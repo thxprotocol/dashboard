@@ -1,30 +1,58 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../views/Home.vue";
+import store from '@/store';
+import Vue from 'vue';
+import VueRouter, { RouteConfig } from 'vue-router';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
+    {
+        path: '/',
+        component: () => import('../views/Home.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: '/login',
+        component: () => import('../views/Signin.vue'),
+    },
+    {
+        path: '/signin-oidc',
+        component: () => import('../views/SigninRedirect.vue'),
+    },
+    {
+        path: '/silent-renew',
+        component: () => import('../views/SilentRenew.vue'),
+    },
+    {
+        path: '/account',
+        name: 'Account',
+        component: () => import('../views/Account.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
 ];
 
 const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
-  routes,
+    mode: 'history',
+    routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+    try {
+        const user = await store.dispatch('account/getUser');
+
+        if (requiresAuth && !user) {
+            await store.dispatch('account/signinRedirect');
+        } else {
+            return next();
+        }
+    } catch (err) {
+        console.error(err);
+    }
 });
 
 export default router;
