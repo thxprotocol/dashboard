@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="lg" title="Create Asset Pool" id="modalCreateAssetPool">
+    <b-modal size="lg" title="Create Asset Pool" id="modalAssetPoolCreate">
         <form v-on:submit.prevent="submit" id="formAssetPoolCreate">
             <b-form-group>
                 <label for="poolTitle">Title:</label>
