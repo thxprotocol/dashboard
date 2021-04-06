@@ -1,7 +1,6 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { UserProfile } from './account';
 
 interface TokenBalance {
     name: string;
@@ -13,23 +12,21 @@ interface TokenBalance {
 export class AssetPool {
     address: string;
     title: string;
-    poolAddress: string;
+    aud: string;
     poolToken: TokenBalance;
-    isMember: string;
-    isManager: string;
+    bypassPolls: boolean;
 
     constructor(data: any) {
         this.address = data.address;
         this.title = data.title;
-        this.poolAddress = data.poolAddress;
-        this.poolToken = data.poolToken;
-        this.isMember = data.isMember;
-        this.isManager = data.isManager;
+        this.aud = data.aud;
+        this.poolToken = data.token;
+        this.bypassPolls = data.bypassPolls;
     }
 }
 
 export interface IAssetPools {
-    [poolAddress: string]: AssetPool;
+    [address: string]: AssetPool;
 }
 
 @Module({ namespaced: true })
@@ -42,56 +39,35 @@ class AssetPoolModule extends VuexModule {
 
     @Mutation
     set(pool: AssetPool) {
-        Vue.set(this._all, pool.poolAddress, pool);
+        Vue.set(this._all, pool.address, pool);
+    }
+
+    @Mutation
+    unset(address: string) {
+        Vue.delete(this._all, address);
     }
 
     @Action
-    async read({ profile, poolAddress }: { profile: UserProfile; poolAddress: string }) {
-        let title = '',
-            poolToken = null,
-            isMember = false,
-            isManager = false;
+    async read(address: string) {
         try {
             const r = await axios({
                 method: 'get',
-                url: '/asset_pools/' + poolAddress,
-                headers: { AssetPool: poolAddress },
+                url: '/asset_pools/' + address,
+                headers: { AssetPool: address },
             });
-
-            title = r.data.title;
-            poolAddress = r.data.address;
-            poolToken = r.data.token;
-
-            const x = await axios({
-                method: 'get',
-                url: '/members/' + profile.address,
-                headers: { AssetPool: poolAddress },
-            });
-
-            isMember = x.data.isMember;
-            isManager = x.data.isManager;
+            this.context.commit('set', new AssetPool(r.data));
         } catch (e) {
-            // if (e.response.status !== 404) {
-            //     return;
-            // }
-        } finally {
-            this.context.commit(
-                'set',
-                new AssetPool({
-                    address: profile.address,
-                    title,
-                    poolAddress,
-                    poolToken,
-                    isMember,
-                    isManager,
-                }),
-            );
+            // Only logs the non 404, since the 404s are probably caused due to a network change.
+            if (e.response && e.response.status !== 404) {
+                console.error(e);
+            }
         }
     }
 
     @Action
     async create(data: {
         title: string;
+        aud: string;
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
         try {
@@ -100,9 +76,43 @@ class AssetPoolModule extends VuexModule {
                 url: '/asset_pools',
                 data,
             });
-            console.log(r.data);
-            debugger;
+            return r.data.address;
         } catch (e) {
+            debugger;
+        }
+    }
+
+    @Action
+    async update(data: { title: string; address: string; aud: string; bypassPolls: boolean }) {
+        try {
+            await axios({
+                method: 'PATCH',
+                url: '/asset_pools/' + data.address,
+                data,
+                headers: {
+                    AssetPool: data.address,
+                },
+            });
+        } catch (e) {
+            console.log(e);
+            debugger;
+        }
+    }
+
+    @Action
+    async remove(address: string) {
+        try {
+            await axios({
+                method: 'DELETE',
+                url: '/asset_pools/' + address,
+                headers: {
+                    AssetPool: address,
+                },
+            });
+
+            this.context.commit('unset', address);
+        } catch (e) {
+            console.log(e);
             debugger;
         }
     }

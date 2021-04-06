@@ -17,12 +17,14 @@ export class Account {
     lastName = '';
     assetPools: string[] = [];
     burnProofs: string[] = [];
+    registrationAccessTokens: string[] = [];
 }
 export interface UserProfile {
     address: string;
     privateKey: string;
     burnProofs: string[];
     memberships: string[];
+    registrationAccessTokens: string[];
 }
 
 const config: any = {
@@ -39,7 +41,7 @@ const config: any = {
     automaticSilentRenew: true,
 
     loadUserInfo: true,
-    scope: 'openid user dashboard email offline_access',
+    scope: 'openid user dashboard',
 };
 
 @Module({ namespaced: true })

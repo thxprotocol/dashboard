@@ -3,51 +3,86 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 
 export class Application {
-    address: string;
-    title: string;
+    clientName: string;
+    clientId: string;
+    clientSecret: string;
+    requestUris: string;
+    registrationAccessToken: string;
 
     constructor(data: any) {
-        this.address = data.address;
-        this.title = data.title;
+        this.clientName = data.name;
+        this.clientId = data.clientId;
+        this.clientSecret = data.clientSecret;
+        this.requestUris = data.requestUris;
+        this.registrationAccessToken = data.registrationAccessToken;
     }
+}
+
+export interface IApplications {
+    [rat: string]: Application;
 }
 
 @Module({ namespaced: true })
 class ApplicationModule extends VuexModule {
-    _all: any[] = [];
+    _all: IApplications = {};
 
     get all() {
         return this._all;
     }
 
-    // @Mutation
-    // set(app: Application) {
-    //     Vue.set(this._all, app.id, app);
-    // }
+    @Mutation
+    set(app: Application) {
+        Vue.set(this._all, app.registrationAccessToken, app);
+    }
+
+    @Mutation
+    unset(rat: string) {
+        Vue.delete(this._all, rat);
+    }
 
     @Action
-    async create(data: {
-        title: string;
-        token: { address: string; name: string; symbol: string; totalSupply: number };
-    }) {
+    async read(rat: string) {
+        try {
+            const r = await axios({
+                method: 'get',
+                url: '/clients/' + rat,
+            });
+
+            if (!r.data) {
+                throw new Error('No data found.');
+            }
+            this.context.commit('set', new Application(r.data));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    @Action
+    async create(data: { title: string; requestUri: string }) {
         try {
             const r = await axios({
                 method: 'POST',
-                url: process.env.VUE_APP_API_ROOT + '/reg',
-                data: {
-                    application_type: 'web',
-                    client_name: data.title,
-                    grant_types: ['client_credentials'],
-                    redirect_uris: [],
-                    post_logout_redirect_uris: [],
-                    response_types: [],
-                    scope: 'openid admin',
-                },
+                url: '/clients',
+                data,
             });
-            debugger;
-            console.log(r.data);
+
+            return r.data.rat;
         } catch (e) {
-            debugger;
+            console.error(e);
+        }
+    }
+
+    @Action
+    async remove(rat: string) {
+        try {
+            await axios({
+                method: 'DELETE',
+                url: '/clients/' + rat,
+            });
+
+            this.context.commit('unset', rat);
+        } catch (e) {
+            console.error(e);
         }
     }
 }

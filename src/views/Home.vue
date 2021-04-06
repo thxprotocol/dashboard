@@ -8,6 +8,11 @@
             </b-button>
         </div>
         <hr />
+        <div class="row" v-if="profile">
+            <div class="col-md-6 col-lg-4" :key="rat" v-for="rat of profile.registrationAccessTokens">
+                <base-application :rat="rat" />
+            </div>
+        </div>
         <div class="justify-content-between d-flex pt-3">
             <h1 class="h3">Your Asset Pools</h1>
             <b-button v-b-modal="'modalAssetPoolCreate'" class="btn-rounded" variant="primary">
@@ -27,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import BaseApplication from '@/components/BaseApplication.vue';
 import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalApplicationCreate from '@/components/ModalApplicationCreate.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
@@ -37,6 +43,7 @@ import { mapGetters } from 'vuex';
 
 @Component({
     components: {
+        'base-application': BaseApplication,
         'base-asset-pool': BaseAssetPool,
         'modal-application-create': ModalApplicationCreate,
         'modal-asset-pool-create': ModalAssetPoolCreate,
@@ -46,7 +53,6 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({
         profile: 'account/profile',
-        assetPools: 'assetPools/all',
     }),
 })
 export default class Home extends Vue {
