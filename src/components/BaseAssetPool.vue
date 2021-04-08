@@ -1,11 +1,13 @@
 <template>
     <b-overlay :show="loading" rounded="sm" v-if="p">
-        <b-card :title="p.title" class="mt-3 mb-3 position-relative">
-            <b-badge class="" variant="success" v-if="p.bypassPolls"> Protected </b-badge>
-            <hr />
-            <div class="text-center font-weight-bold m-0 text-primary h2">
-                {{ p.poolToken.balance }} {{ p.poolToken.symbol }}
+        <b-card class="mt-3 mb-3 position-relative">
+            <div class="d-flex justify-content-between">
+                <strong class="mr-3">{{ p.title }}</strong>
+                <b-badge class="d-flex align-items-center" variant="primary" v-if="p.network === 0"> Test </b-badge>
+                <b-badge class="d-flex align-items-center" variant="success" v-if="p.network === 1"> Main </b-badge>
             </div>
+            <hr />
+            <div class="font-weight-bold m-0 text-primary h3">{{ p.poolToken.balance }} {{ p.poolToken.symbol }}</div>
             <template #footer>
                 <div class="text-right">
                     <b-link class="text-danger small mr-3" size="sm" href="#" v-b-modal="`modalDelete-${p.address}`">
@@ -89,6 +91,6 @@ export default class BaseAssetPool extends Vue {
 </script>
 <style lang="scss" scoped>
 .card-title {
-    text-align: center;
+    font-size: 1rem;
 }
 </style>

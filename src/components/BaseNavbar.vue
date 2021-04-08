@@ -11,10 +11,10 @@
                     <!-- <b-nav-item to="/faq">FAQ</b-nav-item> -->
                 </b-navbar-nav>
                 <div class="navbar-nav-right">
-                    <b-dropdown size="sm" variant="light" class="mr-3" :text="networkNames[network]">
+                    <!-- <b-dropdown size="sm" variant="light" class="mr-3" :text="networkNames[network]">
                         <b-dropdown-item @click="network = 0">{{ networkNames[0] }}</b-dropdown-item>
                         <b-dropdown-item @click="network = 1" disabled>{{ networkNames[1] }}</b-dropdown-item>
-                    </b-dropdown>
+                    </b-dropdown> -->
                     <b-navbar-nav>
                         <b-nav-item href="https://github.com/thxprotocol" target="_blank">
                             <i class="fab fa-github"></i>

@@ -23,6 +23,7 @@
                     </b-form-group>
                     <b-form-group label="Token (ERC20)" v-slot="{ ariaDescribedby }">
                         <b-form-radio
+                            disabled
                             v-model="tokenOption"
                             :aria-describedby="ariaDescribedby"
                             name="tokenOption"
@@ -99,6 +100,7 @@
 
 <script lang="ts">
 import { Application, IApplications } from '@/store/modules/applications';
+import { RPC } from '@/store/modules/assetPools';
 import {
     BButton,
     BCard,
@@ -144,8 +146,9 @@ enum PoolTokenType {
 export default class ModalAssetPoolCreate extends Vue {
     loading = false;
     title = '';
-    tokenOption = 0;
+    tokenOption = 1;
     tokenList = tokenList;
+    network: RPC = 0;
 
     erc20Address = tokenList[0].address;
     erc20Name = '';
@@ -166,12 +169,14 @@ export default class ModalAssetPoolCreate extends Vue {
             const data = {
                 title: this.title,
                 aud: this.application.clientId,
+                network: this.network,
                 token:
                     this.tokenOption === PoolTokenType.New
                         ? {
                               name: this.erc20Name,
                               symbol: this.erc20Symbol,
                               totalSupply: this.erc20TotalSupply,
+                              network: this.network,
                           }
                         : this.tokenOption === PoolTokenType.Existing
                         ? {

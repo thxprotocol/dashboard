@@ -21,7 +21,11 @@
                 <b-form-input id="title" v-model="title" />
             </b-form-group>
             <b-form-group>
-                <label for="clientId">Contract Address:</label>
+                <label for="clientId">
+                    Contract Address
+                    <span v-if="network === 0">Test</span>
+                    <span v-if="network === 1">Main</span>:
+                </label>
                 <b-form-input readonly id="address" v-model="assetPool.address" />
             </b-form-group>
             <b-form-group>
@@ -45,7 +49,7 @@
 
 <script lang="ts">
 import { Application, IApplications } from '@/store/modules/applications';
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool, RPC } from '@/store/modules/assetPools';
 import {
     BButton,
     BCard,
@@ -85,6 +89,7 @@ export default class ModalAssetPoolDetails extends Vue {
     loading = false;
     application: Application | null = null;
     bypassPolls = false;
+    network: RPC = 0;
     title = '';
 
     @Prop() assetPool!: AssetPool;
@@ -96,6 +101,7 @@ export default class ModalAssetPoolDetails extends Vue {
             Object.values(this.applications).find((app: Application) => app.clientId === this.assetPool.aud) || null;
         this.title = this.assetPool.title;
         this.bypassPolls = this.assetPool.bypassPolls;
+        this.network = this.assetPool.network;
     }
 
     async update() {
@@ -106,6 +112,7 @@ export default class ModalAssetPoolDetails extends Vue {
                 title: this.title,
                 aud: this.application?.clientId,
                 bypassPolls: this.bypassPolls,
+                network: this.network,
             });
 
             await this.$store.dispatch('assetPools/read', this.assetPool.address);

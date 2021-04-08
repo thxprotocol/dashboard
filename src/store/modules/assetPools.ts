@@ -9,12 +9,18 @@ interface TokenBalance {
     balance: { type: string; hex: string };
 }
 
+export enum RPC {
+    Test = 0,
+    Main = 1,
+}
+
 export class AssetPool {
     address: string;
     title: string;
     aud: string;
     poolToken: TokenBalance;
     bypassPolls: boolean;
+    network: RPC;
 
     constructor(data: any) {
         this.address = data.address;
@@ -22,6 +28,7 @@ export class AssetPool {
         this.aud = data.aud;
         this.poolToken = data.token;
         this.bypassPolls = data.bypassPolls;
+        this.network = data.network;
     }
 }
 
@@ -68,6 +75,7 @@ class AssetPoolModule extends VuexModule {
     async create(data: {
         title: string;
         aud: string;
+        network: number;
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
         try {
