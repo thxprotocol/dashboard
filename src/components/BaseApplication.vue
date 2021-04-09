@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import { Application } from '@/store/modules/applications';
 import { BButton, BCard, BLink, BOverlay } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -53,36 +54,30 @@ import ModalDelete from './ModalDelete.vue';
 })
 export default class BaseApplication extends Vue {
     loading = false;
+
     clientName = '';
     clientId = '';
     clientSecret = '';
     requestUris = '';
 
-    @Prop() rat!: string;
+    @Prop() app!: Application;
 
     applications!: any;
 
     async mounted() {
-        this.loading = true;
-
-        try {
-            await this.$store.dispatch('applications/read', this.rat);
-
-            this.clientName = this.applications[this.rat].clientName;
-            this.clientId = this.applications[this.rat].clientId;
-            this.clientSecret = this.applications[this.rat].clientSecret;
-            this.requestUris = this.applications[this.rat].requestUris;
-        } catch (e) {
-            console.error(e);
-        } finally {
-            this.loading = false;
-        }
+        this.clientName = this.app.clientName;
+        this.clientId = this.app.clientId;
+        this.clientSecret = this.app.clientSecret;
+        this.requestUris = this.app.requestUris;
     }
 
     async remove() {
         try {
-            await this.$store.dispatch('applications/remove', this.rat);
-            await this.$store.dispatch('account/getProfile');
+            const r = await this.$store.dispatch('applications/remove', this.app.registrationAccessToken);
+
+            if (r.response.data.error) {
+                return r.response.data;
+            }
         } catch (e) {
             console.error(e);
         } finally {

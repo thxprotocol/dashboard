@@ -1,30 +1,41 @@
 <template>
-    <b-overlay :show="loading" rounded="sm" v-if="p">
+    <b-overlay :show="loading" rounded="sm">
         <b-card class="mt-3 mb-3 position-relative">
             <div class="d-flex justify-content-between">
-                <strong class="mr-3">{{ p.title }}</strong>
-                <b-badge class="d-flex align-items-center" variant="primary" v-if="p.network === 0"> Test </b-badge>
-                <b-badge class="d-flex align-items-center" variant="success" v-if="p.network === 1"> Main </b-badge>
+                <strong class="mr-3">{{ assetPool.title }}</strong>
+                <b-badge class="d-flex align-items-center" variant="primary" v-if="assetPool.network === 0">
+                    Test
+                </b-badge>
+                <b-badge class="d-flex align-items-center" variant="success" v-if="assetPool.network === 1">
+                    Main
+                </b-badge>
             </div>
             <hr />
-            <div class="font-weight-bold m-0 text-primary h3">{{ p.poolToken.balance }} {{ p.poolToken.symbol }}</div>
+            <div class="font-weight-bold m-0 text-primary h3">
+                {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+            </div>
             <template #footer>
                 <div class="text-right">
-                    <b-link class="text-danger small mr-3" size="sm" href="#" v-b-modal="`modalDelete-${p.address}`">
+                    <b-link
+                        class="text-danger small mr-3"
+                        size="sm"
+                        href="#"
+                        v-b-modal="`modalDelete-${assetPool.address}`"
+                    >
                         Remove
                     </b-link>
                     <b-button
                         variant="primary"
                         class="btn-rounded"
                         size="sm"
-                        v-b-modal="`modalAssetPoolDetails-${address}`"
+                        v-b-modal="`modalAssetPoolDetails-${assetPool.address}`"
                     >
                         Details
                     </b-button>
                 </div>
             </template>
-            <modal-delete :id="`modalDelete-${p.address}`" :call="remove" :subject="p.title" />
-            <modal-asset-pool-details :assetPool="p" />
+            <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.title" />
+            <modal-asset-pool-details :assetPool="assetPool" />
         </b-card>
     </b-overlay>
 </template>
@@ -56,31 +67,15 @@ import ModalDelete from './ModalDelete.vue';
 export default class BaseAssetPool extends Vue {
     loading = false;
 
-    @Prop() address!: string;
+    @Prop() assetPool!: AssetPool;
 
     profile!: UserProfile;
     assetPools!: IAssetPools;
 
-    get p(): AssetPool {
-        return this.assetPools[this.address];
-    }
-
-    async mounted() {
-        this.loading = true;
-        try {
-            await this.$store.dispatch('assetPools/read', this.address);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            this.loading = false;
-        }
-    }
-
     async remove() {
         this.loading = true;
         try {
-            await this.$store.dispatch('assetPools/remove', this.address);
-            await this.$store.dispatch('account/getProfile');
+            await this.$store.dispatch('assetPools/remove', this.assetPool.address);
         } catch (e) {
             console.error(e);
         } finally {

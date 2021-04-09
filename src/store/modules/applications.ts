@@ -8,6 +8,7 @@ export class Application {
     clientSecret: string;
     requestUris: string;
     registrationAccessToken: string;
+    assetPools: string[];
 
     constructor(data: any) {
         this.clientName = data.name;
@@ -15,6 +16,7 @@ export class Application {
         this.clientSecret = data.clientSecret;
         this.requestUris = data.requestUris;
         this.registrationAccessToken = data.registrationAccessToken;
+        this.assetPools = data.assetPools;
     }
 }
 
@@ -82,7 +84,8 @@ class ApplicationModule extends VuexModule {
 
             this.context.commit('unset', rat);
         } catch (e) {
-            console.error(e);
+            console.log(e);
+            return e;
         }
     }
 }

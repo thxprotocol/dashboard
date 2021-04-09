@@ -64,10 +64,7 @@ class AssetPoolModule extends VuexModule {
             });
             this.context.commit('set', new AssetPool(r.data));
         } catch (e) {
-            // Only logs the non 404, since the 404s are probably caused due to a network change.
-            if (e.response && e.response.status !== 404) {
-                console.error(e);
-            }
+            console.error(e);
         }
     }
 
@@ -79,12 +76,23 @@ class AssetPoolModule extends VuexModule {
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
         try {
-            const r = await axios({
+            const res = await axios({
                 method: 'POST',
                 url: '/asset_pools',
                 data,
             });
-            return r.data.address;
+            debugger;
+            try {
+                const r = await axios({
+                    method: 'get',
+                    url: '/asset_pools/' + res.data.address,
+                    headers: { AssetPool: res.data.address },
+                });
+                debugger;
+                this.context.commit('set', new AssetPool(r.data));
+            } catch (e) {
+                debugger;
+            }
         } catch (e) {
             debugger;
         }

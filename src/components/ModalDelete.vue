@@ -1,5 +1,6 @@
 <template>
     <b-modal size="lg" :title="`Delete ${subject}`" :id="id">
+        <b-alert show variant="danger" v-if="error">{{ error }}</b-alert>
         <b-overlay :show="loading" rounded="sm">
             <p>
                 Are you sure to delete the <strong>{{ subject }}</strong
@@ -15,19 +16,21 @@
 </template>
 
 <script lang="ts">
-import { BButton, BLink, BModal, BOverlay } from 'bootstrap-vue';
+import { BAlert, BButton, BLink, BModal, BOverlay } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
     components: {
         'b-modal': BModal,
         'b-link': BLink,
+        'b-alert': BAlert,
         'b-button': BButton,
         'b-overlay': BOverlay,
     },
 })
 export default class ModalDelete extends Vue {
     loading = false;
+    error = '';
 
     @Prop() id!: string;
     @Prop() subject!: string;
@@ -37,8 +40,12 @@ export default class ModalDelete extends Vue {
         this.loading = true;
 
         try {
-            await this.call();
+            const r = await this.call();
 
+            if (r && r.error) {
+                this.error = r.error.message;
+                return;
+            }
             this.$bvModal.hide(this.id);
         } catch (e) {
             console.error(e);

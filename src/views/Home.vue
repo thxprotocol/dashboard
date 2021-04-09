@@ -9,8 +9,8 @@
         </div>
         <hr />
         <div class="row" v-if="profile">
-            <div class="col-md-6 col-lg-4" :key="rat" v-for="rat of profile.registrationAccessTokens">
-                <base-application :rat="rat" />
+            <div class="col-md-6 col-lg-4" :key="app.clientId" v-for="app of applications">
+                <base-application :app="app" />
             </div>
         </div>
         <div class="justify-content-between d-flex pt-3">
@@ -22,8 +22,8 @@
         </div>
         <hr />
         <div class="row" v-if="profile">
-            <div class="col-md-6 col-lg-4" :key="address" v-for="address of profile.memberships">
-                <base-asset-pool :address="address" />
+            <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
+                <base-asset-pool :assetPool="assetPool" />
             </div>
         </div>
         <modal-application-create />
@@ -37,6 +37,8 @@ import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalApplicationCreate from '@/components/ModalApplicationCreate.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { UserProfile } from '@/store/modules/account';
+import { IApplications } from '@/store/modules/applications';
+import { IAssetPools } from '@/store/modules/assetPools';
 import { BButton, BCard, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -53,14 +55,26 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({
         profile: 'account/profile',
+        applications: 'applications/all',
+        assetPools: 'assetPools/all',
     }),
 })
 export default class Home extends Vue {
     profile!: UserProfile;
+    assetPools!: IAssetPools;
+    applications!: IApplications;
 
     async mounted() {
         try {
             await this.$store.dispatch('account/getProfile');
+
+            for (const rat of this.profile.registrationAccessTokens) {
+                await this.$store.dispatch('applications/read', rat);
+
+                this.applications[rat].assetPools.forEach((address: string) => {
+                    this.$store.dispatch('assetPools/read', address);
+                });
+            }
         } catch (e) {
             debugger;
         }
