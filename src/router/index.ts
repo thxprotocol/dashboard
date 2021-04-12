@@ -13,6 +13,16 @@ const routes: Array<RouteConfig> = [
         },
     },
     {
+        path: '/signup',
+        component: () => import('../views/Signup.vue'),
+    },
+    {
+        path: '/verify',
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
         path: '/login',
         component: () => import('../views/Signin.vue'),
     },
@@ -46,7 +56,7 @@ router.beforeEach(async (to, from, next) => {
         const user = await store.dispatch('account/getUser');
 
         if (requiresAuth && !user) {
-            await store.dispatch('account/signinRedirect');
+            await store.dispatch('account/signinRedirect', { signupToken: to.query.signup_token || null });
         } else {
             return next();
         }

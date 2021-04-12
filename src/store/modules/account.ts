@@ -128,11 +128,30 @@ class AccountModule extends VuexModule {
     }
 
     @Action
-    async signinRedirect() {
+    async signinRedirect(payload: { signupToken: string }) {
         try {
             await this.userManager.clearStaleState();
 
-            return await this.userManager.signinRedirect({});
+            return await this.userManager.signinRedirect(
+                payload.signupToken
+                    ? {
+                          extraQueryParams: { signup_token: payload.signupToken },
+                      }
+                    : {},
+            );
+        } catch (e) {
+            return e;
+        }
+    }
+
+    @Action
+    async signupRedirect() {
+        try {
+            await this.userManager.clearStaleState();
+
+            return await this.userManager.signinRedirect({
+                prompt: 'create',
+            });
         } catch (e) {
             return e;
         }

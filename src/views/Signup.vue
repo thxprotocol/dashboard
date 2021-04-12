@@ -5,13 +5,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
-@Component({
-    components: {},
-})
-export default class Login extends Vue {
+@Component({})
+export default class Signup extends Vue {
+    error = '';
+
     async mounted() {
         try {
-            await this.$store.dispatch('account/signinRedirect', {});
+            await this.$store.dispatch('account/signupRedirect');
         } catch (e) {
             return;
         }

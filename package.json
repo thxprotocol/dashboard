@@ -16,6 +16,7 @@
         "core-js": "^3.6.5",
         "oidc-client": "^1.11.5",
         "quickswap-default-token-list": "^1.0.48",
+        "vee-validate": "^3.4.5",
         "vue": "^2.6.11",
         "vue-class-component": "^7.2.3",
         "vue-clipboard2": "^0.3.1",

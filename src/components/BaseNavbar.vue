@@ -8,13 +8,8 @@
                 </router-link>
                 <b-navbar-nav>
                     <b-nav-item to="/">Dashboard</b-nav-item>
-                    <!-- <b-nav-item to="/faq">FAQ</b-nav-item> -->
                 </b-navbar-nav>
                 <div class="navbar-nav-right">
-                    <!-- <b-dropdown size="sm" variant="light" class="mr-3" :text="networkNames[network]">
-                        <b-dropdown-item @click="network = 0">{{ networkNames[0] }}</b-dropdown-item>
-                        <b-dropdown-item @click="network = 1" disabled>{{ networkNames[1] }}</b-dropdown-item>
-                    </b-dropdown> -->
                     <b-navbar-nav>
                         <b-nav-item href="https://github.com/thxprotocol" target="_blank">
                             <i class="fab fa-github"></i>
@@ -64,9 +59,6 @@ import { Component, Vue } from 'vue-property-decorator';
     },
 })
 export default class BaseNavbar extends Vue {
-    network = 0;
-    networkNames = ['Test Network', 'Main Network'];
-
     async logout() {
         try {
             await this.$store.dispatch('account/signoutRedirect');
