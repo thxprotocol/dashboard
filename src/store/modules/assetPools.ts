@@ -62,6 +62,7 @@ class AssetPoolModule extends VuexModule {
                 url: '/asset_pools/' + address,
                 headers: { AssetPool: address },
             });
+
             this.context.commit('set', new AssetPool(r.data));
         } catch (e) {
             console.error(e);
@@ -81,19 +82,21 @@ class AssetPoolModule extends VuexModule {
                 url: '/asset_pools',
                 data,
             });
-            debugger;
+
             try {
                 const r = await axios({
                     method: 'get',
                     url: '/asset_pools/' + res.data.address,
                     headers: { AssetPool: res.data.address },
                 });
-                debugger;
+
                 this.context.commit('set', new AssetPool(r.data));
             } catch (e) {
+                console.log(e);
                 debugger;
             }
         } catch (e) {
+            console.log(e);
             debugger;
         }
     }

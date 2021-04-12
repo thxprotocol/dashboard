@@ -62,13 +62,26 @@ class ApplicationModule extends VuexModule {
     @Action
     async create(data: { title: string; requestUri: string }) {
         try {
-            const r = await axios({
+            const res = await axios({
                 method: 'POST',
                 url: '/clients',
                 data,
             });
 
-            return r.data.rat;
+            try {
+                const r = await axios({
+                    method: 'get',
+                    url: '/clients/' + res.data.rat,
+                });
+
+                if (!r.data) {
+                    throw new Error('No data found.');
+                }
+
+                this.context.commit('set', new Application(r.data));
+            } catch (e) {
+                console.error(e);
+            }
         } catch (e) {
             console.error(e);
         }

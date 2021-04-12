@@ -3,6 +3,14 @@
         <b-overlay :show="loading" rounded="sm">
             <form v-on:submit.prevent="submit" id="formAssetPoolCreate">
                 <b-form-group>
+                    <label for="networkId">Network:</label>
+                    <b-form-select v-model="network">
+                        <b-form-select-option :value="network.id" :key="network.id" v-for="network of networks">
+                            {{ network.name }}
+                        </b-form-select-option>
+                    </b-form-select>
+                </b-form-group>
+                <b-form-group>
                     <label for="clientId">Connected App:</label>
                     <b-form-select v-model="application">
                         <b-form-select-option
@@ -120,6 +128,11 @@ import { mapGetters } from 'vuex';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tokenList = require('quickswap-default-token-list').tokens;
 
+interface NetworkProvider {
+    id: number;
+    name: string;
+}
+
 enum PoolTokenType {
     Existing = 0,
     New = 1,
@@ -148,6 +161,10 @@ export default class ModalAssetPoolCreate extends Vue {
     title = '';
     tokenOption = 1;
     tokenList = tokenList;
+    networks: NetworkProvider[] = [
+        { id: 0, name: 'Test Network' },
+        { id: 1, name: 'Main Network' },
+    ];
     network: RPC = 0;
 
     erc20Address = tokenList[0].address;
@@ -186,7 +203,7 @@ export default class ModalAssetPoolCreate extends Vue {
             };
 
             await this.$store.dispatch('assetPools/create', data);
-            await this.$store.dispatch('account/getProfile');
+
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (e) {
             console.error(e);

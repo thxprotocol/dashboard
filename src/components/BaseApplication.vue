@@ -75,7 +75,7 @@ export default class BaseApplication extends Vue {
         try {
             const r = await this.$store.dispatch('applications/remove', this.app.registrationAccessToken);
 
-            if (r.response.data.error) {
+            if (r && r.response.data.error) {
                 return r.response.data;
             }
         } catch (e) {
