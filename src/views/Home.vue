@@ -1,27 +1,27 @@
 <template>
     <div class="section-home container">
         <div class="justify-content-between d-flex pt-3">
-            <h1 class="h3">Your Applications</h1>
+            <h1 class="h3">Applications</h1>
             <b-button v-b-modal="'modalApplicationCreate'" class="btn-rounded" variant="primary">
-                New application
+                <span class="d-none d-sm-inline">New application</span>
                 <i class="fas fa-plus"></i>
             </b-button>
         </div>
         <hr />
-        <div class="row" v-if="profile">
+        <div class="row" v-if="applications">
             <div class="col-md-6 col-lg-4" :key="app.clientId" v-for="app of applications">
                 <base-application :app="app" />
             </div>
         </div>
         <div class="justify-content-between d-flex pt-3">
-            <h1 class="h3">Your Asset Pools</h1>
+            <h1 class="h3">Asset Pools</h1>
             <b-button v-b-modal="'modalAssetPoolCreate'" class="btn-rounded" variant="primary">
-                New asset pool
+                <span class="d-none d-sm-inline">New asset pool</span>
                 <i class="fas fa-plus"></i>
             </b-button>
         </div>
         <hr />
-        <div class="row" v-if="profile">
+        <div class="row" v-if="assetPools">
             <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
                 <base-asset-pool :assetPool="assetPool" />
             </div>
