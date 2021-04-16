@@ -1,43 +1,50 @@
 <template>
     <b-modal size="lg" :title="assetPool.title" :id="`modalAssetPoolDetails-${assetPool.address}`">
-        <b-overlay :show="loading" rounded="sm">
-            <b-form-group>
-                <label for="clientId">Connected App:</label>
-                <b-form-select v-model="application">
-                    <b-form-select-option
-                        :value="application"
-                        :key="application.clientId"
-                        v-for="application of applications"
-                    >
-                        {{ application.clientName }}
-                        ({{ application.clientId }})
-                    </b-form-select-option>
-                </b-form-select>
-            </b-form-group>
-            <hr />
+        <b-overlay :show="loading" class="m-n3 pt-3 pb-3">
+            <div class="ml-3 mr-3">
+                <b-form-group>
+                    <label for="clientId">Connected App:</label>
+                    <b-form-select v-model="application">
+                        <b-form-select-option
+                            :value="application"
+                            :key="application.clientId"
+                            v-for="application of applications"
+                        >
+                            {{ application.clientName }}
+                            ({{ application.clientId }})
+                        </b-form-select-option>
+                    </b-form-select>
+                </b-form-group>
+                <hr />
 
-            <b-form-group>
-                <label for="title">Title:</label>
-                <b-form-input id="title" v-model="title" />
-            </b-form-group>
-            <b-form-group>
-                <label for="clientId">
-                    Contract Address
-                    <span v-if="network === 0">Test</span>
-                    <span v-if="network === 1">Main</span>:
-                </label>
-                <b-form-input readonly id="address" v-model="assetPool.address" />
-            </b-form-group>
-            <b-form-group>
-                <b-form-checkbox v-model="bypassPolls"> Enable asset pool governance. </b-form-checkbox>
-            </b-form-group>
-            <b-card>
-                {{ assetPool.poolToken.name }}
-                <strong>
-                    {{ assetPool.poolToken.balance }}
-                    {{ assetPool.poolToken.symbol }}
-                </strong>
-            </b-card>
+                <b-form-group>
+                    <label for="title">Title:</label>
+                    <b-form-input id="title" v-model="title" />
+                </b-form-group>
+                <b-form-group>
+                    <label for="clientId">
+                        Contract Address
+                        <span v-if="network === 0">Test</span>
+                        <span v-if="network === 1">Main</span>:
+                    </label>
+                    <b-form-input readonly id="address" v-model="assetPool.address" />
+                </b-form-group>
+                <b-form-group>
+                    <b-form-checkbox v-model="enableGovernance"
+                        ><strong>Enable governance</strong>
+                        <p class="text-muted">
+                            Having governance enabled will require a voting procedure for high risk transactions.
+                        </p></b-form-checkbox
+                    >
+                </b-form-group>
+                <b-card>
+                    {{ assetPool.poolToken.name }}
+                    <strong>
+                        {{ assetPool.poolToken.balance }}
+                        {{ assetPool.poolToken.symbol }}
+                    </strong>
+                </b-card>
+            </div>
         </b-overlay>
 
         <template v-slot:modal-footer="{ cancel }">
@@ -88,7 +95,7 @@ import { mapGetters } from 'vuex';
 export default class ModalAssetPoolDetails extends Vue {
     loading = false;
     application: Application | null = null;
-    bypassPolls = false;
+    enableGovernance = true;
     network: RPC = 0;
     title = '';
 
@@ -100,7 +107,7 @@ export default class ModalAssetPoolDetails extends Vue {
         this.application =
             Object.values(this.applications).find((app: Application) => app.clientId === this.assetPool.aud) || null;
         this.title = this.assetPool.title;
-        this.bypassPolls = this.assetPool.bypassPolls;
+        this.enableGovernance = !this.assetPool.bypassPolls;
         this.network = this.assetPool.network;
     }
 
@@ -111,7 +118,7 @@ export default class ModalAssetPoolDetails extends Vue {
                 address: this.assetPool.address,
                 title: this.title,
                 aud: this.application?.clientId,
-                bypassPolls: this.bypassPolls,
+                bypassPolls: !this.enableGovernance,
                 network: this.network,
             });
 

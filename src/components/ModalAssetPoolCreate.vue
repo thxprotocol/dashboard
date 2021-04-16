@@ -1,95 +1,97 @@
 <template>
     <b-modal size="lg" title="Create Asset Pool" id="modalAssetPoolCreate">
-        <b-overlay :show="loading" rounded="sm">
-            <form v-on:submit.prevent="submit" id="formAssetPoolCreate">
-                <b-form-group>
-                    <label for="networkId">Network:</label>
-                    <b-form-select v-model="network">
-                        <b-form-select-option :value="network.id" :key="network.id" v-for="network of networks">
-                            {{ network.name }}
-                        </b-form-select-option>
-                    </b-form-select>
-                </b-form-group>
-                <b-form-group>
-                    <label for="clientId">Connected App:</label>
-                    <b-form-select v-model="application">
-                        <b-form-select-option
-                            :value="application"
-                            :key="application.clientId"
-                            v-for="application of applications"
-                        >
-                            {{ application.clientName }}
-                            ({{ application.clientId }})
-                        </b-form-select-option>
-                    </b-form-select>
-                </b-form-group>
-                <template v-if="application">
-                    <hr />
+        <b-overlay :show="loading" class="m-n3 pt-3 pb-3">
+            <div class="ml-3 mr-3">
+                <form v-on:submit.prevent="submit" id="formAssetPoolCreate">
                     <b-form-group>
-                        <label for="poolTitle">Title:</label>
-                        <b-form-input id="poolTitle" v-model="title" />
+                        <label for="networkId">Network:</label>
+                        <b-form-select v-model="network">
+                            <b-form-select-option :value="network.id" :key="network.id" v-for="network of networks">
+                                {{ network.name }}
+                            </b-form-select-option>
+                        </b-form-select>
                     </b-form-group>
-                    <b-form-group label="Token (ERC20)" v-slot="{ ariaDescribedby }">
-                        <b-form-radio
-                            disabled
-                            v-model="tokenOption"
-                            :aria-describedby="ariaDescribedby"
-                            name="tokenOption"
-                            :value="0"
-                        >
-                            Use existing token
-                        </b-form-radio>
-                        <b-form-radio
-                            v-model="tokenOption"
-                            :aria-describedby="ariaDescribedby"
-                            name="tokenOption"
-                            :value="1"
-                        >
-                            Create new token
-                        </b-form-radio>
+                    <b-form-group>
+                        <label for="clientId">Connected App:</label>
+                        <b-form-select v-model="application">
+                            <b-form-select-option
+                                :value="application"
+                                :key="application.clientId"
+                                v-for="application of applications"
+                            >
+                                {{ application.clientName }}
+                                ({{ application.clientId }})
+                            </b-form-select-option>
+                        </b-form-select>
                     </b-form-group>
-                    <b-card v-if="tokenOption === 0">
+                    <template v-if="application">
+                        <hr />
                         <b-form-group>
-                            <b-form-select v-model="erc20Address">
-                                <b-form-select-option
-                                    :value="token.address"
-                                    :key="token.address"
-                                    v-for="token of tokenList"
-                                >
-                                    {{ token.symbol }} | {{ token.name }}
-                                </b-form-select-option>
-                            </b-form-select>
-                            <small class="text-muted">
-                                Only tokens that are available on
-                                <a href="https://quickswap.exchange" target="_blank">Quickswap</a> are available for
-                                your asset pool.
-                            </small>
+                            <label for="poolTitle">Title:</label>
+                            <b-form-input id="poolTitle" v-model="title" />
                         </b-form-group>
-                        <b-form-group>
-                            <label for="erc20Address">ERC20 Address:</label>
-                            <b-form-input disabled readonly id="erc20Address" v-model="erc20Address" />
+                        <b-form-group label="Token (ERC20)" v-slot="{ ariaDescribedby }">
+                            <b-form-radio
+                                disabled
+                                v-model="tokenOption"
+                                :aria-describedby="ariaDescribedby"
+                                name="tokenOption"
+                                :value="0"
+                            >
+                                Use existing token
+                            </b-form-radio>
+                            <b-form-radio
+                                v-model="tokenOption"
+                                :aria-describedby="ariaDescribedby"
+                                name="tokenOption"
+                                :value="1"
+                            >
+                                Create new token
+                            </b-form-radio>
                         </b-form-group>
-                    </b-card>
-                    <b-card v-if="tokenOption === 1">
-                        <b-form-group>
-                            <label for="erc20Address">Name:</label>
-                            <b-form-input id="erc20Name" v-model="erc20Name" placeholder="ABC Network Token" />
-                        </b-form-group>
-                        <b-form-group>
-                            <label for="erc20Address">Symbol:</label>
-                            <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="ABC" />
-                        </b-form-group>
-                        <b-form-group>
-                            <label for="erc20Address">Total Supply:</label>
-                            <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
-                            <small class="text-muted">
-                                A total supply of 0 will enable the asset pool to create tokens out of thin air when
-                                needed. All other values will be transfered to the given address.
-                            </small>
-                        </b-form-group>
-                    </b-card>
-                </template>
-            </form>
+                        <b-card v-if="tokenOption === 0">
+                            <b-form-group>
+                                <b-form-select v-model="erc20Address">
+                                    <b-form-select-option
+                                        :value="token.address"
+                                        :key="token.address"
+                                        v-for="token of tokenList"
+                                    >
+                                        {{ token.symbol }} | {{ token.name }}
+                                    </b-form-select-option>
+                                </b-form-select>
+                                <small class="text-muted">
+                                    Only tokens that are available on
+                                    <a href="https://quickswap.exchange" target="_blank">Quickswap</a> are available for
+                                    your asset pool.
+                                </small>
+                            </b-form-group>
+                            <b-form-group>
+                                <label for="erc20Address">ERC20 Address:</label>
+                                <b-form-input disabled readonly id="erc20Address" v-model="erc20Address" />
+                            </b-form-group>
+                        </b-card>
+                        <b-card v-if="tokenOption === 1">
+                            <b-form-group>
+                                <label for="erc20Address">Name:</label>
+                                <b-form-input id="erc20Name" v-model="erc20Name" placeholder="ABC Network Token" />
+                            </b-form-group>
+                            <b-form-group>
+                                <label for="erc20Address">Symbol:</label>
+                                <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="ABC" />
+                            </b-form-group>
+                            <b-form-group>
+                                <label for="erc20Address">Total Supply:</label>
+                                <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
+                                <small class="text-muted">
+                                    A total supply of 0 will enable the asset pool to create tokens out of thin air when
+                                    needed. All other values will be transfered to the given address.
+                                </small>
+                            </b-form-group>
+                        </b-card>
+                    </template>
+                </form>
+            </div>
         </b-overlay>
         <template v-slot:modal-footer="{ cancel }">
             <b-link class="mr-3" variant="dark" @click="cancel()"> Cancel </b-link>
