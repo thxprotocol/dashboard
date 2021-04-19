@@ -11,7 +11,6 @@
                             v-for="application of applications"
                         >
                             {{ application.clientName }}
-                            ({{ application.clientId }})
                         </b-form-select-option>
                     </b-form-select>
                 </b-form-group>
@@ -23,9 +22,9 @@
                 </b-form-group>
                 <b-form-group>
                     <label for="clientId">
-                        Contract Address
-                        <span v-if="network === 0">Test</span>
-                        <span v-if="network === 1">Main</span>:
+                        <b-badge variant="primary" v-if="network === 0">Test</b-badge>
+                        <b-badge variant="success" v-if="network === 1">Main</b-badge>
+                        Contract Address:
                     </label>
                     <b-form-input readonly id="address" v-model="assetPool.address" />
                 </b-form-group>
@@ -33,16 +32,16 @@
                     <b-form-checkbox v-model="enableGovernance"
                         ><strong>Enable governance</strong>
                         <p class="text-muted">
-                            Having governance enabled will require a voting procedure for high risk transactions.
+                            Governance will require a voting procedure for high risk transactions.
                         </p></b-form-checkbox
                     >
                 </b-form-group>
                 <b-card>
-                    {{ assetPool.poolToken.name }}
                     <strong>
                         {{ assetPool.poolToken.balance }}
                         {{ assetPool.poolToken.symbol }}
                     </strong>
+                    {{ assetPool.poolToken.name }}
                 </b-card>
             </div>
         </b-overlay>
@@ -56,8 +55,9 @@
 
 <script lang="ts">
 import { Application, IApplications } from '@/store/modules/applications';
-import { AssetPool, RPC } from '@/store/modules/assetPools';
+import { AssetPool, NetworkProvider } from '@/store/modules/assetPools';
 import {
+    BBadge,
     BButton,
     BCard,
     BCollapse,
@@ -78,6 +78,7 @@ import { mapGetters } from 'vuex';
         'b-modal': BModal,
         'b-link': BLink,
         'b-card': BCard,
+        'b-badge': BBadge,
         'b-form-checkbox': BFormCheckbox,
         'b-form-group': BFormGroup,
         'b-form-select': BFormSelect,
@@ -96,7 +97,7 @@ export default class ModalAssetPoolDetails extends Vue {
     loading = false;
     application: Application | null = null;
     enableGovernance = true;
-    network: RPC = 0;
+    network: NetworkProvider = NetworkProvider.Test;
     title = '';
 
     @Prop() assetPool!: AssetPool;

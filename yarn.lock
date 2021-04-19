@@ -8969,11 +8969,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npm.taobao.org/queue-microtask/download/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha1-SSkii7xyTfrEPg77BYyve2z7YkM=
 
-quickswap-default-token-list@^1.0.48:
-  version "1.0.48"
-  resolved "https://registry.yarnpkg.com/quickswap-default-token-list/-/quickswap-default-token-list-1.0.48.tgz#b21962469e235b33198df89dfb5be1e0647c72a4"
-  integrity sha512-2tpxj6oEhT4iNjw0nv1NJyr2NNeyOrQE9K4bUNPJsA+XutxR5kGl/1G2U3FvbRS4qe38eAA5Cc+9HNPGficGgQ==
-
 ramda@0.24.1:
   version "0.24.1"
   resolved "https://registry.npm.taobao.org/ramda/download/ramda-0.24.1.tgz#c3b7755197f35b8dc3502228262c4c91ddb6b857"

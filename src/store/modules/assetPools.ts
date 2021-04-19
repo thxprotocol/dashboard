@@ -9,7 +9,21 @@ interface TokenBalance {
     balance: { type: string; hex: string };
 }
 
-export enum RPC {
+export interface PoolToken {
+    name: string;
+    address: string;
+    symbol: string;
+    decimals: number;
+    chainId: number;
+    logoURI: string;
+}
+
+export enum PoolTokenType {
+    Existing = 0,
+    New = 1,
+}
+
+export enum NetworkProvider {
     Test = 0,
     Main = 1,
 }
@@ -20,7 +34,7 @@ export class AssetPool {
     aud: string;
     poolToken: TokenBalance;
     bypassPolls: boolean;
-    network: RPC;
+    network: NetworkProvider;
 
     constructor(data: any) {
         this.address = data.address;

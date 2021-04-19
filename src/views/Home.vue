@@ -4,7 +4,7 @@
             <h1 class="h3">Applications</h1>
             <b-button v-b-modal="'modalApplicationCreate'" class="btn-rounded" variant="primary">
                 <span class="d-none d-sm-inline">New application</span>
-                <i class="fas fa-plus"></i>
+                <i class="fas fa-plus ml-2"></i>
             </b-button>
         </div>
         <hr />
@@ -17,7 +17,7 @@
             <h1 class="h3">Asset Pools</h1>
             <b-button v-b-modal="'modalAssetPoolCreate'" class="btn-rounded" variant="primary">
                 <span class="d-none d-sm-inline">New asset pool</span>
-                <i class="fas fa-plus"></i>
+                <i class="fas fa-plus ml-2"></i>
             </b-button>
         </div>
         <hr />

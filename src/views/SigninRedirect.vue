@@ -1,6 +1,6 @@
 <template>
     <div class="center-center h-100">
-        <b-spinner variant="dark"></b-spinner>
+        <b-spinner variant="primary"></b-spinner>
     </div>
 </template>
 
