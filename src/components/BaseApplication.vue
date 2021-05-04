@@ -68,7 +68,6 @@ export default class BaseApplication extends Vue {
         this.clientName = this.app.clientName;
         this.clientId = this.app.clientId;
         this.clientSecret = this.app.clientSecret;
-        this.requestUris = this.app.requestUris;
     }
 
     async remove() {

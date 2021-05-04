@@ -6,7 +6,6 @@ export class Application {
     clientName: string;
     clientId: string;
     clientSecret: string;
-    requestUris: string;
     registrationAccessToken: string;
     assetPools: string[];
 
@@ -14,7 +13,6 @@ export class Application {
         this.clientName = data.name;
         this.clientId = data.clientId;
         this.clientSecret = data.clientSecret;
-        this.requestUris = data.requestUris;
         this.registrationAccessToken = data.registrationAccessToken;
         this.assetPools = data.assetPools;
     }

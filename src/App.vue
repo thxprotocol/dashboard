@@ -2,15 +2,20 @@
     <div id="app" class="bg-light h-100">
         <base-navbar v-if="$route.path !== '/signup'" />
         <router-view />
+        <a target="_blank" class="btn btn-dark btn-chat shadow p-2" href="https://thx.page.link/slack">
+            <i class="far fa-comments"></i>
+        </a>
     </div>
 </template>
 <script lang="ts">
+import { BButton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import BaseNavbar from './components/BaseNavbar.vue';
 
 @Component({
     components: {
         'base-navbar': BaseNavbar,
+        'b-button': BButton,
     },
 })
 export default class App extends Vue {

@@ -6,10 +6,6 @@
                     <label for="appTitle">Title:</label>
                     <b-form-input id="appTitle" v-model="title" />
                 </b-form-group>
-                <b-form-group>
-                    <label for="appRequestUri">Request URI:</label>
-                    <b-form-input id="appRequestUri" v-model="requestUri" />
-                </b-form-group>
             </form>
         </b-overlay>
         <template v-slot:modal-footer="{ cancel }">

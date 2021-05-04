@@ -3,6 +3,10 @@
         <b-overlay :show="loading" class="m-n3 pt-3 pb-3">
             <div class="ml-3 mr-3">
                 <b-form-group>
+                    <label for="title">Title:</label>
+                    <b-form-input id="title" v-model="title" />
+                </b-form-group>
+                <b-form-group>
                     <label for="clientId">Connected App:</label>
                     <b-form-select v-model="application">
                         <b-form-select-option
@@ -14,34 +18,66 @@
                         </b-form-select-option>
                     </b-form-select>
                 </b-form-group>
-                <hr />
-
-                <b-form-group>
-                    <label for="title">Title:</label>
-                    <b-form-input id="title" v-model="title" />
-                </b-form-group>
                 <b-form-group>
                     <label for="clientId">
+                        Smart Contract Address
                         <b-badge variant="primary" v-if="network === 0">Test</b-badge>
                         <b-badge variant="success" v-if="network === 1">Main</b-badge>
-                        Contract Address:
                     </label>
                     <b-form-input readonly id="address" v-model="assetPool.address" />
+                    <p class="text-muted small mb-0">
+                        View your pool transactions in the
+                        <a
+                            v-if="network === 0"
+                            target="_blank"
+                            :href="`https://explorer-mumbai.maticvigil.com/address/${assetPool.address}/transactions`"
+                        >
+                            Polygon testnet block explorer
+                        </a>
+                        <a
+                            v-if="network === 1"
+                            target="_blank"
+                            :href="`https://explorer-mainnet.maticvigil.com/address/${assetPool.address}/transactions`"
+                        >
+                            Polygon mainnet block explorer
+                        </a>
+                        .
+                    </p>
                 </b-form-group>
                 <b-form-group>
-                    <b-form-checkbox v-model="enableGovernance"
-                        ><strong>Enable governance</strong>
-                        <p class="text-muted">
-                            Governance will require a voting procedure for high risk transactions.
-                        </p></b-form-checkbox
-                    >
+                    <b-form-checkbox v-model="enableGovernance">
+                        <strong>
+                            Enable governance
+                            <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </strong>
+                    </b-form-checkbox>
+                    <p class="text-muted mb-0">
+                        Enabling governance will require a voting procedure for high risk transactions.
+                    </p>
                 </b-form-group>
-                <b-card>
-                    <strong>
-                        {{ assetPool.poolToken.balance }}
-                        {{ assetPool.poolToken.symbol }}
-                    </strong>
-                    {{ assetPool.poolToken.name }}
+                <b-card bg-variant="light" v-if="enableGovernance">
+                    <b-form-group>
+                        <label for="rewardPollDuration">Default Reward Poll Duration:</label>
+                        <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
+                        <p class="text-muted small">
+                            Default duration of the poll that is started when a reward configuration is added or
+                            changed. This poll should pass to approve the changes.
+                        </p>
+                    </b-form-group>
+                    <b-form-group>
+                        <label for="withdrawPollDuration">Default Withdraw Poll Duration:</label>
+                        <b-form-input id="withdrawPollDuration" type="number" v-model="withdrawPollDuration" />
+                        <p class="text-muted small">
+                            Default duration of the poll that is started when a reward is claimed by or for a member.
+                            This poll should pass to be able to withdraw the reward. Only members with a manager role
+                            can vote on this poll.
+                            <strong
+                                >Withdraw Poll defauls can be overridden with the configuration of the reward.</strong
+                            >
+                        </p>
+                    </b-form-group>
                 </b-card>
             </div>
         </b-overlay>
@@ -57,6 +93,7 @@
 import { Application, IApplications } from '@/store/modules/applications';
 import { AssetPool, NetworkProvider } from '@/store/modules/assetPools';
 import {
+    BAlert,
     BBadge,
     BButton,
     BCard,
@@ -76,6 +113,7 @@ import { mapGetters } from 'vuex';
 @Component({
     components: {
         'b-modal': BModal,
+        'b-alert': BAlert,
         'b-link': BLink,
         'b-card': BCard,
         'b-badge': BBadge,
@@ -94,9 +132,12 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class ModalAssetPoolDetails extends Vue {
+    docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     application: Application | null = null;
     enableGovernance = true;
+    rewardPollDuration = 0;
+    withdrawPollDuration = 0;
     network: NetworkProvider = NetworkProvider.Test;
     title = '';
 
@@ -120,6 +161,8 @@ export default class ModalAssetPoolDetails extends Vue {
                 title: this.title,
                 aud: this.application?.clientId,
                 bypassPolls: !this.enableGovernance,
+                rewardPollDuration: this.rewardPollDuration,
+                withdrawPollDuration: this.withdrawPollDuration,
                 network: this.network,
             });
 

@@ -7,13 +7,7 @@
             </b-form-group>
             <b-form-group>
                 <label for="clientId">Client Secret:</label>
-                <b-form-input readonly id="clientSecret" v-model="clientSecret" />
-            </b-form-group>
-            <b-form-group>
-                <label for="requestUris">Request URI's:</label>
-                <div :key="uri" v-for="uri of requestUris">
-                    <b-form-input readonly id="requestUris" :value="uri" />
-                </div>
+                <b-form-textarea readonly id="clientSecret" v-model="clientSecret" />
             </b-form-group>
         </b-overlay>
         <template v-slot:modal-footer="{ ok }">
@@ -23,7 +17,18 @@
 </template>
 
 <script lang="ts">
-import { BButton, BCard, BCollapse, BFormGroup, BFormInput, BFormRadio, BLink, BModal, BOverlay } from 'bootstrap-vue';
+import {
+    BButton,
+    BCard,
+    BCollapse,
+    BFormGroup,
+    BFormInput,
+    BFormRadio,
+    BFormTextarea,
+    BLink,
+    BModal,
+    BOverlay,
+} from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
@@ -34,6 +39,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
         'b-form-radio': BFormRadio,
         'b-form-group': BFormGroup,
         'b-form-input': BFormInput,
+        'b-form-textarea': BFormTextarea,
         'b-button': BButton,
         'b-collapse': BCollapse,
         'b-overlay': BOverlay,
@@ -45,6 +51,5 @@ export default class ModalApplicationDetails extends Vue {
     @Prop() clientName!: string;
     @Prop() clientId!: string;
     @Prop() clientSecret!: string;
-    @Prop() requestUris!: string[];
 }
 </script>

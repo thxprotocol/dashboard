@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="md" title="Create Asset Pool" id="modalAssetPoolCreate">
+    <b-modal size="lg" title="Create Asset Pool" id="modalAssetPoolCreate">
         <div class="center-center bg-light m-n3 h-100 flex-column pt-5 pb-5" v-if="loading">
             <b-spinner class="mb-3" variant="primary"></b-spinner>
             <p class="text-muted text-center">Deploying your asset pool. <br />This will take about 20 seconds.</p>
@@ -9,9 +9,12 @@
                 <label for="networkId">Network:</label>
                 <b-form-select v-model="network">
                     <b-form-select-option :value="0">Test Network</b-form-select-option>
-                    <b-form-select-option :value="1" disabled>Main Network</b-form-select-option>
+                    <b-form-select-option disabled :value="1">Main Network</b-form-select-option>
                 </b-form-select>
-                <small class="text-muted">Only Paid plans can access the Polygon Main Network.</small>
+                <small class="text-muted">
+                    Currently only paid plans can access the Polygon Main Network.
+                    <a href="https://thx.page.link/slack" target="_blank">Let us know if you are interested.</a>
+                </small>
             </b-form-group>
             <b-form-group>
                 <label for="clientId">Application:</label>
@@ -41,7 +44,12 @@
                         :value="0"
                     >
                         <strong>Use existing token</strong>
-                        <p>Only Paid plans can access existing tokens.</p>
+                        <p>
+                            Only Paid plans can access existing tokens.
+                            <a :href="docsUrl + '/asset_pools#11-erc20-existing-token-contract'" target="_blank">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </p>
                     </b-form-radio>
                     <b-form-radio
                         v-model="tokenOption"
@@ -50,6 +58,12 @@
                         :value="1"
                     >
                         <strong>Create new token</strong>
+                        <p>
+                            Choose between an unlimited or limited supply.
+                            <a :href="docsUrl + '/asset_pools#1-create-asset-pool'" target="_blank">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </p>
                     </b-form-radio>
                 </b-form-group>
                 <b-card v-if="tokenOption === 0">
@@ -159,6 +173,7 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class ModalAssetPoolCreate extends Vue {
+    docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     title = '';
     tokenOption = 1;

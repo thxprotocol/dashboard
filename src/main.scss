@@ -45,3 +45,8 @@
 @import './scss/navbar';
 @import './scss/jumbotron';
 @import './scss/content';
+
+html,
+body {
+    background: $light;
+}
