@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 import AccountStore from './modules/account';
 import AssetPoolStore from './modules/assetPools';
-import ApplicationStore from './modules/applications';
+import ClientStore from './modules/clients';
 
 Vue.use(Vuex);
 
@@ -13,7 +13,7 @@ const getters = {};
 const modules = {
     account: AccountStore,
     assetPools: AssetPoolStore,
-    applications: ApplicationStore,
+    clients: ClientStore,
 };
 
 export default new Vuex.Store({

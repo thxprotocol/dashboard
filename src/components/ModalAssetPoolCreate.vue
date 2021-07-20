@@ -5,37 +5,19 @@
             <p class="text-muted text-center">Deploying your asset pool. <br />This will take about 20 seconds.</p>
         </div>
         <form v-else v-on:submit.prevent="submit" id="formAssetPoolCreate">
+            <b-alert variant="danger" show v-if="error">
+                {{ error }}
+            </b-alert>
             <b-form-group>
                 <label for="networkId">Network:</label>
                 <b-form-select v-model="network">
-                    <b-form-select-option :value="0">Test Network</b-form-select-option>
-                    <b-form-select-option disabled :value="1">Main Network</b-form-select-option>
-                </b-form-select>
-                <small class="text-muted">
-                    Currently only paid plans can access the Polygon Main Network.
-                    <a href="https://thx.page.link/slack" target="_blank">Let us know if you are interested.</a>
-                </small>
-            </b-form-group>
-            <b-form-group>
-                <label for="clientId">Application:</label>
-                <b-form-select v-model="application">
-                    <b-form-select-option disabled :value="null"> Select access credentials </b-form-select-option>
-                    <b-form-select-option
-                        :value="application"
-                        :key="application.clientId"
-                        v-for="application of applications"
-                    >
-                        {{ application.clientName }}
-                    </b-form-select-option>
+                    <b-form-select-option :value="0">Polygon Test (Mumbai) Network</b-form-select-option>
+                    <b-form-select-option :value="1">Polygon Main Network</b-form-select-option>
                 </b-form-select>
             </b-form-group>
-            <template v-if="application">
+            <template>
                 <hr />
-                <b-form-group>
-                    <label for="poolTitle">Title:</label>
-                    <b-form-input id="poolTitle" v-model="title" />
-                </b-form-group>
-                <b-form-group label="Token (ERC20)" v-slot="{ ariaDescribedby }">
+                <b-form-group label="Token (ERC-20)" v-slot="{ ariaDescribedby }">
                     <b-form-radio
                         :disabled="network !== 1"
                         v-model="tokenOption"
@@ -45,8 +27,8 @@
                     >
                         <strong>Use existing token</strong>
                         <p>
-                            Only Paid plans can access existing tokens.
-                            <a :href="docsUrl + '/asset_pools#11-erc20-existing-token-contract'" target="_blank">
+                            Pick a monetary ERC-20 token from the Quickswap token list.
+                            <a :href="docsUrl + '/create-pool#11-erc20-existing-token-contract'" target="_blank">
                                 <i class="fas fa-question-circle"></i>
                             </a>
                         </p>
@@ -59,10 +41,17 @@
                     >
                         <strong>Create new token</strong>
                         <p>
-                            Choose between an unlimited or limited supply.
-                            <a :href="docsUrl + '/asset_pools#1-create-asset-pool'" target="_blank">
+                            Choose between an
+                            <a :href="docsUrl + '/create-pool#12-erc20-unlimitedsupply-token-contract'" target="_blank">
+                                unlimited
                                 <i class="fas fa-question-circle"></i>
                             </a>
+                            or
+                            <a :href="docsUrl + '/create-pool#13-erc20-limitedsupply-token-contract'" target="_blank">
+                                limited
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                            supply.
                         </p>
                     </b-form-radio>
                 </b-form-group>
@@ -90,7 +79,9 @@
                     </b-form-group>
                     <b-form-group>
                         <label for="erc20Address">ERC20 Address:</label>
-                        <b-form-input disabled readonly id="erc20Address" v-model="erc20Token.address" />
+                        <div id="erc20Address" class="form-control" readonly>
+                            {{ erc20Token.address }}
+                        </div>
                     </b-form-group>
                 </b-card>
                 <b-card v-if="tokenOption === 1">
@@ -129,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import { Application, IApplications } from '@/store/modules/applications';
+import { Client, IClients } from '@/store/modules/clients';
 import { NetworkProvider, PoolToken, PoolTokenType } from '@/store/modules/assetPools';
 import axios from 'axios';
 import {
@@ -151,6 +142,26 @@ import {
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
+async function getLatestTokenList() {
+    let json;
+    let i = 75;
+
+    while (i > 0) {
+        let r;
+        try {
+            r = await axios({
+                method: 'GET',
+                url: `https://unpkg.com/quickswap-default-token-list@1.0.${i++}/build/quickswap-default.tokenlist.json`,
+                withCredentials: false,
+            });
+        } catch (e) {
+            break;
+        }
+        json = r.data;
+    }
+    return json;
+}
+
 @Component({
     components: {
         'b-modal': BModal,
@@ -169,13 +180,14 @@ import { mapGetters } from 'vuex';
         'b-spinner': BSpinner,
     },
     computed: mapGetters({
-        applications: 'applications/all',
+        clients: 'clients/all',
     }),
 })
 export default class ModalAssetPoolCreate extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
-    title = '';
+    error = '';
+
     tokenOption = 1;
     tokenList: PoolToken[] = [];
     network: NetworkProvider = NetworkProvider.Test;
@@ -186,34 +198,26 @@ export default class ModalAssetPoolCreate extends Vue {
     erc20Symbol = '';
     erc20TotalSupply = 0;
 
-    application: Application | null = null;
-    applications!: IApplications;
+    client: Client | null = null;
+    clients!: IClients;
 
     async mounted() {
         try {
-            const r = await axios({
-                method: 'GET',
-                url: 'https://unpkg.com/quickswap-default-token-list@1.0.54/build/quickswap-default.tokenlist.json',
-                withCredentials: false,
-            });
-            this.tokenList = r.data.tokens;
+            const list = await getLatestTokenList();
+
+            this.tokenList = list.tokens;
             this.erc20Token = this.tokenList[0];
         } catch (e) {
             console.error(e);
+            this.error = 'Could not fetch the token list.';
         }
     }
 
     async submit() {
-        if (!this.application) {
-            // cast validatione errors
-            return;
-        }
         this.loading = true;
 
         try {
             const data = {
-                title: this.title,
-                aud: this.application.clientId,
                 network: this.network,
                 token:
                     this.tokenOption === PoolTokenType.New
@@ -230,11 +234,14 @@ export default class ModalAssetPoolCreate extends Vue {
                         : undefined,
             };
 
-            await this.$store.dispatch('assetPools/create', data);
+            const assetPool = await this.$store.dispatch('assetPools/create', data);
+
+            await this.$store.dispatch('clients/read', assetPool.rat);
 
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (e) {
             console.error(e);
+            this.error = 'Could not deploy your asset pool.';
         } finally {
             this.loading = false;
         }

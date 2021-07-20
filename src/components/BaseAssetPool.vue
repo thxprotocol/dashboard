@@ -1,19 +1,20 @@
 <template>
     <b-overlay :show="loading" rounded="sm">
-        <b-card class="mt-3 mb-3 position-relative">
-            <div class="d-flex justify-content-between">
-                <strong class="mr-3">{{ assetPool.title }}</strong>
-                <b-badge class="d-flex align-items-center" variant="primary" v-if="assetPool.network === 0">
-                    Test
-                </b-badge>
-                <b-badge class="d-flex align-items-center" variant="success" v-if="assetPool.network === 1">
-                    Main
-                </b-badge>
-            </div>
-            <hr />
-            <div class="font-weight-bold m-0 text-primary h3">
+        <b-card class="mt-3 mb-3">
+            <b-badge variant="dark" v-if="assetPool.network === 0"> Polygon Test </b-badge>
+            <b-badge variant="success" v-if="assetPool.network === 1"> Polygon Main </b-badge>
+            <p class="font-weight-bold text-primary h3 mt-2">
                 {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-            </div>
+            </p>
+            <p class="text-muted mb-0">
+                Name:
+                <strong>{{ assetPool.poolToken.name }}</strong> <br />
+                <template v-if="assetPool.poolToken.totalSupply > 0">
+                    Supply:
+                    <strong>{{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}</strong>
+                </template>
+                <template v-else> Total Supply: <strong>Unlimited</strong> </template>
+            </p>
             <template #footer>
                 <div class="text-right">
                     <b-link

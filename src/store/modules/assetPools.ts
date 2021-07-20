@@ -30,16 +30,14 @@ export enum NetworkProvider {
 
 export class AssetPool {
     address: string;
-    title: string;
-    aud: string;
+    rat: string;
     poolToken: TokenBalance;
     bypassPolls: boolean;
     network: NetworkProvider;
 
     constructor(data: any) {
         this.address = data.address;
-        this.title = data.title;
-        this.aud = data.aud;
+        this.rat = data.rat;
         this.poolToken = data.token;
         this.bypassPolls = data.bypassPolls;
         this.network = data.network;
