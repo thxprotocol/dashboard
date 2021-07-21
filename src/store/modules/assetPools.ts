@@ -84,7 +84,6 @@ class AssetPoolModule extends VuexModule {
     @Action
     async create(data: {
         title: string;
-        aud: string;
         network: number;
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
@@ -102,7 +101,15 @@ class AssetPoolModule extends VuexModule {
                     headers: { AssetPool: res.data.address },
                 });
 
-                this.context.commit('set', new AssetPool(r.data));
+                if (r.status != 200) {
+                    throw Error('GET /asset_pools/:address failed.');
+                }
+
+                const assetPool: AssetPool = new AssetPool(r.data);
+
+                this.context.commit('set', assetPool);
+
+                return assetPool;
             } catch (e) {
                 console.log(e);
                 debugger;

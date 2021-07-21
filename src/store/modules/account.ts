@@ -151,6 +151,7 @@ class AccountModule extends VuexModule {
 
             return await this.userManager.signinRedirect({
                 prompt: 'create',
+                extraQueryParams: { email: 'peter@peterpolman.nl' },
             });
         } catch (e) {
             return e;

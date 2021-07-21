@@ -60,6 +60,19 @@ class ClientModule extends VuexModule {
             console.error(e);
         }
     }
+
+    @Action
+    async delete(rat: string) {
+        try {
+            await axios({
+                method: 'DELETE',
+                url: '/clients/' + rat,
+            });
+            console.log(rat + 'removed');
+        } catch (e) {
+            console.error(e);
+        }
+    }
 }
 
 export default ClientModule;

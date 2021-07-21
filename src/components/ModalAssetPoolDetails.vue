@@ -71,6 +71,7 @@
                             </b-form-group>
                             <hr />
                             <strong>Example code</strong>
+                            <p>Thes</p>
                             <b-tabs card>
                                 <b-tab title="Simulator" active>
                                     <b-card-text>
