@@ -8,10 +8,14 @@
                 <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
                 <b-collapse id="nav-collapse" is-nav>
                     <b-navbar-nav>
-                        <b-nav-item to="/">Asset Pools</b-nav-item>
-                        <li class="nav-item">
-                            <a :href="docsUrl" class="nav-link" target="_blank">Developer Docs</a>
-                        </li>
+                        <b-nav-item to="/" class="nav-link-plain">
+                            <i class="fas fa-chart-pie mr-2"></i>
+                            Your Pools
+                        </b-nav-item>
+                        <b-nav-item :href="docsUrl" target="_blank" class="nav-link-plain">
+                            <i class="far fa-file-alt mr-2"></i>
+                            Developer Docs
+                        </b-nav-item>
                         <b-nav-item class="d-lg-none" @click="logout()">Logout</b-nav-item>
                     </b-navbar-nav>
                     <div class="navbar-nav-right">

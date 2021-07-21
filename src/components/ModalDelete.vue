@@ -10,7 +10,7 @@
 
         <template v-slot:modal-footer="{ cancel }">
             <b-link @click="cancel()"> Cancel</b-link>
-            <b-button :disabled="loading" variant="danger" class="btn-rounded" @click="remove()"> Remove </b-button>
+            <b-button :disabled="loading" variant="danger" class="rounded-pill" @click="remove()"> Remove </b-button>
         </template>
     </b-modal>
 </template>

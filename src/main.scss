@@ -1,14 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Exo+2:200,400,400i,700,700i,900,900i');
 
-@import '~bootstrap/scss/mixins';
-@import '~bootstrap/scss/functions';
-
-@import './scss/variables';
-
 // Required
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/functions';
+@import './scss/variables';
+@import '~bootstrap/scss/variables';
 
 // Optional
 @import '~bootstrap/scss/utilities';

@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="d-flex align-items-center h-100">
-                    <b-button v-b-modal="'modalAssetPoolCreate'" class="btn-rounded" variant="primary" block>
+                    <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="primary" block>
                         <span>Create asset pool</span>
                         <i class="fas fa-plus ml-2"></i>
                     </b-button>

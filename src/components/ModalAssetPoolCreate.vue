@@ -108,7 +108,7 @@
             <b-link class="mr-3" variant="dark" @click="cancel()"> Cancel </b-link>
             <b-button
                 :disabled="loading"
-                class="btn-rounded"
+                class="rounded-pill"
                 type="submit"
                 variant="primary"
                 form="formAssetPoolCreate"

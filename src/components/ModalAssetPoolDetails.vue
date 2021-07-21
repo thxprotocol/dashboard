@@ -71,11 +71,11 @@
                             </b-form-group>
                             <hr />
                             <strong>Example code</strong>
-                            <p>Thes</p>
+                            <p>These examples should demonstrate how to authorize with the THX API.</p>
                             <b-tabs card>
                                 <b-tab title="Simulator" active>
                                     <b-card-text>
-                                        <b-button variant="primary" @click="getAccessToken()">
+                                        <b-button variant="primary" class="rounded-pill" @click="getAccessToken()">
                                             Request Access Token
                                         </b-button>
                                         <template v-if="accessToken">
@@ -208,7 +208,7 @@ xhr.send(params);
 
         <template v-slot:modal-footer="{ cancel }">
             <b-link @click="cancel()"> Cancel</b-link>
-            <b-button :disabled="loading" variant="primary" class="btn-rounded" @click="update()"> Update </b-button>
+            <b-button :disabled="loading" variant="primary" class="rounded-pill" @click="update()"> Update </b-button>
         </template>
     </b-modal>
 </template>
