@@ -83,7 +83,6 @@ class AssetPoolModule extends VuexModule {
 
     @Action
     async create(data: {
-        title: string;
         network: number;
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
@@ -121,7 +120,7 @@ class AssetPoolModule extends VuexModule {
     }
 
     @Action
-    async update(data: { title: string; address: string; aud: string; bypassPolls: boolean }) {
+    async update(data: { address: string; bypassPolls: boolean }) {
         try {
             await axios({
                 method: 'PATCH',

@@ -320,10 +320,6 @@ export default class ModalAssetPoolDetails extends Vue {
         try {
             await this.$store.dispatch('assetPools/update', {
                 address: this.assetPool.address,
-                client: {
-                    clientId: '',
-                    clientSecret: '',
-                },
                 bypassPolls: !this.enableGovernance,
                 rewardPollDuration: this.rewardPollDuration,
                 withdrawPollDuration: this.withdrawPollDuration,

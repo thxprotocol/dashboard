@@ -225,7 +225,6 @@ export default class ModalAssetPoolCreate extends Vue {
                               name: this.erc20Name,
                               symbol: this.erc20Symbol,
                               totalSupply: this.erc20TotalSupply,
-                              network: this.network,
                           }
                         : this.tokenOption === PoolTokenType.Existing
                         ? {
