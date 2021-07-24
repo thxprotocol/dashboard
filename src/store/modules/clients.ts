@@ -44,7 +44,7 @@ class ClientModule extends VuexModule {
     async read(rat: string) {
         try {
             const r = await axios({
-                method: 'get',
+                method: 'GET',
                 url: '/clients/' + rat,
             });
 

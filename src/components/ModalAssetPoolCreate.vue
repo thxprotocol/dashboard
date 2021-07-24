@@ -142,26 +142,6 @@ import {
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
-async function getLatestTokenList() {
-    let json;
-    let i = 75;
-
-    while (i > 0) {
-        let r;
-        try {
-            r = await axios({
-                method: 'GET',
-                url: `https://unpkg.com/quickswap-default-token-list@1.0.${i++}/build/quickswap-default.tokenlist.json`,
-                withCredentials: false,
-            });
-        } catch (e) {
-            break;
-        }
-        json = r.data;
-    }
-    return json;
-}
-
 @Component({
     components: {
         'b-modal': BModal,
@@ -192,7 +172,7 @@ export default class ModalAssetPoolCreate extends Vue {
     tokenList: PoolToken[] = [];
     network: NetworkProvider = NetworkProvider.Test;
 
-    erc20Token!: PoolToken;
+    erc20Token: PoolToken | null = null;
 
     erc20Name = '';
     erc20Symbol = '';
@@ -201,9 +181,11 @@ export default class ModalAssetPoolCreate extends Vue {
     client: Client | null = null;
     clients!: IClients;
 
+    version = 75;
+
     async mounted() {
         try {
-            const list = await getLatestTokenList();
+            const list = await this.getLatestTokenList();
 
             this.tokenList = list.tokens;
             this.erc20Token = this.tokenList[0];
@@ -213,6 +195,25 @@ export default class ModalAssetPoolCreate extends Vue {
         }
     }
 
+    async getLatestTokenList() {
+        let json;
+
+        while (this.version > 0) {
+            let r;
+            try {
+                r = await axios({
+                    method: 'GET',
+                    url: `https://unpkg.com/quickswap-default-token-list@1.0.${this
+                        .version++}/build/quickswap-default.tokenlist.json`,
+                    withCredentials: false,
+                });
+                json = r.data;
+            } catch (e) {
+                break;
+            }
+        }
+        return json;
+    }
     async submit() {
         this.loading = true;
 
@@ -228,7 +229,7 @@ export default class ModalAssetPoolCreate extends Vue {
                           }
                         : this.tokenOption === PoolTokenType.Existing
                         ? {
-                              address: this.erc20Token.address,
+                              address: this.erc20Token?.address,
                           }
                         : undefined,
             };

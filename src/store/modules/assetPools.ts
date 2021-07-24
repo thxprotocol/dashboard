@@ -95,7 +95,7 @@ class AssetPoolModule extends VuexModule {
 
             try {
                 const r = await axios({
-                    method: 'get',
+                    method: 'GET',
                     url: '/asset_pools/' + res.data.address,
                     headers: { AssetPool: res.data.address },
                 });
@@ -120,16 +120,29 @@ class AssetPoolModule extends VuexModule {
     }
 
     @Action
-    async update(data: { address: string; bypassPolls: boolean }) {
+    async update(payload: {
+        address: string;
+        data: {
+            bypassPolls: boolean;
+            rewardPollDuration: number;
+            withdrawPollDuration: number;
+        };
+    }) {
         try {
-            await axios({
+            const r = await axios({
                 method: 'PATCH',
-                url: '/asset_pools/' + data.address,
-                data,
+                url: '/asset_pools/' + payload.address,
+                data: payload.data,
                 headers: {
-                    AssetPool: data.address,
+                    AssetPool: payload.address,
                 },
             });
+
+            if (r.status !== 200) {
+                throw new Error('PATCH /asset_pools failed');
+            }
+
+            return r.data;
         } catch (e) {
             console.log(e);
             debugger;
