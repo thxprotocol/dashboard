@@ -148,10 +148,12 @@ class AccountModule extends VuexModule {
     async signupRedirect() {
         try {
             await this.userManager.clearStaleState();
+            const url = new URL(window.location.href);
+            const email = url.searchParams.get('email');
 
             return await this.userManager.signinRedirect({
                 prompt: 'create',
-                extraQueryParams: { email: 'peter@peterpolman.nl' },
+                extraQueryParams: { email },
             });
         } catch (e) {
             return e;
