@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ModalPlugin, ToastPlugin } from 'bootstrap-vue';
+import { TooltipPlugin, ModalPlugin, ToastPlugin } from 'bootstrap-vue';
 import './main.scss';
 import VueClipboard from 'vue-clipboard2';
 import * as rules from 'vee-validate/dist/rules';
@@ -65,6 +65,7 @@ VueClipboard.config.autoSetContainer = true;
 Vue.use(ModalPlugin);
 Vue.use(ToastPlugin);
 Vue.use(VueClipboard);
+Vue.use(TooltipPlugin);
 
 new Vue({
     router,

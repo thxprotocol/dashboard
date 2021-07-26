@@ -26,14 +26,14 @@
                                 <a
                                     v-if="network === 0"
                                     target="_blank"
-                                    :href="`https://explorer-mumbai.maticvigil.com/address/${assetPool.address}/transactions`"
+                                    :href="`https://mumbai.polygonscan.com/address/${assetPool.address}/transactions`"
                                 >
                                     Polygon testnet block explorer
                                 </a>
                                 <a
                                     v-if="network === 1"
                                     target="_blank"
-                                    :href="`https://explorer-mainnet.maticvigil.com/address/${assetPool.address}/transactions`"
+                                    :href="`https://polygonscan.com/address/${assetPool.address}/transactions`"
                                 >
                                     Polygon mainnet block explorer
                                 </a>

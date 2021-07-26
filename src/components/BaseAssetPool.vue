@@ -7,13 +7,33 @@
                 {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
             </p>
             <p class="text-muted mb-0">
-                Name:
-                <strong>{{ assetPool.poolToken.name }}</strong> <br />
-                <template v-if="assetPool.poolToken.totalSupply > 0">
-                    Supply:
-                    <strong>{{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}</strong>
+                {{ assetPool.poolToken.name }}
+                <template v-if="assetPool.network === 0">
+                    <a
+                        target="_blank"
+                        :id="`infoTokenTest-${assetPool.address}`"
+                        :href="`https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`"
+                    >
+                        <i class="fas fa-question-circle text-dark"></i>
+                    </a>
+                    <b-tooltip target="infoTokenTest" triggers="hover">
+                        Total Supply:<br />
+                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                    </b-tooltip>
                 </template>
-                <template v-else> Total Supply: <strong>Unlimited</strong> </template>
+                <template v-if="assetPool.network === 1">
+                    <a
+                        target="_blank"
+                        :id="`infoTokenMain-${assetPool.address}`"
+                        :href="`https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`"
+                    >
+                        <i class="fas fa-question-circle text-dark"></i>
+                    </a>
+                    <b-tooltip target="infoTokenMain" triggers="hover">
+                        Total Supply:<br />
+                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                    </b-tooltip>
+                </template>
             </p>
             <template #footer>
                 <div class="text-right">
