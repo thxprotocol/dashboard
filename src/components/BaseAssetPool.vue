@@ -16,7 +16,7 @@
                     >
                         <i class="fas fa-question-circle text-dark"></i>
                     </a>
-                    <b-tooltip target="infoTokenTest" triggers="hover">
+                    <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
                         Total Supply:<br />
                         {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
                     </b-tooltip>
@@ -29,7 +29,7 @@
                     >
                         <i class="fas fa-question-circle text-dark"></i>
                     </a>
-                    <b-tooltip target="infoTokenMain" triggers="hover">
+                    <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
                         Total Supply:<br />
                         {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
                     </b-tooltip>

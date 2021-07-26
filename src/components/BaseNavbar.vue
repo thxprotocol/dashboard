@@ -16,6 +16,10 @@
                             <i class="far fa-file-alt mr-2"></i>
                             Developer Docs
                         </b-nav-item>
+                        <b-nav-item :href="walletUrl" target="_blank" class="nav-link-plain">
+                            <i class="fas fa-wallet text-dark mr-2"></i>
+                            Web Wallet
+                        </b-nav-item>
                         <b-nav-item class="d-lg-none" @click="logout()">Logout</b-nav-item>
                     </b-navbar-nav>
                     <div class="navbar-nav-right">
@@ -60,6 +64,7 @@ import { Component, Vue } from 'vue-property-decorator';
 })
 export default class BaseNavbar extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    walletUrl = process.env.VUE_APP_WALLET_URL;
 
     async logout() {
         try {
