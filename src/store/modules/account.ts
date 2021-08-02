@@ -41,7 +41,7 @@ const config: any = {
     automaticSilentRenew: true,
 
     loadUserInfo: true,
-    scope: 'openid user dashboard',
+    scope: 'openid dashboard',
 };
 
 @Module({ namespaced: true })

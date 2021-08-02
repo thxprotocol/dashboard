@@ -45,7 +45,12 @@
                     >
                         Remove
                     </b-link>
-                    <b-button variant="primary" size="sm" v-b-modal="`modalAssetPoolDetails-${assetPool.address}`">
+                    <b-button
+                        variant="primary"
+                        class="rounded-pill"
+                        size="sm"
+                        v-b-modal="`modalAssetPoolDetails-${assetPool.address}`"
+                    >
                         Details
                     </b-button>
                 </div>

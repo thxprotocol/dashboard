@@ -1,5 +1,10 @@
 <template>
-    <b-modal size="lg" :title="assetPool.poolToken.symbol + ' Pool'" :id="`modalAssetPoolDetails-${assetPool.address}`">
+    <b-modal
+        size="lg"
+        @show="onShow()"
+        :title="assetPool.poolToken.symbol + ' Pool'"
+        :id="`modalAssetPoolDetails-${assetPool.address}`"
+    >
         <b-overlay :show="loading" class="m-n3 pb-3">
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
@@ -160,8 +165,9 @@ xhr.send(params);
                 <b-tab title="Rewards">
                     <b-card-text>
                         <p>Integrate THX API in your app to increase engement with gamified rewards.</p>
+                        <hr />
                         <b-form-group>
-                            <b-form-checkbox v-model="enableGovernance">
+                            <b-form-checkbox @change="updateAssetPool()" v-model="enableGovernance">
                                 <strong>
                                     Enable governance
                                     <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
@@ -176,7 +182,14 @@ xhr.send(params);
                         <b-card bg-variant="light" v-if="enableGovernance">
                             <b-form-group>
                                 <label for="rewardPollDuration">Default Reward Poll Duration:</label>
-                                <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
+                                <b-input-group size="sm">
+                                    <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
+                                    <b-input-group-append>
+                                        <b-button size="sm" variant="dark" @click="updateAssetPool()">
+                                            Update <i class="fas fa-save"></i
+                                        ></b-button>
+                                    </b-input-group-append>
+                                </b-input-group>
                                 <p class="text-muted small">
                                     Default duration of the poll that is started when a reward configuration is added or
                                     changed. This poll should pass to approve the changes.
@@ -184,7 +197,18 @@ xhr.send(params);
                             </b-form-group>
                             <b-form-group>
                                 <label for="withdrawPollDuration">Default Withdraw Poll Duration:</label>
-                                <b-form-input id="withdrawPollDuration" type="number" v-model="withdrawPollDuration" />
+                                <b-input-group size="sm">
+                                    <b-form-input
+                                        id="withdrawPollDuration"
+                                        type="number"
+                                        v-model="withdrawPollDuration"
+                                    />
+                                    <b-input-group-append>
+                                        <b-button size="sm" variant="dark" @click="updateAssetPool()">
+                                            Update <i class="fas fa-save"></i
+                                        ></b-button>
+                                    </b-input-group-append>
+                                </b-input-group>
                                 <p class="text-muted small">
                                     Default duration of the poll that is started when a reward is claimed by or for a
                                     member. This poll should pass to be able to withdraw the reward. Only members with a
@@ -195,20 +219,149 @@ xhr.send(params);
                                 </p>
                             </b-form-group>
                         </b-card>
-                    </b-card-text>
-                </b-tab>
-                <b-tab title="Lending">
-                    <b-card-text>
-                        <p>Create loan pools that request a loan from on the THX Protocol.</p>
-                        <p>Please contact us if you are interested in this.</p>
+                        <hr />
+                        <strong>
+                            Create rewards
+                            <a :href="docsUrl + '/rewards#1-create-a-reward'" target="_blank">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </strong>
+                        <p class="text-muted mb-0">Create rewards that can be given to pool members.</p>
+                        <b-form-group>
+                            <div class="container pl-4 pr-4">
+                                <div class="row mt-3">
+                                    <div class="col-md-4 offset-md-1">
+                                        <strong class="text-muted m-0"> Withdraw amount </strong>
+                                        <a
+                                            :href="docsUrl + '/rewards'"
+                                            v-b-tooltip
+                                            :title="`The amount of ${assetPool.poolToken.symbol} earned with this reward.`"
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <strong class="text-muted"> Withdraw poll duration </strong>
+                                        <a
+                                            :href="docsUrl + '/rewards'"
+                                            v-b-tooltip
+                                            title="The duration in seconds of the withdraw poll that is started when the rewards is claimed or given."
+                                            target="_blank"
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <b-card bg-variant="light" class="mt-2" body-class="pt-2 pb-2">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <code class="mr-3">#{{ filteredRewards.length + 1 }}</code>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b-input-group size="sm" :append="assetPool.poolToken.symbol">
+                                            <b-form-input type="number" v-model="reward.withdrawAmount" />
+                                        </b-input-group>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <b-input-group size="sm" append="Seconds">
+                                            <b-form-input
+                                                type="number"
+                                                :disabled="!enableGovernance"
+                                                v-model="reward.withdrawDuration"
+                                            />
+                                        </b-input-group>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <b-button
+                                            @click="addReward()"
+                                            variant="dark"
+                                            size="sm"
+                                            class="rounded-pill"
+                                            block
+                                        >
+                                            <span>Add</span>
+                                            <i class="fas fa-plus"></i>
+                                        </b-button>
+                                    </div>
+                                </div>
+                            </b-card>
+                        </b-form-group>
+                        <hr />
+                        <strong>
+                            Update rewards
+                            <a :href="docsUrl + '/rewards#2-change-reward-configuration'" target="_blank">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </strong>
+                        <p class="text-muted mb-3">
+                            Update existing rewards immediately or start a poll for the change if governance is enabled.
+                        </p>
+                        <b-form-group>
+                            <b-list-group>
+                                <b-list-group-item class="pt-2 pb-2" :key="reward.id" v-for="reward of filteredRewards">
+                                    <div class="row">
+                                        <div class="col-md-1 d-flex align-items-center">
+                                            <code class="mr-2">#{{ reward.id }}</code>
+                                            <template v-if="reward.poll">
+                                                <a :id="`rewardPoll-${reward.id}`">
+                                                    <i class="fas fa-poll text-primary"></i>
+                                                </a>
+                                                <b-popover
+                                                    :target="`rewardPoll-${reward.id}`"
+                                                    triggers="hover"
+                                                    placement="top"
+                                                >
+                                                    <template #title>Active poll</template>
+
+                                                    <p>
+                                                        Start {{ reward.poll.startTime }}<br />
+                                                        End:{{ reward.poll.endTime }}
+                                                    </p>
+
+                                                    <p>
+                                                        Yes: {{ reward.poll.yesCounter }}<br />
+                                                        No: {{ reward.poll.noCounter }}
+                                                    </p>
+                                                </b-popover>
+                                            </template>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <b-input-group size="sm" :append="assetPool.poolToken.symbol">
+                                                <b-form-input type="number" v-model="reward.withdrawAmount" />
+                                            </b-input-group>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <b-input-group size="sm" append="Seconds">
+                                                <b-form-input
+                                                    type="number"
+                                                    :disabled="!enableGovernance"
+                                                    v-model="reward.withdrawDuration"
+                                                />
+                                            </b-input-group>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <b-button variant="dark" size="sm" class="rounded-pill" block>
+                                                Update
+                                                <i class="fas fa-save"></i>
+                                            </b-button>
+                                        </div>
+                                    </div>
+                                </b-list-group-item>
+                            </b-list-group>
+                        </b-form-group>
                     </b-card-text>
                 </b-tab>
             </b-tabs>
         </b-overlay>
 
-        <template v-slot:modal-footer="{ cancel }">
-            <b-link @click="cancel()"> Cancel</b-link>
-            <b-button :disabled="loading" variant="primary" class="rounded-pill" @click="update()"> Update </b-button>
+        <template v-slot:modal-footer="{ ok }">
+            <div class="d-none">
+                <b-button @click="ok()"></b-button>
+            </div>
         </template>
     </b-modal>
 </template>
@@ -228,15 +381,21 @@ import {
     BFormInput,
     BFormSelect,
     BFormSelectOption,
+    BInputGroup,
     BLink,
     BModal,
     BOverlay,
     BTabs,
     BTab,
+    BListGroupItem,
+    BListGroup,
+    BPopover,
+    BInputGroupAppend,
 } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
+import { IRewards, Reward } from '@/store/modules/rewards';
 
 @Component({
     components: {
@@ -253,13 +412,19 @@ import axios from 'axios';
         'b-form-select': BFormSelect,
         'b-form-select-option': BFormSelectOption,
         'b-form-input': BFormInput,
+        'b-list-group': BListGroup,
+        'b-list-group-item': BListGroupItem,
+        'b-input-group': BInputGroup,
+        'b-input-group-append': BInputGroupAppend,
         'b-button': BButton,
         'b-collapse': BCollapse,
         'b-overlay': BOverlay,
+        'b-popover': BPopover,
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',
         clients: 'clients/all',
+        rewards: 'rewards/all',
     }),
 })
 export default class ModalAssetPoolDetails extends Vue {
@@ -267,17 +432,54 @@ export default class ModalAssetPoolDetails extends Vue {
     apiUrl = process.env.VUE_APP_API_ROOT;
 
     error = '';
-    loading = false;
+    loading = true;
     client: Client | null = null;
     enableGovernance = true;
     rewardPollDuration = 0;
     withdrawPollDuration = 0;
     network: NetworkProvider = NetworkProvider.Test;
     accessToken = '';
+    reward = {
+        withdrawAmount: 0,
+        withdrawDuration: 0,
+    };
 
     @Prop() assetPool!: AssetPool;
 
     clients!: IClients;
+    rewards!: IRewards;
+
+    get filteredRewards(): Reward[] {
+        if (this.rewards[this.assetPool.address]) {
+            return Object.values(this.rewards[this.assetPool.address]);
+        }
+        return [];
+    }
+
+    async onShow() {
+        try {
+            await this.$store.dispatch('rewards/read', this.assetPool.address);
+        } catch (e) {
+            debugger;
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async addReward() {
+        this.loading = true;
+        try {
+            await this.$store.dispatch('rewards/create', {
+                address: this.assetPool.address,
+                withdrawAmount: this.reward.withdrawAmount,
+                withdrawDuration: this.reward.withdrawDuration,
+            });
+        } catch (e) {
+            debugger;
+        } finally {
+            this.loading = false;
+        }
+    }
 
     mounted() {
         this.client =
@@ -315,7 +517,7 @@ export default class ModalAssetPoolDetails extends Vue {
         }
     }
 
-    async update() {
+    async updateAssetPool() {
         this.loading = true;
 
         try {
@@ -327,10 +529,6 @@ export default class ModalAssetPoolDetails extends Vue {
                     withdrawPollDuration: this.withdrawPollDuration,
                 },
             });
-
-            await this.$store.dispatch('assetPools/read', this.assetPool.address);
-
-            this.$bvModal.hide(`modalAssetPoolDetails-${this.assetPool.address}`);
         } catch (e) {
             console.error(e);
             this.error = 'Could not update your asset pool.';
