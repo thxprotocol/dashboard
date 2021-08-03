@@ -2,14 +2,6 @@
     <div id="app" class="bg-light h-100">
         <base-navbar v-if="$route.path !== '/signup'" />
         <router-view />
-        <!-- <a
-            target="_blank"
-            class="btn btn-dark btn-chat d-flex align-items-center shadow"
-            href="https://thx.page.link/slack"
-        >
-            <img :src="require('@/assets/thx_slack.png')" height="24" class="mr-2" />
-            <span>Contact us in Slack</span>
-        </a> -->
     </div>
 </template>
 <script lang="ts">

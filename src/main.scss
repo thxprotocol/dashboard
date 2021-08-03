@@ -57,6 +57,10 @@ body {
     }
 }
 
+.navbar #nav-collapse > .navbar-nav.navbar-nav-right {
+    flex: 0 290px !important;
+}
+
 widgetbot {
     width: 100% !important;
     max-width: 380px !important;

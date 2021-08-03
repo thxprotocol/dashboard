@@ -22,15 +22,24 @@
                         </b-nav-item>
                         <b-nav-item class="d-lg-none" @click="logout()">Logout</b-nav-item>
                     </b-navbar-nav>
-                    <div class="navbar-nav-right">
+                    <b-navbar-nav class="navbar-nav-right">
+                        <b-nav-item href="https://thx.page.link/slack" target="_blank" class="nav-link-plain">
+                            <img :src="require('@/assets/thx_slack.png')" height="15" class="mr-2" />
+                            <span>Slack</span>
+                        </b-nav-item>
+                        <b-nav-item href="https://discord.gg/DNGtp3Xw" target="_blank" class="nav-link-plain">
+                            <img :src="require('@/assets/thx_discord.png')" height="15" class="mr-2" />
+                            <span>Discord</span>
+                        </b-nav-item>
+
                         <b-dropdown variant="white" no-caret class="d-none d-lg-flex">
                             <template #button-content>
-                                <i class="fas fa-user-circle" style="font-size: 1rem"></i>
+                                <i class="fas fa-user-circle text-primary" style="font-size: 1.5rem"></i>
                             </template>
                             <b-dropdown-item disabled>My account</b-dropdown-item>
                             <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
                         </b-dropdown>
-                    </div>
+                    </b-navbar-nav>
                 </b-collapse>
             </div>
         </b-navbar>
