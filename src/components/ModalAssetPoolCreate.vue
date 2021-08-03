@@ -181,7 +181,7 @@ export default class ModalAssetPoolCreate extends Vue {
     client: Client | null = null;
     clients!: IClients;
 
-    version = 75;
+    version = 79;
 
     async mounted() {
         try {
@@ -233,10 +233,9 @@ export default class ModalAssetPoolCreate extends Vue {
                           }
                         : undefined,
             };
+            const rat = await this.$store.dispatch('assetPools/create', data);
 
-            const assetPool = await this.$store.dispatch('assetPools/create', data);
-
-            await this.$store.dispatch('clients/read', assetPool.rat);
+            await this.$store.dispatch('clients/read', rat);
 
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (e) {

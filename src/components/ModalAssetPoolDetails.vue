@@ -433,8 +433,7 @@ export default class ModalAssetPoolDetails extends Vue {
 
     error = '';
     loading = true;
-    client: Client | null = null;
-    enableGovernance = true;
+    enableGovernance = false;
     rewardPollDuration = 0;
     withdrawPollDuration = 0;
     network: NetworkProvider = NetworkProvider.Test;
@@ -456,11 +455,20 @@ export default class ModalAssetPoolDetails extends Vue {
         return [];
     }
 
+    get client() {
+        return (
+            Object.values(this.clients).find(
+                (client: Client) => client.registrationAccessToken === this.assetPool.rat,
+            ) || null
+        );
+    }
+
     async onShow() {
         try {
             await this.$store.dispatch('rewards/read', this.assetPool.address);
         } catch (e) {
-            debugger;
+            console.log(e);
+            this.error = 'Could not get the rewards.';
         } finally {
             this.loading = false;
         }
@@ -474,19 +482,18 @@ export default class ModalAssetPoolDetails extends Vue {
                 withdrawAmount: this.reward.withdrawAmount,
                 withdrawDuration: this.reward.withdrawDuration,
             });
+
+            this.reward.withdrawAmount = 0;
+            this.reward.withdrawDuration = 0;
         } catch (e) {
-            debugger;
+            console.log(e);
+            this.error = 'Could not add the reward.';
         } finally {
             this.loading = false;
         }
     }
 
     mounted() {
-        this.client =
-            Object.values(this.clients).find(
-                (client: Client) => client.registrationAccessToken === this.assetPool.rat,
-            ) || null;
-
         this.enableGovernance = !this.assetPool.bypassPolls;
         this.network = this.assetPool.network;
     }
@@ -514,6 +521,7 @@ export default class ModalAssetPoolDetails extends Vue {
             this.accessToken = r.data;
         } catch (e) {
             console.error(e);
+            this.error = 'Could not request an access token.';
         }
     }
 

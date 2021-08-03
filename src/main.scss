@@ -56,3 +56,13 @@ body {
         max-width: map-get($grid-breakpoints, 'lg');
     }
 }
+
+widgetbot {
+    width: 100% !important;
+    max-width: 380px !important;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    left: auto;
+    top: auto;
+}
