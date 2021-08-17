@@ -5,6 +5,7 @@ import AccountStore from './modules/account';
 import AssetPoolStore from './modules/assetPools';
 import RewardStore from './modules/rewards';
 import ClientStore from './modules/clients';
+import WidgetStore from './modules/widgets';
 
 Vue.use(Vuex);
 
@@ -16,6 +17,7 @@ const modules = {
     assetPools: AssetPoolStore,
     rewards: RewardStore,
     clients: ClientStore,
+    widgets: WidgetStore,
 };
 
 export default new Vuex.Store({

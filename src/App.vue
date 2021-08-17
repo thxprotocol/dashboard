@@ -5,14 +5,12 @@
     </div>
 </template>
 <script lang="ts">
-import { BButton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import BaseNavbar from './components/BaseNavbar.vue';
 
 @Component({
     components: {
         'base-navbar': BaseNavbar,
-        'b-button': BButton,
     },
 })
 export default class App extends Vue {

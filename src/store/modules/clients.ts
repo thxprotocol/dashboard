@@ -7,14 +7,12 @@ export class Client {
     clientId: string;
     clientSecret: string;
     registrationAccessToken: string;
-    assetPools: string[];
 
     constructor(data: any) {
         this.clientName = data.name;
         this.clientId = data.clientId;
         this.clientSecret = data.clientSecret;
         this.registrationAccessToken = data.registrationAccessToken;
-        this.assetPools = data.assetPools;
     }
 }
 
@@ -54,21 +52,6 @@ class ClientModule extends VuexModule {
             const client = new Client(r.data);
 
             this.context.commit('set', client);
-
-            return client;
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    @Action
-    async delete(rat: string) {
-        try {
-            await axios({
-                method: 'DELETE',
-                url: '/clients/' + rat,
-            });
-            console.log(rat + 'removed');
         } catch (e) {
             console.error(e);
         }

@@ -25,7 +25,7 @@
 import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { UserProfile } from '@/store/modules/account';
-import { Client, IClients } from '@/store/modules/clients';
+import { IClients } from '@/store/modules/clients';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { BAlert, BButton, BCard, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
@@ -48,20 +48,13 @@ import { mapGetters } from 'vuex';
 })
 export default class Home extends Vue {
     profile!: UserProfile;
-    assetPools!: IAssetPools;
     clients!: IClients;
+    assetPools!: IAssetPools;
 
     async mounted() {
         try {
             await this.$store.dispatch('account/getProfile');
-
-            for (const rat of this.profile.registrationAccessTokens) {
-                const client: Client = await this.$store.dispatch('clients/read', rat);
-
-                client.assetPools.forEach((address: string) => {
-                    this.$store.dispatch('assetPools/read', address);
-                });
-            }
+            await this.$store.dispatch('assetPools/list');
         } catch (e) {
             debugger;
         }
