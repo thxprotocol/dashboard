@@ -42,7 +42,7 @@ class WidgetModule extends VuexModule {
 
     @Mutation
     set(widget: Widget) {
-        Vue.set(this._all, widget.registrationAccessToken, widget);
+        Vue.set(this._all, widget.metadata.poolAddress, widget);
     }
 
     @Mutation
@@ -77,7 +77,7 @@ class WidgetModule extends VuexModule {
 
     @Action
     async create(data: {
-        metadata: { rewardId: number };
+        metadata: { rewardId: number; poolAddress: string };
         requestUris: string[];
         redirectUris: string[];
         postLogoutRedirectUris: string[];

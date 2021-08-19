@@ -2,6 +2,8 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { User, UserManager } from 'oidc-client';
 
+const BASE_URL = process.env.VUE_APP_BASE_URL;
+
 export class SignupRequest {
     firstName!: string;
     lastName!: string;
@@ -31,13 +33,13 @@ const config: any = {
     authority: process.env.VUE_APP_API_ROOT,
     client_id: process.env.VUE_APP_OIDC_CLIENT_ID,
     client_secret: process.env.VUE_APP_OIDC_CLIENT_SECRET,
-    redirect_uri: `${process.env.VUE_APP_BASE_URL}/signin-oidc`,
+    redirect_uri: `${BASE_URL}/signin-oidc`,
     response_type: 'code',
 
     id_token_signed_response_alg: 'RS256',
-    post_logout_redirect_uri: process.env.VUE_APP_BASE_URL,
+    post_logout_redirect_uri: BASE_URL,
 
-    silent_redirect_uri: `${process.env.VUE_APP_BASE_URL}/silent-renew`,
+    silent_redirect_uri: `${BASE_URL}/silent-renew`,
     automaticSilentRenew: true,
 
     loadUserInfo: true,
@@ -128,17 +130,22 @@ class AccountModule extends VuexModule {
     }
 
     @Action
-    async signinRedirect(payload: { signupToken: string }) {
+    async signinRedirect(payload: { signupToken: string; signupEmail: string }) {
         try {
+            const extraQueryParams: any = {
+                return_url: BASE_URL,
+            };
+
+            if (payload.signupToken) {
+                extraQueryParams['signup_token'] = payload.signupToken;
+            }
+
             await this.userManager.clearStaleState();
 
-            return await this.userManager.signinRedirect(
-                payload.signupToken
-                    ? {
-                          extraQueryParams: { signup_token: payload.signupToken },
-                      }
-                    : {},
-            );
+            return await this.userManager.signinRedirect({
+                prompt: payload.signupToken ? 'confirm' : 'login',
+                extraQueryParams,
+            });
         } catch (e) {
             return e;
         }
@@ -149,11 +156,21 @@ class AccountModule extends VuexModule {
         try {
             await this.userManager.clearStaleState();
             const url = new URL(window.location.href);
-            const email = url.searchParams.get('email');
+            const signupEmail = url.searchParams.get('signup_email');
+
+            const extraQueryParams: any = {
+                return_url: BASE_URL,
+            };
+
+            if (signupEmail) {
+                extraQueryParams['signup_email'] = signupEmail;
+            }
+
+            debugger;
 
             return await this.userManager.signinRedirect({
                 prompt: 'create',
-                extraQueryParams: { email: email ? email : '' },
+                extraQueryParams,
             });
         } catch (e) {
             return e;

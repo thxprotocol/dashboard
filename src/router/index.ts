@@ -56,7 +56,9 @@ router.beforeEach(async (to, from, next) => {
         const user = await store.dispatch('account/getUser');
 
         if (requiresAuth && !user) {
-            await store.dispatch('account/signinRedirect', { signupToken: to.query.signup_token || null });
+            await store.dispatch('account/signinRedirect', {
+                signupToken: to.query.signup_token || null,
+            });
         } else {
             return next();
         }
