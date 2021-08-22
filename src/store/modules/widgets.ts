@@ -20,6 +20,7 @@ class Widget {
             height: 60,
             width: 310,
             rewardId: data.metadata.rewardId,
+            poolAddress: data.metadata.poolAddress,
         };
     }
 
@@ -29,7 +30,7 @@ class Widget {
 }
 
 export interface IWidgets {
-    [rat: string]: Widget;
+    [poolAddress: string]: { [rat: string]: Widget };
 }
 
 @Module({ namespaced: true })
@@ -42,7 +43,8 @@ class WidgetModule extends VuexModule {
 
     @Mutation
     set(widget: Widget) {
-        Vue.set(this._all, widget.metadata.poolAddress, widget);
+        Vue.set(this._all, widget.metadata.poolAddress, {});
+        Vue.set(this._all[widget.metadata.poolAddress], widget.registrationAccessToken, widget);
     }
 
     @Mutation
@@ -51,11 +53,11 @@ class WidgetModule extends VuexModule {
     }
 
     @Action
-    async list() {
+    async list(poolAddress: string) {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/widgets',
+                url: '/widgets?asset_pool=' + poolAddress,
             });
 
             if (r.status !== 200) {

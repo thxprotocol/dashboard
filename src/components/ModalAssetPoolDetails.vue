@@ -267,7 +267,7 @@
                         Paste the embed code somewhere in your HTML page and make sure to use the correct Request URL so
                         you don't run into those nasty CORS issues.
                     </p>
-                    <div :key="widget.clientId" v-for="widget of widgets">
+                    <div :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
                         <b-spinner variant="dark" size="sm" v-if="!widget.reward" />
                         <div class="row" v-else>
                             <div class="col-md-6">
@@ -537,12 +537,13 @@ export default class ModalAssetPoolDetails extends Vue {
     }
 
     async getWidgets() {
-        await this.$store.dispatch('widgets/list');
+        await this.$store.dispatch('widgets/list', this.assetPool.address);
 
-        for (const rat in this.widgets) {
-            const widget = this.widgets[rat];
+        for (const rat in this.widgets[this.assetPool.address]) {
+            const widget = this.widgets[this.assetPool.address][rat];
             const reward = this.rewards[this.assetPool.address][widget.metadata.rewardId];
-            this.widgets[rat].setReward(reward);
+
+            this.widgets[this.assetPool.address][rat].setReward(reward);
         }
     }
 
@@ -568,6 +569,7 @@ export default class ModalAssetPoolDetails extends Vue {
                 postLogoutRedirectUris: [this.widgetRequestUri],
                 metadata: {
                     rewardId: this.widgetReward?.id,
+                    poolAddress: this.assetPool.address,
                 },
             });
             await this.getWidgets();
