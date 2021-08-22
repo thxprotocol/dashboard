@@ -43,7 +43,9 @@ class WidgetModule extends VuexModule {
 
     @Mutation
     set(widget: Widget) {
-        Vue.set(this._all, widget.metadata.poolAddress, {});
+        if (!this._all[widget.metadata.poolAddress]) {
+            Vue.set(this._all, widget.metadata.poolAddress, {});
+        }
         Vue.set(this._all[widget.metadata.poolAddress], widget.registrationAccessToken, widget);
     }
 

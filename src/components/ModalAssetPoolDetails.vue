@@ -61,7 +61,8 @@
                                 </strong>
                             </b-form-checkbox>
                             <p class="text-muted mb-0">
-                                Enabling governance will require a voting procedure for high risk transactions.
+                                Enabling governance will require a voting procedure for adding, updating or withdrawing
+                                rewards.
                             </p>
                         </b-form-group>
                         <b-card bg-variant="light" v-if="enableGovernance">
@@ -145,7 +146,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <b-input-group size="sm" :append="assetPool.poolToken.symbol">
-                                                <b-form-input type="number" v-model="reward.withdrawAmount" />
+                                                <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
                                             </b-input-group>
                                         </div>
                                         <div class="col-md-5">
@@ -158,7 +159,7 @@
                                             </b-input-group>
                                         </div>
                                         <div class="col-md-2">
-                                            <b-button variant="dark" size="sm" class="rounded-pill" block>
+                                            <b-button disabled variant="dark" size="sm" class="rounded-pill" block>
                                                 Update
                                                 <i class="fas fa-save"></i>
                                             </b-button>
@@ -241,35 +242,64 @@
                     </b-card-text>
                 </b-tab>
                 <b-tab title="Widgets">
-                    <strong>Create a Claim Button</strong>
-                    <p>Use THX widgets for adding engagement features without too much effort.</p>
+                    <b-card bg-variant="light">
+                        <strong>Create a Claim Button</strong>
+                        <p>Use THX widgets for adding engagement features without too much effort.</p>
 
-                    <b-form-group>
-                        <label>Select a reward:</label>
-                        <b-form-select v-if="filteredRewards.length" size="sm" v-model="widgetReward">
-                            <b-form-select-option :key="reward.id" v-for="reward of filteredRewards" :value="reward">
-                                #{{ reward.id }} ({{ reward.withdrawAmount }} {{ assetPool.poolToken.symbol }})
-                            </b-form-select-option>
-                        </b-form-select>
-                        <b-alert v-else variant="info" show>Your asset pool has no rewards configured.</b-alert>
-                    </b-form-group>
+                        <b-form-group>
+                            <label>Select a reward:</label>
+                            <b-form-select v-if="filteredRewards.length" size="sm" v-model="widgetReward">
+                                <b-form-select-option
+                                    :key="reward.id"
+                                    v-for="reward of filteredRewards"
+                                    :value="reward"
+                                >
+                                    #{{ reward.id }} ({{ reward.withdrawAmount }} {{ assetPool.poolToken.symbol }})
+                                </b-form-select-option>
+                            </b-form-select>
+                            <b-alert v-else variant="info" show>Your asset pool has no rewards configured.</b-alert>
+                        </b-form-group>
 
-                    <b-form-group>
-                        <label>Request URL</label>
-                        <b-form-input size="sm" v-model="widgetRequestUri" placeholder="http://localhost:8080" />
-                    </b-form-group>
+                        <b-form-group>
+                            <label>Page URL</label>
+                            <b-form-input size="sm" v-model="widgetRequestUri" placeholder="http://localhost:8080" />
+                        </b-form-group>
 
-                    <b-button variant="dark" size="sm" class="rounded-pill" @click="createWidget()"> Create </b-button>
-
+                        <b-button variant="dark" size="sm" class="rounded-pill" @click="createWidget()">
+                            Create
+                        </b-button>
+                    </b-card>
                     <hr />
                     <strong>Your widgets</strong>
                     <p>
-                        Paste the embed code somewhere in your HTML page and make sure to use the correct Request URL so
+                        Paste the embed code somewhere in your HTML page and make sure to use the correct Page URL so
                         you don't run into those nasty CORS issues.
                     </p>
                     <div :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
                         <b-spinner variant="dark" size="sm" v-if="!widget.reward" />
                         <div class="row" v-else>
+                            <div class="col-md-6">
+                                <b-form-group>
+                                    <strong>Page URL</strong>
+                                    <b-form-input type="text" disabled size="sm" :value="widget.requestUri" />
+                                </b-form-group>
+                                <b-form-group>
+                                    <strong>HTML Embed</strong>
+                                    <b-card bg-variant="light" class="mt-2" body-class="p-0">
+                                        <pre class="p-2 m-0">
+&lt;iframe width="{{ widget.metadata.width }}" height="{{ widget.metadata.height }}" frameBorder="0" src="{{
+                                                widgetUrl
+                                            }}/?asset_pool={{ assetPool.address }}&client_id={{
+                                                widget.clientId
+                                            }}&client_secret={{ widget.clientSecret }}&reward_id={{
+                                                widget.metadata.rewardId
+                                            }}&reward_amount={{ widget.reward.withdrawAmount }}&reward_symbol={{
+                                                assetPool.poolToken.symbol
+                                            }}"&gt;&lt;/iframe&gt;                        
+                                        </pre>
+                                    </b-card>
+                                </b-form-group>
+                            </div>
                             <div class="col-md-6">
                                 <strong>Preview</strong>
                                 <div>
@@ -281,22 +311,6 @@
                                     >
                                     </iframe>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>HTML Embed</strong>
-                                <b-card bg-variant="light" class="mt-2" body-class="p-0">
-                                    <pre class="p-2 m-0">
-&lt;iframe width="{{ widget.metadata.width }}" height="{{ widget.metadata.height }}" frameBorder="0" src="{{
-                                            widgetUrl
-                                        }}/?asset_pool={{ assetPool.address }}&client_id={{
-                                            widget.clientId
-                                        }}&client_secret={{ widget.clientSecret }}&reward_id={{
-                                            widget.metadata.rewardId
-                                        }}&reward_amount={{ widget.reward.withdrawAmount }}&reward_symbol={{
-                                            assetPool.poolToken.symbol
-                                        }}"&gt;&lt;/iframe&gt;                                        
-                                    </pre>
-                                </b-card>
                             </div>
                         </div>
                         <hr />
