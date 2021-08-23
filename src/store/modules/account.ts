@@ -137,13 +137,13 @@ class AccountModule extends VuexModule {
             };
 
             if (payload.signupToken) {
+                extraQueryParams['prompt'] = 'confirm';
                 extraQueryParams['signup_token'] = payload.signupToken;
             }
 
             await this.userManager.clearStaleState();
 
             return await this.userManager.signinRedirect({
-                prompt: payload.signupToken ? 'confirm' : 'login',
                 extraQueryParams,
             });
         } catch (e) {
