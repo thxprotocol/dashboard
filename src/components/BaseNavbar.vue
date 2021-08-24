@@ -27,7 +27,7 @@
                             <img :src="require('@/assets/thx_slack.png')" height="15" class="mr-2" />
                             <span>Slack</span>
                         </b-nav-item>
-                        <b-nav-item href="https://discord.com/invite/qN9tsPv3" target="_blank" class="nav-link-plain">
+                        <b-nav-item href="https://discord.com/invite/TzbbSmkE7Y" target="_blank" class="nav-link-plain">
                             <img :src="require('@/assets/thx_discord.png')" height="15" class="mr-2" />
                             <span>Discord</span>
                         </b-nav-item>
