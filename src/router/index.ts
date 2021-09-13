@@ -13,6 +13,14 @@ const routes: Array<RouteConfig> = [
         },
     },
     {
+        name: 'pool',
+        path: '/pool/:address',
+        component: () => import('../views/AssetPool.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
         path: '/signup',
         component: () => import('../views/Signup.vue'),
     },

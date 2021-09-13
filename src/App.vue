@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="bg-light h-100">
+    <div id="app" class="bg-light">
         <base-navbar v-if="$route.path !== '/signup'" />
         <router-view />
     </div>

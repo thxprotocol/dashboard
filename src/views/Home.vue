@@ -1,19 +1,32 @@
 <template>
-    <div class="section-home container container-md">
-        <b-alert variant="info" show class="mt-4" v-if="!Object.values(assetPools).length">
-            Hi there! You can use this dashboard to create an asset pool on the Polygon blockchain that you can control
-            with THX API.
-        </b-alert>
-        <div class="row" v-if="assetPools">
-            <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
-                <base-asset-pool :assetPool="assetPool" />
+    <div class="flex-grow-1">
+        <b-jumbotron
+            class="jumbotron-header text-left"
+            :style="{
+                'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+            }"
+        >
+            <div class="container container-md pt-5">
+                <p class="brand-text">Hello!</p>
+                <p>
+                    Welcome to your personal dashboard. Here you can create and maintain your asset pools on the Polygon
+                    blockchain.
+                </p>
+                <hr class="bg-white mt-5 mb-5" />
+                <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="light">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Create asset pool</span>
+                </b-button>
+                <b-button :href="docsUrl" target="_blank" variant="link" class="text-light">
+                    <i class="far fa-file-alt mr-2"></i>
+                    <span>View Developer Docs</span>
+                </b-button>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="d-flex align-items-center h-100">
-                    <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="primary" block>
-                        <span>Create asset pool</span>
-                        <i class="fas fa-plus ml-2"></i>
-                    </b-button>
+        </b-jumbotron>
+        <div class="container container-md">
+            <div class="row" v-if="assetPools">
+                <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
+                    <base-asset-pool :assetPool="assetPool" />
                 </div>
             </div>
         </div>
@@ -27,7 +40,7 @@ import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { UserProfile } from '@/store/modules/account';
 import { IClients } from '@/store/modules/clients';
 import { IAssetPools } from '@/store/modules/assetPools';
-import { BAlert, BButton, BCard, BModal } from 'bootstrap-vue';
+import { BAlert, BButton, BCard, BJumbotron, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -35,6 +48,7 @@ import { mapGetters } from 'vuex';
     components: {
         'base-asset-pool': BaseAssetPool,
         'modal-asset-pool-create': ModalAssetPoolCreate,
+        'b-jumbotron': BJumbotron,
         'b-alert': BAlert,
         'b-button': BButton,
         'b-card': BCard,
@@ -50,6 +64,7 @@ export default class Home extends Vue {
     profile!: UserProfile;
     clients!: IClients;
     assetPools!: IAssetPools;
+    docsUrl = process.env.VUE_APP_DOCS_URL;
 
     async mounted() {
         try {

@@ -1,14 +1,8 @@
 <template>
-    <b-modal
-        size="lg"
-        @show="onShow()"
-        :title="assetPool.poolToken.symbol + ' Pool'"
-        :id="`modalAssetPoolDetails-${assetPool.address}`"
-    >
-        <b-overlay :show="loading" class="m-n3 pb-3">
-            <b-alert variant="danger" show v-if="error">
-                {{ error }}
-            </b-alert>
+    <div class="flex-grow-1">
+        <div class="container container-md" v-if="assetPool">
+            <h1>{{ assetPool.poolToken.symbol + ' Pool' }}</h1>
+            <b-alert variant="danger" show v-if="error"> {{ error }} </b-alert>
             <b-tabs card>
                 <b-tab title="Information" active>
                     <b-card-text>
@@ -432,19 +426,13 @@ xhr.send(params);
                     </b-card-text>
                 </b-tab>
             </b-tabs>
-        </b-overlay>
-
-        <template v-slot:modal-footer="{ ok }">
-            <div class="d-none">
-                <b-button @click="ok()"></b-button>
-            </div>
-        </template>
-    </b-modal>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
 import { Client, IClients } from '@/store/modules/clients';
-import { AssetPool, NetworkProvider } from '@/store/modules/assetPools';
+import { IAssetPools, NetworkProvider } from '@/store/modules/assetPools';
 import {
     BAlert,
     BBadge,
@@ -470,7 +458,7 @@ import {
     BInputGroupAppend,
     BSpinner,
 } from 'bootstrap-vue';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { IRewards, Reward } from '@/store/modules/rewards';
@@ -509,7 +497,7 @@ import { IWidgets } from '@/store/modules/widgets';
         widgets: 'widgets/all',
     }),
 })
-export default class ModalAssetPoolDetails extends Vue {
+export default class AssetPoolView extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
@@ -529,11 +517,14 @@ export default class ModalAssetPoolDetails extends Vue {
     widgetReward: Reward | null = null;
     widgetRequestUri = '';
 
-    @Prop() assetPool!: AssetPool;
-
+    assetPools!: IAssetPools;
     clients!: IClients;
     rewards!: IRewards;
     widgets!: IWidgets;
+
+    get assetPool() {
+        return this.assetPools[this.$route.params.address];
+    }
 
     get filteredRewards(): Reward[] {
         if (this.rewards[this.assetPool.address]) {
@@ -561,13 +552,16 @@ export default class ModalAssetPoolDetails extends Vue {
         }
     }
 
-    async onShow() {
+    async mounted() {
         try {
+            await this.$store.dispatch('assetPools/read', this.$route.params.address);
             await this.$store.dispatch('clients/read', this.assetPool.rat);
             await this.$store.dispatch('rewards/read', this.assetPool.address);
             await this.getWidgets();
 
             this.widgetReward = this.filteredRewards[0];
+            this.enableGovernance = !this.assetPool.bypassPolls;
+            this.network = this.assetPool.network;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {
@@ -609,11 +603,6 @@ export default class ModalAssetPoolDetails extends Vue {
         } finally {
             this.loading = false;
         }
-    }
-
-    mounted() {
-        this.enableGovernance = !this.assetPool.bypassPolls;
-        this.network = this.assetPool.network;
     }
 
     authHeader() {

@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="lg" title="Create Asset Pool" id="modalAssetPoolCreate">
+    <b-modal size="lg" title="Create Asset Pool" id="modalAssetPoolCreate" centered>
         <div class="center-center bg-light m-n3 h-100 flex-column pt-5 pb-5" v-if="loading">
             <b-spinner class="mb-3" variant="primary"></b-spinner>
             <p class="text-muted text-center">Deploying your asset pool. <br />This will take about 20 seconds.</p>
@@ -9,109 +9,136 @@
                 {{ error }}
             </b-alert>
             <b-form-group>
-                <label for="networkId">Network:</label>
+                <label for="networkId">Blockchain Network</label>
                 <b-form-select v-model="network">
                     <b-form-select-option :value="0">Polygon Test (Mumbai) Network</b-form-select-option>
                     <b-form-select-option :value="1">Polygon Main Network</b-form-select-option>
                 </b-form-select>
             </b-form-group>
-            <template>
-                <hr />
-                <b-form-group label="Token (ERC-20)" v-slot="{ ariaDescribedby }">
-                    <b-form-radio
-                        :disabled="network !== 1"
-                        v-model="tokenOption"
-                        :aria-describedby="ariaDescribedby"
-                        name="tokenOption"
-                        :value="0"
-                    >
-                        <strong>Use existing token</strong>
-                        <p>
-                            Pick a monetary ERC-20 token from the Quickswap token list.
-                            <a :href="docsUrl + '/create-pool#11-erc20-existing-token-contract'" target="_blank">
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </p>
-                    </b-form-radio>
-                    <b-form-radio
-                        v-model="tokenOption"
-                        :aria-describedby="ariaDescribedby"
-                        name="tokenOption"
-                        :value="1"
-                    >
-                        <strong>Create new token</strong>
-                        <p>
-                            Choose between an
-                            <a :href="docsUrl + '/create-pool#12-erc20-unlimitedsupply-token-contract'" target="_blank">
-                                unlimited
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                            or
-                            <a :href="docsUrl + '/create-pool#13-erc20-limitedsupply-token-contract'" target="_blank">
-                                limited
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                            supply.
-                        </p>
-                    </b-form-radio>
-                </b-form-group>
-                <b-card v-if="tokenOption === 0">
-                    <b-form-group>
-                        <b-dropdown variant="light" class="dropdown-select">
-                            <template #button-content>
+            <b-form-group label="Asset Type" v-slot="{ ariaDescribedby }">
+                <b-form-radio
+                    :disabled="network !== 1"
+                    v-model="tokenOption"
+                    :aria-describedby="ariaDescribedby"
+                    name="tokenOption"
+                    :value="0"
+                >
+                    <strong>
+                        Use existing token
+                        <a
+                            v-b-tooltip
+                            title="Tokens that are not on the Quickswap token list can not be swapped easily and will therefor not be supported."
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </strong>
+                    <p>Pick a monetary ERC-20 token from the Quickswap token list.</p>
+                </b-form-radio>
+                <b-form-radio v-model="tokenOption" :aria-describedby="ariaDescribedby" name="tokenOption" :value="1">
+                    <strong>
+                        Create new token
+                        <a
+                            v-b-tooltip
+                            title="Let us deploy your own token contract and move the token supply into your pool."
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </strong>
+                    <p>
+                        Choose between an
+                        <a :href="docsUrl + '/create-pool#12-erc20-unlimitedsupply-token-contract'" target="_blank">
+                            unlimited
+                        </a>
+                        or
+                        <a :href="docsUrl + '/create-pool#13-erc20-limitedsupply-token-contract'" target="_blank">
+                            limited
+                        </a>
+                        supply.
+                    </p>
+                </b-form-radio>
+            </b-form-group>
+            <template v-if="tokenOption === 0 && erc20Token">
+                <b-form-group>
+                    <label>
+                        Token Contract
+                        <a
+                            v-b-tooltip
+                            title="Only quickswap.exchange listed tokens can be used in the THX protocol."
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-dropdown variant="link" class="dropdown-select">
+                        <template #button-content>
+                            <div>
                                 <img :src="erc20Token.logoURI" width="20" class="mr-2" :alt="erc20Token.name" />
                                 <strong>{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
-                            </template>
-                            <b-dropdown-item-button
-                                :key="token.address"
-                                v-for="token of tokenList"
-                                @click="erc20Token = token"
-                            >
-                                <img :src="token.logoURI" width="20" class="mr-3" :alt="token.name" />
-                                <strong>{{ token.symbol }}</strong> {{ token.name }}
-                            </b-dropdown-item-button>
-                        </b-dropdown>
-                        <small class="text-muted">
-                            Only
-                            <a href="https://quickswap.exchange" target="_blank">quickswap.exchange</a> listed tokens
-                            can be used in the THX protocol.
-                        </small>
-                    </b-form-group>
-                    <b-form-group>
-                        <label for="erc20Address">ERC20 Address:</label>
-                        <div id="erc20Address" class="form-control" readonly>
-                            {{ erc20Token.address }}
+                            </div>
+                        </template>
+                        <b-dropdown-item-button
+                            :key="token.address"
+                            v-for="token of tokenList"
+                            @click="erc20Token = token"
+                        >
+                            <img :src="token.logoURI" width="20" class="mr-3" :alt="token.name" />
+                            <strong>{{ token.symbol }}</strong> {{ token.name }}
+                        </b-dropdown-item-button>
+                    </b-dropdown>
+                    <small class="text-muted"> </small>
+                </b-form-group>
+                <b-form-group>
+                    <label for="erc20Address">Token Contract Address</label>
+                    <div class="input-group mb-3">
+                        <input
+                            id="erc20Address"
+                            readonly
+                            type="text"
+                            class="form-control"
+                            aria-describedby="erc20Address"
+                            :value="erc20Token.address"
+                        />
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" v-clipboard:copy="erc20Token.address">
+                                <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
+                            </button>
                         </div>
-                    </b-form-group>
-                </b-card>
-                <b-card v-if="tokenOption === 1">
-                    <b-form-group>
-                        <label for="erc20Address">Name:</label>
-                        <b-form-input id="erc20Name" v-model="erc20Name" placeholder="ABC Network Token" />
-                    </b-form-group>
-                    <b-form-group>
-                        <label for="erc20Address">Symbol:</label>
+                    </div>
+                </b-form-group>
+            </template>
+            <template v-if="tokenOption === 1">
+                <b-form-group>
+                    <label for="erc20Address">Name</label>
+                    <b-form-input id="erc20Name" v-model="erc20Name" placeholder="ABC Network Token" />
+                </b-form-group>
+                <div class="row">
+                    <b-form-group class="col-md-6">
+                        <label for="erc20Address">Symbol</label>
                         <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="ABC" />
                     </b-form-group>
-                    <b-form-group>
-                        <label for="erc20Address">Total Supply:</label>
+                    <b-form-group class="col-md-6">
+                        <label for="erc20Address">
+                            Total Supply
+                            <a v-b-tooltip title="Configure a total supply of 0 for an unlimited supply.">
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </label>
                         <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
-                        <p class="text-muted small">Configure a total supply of 0 for an unlimited supply.</p>
-                        <b-alert variant="info" show v-if="erc20TotalSupply == 0" class="m-0">
-                            Tokens are minted whenever required in an asset pool transaction.
-                        </b-alert>
                     </b-form-group>
-                </b-card>
+                </div>
+                <b-alert variant="info" show v-if="erc20TotalSupply == 0" class="m-0">
+                    Tokens are minted whenever required in an asset pool transaction.
+                </b-alert>
             </template>
         </form>
-        <template v-slot:modal-footer="{ cancel }">
-            <b-link class="mr-3" variant="dark" @click="cancel()"> Cancel </b-link>
+        <template v-slot:modal-footer="{}">
             <b-button
                 :disabled="loading"
                 class="rounded-pill"
                 type="submit"
                 variant="primary"
                 form="formAssetPoolCreate"
+                block
             >
                 Create Asset Pool
             </b-button>
@@ -196,23 +223,13 @@ export default class ModalAssetPoolCreate extends Vue {
     }
 
     async getLatestTokenList() {
-        let json;
+        const r = await axios({
+            method: 'GET',
+            url: `https://unpkg.com/quickswap-default-token-list@1.0.85/build/quickswap-default.tokenlist.json`,
+            withCredentials: false,
+        });
 
-        while (this.version > 0) {
-            let r;
-            try {
-                r = await axios({
-                    method: 'GET',
-                    url: `https://unpkg.com/quickswap-default-token-list@1.0.${this
-                        .version++}/build/quickswap-default.tokenlist.json`,
-                    withCredentials: false,
-                });
-                json = r.data;
-            } catch (e) {
-                break;
-            }
-        }
-        return json;
+        return r.data;
     }
     async submit() {
         this.loading = true;
@@ -247,13 +264,4 @@ export default class ModalAssetPoolCreate extends Vue {
     }
 }
 </script>
-<style lang="scss">
-.dropdown-select .dropdown-menu {
-    max-height: 30vh;
-    overflow-y: auto;
-
-    button {
-        max-width: 300px !important;
-    }
-}
-</style>
+<style lang="scss"></style>

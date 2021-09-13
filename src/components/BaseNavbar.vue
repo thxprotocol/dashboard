@@ -1,49 +1,45 @@
 <template>
-    <div class="shadow mb-5">
-        <b-navbar toggleable="lg">
-            <div class="container">
-                <router-link to="/" class="header-brand mr-3">
-                    <img :src="require('@/assets/logo.png')" alt="THX logo" />
-                </router-link>
-                <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-                <b-collapse id="nav-collapse" is-nav>
-                    <b-navbar-nav>
-                        <b-nav-item to="/" class="nav-link-plain">
-                            <i class="fas fa-chart-pie mr-2"></i>
-                            Your Pools
-                        </b-nav-item>
-                        <b-nav-item :href="docsUrl" target="_blank" class="nav-link-plain">
-                            <i class="far fa-file-alt mr-2"></i>
-                            Developer Docs
-                        </b-nav-item>
-                        <b-nav-item :href="walletUrl" target="_blank" class="nav-link-plain">
-                            <i class="fas fa-wallet text-dark mr-2"></i>
-                            Web Wallet
-                        </b-nav-item>
-                        <b-nav-item class="d-lg-none" @click="logout()">Logout</b-nav-item>
-                    </b-navbar-nav>
-                    <b-navbar-nav class="navbar-nav-right">
-                        <b-nav-item href="https://thx.page.link/slack" target="_blank" class="nav-link-plain">
-                            <img :src="require('@/assets/thx_slack.png')" height="15" class="mr-2" />
-                            <span>Slack</span>
-                        </b-nav-item>
-                        <b-nav-item href="https://discord.com/invite/TzbbSmkE7Y" target="_blank" class="nav-link-plain">
-                            <img :src="require('@/assets/thx_discord.png')" height="15" class="mr-2" />
-                            <span>Discord</span>
-                        </b-nav-item>
-
-                        <b-dropdown variant="white" no-caret class="d-none d-lg-flex">
-                            <template #button-content>
-                                <i class="fas fa-user-circle text-primary" style="font-size: 1.5rem"></i>
-                            </template>
-                            <b-dropdown-item disabled>My account</b-dropdown-item>
-                            <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
-                        </b-dropdown>
-                    </b-navbar-nav>
-                </b-collapse>
-            </div>
-        </b-navbar>
-    </div>
+    <b-navbar toggleable="lg" class="sidebar">
+        <router-link to="/" class="header-brand mb-5">
+            <img :src="require('@/assets/logo.png')" width="65" alt="THX logo" />
+        </router-link>
+        <div class="flex-grow-1 w-100">
+            <b-navbar-nav>
+                <b-nav-item to="/" class="nav-link-plain">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                    <span class="d-none d-lg-inline-block">Asset Pools</span>
+                </b-nav-item>
+                <b-nav-item :href="docsUrl" target="_blank" class="nav-link-plain">
+                    <i class="far fa-file-alt mr-2"></i>
+                    <span class="d-none d-lg-inline-block">Developer Docs</span>
+                </b-nav-item>
+                <b-nav-item :href="walletUrl" target="_blank" class="nav-link-plain">
+                    <i class="fas fa-wallet mr-2"></i>
+                    <span class="d-none d-lg-inline-block">Web Wallet</span>
+                </b-nav-item>
+            </b-navbar-nav>
+        </div>
+        <div class="d-flex justify-content-end flex-column flex-grow-0 w-100">
+            <b-navbar-nav>
+                <b-nav-item href="https://thx.page.link/slack" target="_blank" class="nav-link-plain">
+                    <div class="rounded bg-white d-inline-flex p-3 mr-3">
+                        <img :src="require('@/assets/thx_slack.png')" width="16" />
+                    </div>
+                    <span class="d-none d-lg-inline-block">Slack</span>
+                </b-nav-item>
+                <b-nav-item href="https://discord.com/invite/TzbbSmkE7Y" target="_blank" class="nav-link-plain">
+                    <div class="rounded bg-white d-inline-flex p-3 mr-3">
+                        <img :src="require('@/assets/thx_discord.png')" width="16" />
+                    </div>
+                    <span class="d-none d-lg-inline-block">Discord</span>
+                </b-nav-item>
+                <b-nav-item @click="logout()" class="nav-link-plain text-center border-top border-dark mt-3">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span class="d-none d-lg-inline-block">Logout</span>
+                </b-nav-item>
+            </b-navbar-nav>
+        </div>
+    </b-navbar>
 </template>
 
 <script lang="ts">
@@ -84,3 +80,5 @@ export default class BaseNavbar extends Vue {
     }
 }
 </script>
+
+<style></style>

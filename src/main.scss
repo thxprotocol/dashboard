@@ -33,6 +33,7 @@
 @import '~bootstrap/scss/grid';
 @import '~bootstrap/scss/code';
 @import '~bootstrap/scss/popover';
+@import '~bootstrap/scss/jumbotron';
 
 // Bootstrap Vue
 @import '~bootstrap-vue/src/index.scss';
@@ -44,7 +45,11 @@
 @import './scss/custom-switch';
 @import './scss/buttons';
 @import './scss/navbar';
+@import './scss/forms';
+@import './scss/custom-forms';
+@import './scss/sidebar';
 @import './scss/jumbotron';
+@import './scss/modals';
 
 html,
 body {
