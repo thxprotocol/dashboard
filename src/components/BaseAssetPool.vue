@@ -1,5 +1,8 @@
 <template>
-    <b-card @click="$router.push({ path: `pool/${assetPool.address}/info` })" class="mt-3 mb-3 shadow-sm">
+    <b-card
+        @click="$router.push({ path: `pool/${assetPool.address}/info` })"
+        class="mt-3 mb-3 shadow-sm cursor-pointer"
+    >
         <b-button
             variant="link"
             class="btn-remove rounded-pill float-right"
