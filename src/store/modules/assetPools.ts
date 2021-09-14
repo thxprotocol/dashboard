@@ -79,15 +79,15 @@ class AssetPoolModule extends VuexModule {
             });
 
             for (const address of r.data) {
-                const r = await axios({
+                axios({
                     method: 'GET',
                     url: '/asset_pools/' + address,
                     headers: {
                         AssetPool: address,
                     },
+                }).then((r) => {
+                    this.context.commit('set', new AssetPool(r.data));
                 });
-
-                this.context.commit('set', new AssetPool(r.data));
             }
         } catch (e) {
             console.error(e);
