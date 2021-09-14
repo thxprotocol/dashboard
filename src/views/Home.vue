@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ profile }}
         <b-jumbotron
             class="jumbotron-header text-left"
             :style="{
