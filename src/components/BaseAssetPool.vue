@@ -1,63 +1,57 @@
 <template>
-    <b-overlay :show="loading" rounded="sm">
-        <b-card
-            @click="$router.push({ name: 'pool', params: { address: assetPool.address } })"
-            class="mt-3 mb-3 shadow-sm"
+    <b-card @click="$router.push({ path: `pool/${assetPool.address}/info` })" class="mt-3 mb-3 shadow-sm">
+        <b-button
+            variant="link"
+            class="btn-remove rounded-pill float-right"
+            size="sm"
+            @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
         >
-            <b-button
-                variant="link"
-                class="btn-remove rounded-pill float-right"
-                size="sm"
-                @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
-            >
-                <i class="far fa-trash-alt"></i>
-            </b-button>
-            <b-badge class="p-2 text-white" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
-            <b-badge class="p-2" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
-            <p class="font-weight-bold text-primary h3 mt-2">
-                {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-            </p>
-            <p class="text-muted mb-0">
-                {{ assetPool.poolToken.name }}
-                <template v-if="assetPool.network === 0">
-                    <a
-                        target="_blank"
-                        :id="`infoTokenTest-${assetPool.address}`"
-                        @click.stop="
-                            openUrl(
-                                `https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
-                            )
-                        "
-                    >
-                        <i class="fas fa-question-circle text-gray"></i>
-                    </a>
-                    <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
-                        Total Supply:<br />
-                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                    </b-tooltip>
-                </template>
-                <template v-if="assetPool.network === 1">
-                    <a
-                        target="_blank"
-                        :id="`infoTokenMain-${assetPool.address}`"
-                        @click.stop="
-                            openUrl(
-                                `https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
-                                '_blank',
-                            ).focus()
-                        "
-                    >
-                        <i class="fas fa-question-circle"></i>
-                    </a>
-                    <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
-                        Total Supply:<br />
-                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                    </b-tooltip>
-                </template>
-            </p>
-        </b-card>
-        <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.title" />
-    </b-overlay>
+            <i class="far fa-trash-alt"></i>
+        </b-button>
+        <b-badge class="p-2 text-white" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
+        <b-badge class="p-2" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
+        <p class="font-weight-bold text-primary h3 mt-2">
+            {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+        </p>
+        <p class="text-muted mb-0">
+            {{ assetPool.poolToken.name }}
+            <template v-if="assetPool.network === 0">
+                <a
+                    target="_blank"
+                    :id="`infoTokenTest-${assetPool.address}`"
+                    @click.stop="
+                        openUrl(`https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`)
+                    "
+                >
+                    <i class="fas fa-question-circle text-gray"></i>
+                </a>
+                <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
+                    Total Supply:<br />
+                    {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                </b-tooltip>
+            </template>
+            <template v-if="assetPool.network === 1">
+                <a
+                    target="_blank"
+                    :id="`infoTokenMain-${assetPool.address}`"
+                    @click.stop="
+                        openUrl(
+                            `https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
+                            '_blank',
+                        ).focus()
+                    "
+                >
+                    <i class="fas fa-question-circle"></i>
+                </a>
+                <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
+                    Total Supply:<br />
+                    {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                </b-tooltip>
+            </template>
+        </p>
+
+        <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
+    </b-card>
 </template>
 
 <script lang="ts">

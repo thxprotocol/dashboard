@@ -1,5 +1,6 @@
 <template>
-    <div class="flex-grow-1">
+    <div>
+        {{ profile }}
         <b-jumbotron
             class="jumbotron-header text-left"
             :style="{
@@ -10,7 +11,7 @@
                 <p class="brand-text">Hello!</p>
                 <p>
                     Welcome to your personal dashboard. Here you can create and maintain your asset pools on the Polygon
-                    blockchain.
+                    (Ethereum L2) blockchain.
                 </p>
                 <hr class="bg-white mt-5 mb-5" />
                 <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="light">

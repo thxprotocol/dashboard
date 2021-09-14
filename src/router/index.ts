@@ -19,6 +19,24 @@ const routes: Array<RouteConfig> = [
         meta: {
             requiresAuth: true,
         },
+        children: [
+            {
+                path: 'info',
+                component: () => import('../views/AssetPool/Info.vue'),
+            },
+            {
+                path: 'rewards',
+                component: () => import('../views/AssetPool/Rewards.vue'),
+            },
+            {
+                path: 'widgets',
+                component: () => import('../views/AssetPool/Widgets.vue'),
+            },
+            {
+                path: 'authorization',
+                component: () => import('../views/AssetPool/Authorization.vue'),
+            },
+        ],
     },
     {
         path: '/signup',

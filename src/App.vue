@@ -1,19 +1,33 @@
 <template>
     <div id="app" class="bg-light">
-        <base-navbar v-if="$route.path !== '/signup'" />
-        <router-view />
+        <b-button class="btn-menu shadow-sm" variant="link" v-b-toggle.sidebar-left>
+            <i class="fas fa-bars"> </i
+        ></b-button>
+        <base-navbar />
+        <div class="sidebar-sibling">
+            <router-view />
+        </div>
     </div>
 </template>
 <script lang="ts">
+import { BButton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
 import BaseNavbar from './components/BaseNavbar.vue';
+import { UserProfile } from './store/modules/account';
 
 @Component({
     components: {
+        'b-button': BButton,
         'base-navbar': BaseNavbar,
     },
+    computed: mapGetters({
+        profile: 'account/profile',
+    }),
 })
 export default class App extends Vue {
+    profile!: UserProfile;
+
     created() {
         (function (w: any, d, s, l: any, i) {
             w[l] = w[l] || [];

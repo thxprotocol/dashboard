@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { Reward } from './rewards';
 
-class Widget {
+export class Widget {
     clientId: string;
     clientSecret: string;
     registrationAccessToken: string;

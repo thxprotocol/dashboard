@@ -3,13 +3,13 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { TooltipPlugin, ModalPlugin, ToastPlugin } from 'bootstrap-vue';
+import { TooltipPlugin, ModalPlugin, ToastPlugin, VBTogglePlugin } from 'bootstrap-vue';
 import './main.scss';
 import VueClipboard from 'vue-clipboard2';
 import * as rules from 'vee-validate/dist/rules';
 import * as en from 'vee-validate/dist/locale/en.json';
-
 import { ValidationObserver, ValidationProvider, extend, localize } from 'vee-validate';
+
 // Install VeeValidate rules and localization
 Object.keys(rules).forEach((rule) => {
     extend(rule, (rules as any)[rule]);
@@ -66,6 +66,7 @@ Vue.use(ModalPlugin);
 Vue.use(ToastPlugin);
 Vue.use(VueClipboard);
 Vue.use(TooltipPlugin);
+Vue.use(VBTogglePlugin);
 
 new Vue({
     router,

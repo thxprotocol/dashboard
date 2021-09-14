@@ -34,6 +34,8 @@ export class AssetPool {
     poolToken: TokenBalance;
     bypassPolls: boolean;
     network: NetworkProvider;
+    rewardPollDuration: number;
+    proposeWithdrawPollDuration: number;
 
     constructor(data: any) {
         this.address = data.address;
@@ -41,6 +43,8 @@ export class AssetPool {
         this.poolToken = data.token;
         this.bypassPolls = data.bypassPolls;
         this.network = data.network;
+        this.rewardPollDuration = Number(data.rewardPollDuration);
+        this.proposeWithdrawPollDuration = Number(data.proposeWithdrawPollDuration);
     }
 }
 

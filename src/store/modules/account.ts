@@ -56,13 +56,6 @@ class AccountModule extends VuexModule {
         return this._user;
     }
 
-    get privateKey() {
-        if (!this.user) {
-            return '';
-        }
-        return sessionStorage.getItem(`thx:wallet:user:${this.user.profile.sub}:key`);
-    }
-
     get profile() {
         return this._profile;
     }
@@ -93,6 +86,7 @@ class AccountModule extends VuexModule {
     @Action
     async getProfile() {
         try {
+            debugger;
             const r = await axios({
                 method: 'GET',
                 url: '/account',

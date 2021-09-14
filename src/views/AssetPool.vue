@@ -1,431 +1,58 @@
 <template>
-    <div class="flex-grow-1">
+    <div class="pt-5">
         <div class="container container-md" v-if="assetPool">
-            <h1>{{ assetPool.poolToken.symbol + ' Pool' }}</h1>
-            <b-alert variant="danger" show v-if="error"> {{ error }} </b-alert>
-            <b-tabs card>
-                <b-tab title="Information" active>
-                    <b-card-text>
-                        <b-form-group>
-                            <label>
-                                <strong>Blockchain Network</strong>
-                            </label>
-                            <b-form-input readonly v-if="network === 0" value="Polygon Test" />
-                            <b-form-input readonly v-if="network === 1" value="Polygon Mainnet" />
-                        </b-form-group>
-                        <b-form-group>
-                            <label for="clientId">
-                                <strong class="mr-2">Smart Contract Address</strong>
-                                <b-badge variant="primary" v-if="network === 0">Polygon Test</b-badge>
-                                <b-badge variant="success" v-if="network === 1">Polygon Main</b-badge>
-                            </label>
-                            <b-form-input readonly id="address" v-model="assetPool.address" />
-                            <p class="text-muted small mb-0">
-                                View your asset pool transactions in the
-                                <a
-                                    v-if="network === 0"
-                                    target="_blank"
-                                    :href="`https://mumbai.polygonscan.com/address/${assetPool.address}/transactions`"
-                                >
-                                    Polygon testnet block explorer
-                                </a>
-                                <a
-                                    v-if="network === 1"
-                                    target="_blank"
-                                    :href="`https://polygonscan.com/address/${assetPool.address}/transactions`"
-                                >
-                                    Polygon mainnet block explorer
-                                </a>
-                                .
-                            </p>
-                        </b-form-group>
-                    </b-card-text>
-                </b-tab>
-                <b-tab title="Rewards">
-                    <b-card-text>
-                        <p>Integrate THX API in your app to increase engement with gamified rewards.</p>
-                        <hr />
-                        <b-form-group>
-                            <b-form-checkbox @change="updateAssetPool()" v-model="enableGovernance">
-                                <strong>
-                                    Enable governance
-                                    <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
-                                        <i class="fas fa-question-circle"></i>
-                                    </a>
-                                </strong>
-                            </b-form-checkbox>
-                            <p class="text-muted mb-0">
-                                Enabling governance will require a voting procedure for adding, updating or withdrawing
-                                rewards.
-                            </p>
-                        </b-form-group>
-                        <b-card bg-variant="light" v-if="enableGovernance">
-                            <b-form-group>
-                                <label for="rewardPollDuration">Default Reward Poll Duration:</label>
-                                <b-input-group size="sm">
-                                    <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
-                                    <b-input-group-append>
-                                        <b-button size="sm" variant="dark" @click="updateAssetPool()">
-                                            Update <i class="fas fa-save"></i
-                                        ></b-button>
-                                    </b-input-group-append>
-                                </b-input-group>
-                                <p class="text-muted small">
-                                    Default duration of the poll that is started when a reward configuration is added or
-                                    changed. This poll should pass to approve the changes.
-                                </p>
-                            </b-form-group>
-                            <b-form-group>
-                                <label for="withdrawPollDuration">Default Withdraw Poll Duration:</label>
-                                <b-input-group size="sm">
-                                    <b-form-input
-                                        id="withdrawPollDuration"
-                                        type="number"
-                                        v-model="withdrawPollDuration"
-                                    />
-                                    <b-input-group-append>
-                                        <b-button size="sm" variant="dark" @click="updateAssetPool()">
-                                            Update <i class="fas fa-save"></i
-                                        ></b-button>
-                                    </b-input-group-append>
-                                </b-input-group>
-                                <p class="text-muted small">
-                                    Default duration of the poll that is started when a reward is claimed by or for a
-                                    member. This poll should pass to be able to withdraw the reward. Only members with a
-                                    manager role can vote on this poll.
-                                    <strong>
-                                        Withdraw Poll defauls can be overridden with the configuration of the reward.
-                                    </strong>
-                                </p>
-                            </b-form-group>
-                        </b-card>
-                        <hr />
-                        <strong>
-                            Update rewards
-                            <a :href="docsUrl + '/rewards#2-change-reward-configuration'" target="_blank">
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </strong>
-                        <p class="text-muted mb-3">
-                            Update existing rewards immediately or start a poll for the change if governance is enabled.
-                        </p>
-                        <b-form-group>
-                            <b-list-group>
-                                <b-list-group-item class="pt-2 pb-2" :key="reward.id" v-for="reward of filteredRewards">
-                                    <div class="row">
-                                        <div class="col-md-1 d-flex align-items-center">
-                                            <code class="mr-2">#{{ reward.id }}</code>
-                                            <template v-if="reward.poll">
-                                                <a :id="`rewardPoll-${reward.id}`">
-                                                    <i class="fas fa-poll text-primary"></i>
-                                                </a>
-                                                <b-popover
-                                                    :target="`rewardPoll-${reward.id}`"
-                                                    triggers="hover"
-                                                    placement="top"
-                                                >
-                                                    <template #title>Active poll</template>
+            <div class="d-flex align-items-center">
+                <h1 class="mr-3">
+                    {{ assetPool.poolToken.symbol + ' Pool' }}
+                </h1>
+                <b-badge variant="gray" class="text-white p-2" v-if="network === 0">Polygon Test</b-badge>
+                <b-badge variant="primary" class="p-2" v-if="network === 1">Polygon Main</b-badge>
+            </div>
 
-                                                    <p>
-                                                        Start {{ reward.poll.startTime }}<br />
-                                                        End:{{ reward.poll.endTime }}
-                                                    </p>
-
-                                                    <p>
-                                                        Yes: {{ reward.poll.yesCounter }}<br />
-                                                        No: {{ reward.poll.noCounter }}
-                                                    </p>
-                                                </b-popover>
-                                            </template>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <b-input-group size="sm" :append="assetPool.poolToken.symbol">
-                                                <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
-                                            </b-input-group>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <b-input-group size="sm" append="Seconds">
-                                                <b-form-input
-                                                    type="number"
-                                                    :disabled="!enableGovernance"
-                                                    v-model="reward.withdrawDuration"
-                                                />
-                                            </b-input-group>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <b-button disabled variant="dark" size="sm" class="rounded-pill" block>
-                                                Update
-                                                <i class="fas fa-save"></i>
-                                            </b-button>
-                                        </div>
-                                    </div>
-                                </b-list-group-item>
-                            </b-list-group>
-                        </b-form-group>
-                        <hr />
-                        <strong>
-                            Create rewards
-                            <a :href="docsUrl + '/rewards#1-create-a-reward'" target="_blank">
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </strong>
-                        <p class="text-muted mb-0">Create rewards that can be given to pool members.</p>
-                        <b-form-group>
-                            <div class="container pl-4 pr-4">
-                                <div class="row mt-3">
-                                    <div class="col-md-4 offset-md-1">
-                                        <strong class="text-muted m-0"> Withdraw amount </strong>
-                                        <a
-                                            :href="docsUrl + '/rewards'"
-                                            v-b-tooltip
-                                            :title="`The amount of ${assetPool.poolToken.symbol} earned with this reward.`"
-                                            target="_blank"
-                                        >
-                                            <i class="fas fa-question-circle"></i>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <strong class="text-muted"> Withdraw poll duration </strong>
-                                        <a
-                                            :href="docsUrl + '/rewards'"
-                                            v-b-tooltip
-                                            title="The duration in seconds of the withdraw poll that is started when the rewards is claimed or given."
-                                            target="_blank"
-                                        >
-                                            <i class="fas fa-question-circle"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <b-card bg-variant="light" class="mt-2" body-class="pt-2 pb-2">
-                                <div class="row">
-                                    <div class="col-md-1">
-                                        <code class="mr-3">#{{ filteredRewards.length + 1 }}</code>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <b-input-group size="sm" :append="assetPool.poolToken.symbol">
-                                            <b-form-input type="number" v-model="reward.withdrawAmount" />
-                                        </b-input-group>
-                                    </div>
-
-                                    <div class="col-md-5">
-                                        <b-input-group size="sm" append="Seconds">
-                                            <b-form-input
-                                                type="number"
-                                                :disabled="!enableGovernance"
-                                                v-model="reward.withdrawDuration"
-                                            />
-                                        </b-input-group>
-                                    </div>
-
-                                    <div class="col-md-2">
-                                        <b-button
-                                            @click="addReward()"
-                                            variant="dark"
-                                            size="sm"
-                                            class="rounded-pill"
-                                            block
-                                        >
-                                            <span>Add</span>
-                                            <i class="fas fa-plus"></i>
-                                        </b-button>
-                                    </div>
-                                </div>
-                            </b-card>
-                        </b-form-group>
-                    </b-card-text>
-                </b-tab>
-                <b-tab title="Widgets">
-                    <b-card bg-variant="light">
-                        <strong>Create a Claim Button</strong>
-                        <p>Use THX widgets for adding engagement features without too much effort.</p>
-
-                        <b-form-group>
-                            <label>Select a reward:</label>
-                            <b-form-select v-if="filteredRewards.length" size="sm" v-model="widgetReward">
-                                <b-form-select-option
-                                    :key="reward.id"
-                                    v-for="reward of filteredRewards"
-                                    :value="reward"
-                                >
-                                    #{{ reward.id }} ({{ reward.withdrawAmount }} {{ assetPool.poolToken.symbol }})
-                                </b-form-select-option>
-                            </b-form-select>
-                            <b-alert v-else variant="info" show>Your asset pool has no rewards configured.</b-alert>
-                        </b-form-group>
-
-                        <b-form-group>
-                            <label>Page URL</label>
-                            <b-form-input size="sm" v-model="widgetRequestUri" placeholder="http://localhost:8080" />
-                        </b-form-group>
-
-                        <b-button variant="dark" size="sm" class="rounded-pill" @click="createWidget()">
-                            Create
-                        </b-button>
-                    </b-card>
-                    <hr />
-                    <strong>Your widgets</strong>
-                    <p>
-                        Paste the embed code somewhere in your HTML page and make sure to use the correct Page URL so
-                        you don't run into those nasty CORS issues.
-                    </p>
-                    <div :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
-                        <b-spinner variant="dark" size="sm" v-if="!widget.reward" />
-                        <div class="row" v-else>
-                            <div class="col-md-6">
-                                <b-form-group>
-                                    <strong>Page URL</strong>
-                                    <b-form-input type="text" disabled size="sm" :value="widget.requestUri" />
-                                </b-form-group>
-                                <b-form-group>
-                                    <strong>HTML Embed</strong>
-                                    <b-card bg-variant="light" class="mt-2" body-class="p-0">
-                                        <pre class="p-2 m-0">
-&lt;iframe width="{{ widget.metadata.width }}" height="{{ widget.metadata.height }}" frameBorder="0" src="{{
-                                                widgetUrl
-                                            }}/?asset_pool={{ assetPool.address }}&client_id={{
-                                                widget.clientId
-                                            }}&client_secret={{ widget.clientSecret }}&reward_id={{
-                                                widget.metadata.rewardId
-                                            }}&reward_amount={{ widget.reward.withdrawAmount }}&reward_symbol={{
-                                                assetPool.poolToken.symbol
-                                            }}"&gt;&lt;/iframe&gt;                        
-                                        </pre>
-                                    </b-card>
-                                </b-form-group>
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Preview</strong>
-                                <div>
-                                    <iframe
-                                        frameBorder="0"
-                                        :width="widget.metadata.width"
-                                        :height="widget.metadata.height"
-                                        :src="`${widgetUrl}/?asset_pool=${assetPool.address}&client_id=${widget.clientId}&client_secret=${widget.clientSecret}&reward_id=${widget.reward.id}&reward_amount=${widget.reward.withdrawAmount}&reward_symbol=${assetPool.poolToken.symbol}`"
-                                    >
-                                    </iframe>
-                                </div>
-                            </div>
-                        </div>
-                        <hr />
-                    </div>
-                </b-tab>
-                <b-tab title="Authorization">
-                    <b-card-text>
-                        <b-form-group v-if="client">
-                            <strong>
-                                Authorization
-                                <a :href="docsUrl + '/authorization'" target="_blank">
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </strong>
-                            <p>
-                                Use you client credentials to create a
-                                <a
-                                    :href="docsUrl + '/authorization#2-create-a-basic-authentication-header'"
-                                    target="_blank"
-                                >
-                                    Basic Authentication header
-                                </a>
-                                and request an access token to authorize your application with THX API.
-                            </p>
-                            <b-form-group>
-                                <label for="clientId"> Client ID: </label>
-                                <b-form-input readonly id="clientId" v-model="client.clientId" />
-                            </b-form-group>
-                            <b-form-group>
-                                <label for="clientSecret"> Client Secret: </label>
-                                <b-form-input readonly id="clientSecret" v-model="client.clientSecret" />
-                            </b-form-group>
-                            <hr />
-                            <strong>Example code</strong>
-                            <p>These examples should demonstrate how to authorize with the THX API.</p>
-                            <b-tabs card>
-                                <b-tab title="Simulator" active>
-                                    <b-card-text>
-                                        <b-button variant="primary" class="rounded-pill" @click="getAccessToken()">
-                                            Request Access Token
-                                        </b-button>
-                                        <template v-if="accessToken">
-                                            <code class="mt-3 d-block">
-                                                <small>{{ accessToken.access_token }}</small>
-                                            </code>
-                                            <b-alert class="mt-3" variant="warning" show>
-                                                This access token is only valid for a limited amount of time ({{
-                                                    accessToken.expires_in
-                                                }}
-                                                seconds).
-                                            </b-alert>
-                                        </template>
-                                    </b-card-text>
-                                </b-tab>
-                                <b-tab title="Basic Authorization header">
-                                    <b-card-text>
-                                        <p>
-                                            This example demonstrates the authorization header you should use to request
-                                            your access token.
-                                            <a
-                                                :href="
-                                                    docsUrl + '/authorization#2-create-a-basic-authentication-header'
-                                                "
-                                                target="_blank"
-                                            >
-                                                Read more about constructing it yourself</a
-                                            >.
-                                        </p>
-                                        <pre>
-Authorization: Basic {{ authHeader() }}
-                                        </pre>
-                                    </b-card-text>
-                                </b-tab>
-                                <b-tab title="CURL">
-                                    <b-card-text>
-                                        <pre>
-curl "https://api.thx.network/token" \
-    -X "POST" \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Authorization: Basic {{ authHeader() }}' \
-    -d 'grant_type=client_credentials&scope=openid admin'
-                                        </pre>
-                                    </b-card-text>
-                                </b-tab>
-                                <b-tab title="Axios">
-                                    <b-card-text>
-                                        <pre>
-axios({
-    url: 'https://api.thx.network/token', 
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic {{ authHeader() }}',
-    },
-    data: {
-        grant_type: 'client_credentials',
-        scope: 'openid admin',
-    }
-});
-                                        </pre>
-                                    </b-card-text>
-                                </b-tab>
-                                <b-tab title="Vanilla JS">
-                                    <b-card-text>
-                                        <pre>
-var params = new URLSearchParams();
-params.append('grant_type', 'client_credentials');
-params.append('scope', 'openid admin');
-var xhr = new XMLHttpRequest();
-xhr.open("POST", "https://api.thx.network/token", true);
-xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.setRequestHeader('Authorization', 'Basic {{ authHeader() }}');
-xhr.send(params);
-                                        </pre>
-                                    </b-card-text>
-                                </b-tab>
-                            </b-tabs>
-                        </b-form-group>
-                    </b-card-text>
-                </b-tab>
-            </b-tabs>
+            <p class="text-muted">Created at November 15th 4:30 am | Block #333213</p>
+            <div class="d-flex mb-4 mt-5">
+                <router-link
+                    class="btn btn-tab shadow-sm"
+                    :style="{
+                        'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                    }"
+                    :to="`/pool/${assetPool.address}/info`"
+                >
+                    <img height="30" :src="require('../assets/thx_pool_info.webp')" />
+                    <div class="d-none d-md-block">Information</div>
+                </router-link>
+                <router-link
+                    class="btn btn-tab shadow-sm"
+                    :style="{
+                        'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                    }"
+                    :to="`/pool/${assetPool.address}/rewards`"
+                >
+                    <img height="30" :src="require('../assets/thx_pool_rewards.webp')" />
+                    <div class="d-none d-md-block">Rewards</div>
+                </router-link>
+                <router-link
+                    class="btn btn-tab shadow-sm"
+                    :style="{
+                        'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                    }"
+                    :to="`/pool/${assetPool.address}/widgets`"
+                >
+                    <img height="30" :src="require('../assets/thx_pool_widgets.webp')" />
+                    <div class="d-none d-md-block">Widgets</div>
+                </router-link>
+                <router-link
+                    class="btn btn-tab shadow-sm"
+                    :style="{
+                        'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                    }"
+                    :to="`/pool/${assetPool.address}/authorization`"
+                >
+                    <img height="30" :src="require('../assets/thx_pool_authorization.webp')" />
+                    <div class="d-none d-md-block">Authorization</div>
+                </router-link>
+            </div>
+            <router-view></router-view>
         </div>
     </div>
 </template>
