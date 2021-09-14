@@ -59,7 +59,6 @@
 </template>
 
 <script lang="ts">
-import { Client, IClients } from '@/store/modules/clients';
 import { IAssetPools, NetworkProvider } from '@/store/modules/assetPools';
 import {
     BAlert,
@@ -88,9 +87,6 @@ import {
 } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import axios from 'axios';
-import { IRewards, Reward } from '@/store/modules/rewards';
-import { IWidgets } from '@/store/modules/widgets';
 
 @Component({
     components: {
