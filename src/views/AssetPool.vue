@@ -9,7 +9,8 @@
                 <b-badge variant="primary" class="p-2" v-if="network === 1">Polygon Main</b-badge>
             </div>
 
-            <p class="text-muted">Created at November 15th 4:30 am | Block #333213</p>
+            <!-- <p class="text-muted">Created at November 15th 4:30 am | Block #333213</p> -->
+            <hr />
             <div class="d-flex mb-4 mt-5">
                 <router-link
                     class="btn btn-tab shadow-sm"
