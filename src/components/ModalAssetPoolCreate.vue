@@ -291,13 +291,16 @@ export default class ModalAssetPoolCreate extends Vue {
                           }
                         : undefined,
             };
-            const rat = await this.$store.dispatch('assetPools/create', data);
+            const { rat, error } = await this.$store.dispatch('assetPools/create', data);
 
-            await this.$store.dispatch('clients/read', rat);
+            if (error) {
+                throw new Error(error);
+            } else {
+                await this.$store.dispatch('clients/read', rat);
 
-            this.$bvModal.hide(`modalAssetPoolCreate`);
+                this.$bvModal.hide(`modalAssetPoolCreate`);
+            }
         } catch (e) {
-            console.error(e);
             this.error = 'Could not deploy your asset pool.';
         } finally {
             this.loading = false;

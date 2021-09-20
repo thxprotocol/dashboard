@@ -136,14 +136,12 @@ class AssetPoolModule extends VuexModule {
 
                 this.context.commit('set', assetPool);
 
-                return assetPool.rat;
+                return { rat: assetPool.rat };
             } catch (e) {
-                console.log(e);
-                debugger;
+                return { error: e };
             }
         } catch (e) {
-            console.log(e);
-            debugger;
+            return { error: e };
         }
     }
 
