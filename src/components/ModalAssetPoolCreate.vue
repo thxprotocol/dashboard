@@ -61,7 +61,7 @@
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </strong>
-                    <p>Pick a monetary ERC-20 token from the Quickswap token list.</p>
+                    <p>Choose a monetary ERC20 contract address or provide your own.</p>
                 </b-form-radio>
                 <b-form-radio v-model="tokenOption" :aria-describedby="ariaDescribedby" name="tokenOption" :value="1">
                     <strong>
@@ -86,7 +86,7 @@
                     </p>
                 </b-form-radio>
             </b-form-group>
-            <template v-if="tokenOption === 0 && erc20Token">
+            <template v-if="tokenOption === 0">
                 <b-form-group>
                     <label>
                         Token Contract
@@ -100,15 +100,20 @@
                     </label>
                     <b-dropdown variant="link" class="dropdown-select">
                         <template #button-content>
-                            <div>
+                            <div v-if="erc20Token">
                                 <img :src="erc20Token.logoURI" width="20" class="mr-2" :alt="erc20Token.name" />
                                 <strong>{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
                             </div>
+                            <div v-else>Other ERC20 contract</div>
                         </template>
+                        <b-dropdown-item-button key="custom-token-address" @click="onTokenListItemClick(null)">
+                            Other ERC20 contract address
+                        </b-dropdown-item-button>
+                        <b-dropdown-divider></b-dropdown-divider>
                         <b-dropdown-item-button
                             :key="token.address"
                             v-for="token of tokenList"
-                            @click="erc20Token = token"
+                            @click="onTokenListItemClick(token)"
                         >
                             <img :src="token.logoURI" width="20" class="mr-3" :alt="token.name" />
                             <strong>{{ token.symbol }}</strong> {{ token.name }}
@@ -121,14 +126,14 @@
                     <div class="input-group mb-3">
                         <input
                             id="erc20Address"
-                            readonly
+                            :readonly="erc20Token"
                             type="text"
                             class="form-control"
                             aria-describedby="erc20Address"
-                            :value="erc20Token.address"
+                            v-model="erc20TokenAddress"
                         />
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" v-clipboard:copy="erc20Token.address">
+                            <button class="btn btn-primary" type="button" v-clipboard:copy="erc20TokenAddress">
                                 <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                             </button>
                         </div>
@@ -185,6 +190,7 @@ import {
     BCard,
     BCollapse,
     BDropdown,
+    BDropdownDivider,
     BDropdownItemButton,
     BFormGroup,
     BFormInput,
@@ -214,6 +220,7 @@ import { mapGetters } from 'vuex';
         'b-form-select': BFormSelect,
         'b-form-select-option': BFormSelectOption,
         'b-spinner': BSpinner,
+        'b-dropdown-divider': BDropdownDivider,
     },
     computed: mapGetters({
         clients: 'clients/all',
@@ -229,6 +236,7 @@ export default class ModalAssetPoolCreate extends Vue {
     network: NetworkProvider = NetworkProvider.Test;
 
     erc20Token: PoolToken | null = null;
+    erc20TokenAddress = '';
 
     erc20Name = '';
     erc20Symbol = '';
@@ -237,16 +245,14 @@ export default class ModalAssetPoolCreate extends Vue {
     client: Client | null = null;
     clients!: IClients;
 
-    version = 79;
-
     async mounted() {
         try {
             const list = await this.getLatestTokenList();
 
             this.tokenList = list.tokens;
             this.erc20Token = this.tokenList[0];
+            this.erc20TokenAddress = this.tokenList[0].address;
         } catch (e) {
-            console.error(e);
             this.error = 'Could not fetch the token list.';
         }
     }
@@ -260,6 +266,12 @@ export default class ModalAssetPoolCreate extends Vue {
 
         return r.data;
     }
+
+    onTokenListItemClick(erc20: PoolToken) {
+        this.erc20Token = erc20;
+        this.erc20TokenAddress = erc20 ? erc20.address : '';
+    }
+
     async submit() {
         this.loading = true;
 
@@ -275,7 +287,7 @@ export default class ModalAssetPoolCreate extends Vue {
                           }
                         : this.tokenOption === PoolTokenType.Existing
                         ? {
-                              address: this.erc20Token?.address,
+                              address: this.erc20TokenAddress,
                           }
                         : undefined,
             };

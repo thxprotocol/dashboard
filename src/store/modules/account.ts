@@ -86,7 +86,6 @@ class AccountModule extends VuexModule {
     @Action
     async getProfile() {
         try {
-            debugger;
             const r = await axios({
                 method: 'GET',
                 url: '/account',
