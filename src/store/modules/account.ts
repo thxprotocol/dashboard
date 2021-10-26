@@ -30,7 +30,7 @@ export interface UserProfile {
 }
 
 const config: any = {
-    authority: process.env.VUE_APP_API_ROOT,
+    authority: process.env.VUE_APP_AUTH_ROOT,
     client_id: process.env.VUE_APP_OIDC_CLIENT_ID,
     client_secret: process.env.VUE_APP_OIDC_CLIENT_SECRET,
     redirect_uri: `${BASE_URL}/signin-oidc`,
@@ -88,7 +88,7 @@ class AccountModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/account',
+                url: process.env.VUE_APP_AUTH_ROOT + '/me',
             });
 
             if (r.status !== 200) {
