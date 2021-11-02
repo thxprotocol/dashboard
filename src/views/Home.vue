@@ -38,7 +38,6 @@
 import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { UserProfile } from '@/store/modules/account';
-import { IClients } from '@/store/modules/clients';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { BAlert, BButton, BCard, BJumbotron, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
@@ -56,13 +55,11 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({
         profile: 'account/profile',
-        clients: 'clients/all',
         assetPools: 'assetPools/all',
     }),
 })
 export default class Home extends Vue {
     profile!: UserProfile;
-    clients!: IClients;
     assetPools!: IAssetPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
 

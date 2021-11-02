@@ -30,7 +30,8 @@ export enum NetworkProvider {
 
 export class AssetPool {
     address: string;
-    rat: string;
+    clientId: string;
+    clientSecret: string;
     poolToken: TokenBalance;
     bypassPolls: boolean;
     network: NetworkProvider;
@@ -39,7 +40,8 @@ export class AssetPool {
 
     constructor(data: any) {
         this.address = data.address;
-        this.rat = data.rat;
+        this.clientId = data.clientId;
+        this.clientSecret = data.clientSecret;
         this.poolToken = data.token;
         this.bypassPolls = data.bypassPolls;
         this.network = data.network;
@@ -136,7 +138,7 @@ class AssetPoolModule extends VuexModule {
 
                 this.context.commit('set', assetPool);
 
-                return { rat: assetPool.rat };
+                return { assetPool };
             } catch (e) {
                 return { error: e };
             }

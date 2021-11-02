@@ -181,7 +181,6 @@
 </template>
 
 <script lang="ts">
-import { Client, IClients } from '@/store/modules/clients';
 import { NetworkProvider, PoolToken, PoolTokenType } from '@/store/modules/assetPools';
 import axios from 'axios';
 import {
@@ -222,9 +221,7 @@ import { mapGetters } from 'vuex';
         'b-spinner': BSpinner,
         'b-dropdown-divider': BDropdownDivider,
     },
-    computed: mapGetters({
-        clients: 'clients/all',
-    }),
+    computed: mapGetters({}),
 })
 export default class ModalAssetPoolCreate extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
@@ -241,9 +238,6 @@ export default class ModalAssetPoolCreate extends Vue {
     erc20Name = '';
     erc20Symbol = '';
     erc20TotalSupply = 0;
-
-    client: Client | null = null;
-    clients!: IClients;
 
     async mounted() {
         try {
@@ -291,15 +285,13 @@ export default class ModalAssetPoolCreate extends Vue {
                           }
                         : undefined,
             };
-            const { rat, error } = await this.$store.dispatch('assetPools/create', data);
+            const { assetPool, error } = await this.$store.dispatch('assetPools/create', data);
 
-            if (error) {
-                throw new Error(error);
-            } else {
-                await this.$store.dispatch('clients/read', rat);
-
-                this.$bvModal.hide(`modalAssetPoolCreate`);
+            if (!assetPool || error) {
+                throw new Error();
             }
+
+            this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (e) {
             this.error = 'Could not deploy your asset pool.';
         } finally {

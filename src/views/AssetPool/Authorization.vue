@@ -1,6 +1,6 @@
 <template>
     <b-card-text>
-        <b-form-group v-if="client">
+        <b-form-group>
             <h2 class="font-weight-normal">Authorization</h2>
             <p>
                 Use you client credentials to create a
@@ -13,9 +13,9 @@
                 <b-form-group>
                     <label for="clientId"> Client ID: </label>
                     <b-input-group>
-                        <b-form-input readonly id="clientId" v-model="client.clientId" />
+                        <b-form-input readonly id="clientId" v-model="assetPool.clientId" />
                         <b-input-group-append>
-                            <b-button variant="primary" v-clipboard:copy="client.clientId">
+                            <b-button variant="primary" v-clipboard:copy="assetPool.clientId">
                                 <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                             </b-button>
                         </b-input-group-append>
@@ -24,9 +24,9 @@
                 <b-form-group>
                     <label for="clientSecret"> Client Secret: </label>
                     <b-input-group>
-                        <b-form-input readonly id="clientSecret" v-model="client.clientSecret" />
+                        <b-form-input readonly id="clientSecret" v-model="assetPool.clientSecret" />
                         <b-input-group-append>
-                            <b-button variant="primary" v-clipboard:copy="client.clientSecret">
+                            <b-button variant="primary" v-clipboard:copy="assetPool.clientSecret">
                                 <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                             </b-button>
                         </b-input-group-append>
@@ -121,7 +121,6 @@ xhr.send(params);
 </template>
 
 <script lang="ts">
-import { Client, IClients } from '@/store/modules/clients';
 import { IAssetPools } from '@/store/modules/assetPools';
 import {
     BAlert,
@@ -186,6 +185,7 @@ import axios from 'axios';
 export default class AssetPoolView extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
+    authUrl = process.env.VUE_APP_AUTH_URL;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
 
     error = '';
@@ -193,24 +193,14 @@ export default class AssetPoolView extends Vue {
     accessToken = '';
 
     assetPools!: IAssetPools;
-    clients!: IClients;
 
     get assetPool() {
         return this.assetPools[this.$route.params.address];
     }
 
-    get client() {
-        return (
-            Object.values(this.clients).find(
-                (client: Client) => client.registrationAccessToken === this.assetPool.rat,
-            ) || null
-        );
-    }
-
     async mounted() {
         try {
             await this.$store.dispatch('assetPools/read', this.$route.params.address);
-            await this.$store.dispatch('clients/read', this.assetPool.rat);
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {
@@ -219,7 +209,7 @@ export default class AssetPoolView extends Vue {
     }
 
     authHeader() {
-        return btoa(`${this.client?.clientId}:${this.client?.clientSecret}`);
+        return btoa(`${this.assetPool.clientId}:${this.assetPool.clientSecret}`);
     }
 
     async getAccessToken() {
@@ -229,7 +219,7 @@ export default class AssetPoolView extends Vue {
             data.append('scope', 'openid admin');
 
             const r = await axios({
-                url: this.apiUrl + '/token',
+                url: this.authUrl + '/token',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

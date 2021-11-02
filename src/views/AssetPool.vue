@@ -59,7 +59,6 @@
 </template>
 
 <script lang="ts">
-import { Client, IClients } from '@/store/modules/clients';
 import { IAssetPools, NetworkProvider } from '@/store/modules/assetPools';
 import {
     BAlert,
@@ -88,9 +87,6 @@ import {
 } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import axios from 'axios';
-import { IRewards, Reward } from '@/store/modules/rewards';
-import { IWidgets } from '@/store/modules/widgets';
 
 @Component({
     components: {
@@ -120,7 +116,6 @@ import { IWidgets } from '@/store/modules/widgets';
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',
-        clients: 'clients/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
     }),
@@ -129,152 +124,22 @@ export default class AssetPoolView extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
-
     error = '';
     loading = true;
-    enableGovernance = false;
-    rewardPollDuration = 0;
-    withdrawPollDuration = 0;
     network: NetworkProvider = NetworkProvider.Test;
-    accessToken = '';
-    reward = {
-        withdrawAmount: 0,
-        withdrawDuration: 0,
-    };
-
-    widgetReward: Reward | null = null;
-    widgetRequestUri = '';
-
     assetPools!: IAssetPools;
-    clients!: IClients;
-    rewards!: IRewards;
-    widgets!: IWidgets;
 
     get assetPool() {
         return this.assetPools[this.$route.params.address];
     }
 
-    get filteredRewards(): Reward[] {
-        if (this.rewards[this.assetPool.address]) {
-            return Object.values(this.rewards[this.assetPool.address]);
-        }
-        return [];
-    }
-
-    get client() {
-        return (
-            Object.values(this.clients).find(
-                (client: Client) => client.registrationAccessToken === this.assetPool.rat,
-            ) || null
-        );
-    }
-
-    async getWidgets() {
-        await this.$store.dispatch('widgets/list', this.assetPool.address);
-
-        for (const rat in this.widgets[this.assetPool.address]) {
-            const widget = this.widgets[this.assetPool.address][rat];
-            const reward = this.rewards[this.assetPool.address][widget.metadata.rewardId];
-
-            this.widgets[this.assetPool.address][rat].setReward(reward);
-        }
-    }
-
     async mounted() {
         try {
             await this.$store.dispatch('assetPools/read', this.$route.params.address);
-            await this.$store.dispatch('clients/read', this.assetPool.rat);
-            await this.$store.dispatch('rewards/read', this.assetPool.address);
-            await this.getWidgets();
 
-            this.widgetReward = this.filteredRewards[0];
-            this.enableGovernance = !this.assetPool.bypassPolls;
             this.network = this.assetPool.network;
         } catch (e) {
             this.error = 'Could not get the rewards.';
-        } finally {
-            this.loading = false;
-        }
-    }
-
-    async createWidget() {
-        try {
-            await this.$store.dispatch('widgets/create', {
-                requestUris: [this.widgetRequestUri],
-                redirectUris: [this.widgetRequestUri],
-                postLogoutRedirectUris: [this.widgetRequestUri],
-                metadata: {
-                    rewardId: this.widgetReward?.id,
-                    poolAddress: this.assetPool.address,
-                },
-            });
-            await this.getWidgets();
-        } catch (e) {
-            debugger;
-        }
-    }
-
-    async addReward() {
-        this.loading = true;
-        try {
-            await this.$store.dispatch('rewards/create', {
-                address: this.assetPool.address,
-                withdrawAmount: this.reward.withdrawAmount,
-                withdrawDuration: this.reward.withdrawDuration,
-            });
-
-            this.reward.withdrawAmount = 0;
-            this.reward.withdrawDuration = 0;
-        } catch (e) {
-            console.log(e);
-            this.error = 'Could not add the reward.';
-        } finally {
-            this.loading = false;
-        }
-    }
-
-    authHeader() {
-        return btoa(`${this.client?.clientId}:${this.client?.clientSecret}`);
-    }
-
-    async getAccessToken() {
-        try {
-            const data = new URLSearchParams();
-            data.append('grant_type', 'client_credentials');
-            data.append('scope', 'openid admin');
-
-            const r = await axios({
-                url: this.apiUrl + '/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + this.authHeader(),
-                },
-                data,
-            });
-
-            this.accessToken = r.data;
-        } catch (e) {
-            console.error(e);
-            this.error = 'Could not request an access token.';
-        }
-    }
-
-    async updateAssetPool() {
-        this.loading = true;
-
-        try {
-            await this.$store.dispatch('assetPools/update', {
-                address: this.assetPool.address,
-                data: {
-                    bypassPolls: !this.enableGovernance,
-                    rewardPollDuration: this.rewardPollDuration,
-                    withdrawPollDuration: this.withdrawPollDuration,
-                },
-            });
-        } catch (e) {
-            console.error(e);
-            this.error = 'Could not update your asset pool.';
         } finally {
             this.loading = false;
         }

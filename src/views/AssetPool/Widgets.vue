@@ -60,7 +60,6 @@
 </template>
 
 <script lang="ts">
-import { Client, IClients } from '@/store/modules/clients';
 import { IAssetPools } from '@/store/modules/assetPools';
 import {
     BAlert,
@@ -124,7 +123,6 @@ import BaseModalWidgetEdit from '@/components/ModalWidgetEdit.vue';
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',
-        clients: 'clients/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
     }),
@@ -137,7 +135,6 @@ export default class AssetPoolView extends Vue {
     loading = true;
 
     assetPools!: IAssetPools;
-    clients!: IClients;
     rewards!: IRewards;
     widgets!: IWidgets;
 
@@ -152,29 +149,19 @@ export default class AssetPoolView extends Vue {
         return [];
     }
 
-    get client() {
-        return (
-            Object.values(this.clients).find(
-                (client: Client) => client.registrationAccessToken === this.assetPool.rat,
-            ) || null
-        );
-    }
-
     async getWidgets() {
         await this.$store.dispatch('widgets/list', this.assetPool.address);
 
-        for (const rat in this.widgets[this.assetPool.address]) {
-            const widget = this.widgets[this.assetPool.address][rat];
+        for (const clientId in this.widgets[this.assetPool.address]) {
+            const widget = this.widgets[this.assetPool.address][clientId];
             const reward = this.rewards[this.assetPool.address][widget.metadata.rewardId];
 
-            this.widgets[this.assetPool.address][rat].setReward(reward);
+            this.widgets[this.assetPool.address][clientId].setReward(reward);
         }
     }
 
     async mounted() {
         try {
-            await this.$store.dispatch('assetPools/read', this.$route.params.address);
-            await this.$store.dispatch('clients/read', this.assetPool.rat);
             await this.$store.dispatch('rewards/read', this.assetPool.address);
             await this.getWidgets();
         } catch (e) {
