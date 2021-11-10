@@ -24,11 +24,25 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <div class="row" v-if="assetPools">
-                <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
-                    <base-asset-pool :assetPool="assetPool" />
+            <b-skeleton-wrapper :loading="skeletonLoading">
+                <template #loading>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4" v-for="index in 3" :key="index">
+                            <b-card>
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="55%"></b-skeleton>
+                                <b-skeleton animation="fade" width="70%"></b-skeleton>
+                                <b-skeleton animation="fade" width="40%"></b-skeleton>
+                            </b-card>
+                        </div>
+                    </div>
+                </template>
+                <div class="row" v-if="assetPools">
+                    <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
+                        <base-asset-pool :assetPool="assetPool" />
+                    </div>
                 </div>
-            </div>
+            </b-skeleton-wrapper>
         </div>
         <modal-asset-pool-create />
     </div>
@@ -39,7 +53,7 @@ import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { UserProfile } from '@/store/modules/account';
 import { IAssetPools } from '@/store/modules/assetPools';
-import { BAlert, BButton, BCard, BJumbotron, BModal } from 'bootstrap-vue';
+import { BAlert, BButton, BCard, BJumbotron, BModal, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -52,6 +66,8 @@ import { mapGetters } from 'vuex';
         'b-button': BButton,
         'b-card': BCard,
         'b-modal': BModal,
+        'b-skeleton': BSkeleton,
+        'b-skeleton-wrapper': BSkeletonWrapper,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -62,11 +78,16 @@ export default class Home extends Vue {
     profile!: UserProfile;
     assetPools!: IAssetPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    skeletonLoading = true;
 
     async mounted() {
         try {
             await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('assetPools/list');
+            await this.$store.dispatch('assetPools/list').then(() => {
+                setTimeout(() => {
+                    this.skeletonLoading = false;
+                }, 2000);
+            });
         } catch (e) {
             debugger;
         }
