@@ -19,7 +19,7 @@
                 <div class="col-md-3">
                     <strong>ID</strong>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>Page URL</strong>
                 </div>
                 <div class="col-md-2">
@@ -28,7 +28,7 @@
                 <div class="col-md-2">
                     <strong>Type</strong>
                 </div>
-                <div class="col-md-1"></div>
+                <div class="col-md-2"></div>
             </div>
             <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
                 <hr />
@@ -36,7 +36,7 @@
                     <div class="col-md-3 d-flex align-items-center">
                         {{ widget.clientId }}
                     </div>
-                    <div class="col-md-4 d-flex align-items-center">
+                    <div class="col-md-3 d-flex align-items-center">
                         {{ widget.requestUri }}
                     </div>
                     <div class="col-md-2 d-flex align-items-center">
@@ -45,13 +45,21 @@
                         >
                     </div>
                     <div class="col-md-2 d-flex align-items-center">Claim Button</div>
-                    <div class="col-md-1 text-right">
+                    <div class="col-md-2 text-right">
                         <b-button class="rounded-pill" variant="light" v-b-modal="`modalWidgetEdit-${widget.clientId}`">
                             <i class="fas fa-pencil-alt text-primary ml-0"></i
+                        ></b-button>
+                        <b-button
+                            class="rounded-pill ml-1"
+                            variant="light"
+                            v-b-modal="`modalDelete-${widget.clientId}`"
+                        >
+                            <i class="far fa-trash-alt text-primary ml-0"></i
                         ></b-button>
                     </div>
                 </div>
                 <base-modal-widget-edit :assetPool="assetPool" :filteredRewards="filteredRewards" :widget="widget" />
+                <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
             </b-form-group>
         </b-card>
 
@@ -92,11 +100,13 @@ import { IRewards, Reward } from '@/store/modules/rewards';
 import { IWidgets } from '@/store/modules/widgets';
 import BaseModalWidgetCreate from '@/components/ModalWidgetCreate.vue';
 import BaseModalWidgetEdit from '@/components/ModalWidgetEdit.vue';
+import ModalDelete from '@/components/ModalDelete.vue';
 
 @Component({
     components: {
         'base-modal-widget-create': BaseModalWidgetCreate,
         'base-modal-widget-edit': BaseModalWidgetEdit,
+        'modal-delete': ModalDelete,
         'b-modal': BModal,
         'b-alert': BAlert,
         'b-tabs': BTabs,
@@ -166,6 +176,18 @@ export default class AssetPoolView extends Vue {
             await this.getWidgets();
         } catch (e) {
             this.error = 'Could not get the rewards.';
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async remove(clientId: string) {
+        this.loading = true;
+        try {
+            await this.$store.dispatch('widgets/remove', clientId);
+            await this.getWidgets();
+        } catch (e) {
+            console.error(e);
         } finally {
             this.loading = false;
         }

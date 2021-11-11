@@ -100,6 +100,21 @@ class WidgetModule extends VuexModule {
             console.error(e);
         }
     }
+
+    @Action
+    async remove(clientId: string) {
+        try {
+            await axios({
+                method: 'DELETE',
+                url: '/widgets/' + clientId,
+            });
+
+            this.context.commit('unset', clientId);
+        } catch (e) {
+            console.log(e);
+            debugger;
+        }
+    }
 }
 
 export default WidgetModule;
