@@ -184,8 +184,7 @@ export default class AssetPoolView extends Vue {
     async remove(clientId: string) {
         this.loading = true;
         try {
-            await this.$store.dispatch('widgets/remove', clientId);
-            await this.getWidgets();
+            await this.$store.dispatch('widgets/remove', { clientId, poolAddress: this.assetPool.address });
         } catch (e) {
             console.error(e);
         } finally {
