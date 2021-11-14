@@ -46,12 +46,12 @@ class WidgetModule extends VuexModule {
         if (!this._all[widget.metadata.poolAddress]) {
             Vue.set(this._all, widget.metadata.poolAddress, {});
         }
-        Vue.set(this._all[widget.metadata.poolAddress], widget.registrationAccessToken, widget);
+        Vue.set(this._all[widget.metadata.poolAddress], widget.clientId, widget);
     }
 
     @Mutation
-    unset(rat: string) {
-        Vue.delete(this._all, rat);
+    unset(data: { clientId: string; poolAddress: string }) {
+        Vue.delete(this._all[data.poolAddress], data.clientId);
     }
 
     @Action
@@ -98,6 +98,21 @@ class WidgetModule extends VuexModule {
             }
         } catch (e) {
             console.error(e);
+        }
+    }
+
+    @Action
+    async remove(data: { clientId: string; poolAddress: string }) {
+        try {
+            await axios({
+                method: 'DELETE',
+                url: '/widgets/' + data.clientId,
+            });
+
+            this.context.commit('unset', { clientId: data.clientId, poolAddress: data.poolAddress });
+        } catch (e) {
+            console.log(e);
+            debugger;
         }
     }
 }
