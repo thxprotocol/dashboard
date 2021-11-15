@@ -1,66 +1,78 @@
 <template>
-    <b-card
-        @click="$router.push({ path: `pool/${assetPool.address}/info` })"
-        class="mt-3 mb-3 shadow-sm cursor-pointer"
-    >
-        <b-button
-            variant="link"
-            class="btn-remove rounded-pill float-right"
-            size="sm"
-            @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+    <b-skeleton-wrapper :loading="skeletonLoading">
+        <template #loading>
+            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
+                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                <b-skeleton animation="fade" width="55%"></b-skeleton>
+                <b-skeleton animation="fade" width="70%"></b-skeleton>
+                <b-skeleton animation="fade" width="60%"></b-skeleton>
+                <b-skeleton animation="fade" width="40%"></b-skeleton>
+            </b-card>
+        </template>
+        <b-card
+            @click="$router.push({ path: `pool/${assetPool.address}/info` })"
+            class="mt-3 mb-3 shadow-sm cursor-pointer"
         >
-            <i class="far fa-trash-alt"></i>
-        </b-button>
-        <b-badge class="p-2 text-white" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
-        <b-badge class="p-2" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
-        <p class="font-weight-bold text-primary h3 mt-2">
-            {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-        </p>
-        <p class="text-muted mb-0">
-            {{ assetPool.poolToken.name }}
-            <template v-if="assetPool.network === 0">
-                <a
-                    target="_blank"
-                    :id="`infoTokenTest-${assetPool.address}`"
-                    @click.stop="
-                        openUrl(`https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`)
-                    "
-                >
-                    <i class="fas fa-question-circle text-gray"></i>
-                </a>
-                <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
-                    Total Supply:<br />
-                    {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                </b-tooltip>
-            </template>
-            <template v-if="assetPool.network === 1">
-                <a
-                    target="_blank"
-                    :id="`infoTokenMain-${assetPool.address}`"
-                    @click.stop="
-                        openUrl(
-                            `https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
-                            '_blank',
-                        ).focus()
-                    "
-                >
-                    <i class="fas fa-question-circle"></i>
-                </a>
-                <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
-                    Total Supply:<br />
-                    {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                </b-tooltip>
-            </template>
-        </p>
-
-        <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
-    </b-card>
+            <b-button
+                variant="link"
+                class="btn-remove rounded-pill float-right"
+                size="sm"
+                @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+            >
+                <i class="far fa-trash-alt"></i>
+            </b-button>
+            <b-badge class="p-2 text-white" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
+            <b-badge class="p-2" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
+            <p class="font-weight-bold text-primary h3 mt-2">
+                {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+            </p>
+            <p class="text-muted mb-0">
+                {{ assetPool.poolToken.name }}
+                <template v-if="assetPool.network === 0">
+                    <a
+                        target="_blank"
+                        :id="`infoTokenTest-${assetPool.address}`"
+                        @click.stop="
+                            openUrl(
+                                `https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
+                            )
+                        "
+                    >
+                        <i class="fas fa-question-circle text-gray"></i>
+                    </a>
+                    <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
+                        Total Supply:<br />
+                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                    </b-tooltip>
+                </template>
+                <template v-if="assetPool.network === 1">
+                    <a
+                        target="_blank"
+                        :id="`infoTokenMain-${assetPool.address}`"
+                        @click.stop="
+                            openUrl(
+                                `https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
+                                '_blank',
+                            ).focus()
+                        "
+                    >
+                        <i class="fas fa-question-circle"></i>
+                    </a>
+                    <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
+                        Total Supply:<br />
+                        {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
+                    </b-tooltip>
+                </template>
+            </p>
+            <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
+        </b-card>
+    </b-skeleton-wrapper>
 </template>
 
 <script lang="ts">
 import { UserProfile } from '@/store/modules/account';
 import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
-import { BBadge, BButton, BCard, BLink, BOverlay } from 'bootstrap-vue';
+import { BBadge, BButton, BCard, BLink, BOverlay, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import ModalDelete from './ModalDelete.vue';
@@ -73,6 +85,8 @@ import ModalDelete from './ModalDelete.vue';
         'b-card': BCard,
         'b-overlay': BOverlay,
         'modal-delete': ModalDelete,
+        'b-skeleton': BSkeleton,
+        'b-skeleton-wrapper': BSkeletonWrapper,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -81,14 +95,21 @@ import ModalDelete from './ModalDelete.vue';
 })
 export default class BaseAssetPool extends Vue {
     loading = false;
+    skeletonLoading = true;
 
     @Prop() assetPool!: AssetPool;
 
     profile!: UserProfile;
     assetPools!: IAssetPools;
-
     openUrl(url: string) {
         return (window as any).open(url, '_blank').focus();
+    }
+
+    async mounted() {
+        if (this.assetPool.address != null) {
+            await this.$store.dispatch('assetPools/read', this.assetPool.address);
+            this.skeletonLoading = false;
+        }
     }
 
     async remove() {
