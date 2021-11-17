@@ -6,7 +6,7 @@
                 'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
             }"
         >
-            <div class="container container-md pt-5">
+            <div class="container container-md pt-5 pb-5">
                 <p class="brand-text">Hello!</p>
                 <p>
                     Welcome to your personal dashboard. Here you can create and maintain your asset pools on the Polygon
