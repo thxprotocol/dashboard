@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { BAlert, BButton, BLink, BModal, BOverlay } from 'bootstrap-vue';
+import { BAlert, BButton, BLink, BModal, BOverlay, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
@@ -62,6 +62,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
         'b-alert': BAlert,
         'b-button': BButton,
         'b-overlay': BOverlay,
+        'b-spinner': BSpinner,
     },
 })
 export default class ModalDelete extends Vue {
@@ -76,7 +77,7 @@ export default class ModalDelete extends Vue {
         this.loading = true;
 
         try {
-            const r = await this.call();
+            const r = await this.call(this.subject);
 
             if (r && r.error) {
                 this.error = r.error.message;

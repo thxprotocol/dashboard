@@ -19,7 +19,7 @@
                 <div class="col-md-3">
                     <strong>ID</strong>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>Page URL</strong>
                 </div>
                 <div class="col-md-2">
@@ -28,7 +28,7 @@
                 <div class="col-md-2">
                     <strong>Type</strong>
                 </div>
-                <div class="col-md-1"></div>
+                <div class="col-md-2"></div>
             </div>
             <b-skeleton-wrapper :loading="skeletonLoading">
                 <template #loading>
@@ -82,13 +82,31 @@
                             ></b-button>
                         </div>
                     </div>
-                    <base-modal-widget-edit
-                        :assetPool="assetPool"
-                        :filteredRewards="filteredRewards"
-                        :widget="widget"
-                    />
-                </b-form-group>
-            </b-skeleton-wrapper>
+                    <div class="col-md-3 d-flex align-items-center">
+                        {{ widget.requestUri }}
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <template v-if="widget.reward"
+                            >{{ widget.reward.withdrawAmount }} {{ assetPool.poolToken.symbol }}</template
+                        >
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">Claim Button</div>
+                    <div class="col-md-2 text-right">
+                        <b-button class="rounded-pill" variant="light" v-b-modal="`modalWidgetEdit-${widget.clientId}`">
+                            <i class="fas fa-pencil-alt text-primary ml-0"></i
+                        ></b-button>
+                        <b-button
+                            class="rounded-pill ml-1"
+                            variant="light"
+                            v-b-modal="`modalDelete-${widget.clientId}`"
+                        >
+                            <i class="far fa-trash-alt text-primary ml-0"></i
+                        ></b-button>
+                    </div>
+                </div>
+                <base-modal-widget-edit :assetPool="assetPool" :filteredRewards="filteredRewards" :widget="widget" />
+                <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
+            </b-form-group>
         </b-card>
 
         <base-modal-widget-create @submit="getWidgets()" :assetPool="assetPool" :filteredRewards="filteredRewards" />
@@ -130,11 +148,13 @@ import { IRewards, Reward } from '@/store/modules/rewards';
 import { IWidgets } from '@/store/modules/widgets';
 import BaseModalWidgetCreate from '@/components/ModalWidgetCreate.vue';
 import BaseModalWidgetEdit from '@/components/ModalWidgetEdit.vue';
+import ModalDelete from '@/components/ModalDelete.vue';
 
 @Component({
     components: {
         'base-modal-widget-create': BaseModalWidgetCreate,
         'base-modal-widget-edit': BaseModalWidgetEdit,
+        'modal-delete': ModalDelete,
         'b-modal': BModal,
         'b-alert': BAlert,
         'b-tabs': BTabs,
@@ -208,6 +228,17 @@ export default class AssetPoolView extends Vue {
             this.skeletonLoading = false;
         } catch (e) {
             this.error = 'Could not get the rewards.';
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async remove(clientId: string) {
+        this.loading = true;
+        try {
+            await this.$store.dispatch('widgets/remove', { clientId, poolAddress: this.assetPool.address });
+        } catch (e) {
+            console.error(e);
         } finally {
             this.loading = false;
         }
