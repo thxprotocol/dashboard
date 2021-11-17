@@ -94,51 +94,75 @@
                 </div>
                 <div class="col-md-1"></div>
             </div>
-            <b-form-group class="mb-0" :key="reward.id" v-for="reward of filteredRewards">
-                <hr />
-                <div class="row pt-2 pb-2">
-                    <div class="col-md-1 d-flex align-items-center">
-                        <span class="large mr-2 text-primary">#{{ reward.id }}</span>
-                        <template v-if="reward.poll">
-                            <a :id="`rewardPoll-${reward.id}`">
-                                <i class="fas fa-poll text-primary"></i>
-                            </a>
-                            <b-popover :target="`rewardPoll-${reward.id}`" triggers="hover" placement="top">
-                                <template #title>Active poll</template>
+            <b-skeleton-wrapper :loading="skeletonLoading">
+                <template #loading>
+                    <b-form-group class="mb-0" v-for="index in 2" :key="index">
+                        <hr />
+                        <div class="row pt-2 pb-2">
+                            <div class="col-md-1">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-4">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-6">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-1">
+                                <b-skeleton type="avatar"></b-skeleton>
+                            </div>
+                        </div>
+                    </b-form-group>
+                </template>
+                <b-form-group class="mb-0" :key="reward.id" v-for="reward of filteredRewards">
+                    <hr />
+                    <div class="row pt-2 pb-2">
+                        <div class="col-md-1 d-flex align-items-center">
+                            <span class="large mr-2 text-primary">#{{ reward.id }}</span>
+                            <template v-if="reward.poll">
+                                <a :id="`rewardPoll-${reward.id}`">
+                                    <i class="fas fa-poll text-primary"></i>
+                                </a>
+                                <b-popover :target="`rewardPoll-${reward.id}`" triggers="hover" placement="top">
+                                    <template #title>Active poll</template>
 
-                                <p>
-                                    Start {{ reward.poll.startTime }}<br />
-                                    End:{{ reward.poll.endTime }}
-                                </p>
+                                    <p>
+                                        Start {{ reward.poll.startTime }}<br />
+                                        End:{{ reward.poll.endTime }}
+                                    </p>
 
-                                <p>
-                                    Yes: {{ reward.poll.yesCounter }}<br />
-                                    No: {{ reward.poll.noCounter }}
-                                </p>
-                            </b-popover>
-                        </template>
+                                    <p>
+                                        Yes: {{ reward.poll.yesCounter }}<br />
+                                        No: {{ reward.poll.noCounter }}
+                                    </p>
+                                </b-popover>
+                            </template>
+                        </div>
+                        <div class="col-md-4">
+                            <b-input-group :append="assetPool.poolToken.symbol">
+                                <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
+                            </b-input-group>
+                        </div>
+                        <div class="col-md-6">
+                            <b-input-group append="Seconds">
+                                <b-form-input
+                                    type="number"
+                                    :disabled="!enableGovernance"
+                                    v-model="reward.withdrawDuration"
+                                />
+                            </b-input-group>
+                        </div>
+                        <div class="col-md-1 text-right">
+                            <b-button class="rounded-pill" variant="primary" @click="updateReward()">
+                                <i class="fas fa-save ml-0"></i
+                            ></b-button>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <b-input-group :append="assetPool.poolToken.symbol">
-                            <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
-                        </b-input-group>
-                    </div>
-                    <div class="col-md-6">
-                        <b-input-group append="Seconds">
-                            <b-form-input
-                                type="number"
-                                :disabled="!enableGovernance"
-                                v-model="reward.withdrawDuration"
-                            />
-                        </b-input-group>
-                    </div>
-                    <div class="col-md-1 text-right">
-                        <b-button class="rounded-pill" variant="primary" @click="updateReward()">
-                            <i class="fas fa-save ml-0"></i
-                        ></b-button>
-                    </div>
-                </div>
-            </b-form-group>
+                </b-form-group>
+            </b-skeleton-wrapper>
         </b-card>
         <base-modal-reward-create
             :assetPool="assetPool"
@@ -174,6 +198,8 @@ import {
     BPopover,
     BInputGroupAppend,
     BSpinner,
+    BSkeleton,
+    BSkeletonWrapper,
 } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -206,6 +232,8 @@ import BaseModalRewardCreate from '@/components/ModalRewardCreate.vue';
         'b-collapse': BCollapse,
         'b-overlay': BOverlay,
         'b-popover': BPopover,
+        'b-skeleton': BSkeleton,
+        'b-skeleton-wrapper': BSkeletonWrapper,
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',
@@ -219,6 +247,7 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
+    skeletonLoading = true;
 
     enableGovernance = false;
     rewardPollDuration = 0;
@@ -246,6 +275,7 @@ export default class AssetPoolView extends Vue {
             this.enableGovernance = !this.assetPool.bypassPolls;
             this.rewardPollDuration = this.assetPool.rewardPollDuration;
             this.proposeWithdrawPollDuration = this.assetPool.proposeWithdrawPollDuration;
+            this.skeletonLoading = false;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {

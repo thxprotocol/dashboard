@@ -30,11 +30,57 @@
                 </div>
                 <div class="col-md-2"></div>
             </div>
-            <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
-                <hr />
-                <div class="row pt-2 pb-2">
-                    <div class="col-md-3 d-flex align-items-center">
-                        {{ widget.clientId }}
+            <b-skeleton-wrapper :loading="skeletonLoading">
+                <template #loading>
+                    <b-form-group class="mb-0" v-for="index in 2" :key="index">
+                        <hr />
+                        <div class="row pt-2 pb-2">
+                            <div class="col-md-3">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-4">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-2">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-2">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-1">
+                                <b-skeleton type="avatar"></b-skeleton>
+                            </div>
+                        </div>
+                    </b-form-group>
+                </template>
+                <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
+                    <hr />
+                    <div class="row pt-2 pb-2">
+                        <div class="col-md-3 d-flex align-items-center">
+                            {{ widget.clientId }}
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center">
+                            {{ widget.requestUri }}
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                            <template v-if="widget.reward"
+                                >{{ widget.reward.withdrawAmount }} {{ assetPool.poolToken.symbol }}</template
+                            >
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">Claim Button</div>
+                        <div class="col-md-1 text-right">
+                            <b-button
+                                class="rounded-pill"
+                                variant="light"
+                                v-b-modal="`modalWidgetEdit-${widget.clientId}`"
+                            >
+                                <i class="fas fa-pencil-alt text-primary ml-0"></i
+                            ></b-button>
+                        </div>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
                         {{ widget.requestUri }}
@@ -93,6 +139,8 @@ import {
     BPopover,
     BInputGroupAppend,
     BSpinner,
+    BSkeleton,
+    BSkeletonWrapper,
 } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -130,6 +178,8 @@ import ModalDelete from '@/components/ModalDelete.vue';
         'b-collapse': BCollapse,
         'b-overlay': BOverlay,
         'b-popover': BPopover,
+        'b-skeleton': BSkeleton,
+        'b-skeleton-wrapper': BSkeletonWrapper,
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',
@@ -143,6 +193,7 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
+    skeletonLoading = true;
 
     assetPools!: IAssetPools;
     rewards!: IRewards;
@@ -174,6 +225,7 @@ export default class AssetPoolView extends Vue {
         try {
             await this.$store.dispatch('rewards/read', this.assetPool.address);
             await this.getWidgets();
+            this.skeletonLoading = false;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {
