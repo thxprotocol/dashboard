@@ -16,10 +16,7 @@
                 Your asset pool has no rewards configured.
             </b-alert>
             <div class="row pt-2 pb-2">
-                <div class="col-md-3">
-                    <strong>ID</strong>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <strong>Page URL</strong>
                 </div>
                 <div class="col-md-2">
@@ -32,13 +29,9 @@
             </div>
             <b-skeleton-wrapper :loading="skeletonLoading">
                 <template #loading>
-                    <b-form-group class="mb-0" v-for="index in 2" :key="index">
+                    <b-form-group class="mb-0">
                         <hr />
                         <div class="row pt-2 pb-2">
-                            <div class="col-md-3">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
                             <div class="col-md-4">
                                 <b-skeleton animation="fade" width="85%"></b-skeleton>
                                 <b-skeleton animation="fade" width="80%"></b-skeleton>
@@ -51,8 +44,9 @@
                                 <b-skeleton animation="fade" width="85%"></b-skeleton>
                                 <b-skeleton animation="fade" width="80%"></b-skeleton>
                             </div>
-                            <div class="col-md-1">
-                                <b-skeleton type="avatar"></b-skeleton>
+                            <div class="col-md-4 text-right d-flex justify-content-end">
+                                <b-skeleton type="avatar" class="inline"></b-skeleton>
+                                <b-skeleton type="avatar" class="inline ml-1"></b-skeleton>
                             </div>
                         </div>
                     </b-form-group>
@@ -60,9 +54,6 @@
                 <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
                     <hr />
                     <div class="row pt-2 pb-2">
-                        <div class="col-md-3 d-flex align-items-center">
-                            {{ widget.clientId }}
-                        </div>
                         <div class="col-md-4 d-flex align-items-center">
                             {{ widget.requestUri }}
                         </div>
@@ -72,41 +63,31 @@
                             >
                         </div>
                         <div class="col-md-2 d-flex align-items-center">Claim Button</div>
-                        <div class="col-md-1 text-right">
+                        <div class="col-md-4 text-right">
                             <b-button
                                 class="rounded-pill"
                                 variant="light"
                                 v-b-modal="`modalWidgetEdit-${widget.clientId}`"
                             >
-                                <i class="fas fa-pencil-alt text-primary ml-0"></i
-                            ></b-button>
+                                <i class="fas fa-pencil-alt text-primary ml-0"></i>
+                            </b-button>
+                            <b-button
+                                class="rounded-pill ml-1"
+                                variant="light"
+                                v-b-modal="`modalDelete-${widget.clientId}`"
+                            >
+                                <i class="far fa-trash-alt text-primary ml-0"></i>
+                            </b-button>
                         </div>
                     </div>
-                    <div class="col-md-3 d-flex align-items-center">
-                        {{ widget.requestUri }}
-                    </div>
-                    <div class="col-md-2 d-flex align-items-center">
-                        <template v-if="widget.reward"
-                            >{{ widget.reward.withdrawAmount }} {{ assetPool.poolToken.symbol }}</template
-                        >
-                    </div>
-                    <div class="col-md-2 d-flex align-items-center">Claim Button</div>
-                    <div class="col-md-2 text-right">
-                        <b-button class="rounded-pill" variant="light" v-b-modal="`modalWidgetEdit-${widget.clientId}`">
-                            <i class="fas fa-pencil-alt text-primary ml-0"></i
-                        ></b-button>
-                        <b-button
-                            class="rounded-pill ml-1"
-                            variant="light"
-                            v-b-modal="`modalDelete-${widget.clientId}`"
-                        >
-                            <i class="far fa-trash-alt text-primary ml-0"></i
-                        ></b-button>
-                    </div>
+                    <base-modal-widget-edit
+                        :assetPool="assetPool"
+                        :filteredRewards="filteredRewards"
+                        :widget="widget"
+                    />
+                    <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
                 </b-form-group>
             </b-skeleton-wrapper>
-            <base-modal-widget-edit :assetPool="assetPool" :filteredRewards="filteredRewards" :widget="widget" />
-            <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
         </b-card>
 
         <base-modal-widget-create @submit="getWidgets()" :assetPool="assetPool" :filteredRewards="filteredRewards" />

@@ -8,71 +8,108 @@
         <p>Integrate THX API in your app to increase engement with gamified rewards.</p>
         <b-card class="shadow-sm mb-5">
             <b-form-group class="mb-0">
-                <b-form-checkbox @change="updateAssetPool()" class="mb-0" v-model="enableGovernance">
-                    <strong> Enable governance </strong>
-                    (experimental)
-                    <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
-                        <i class="fas fa-question-circle"></i>
-                    </a>
-                    <p class="text-muted mb-0">
-                        Enabling governance will require a voting procedure for adding, updating or withdrawing rewards.
-                    </p>
-                </b-form-checkbox>
-            </b-form-group>
-            <template v-if="enableGovernance">
-                <b-form-group class="mb-0">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-4 d-flex align-items-center">
-                            <label for="rewardPollDuration">
-                                Default reward poll duration
-                                <a
-                                    v-b-tooltip
-                                    title="Default duration of the poll that is started when a reward configuration is added or
-                            changed. This poll should pass to approve the changes."
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </label>
-                        </div>
-                        <div class="col-md-7">
-                            <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
-                        </div>
-                        <div class="col-md-1 text-right">
-                            <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
-                                <i class="fas fa-save ml-0"></i
-                            ></b-button>
-                        </div>
-                    </div>
-                </b-form-group>
+                <b-skeleton-wrapper :loading="assetPoolLoading">
+                    <template #loading>
+                        <b-card>
+                            <b-form-group class="mb-0">
+                                <div class="row pt-2 pb-2">
+                                    <div class="col-md-1 d-flex center-center">
+                                        <b-skeleton animation="fade" width="35%"></b-skeleton>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <b-skeleton animation="fade" width="45%"></b-skeleton>
+                                        <b-skeleton animation="fade" width="80%"></b-skeleton>
+                                    </div>
+                                </div>
+                            </b-form-group>
+                        </b-card>
+                        <hr />
+                        <template>
+                            <div class="row pt-2 pb-2" v-for="index of 2" :key="index">
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <b-skeleton animation="fade" width="80%"></b-skeleton>
+                                </div>
+                                <div class="col-md-7">
+                                    <b-skeleton animation="fade" width="90%"></b-skeleton>
+                                    <b-skeleton animation="fade" width="90%"></b-skeleton>
+                                </div>
+                                <div class="col-md-1">
+                                    <b-skeleton animation="fade" type="avatar"></b-skeleton>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <b-form-checkbox @change="updateAssetPool()" class="mb-0" v-model="enableGovernance">
+                        <strong> Enable governance </strong>
+                        (experimental)
+                        <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                        <p class="text-muted mb-0">
+                            Enabling governance will require a voting procedure for adding, updating or withdrawing
+                            rewards.
+                        </p>
+                    </b-form-checkbox>
 
-                <b-form-group class="mb-0">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-4 d-flex align-items-center">
-                            <label for="rewardPollDuration">
-                                Default withdraw poll duration
-                                <a
-                                    v-b-tooltip
-                                    title=" Default duration of the poll that is started when a reward is claimed by or for a member. This
+                    <template v-if="enableGovernance">
+                        <b-form-group class="mb-0">
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <label for="rewardPollDuration">
+                                        Default reward poll duration
+                                        <a
+                                            v-b-tooltip
+                                            title="Default duration of the poll that is started when a reward configuration is added or
+                            changed. This poll should pass to approve the changes."
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                </div>
+                                <div class="col-md-7">
+                                    <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
+                                </div>
+                                <div class="col-md-1 text-right">
+                                    <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
+                                        <i class="fas fa-save ml-0"></i
+                                    ></b-button>
+                                </div>
+                            </div>
+                        </b-form-group>
+
+                        <b-form-group class="mb-0">
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <label for="rewardPollDuration">
+                                        Default withdraw poll duration
+                                        <a
+                                            v-b-tooltip
+                                            title=" Default duration of the poll that is started when a reward is claimed by or for a member. This
                         poll should pass to be able to withdraw the reward. Only members with a manager role can vote on
                         this poll."
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </label>
-                        </div>
-                        <div class="col-md-7">
-                            <b-form-input id="rewardPollDuration" type="number" v-model="proposeWithdrawPollDuration" />
-                        </div>
-                        <div class="col-md-1 text-right">
-                            <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
-                                <i class="fas fa-save ml-0"></i
-                            ></b-button>
-                        </div>
-                    </div>
-                </b-form-group>
-            </template>
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                </div>
+                                <div class="col-md-7">
+                                    <b-form-input
+                                        id="rewardPollDuration"
+                                        type="number"
+                                        v-model="proposeWithdrawPollDuration"
+                                    />
+                                </div>
+                                <div class="col-md-1 text-right">
+                                    <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
+                                        <i class="fas fa-save ml-0"></i
+                                    ></b-button>
+                                </div>
+                            </div>
+                        </b-form-group> </template
+                ></b-skeleton-wrapper>
+            </b-form-group>
         </b-card>
         <h2>Update rewards</h2>
         <p>
@@ -94,9 +131,9 @@
                 </div>
                 <div class="col-md-1"></div>
             </div>
-            <b-skeleton-wrapper :loading="skeletonLoading">
+            <b-skeleton-wrapper :loading="rewardsLoading">
                 <template #loading>
-                    <b-form-group class="mb-0" v-for="index in 2" :key="index">
+                    <b-form-group class="mb-0">
                         <hr />
                         <div class="row pt-2 pb-2">
                             <div class="col-md-1">
@@ -156,7 +193,7 @@
                             </b-input-group>
                         </div>
                         <div class="col-md-1 text-right">
-                            <b-button class="rounded-pill" variant="primary" @click="updateReward()">
+                            <b-button class="rounded-pill" disabled variant="primary" @click="updateReward()">
                                 <i class="fas fa-save ml-0"></i
                             ></b-button>
                         </div>
@@ -247,7 +284,8 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
-    skeletonLoading = true;
+    rewardsLoading = true;
+    assetPoolLoading = true;
 
     enableGovernance = false;
     rewardPollDuration = 0;
@@ -275,16 +313,16 @@ export default class AssetPoolView extends Vue {
             this.enableGovernance = !this.assetPool.bypassPolls;
             this.rewardPollDuration = this.assetPool.rewardPollDuration;
             this.proposeWithdrawPollDuration = this.assetPool.proposeWithdrawPollDuration;
-            this.skeletonLoading = false;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {
-            this.loading = false;
+            this.rewardsLoading = false;
+            this.assetPoolLoading = false;
         }
     }
 
     async updateAssetPool() {
-        this.loading = true;
+        this.assetPoolLoading = true;
 
         try {
             await this.$store.dispatch('assetPools/update', {
@@ -298,7 +336,7 @@ export default class AssetPoolView extends Vue {
         } catch (e) {
             this.error = 'Could not update your asset pool.';
         } finally {
-            this.loading = false;
+            this.assetPoolLoading = false;
         }
     }
 }
