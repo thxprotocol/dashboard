@@ -103,10 +103,10 @@
                             <i class="far fa-trash-alt text-primary ml-0"></i
                         ></b-button>
                     </div>
-                </div>
-                <base-modal-widget-edit :assetPool="assetPool" :filteredRewards="filteredRewards" :widget="widget" />
-                <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
-            </b-form-group>
+                </b-form-group>
+            </b-skeleton-wrapper>
+            <base-modal-widget-edit :assetPool="assetPool" :filteredRewards="filteredRewards" :widget="widget" />
+            <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
         </b-card>
 
         <base-modal-widget-create @submit="getWidgets()" :assetPool="assetPool" :filteredRewards="filteredRewards" />
