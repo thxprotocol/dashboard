@@ -65,7 +65,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label> Social Channel:</label>
-                            <b-dropdown variant="link" class="dropdown-select">
+                            <b-dropdown variant="link" class="dropdown-select bg-white">
                                 <template #button-content>
                                     <div v-if="channel">
                                         <img
@@ -122,7 +122,7 @@
                     <label> Item:</label>
                     <b-dropdown
                         variant="link"
-                        class="dropdown-select"
+                        class="dropdown-select bg-white"
                         v-if="channel && action && action.items.length > 0"
                     >
                         <template #button-content>
@@ -211,21 +211,21 @@ import { IAccount, IYoutube } from '@/store/modules/account';
 
 @Component({
     components: {
-        'b-modal': BModal,
-        'b-alert': BAlert,
-        'b-link': BLink,
-        'b-card': BCard,
-        'b-input-group': BInputGroup,
-        'b-dropdown': BDropdown,
-        'b-dropdown-item-button': BDropdownItemButton,
-        'b-form-radio': BFormRadio,
-        'b-form-group': BFormGroup,
-        'b-form-input': BFormInput,
-        'b-button': BButton,
-        'b-collapse': BCollapse,
-        'b-form-select': BFormSelect,
-        'b-form-select-option': BFormSelectOption,
-        'b-spinner': BSpinner,
+        BModal,
+        BAlert,
+        BLink,
+        BCard,
+        BInputGroup,
+        BDropdown,
+        BDropdownItemButton,
+        BFormRadio,
+        BFormGroup,
+        BFormInput,
+        BButton,
+        BCollapse,
+        BFormSelect,
+        BFormSelectOption,
+        BSpinner,
     },
     computed: mapGetters({
         profile: 'account/profile',
