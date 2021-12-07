@@ -5,8 +5,7 @@
 </template>
 
 <script lang="ts">
-import { UserProfile } from '@/store/modules/account';
-import { User } from 'oidc-client';
+import { IAccount } from '@/store/modules/account';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { BSpinner } from 'bootstrap-vue';
@@ -16,16 +15,13 @@ import { BSpinner } from 'bootstrap-vue';
     computed: mapGetters({
         privateKey: 'account/privateKey',
         profile: 'account/profile',
-        user: 'account/user',
     }),
 })
 export default class Redirect extends Vue {
     busy = false;
     error = '';
 
-    // getters
-    user!: User;
-    profile!: UserProfile;
+    profile!: IAccount;
     privateKey!: string;
 
     async mounted() {
@@ -34,8 +30,8 @@ export default class Redirect extends Vue {
             await this.$store.dispatch('account/getProfile');
 
             this.$router.push('/');
-        } catch (e) {
-            this.error = e.toString();
+        } catch (error) {
+            this.error = (error as Error).toString();
         }
     }
 }

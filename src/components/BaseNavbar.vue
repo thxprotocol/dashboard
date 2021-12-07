@@ -15,9 +15,17 @@
             </router-link>
             <div class="flex-grow-1 w-100">
                 <b-navbar-nav>
-                    <b-nav-item to="/" class="nav-link-plain">
+                    <b-nav-item to="/pools" class="nav-link-plain">
                         <i class="fas fa-chart-pie mr-2"></i>
                         <span>Asset Pools</span>
+                    </b-nav-item>
+                    <b-nav-item to="/integrations" class="nav-link-plain">
+                        <i class="fas fa-cogs mr-2"></i>
+                        <span>Integrations</span>
+                    </b-nav-item>
+                    <b-nav-item to="/analytics" class="nav-link-plain cursor-not-allowed" disabled>
+                        <i class="fas fa-chart-line mr-2"></i>
+                        <span class="text-muted">Analytics</span>
                     </b-nav-item>
                     <b-nav-item :href="docsUrl" target="_blank" class="nav-link-plain">
                         <i class="far fa-file-alt mr-2"></i>

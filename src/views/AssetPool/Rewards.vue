@@ -5,7 +5,63 @@
             <span>Create a reward</span>
         </b-button>
         <h2 class="font-weight-normal">Rewards</h2>
-        <p>Integrate THX API in your app to increase engement with gamified rewards.</p>
+        <p>
+            Integrate THX API in your app to increase engement with gamified rewards. Update existing rewards
+            immediately or start a poll for the change if governance is enabled.
+            <a :href="docsUrl + '/rewards#2-change-reward-configuration'" target="_blank">
+                <i class="fas fa-question-circle"></i>
+            </a>
+        </p>
+        <b-card class="shadow-sm">
+            <div class="row pt-2 pb-2">
+                <div class="col-md-1">
+                    <strong>#</strong>
+                </div>
+                <div class="col-md-3">
+                    <strong>Withdraw amount</strong>
+                </div>
+                <div class="col-md-3">
+                    <strong>Withdraw poll duration</strong>
+                </div>
+                <div class="col-md-4">
+                    <strong>Withdraw condition</strong>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+            <b-skeleton-wrapper :loading="rewardsLoading">
+                <template #loading>
+                    <b-form-group class="mb-0">
+                        <hr />
+                        <div class="row pt-2 pb-2">
+                            <div class="col-md-1">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-4">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-6">
+                                <b-skeleton animation="fade" width="85%"></b-skeleton>
+                                <b-skeleton animation="fade" width="80%"></b-skeleton>
+                            </div>
+                            <div class="col-md-1">
+                                <b-skeleton type="avatar"></b-skeleton>
+                            </div>
+                        </div>
+                    </b-form-group>
+                </template>
+                <base-list-item-reward
+                    :assetPool="assetPool"
+                    :reward="reward"
+                    :isGovernanceEnabled="enableGovernance"
+                    :key="reward.id"
+                    v-for="reward of filteredRewards"
+                />
+            </b-skeleton-wrapper>
+        </b-card>
+        <hr />
+        <h2>Governance</h2>
         <b-card class="shadow-sm mb-5">
             <b-form-group class="mb-0">
                 <b-skeleton-wrapper :loading="assetPoolLoading">
@@ -107,99 +163,10 @@
                                     ></b-button>
                                 </div>
                             </div>
-                        </b-form-group> </template
-                ></b-skeleton-wrapper>
+                        </b-form-group>
+                    </template>
+                </b-skeleton-wrapper>
             </b-form-group>
-        </b-card>
-        <h2>Update rewards</h2>
-        <p>
-            Update existing rewards immediately or start a poll for the change if governance is enabled.
-            <a :href="docsUrl + '/rewards#2-change-reward-configuration'" target="_blank">
-                <i class="fas fa-question-circle"></i>
-            </a>
-        </p>
-        <b-card class="shadow-sm">
-            <div class="row pt-2 pb-2">
-                <div class="col-md-1">
-                    <strong>#</strong>
-                </div>
-                <div class="col-md-4">
-                    <strong>Withdraw amount</strong>
-                </div>
-                <div class="col-md-6">
-                    <strong>Withdraw poll duration</strong>
-                </div>
-                <div class="col-md-1"></div>
-            </div>
-            <b-skeleton-wrapper :loading="rewardsLoading">
-                <template #loading>
-                    <b-form-group class="mb-0">
-                        <hr />
-                        <div class="row pt-2 pb-2">
-                            <div class="col-md-1">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-4">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-6">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-1">
-                                <b-skeleton type="avatar"></b-skeleton>
-                            </div>
-                        </div>
-                    </b-form-group>
-                </template>
-                <b-form-group class="mb-0" :key="reward.id" v-for="reward of filteredRewards">
-                    <hr />
-                    <div class="row pt-2 pb-2">
-                        <div class="col-md-1 d-flex align-items-center">
-                            <span class="large mr-2 text-primary">#{{ reward.id }}</span>
-                            <template v-if="reward.poll">
-                                <a :id="`rewardPoll-${reward.id}`">
-                                    <i class="fas fa-poll text-primary"></i>
-                                </a>
-                                <b-popover :target="`rewardPoll-${reward.id}`" triggers="hover" placement="top">
-                                    <template #title>Active poll</template>
-
-                                    <p>
-                                        Start {{ reward.poll.startTime }}<br />
-                                        End:{{ reward.poll.endTime }}
-                                    </p>
-
-                                    <p>
-                                        Yes: {{ reward.poll.yesCounter }}<br />
-                                        No: {{ reward.poll.noCounter }}
-                                    </p>
-                                </b-popover>
-                            </template>
-                        </div>
-                        <div class="col-md-4">
-                            <b-input-group :append="assetPool.poolToken.symbol">
-                                <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
-                            </b-input-group>
-                        </div>
-                        <div class="col-md-6">
-                            <b-input-group append="Seconds">
-                                <b-form-input
-                                    type="number"
-                                    :disabled="!enableGovernance"
-                                    v-model="reward.withdrawDuration"
-                                />
-                            </b-input-group>
-                        </div>
-                        <div class="col-md-1 text-right">
-                            <b-button class="rounded-pill" disabled variant="primary" @click="updateReward()">
-                                <i class="fas fa-save ml-0"></i
-                            ></b-button>
-                        </div>
-                    </div>
-                </b-form-group>
-            </b-skeleton-wrapper>
         </b-card>
         <base-modal-reward-create
             :assetPool="assetPool"
@@ -242,10 +209,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
 import BaseModalRewardCreate from '@/components/ModalRewardCreate.vue';
+import BaseListItemReward from '@/components/BaseListItemReward.vue';
 
 @Component({
     components: {
         'base-modal-reward-create': BaseModalRewardCreate,
+        'base-list-item-reward': BaseListItemReward,
         'b-modal': BModal,
         'b-alert': BAlert,
         'b-tabs': BTabs,

@@ -4,29 +4,14 @@ import { User, UserManager } from 'oidc-client';
 
 const BASE_URL = process.env.VUE_APP_BASE_URL;
 
-export class SignupRequest {
-    firstName!: string;
-    lastName!: string;
-    email!: string;
-    address!: string;
-}
-
-export class Account {
-    privateKey = '';
-    address = '';
-    email = '';
-    firstName = '';
-    lastName = '';
-    assetPools: string[] = [];
-    burnProofs: string[] = [];
-    registrationAccessTokens: string[] = [];
-}
-export interface UserProfile {
-    address: string;
+export interface IAccount {
     privateKey: string;
-    burnProofs: string[];
-    memberships: string[];
-    registrationAccessTokens: string[];
+    address: string;
+    youtube: any;
+}
+export interface IAccountUpdates {
+    address: string;
+    googleAccessToken: string;
 }
 
 const config: any = {
@@ -46,11 +31,17 @@ const config: any = {
     scope: 'openid dashboard',
 };
 
+export interface IYoutube {
+    channels: any;
+    videos: any;
+}
+
 @Module({ namespaced: true })
 class AccountModule extends VuexModule {
     userManager: UserManager = new UserManager(config);
     _user!: User;
-    _profile: UserProfile | null = null;
+    _profile: IAccount | null = null;
+    _youtube: IYoutube | null = null;
 
     get user() {
         return this._user;
@@ -60,14 +51,23 @@ class AccountModule extends VuexModule {
         return this._profile;
     }
 
+    get youtube() {
+        return this._youtube;
+    }
+
     @Mutation
     setUser(user: User) {
         this._user = user;
     }
 
     @Mutation
-    setUserProfile(profile: UserProfile) {
+    setAccount(profile: IAccount) {
         this._profile = profile;
+    }
+
+    @Mutation
+    setYoutube(data: IYoutube) {
+        this._youtube = data;
     }
 
     @Action
@@ -88,14 +88,14 @@ class AccountModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: process.env.VUE_APP_AUTH_URL + '/me',
+                url: '/account',
             });
 
             if (r.status !== 200) {
                 throw Error('GET /account failed.');
             }
 
-            this.context.commit('setUserProfile', r.data);
+            this.context.commit('setAccount', r.data);
 
             return r.data;
         } catch (e) {
@@ -104,7 +104,27 @@ class AccountModule extends VuexModule {
     }
 
     @Action
-    async update(data: UserProfile) {
+    async getYoutube() {
+        try {
+            const r = await axios({
+                method: 'GET',
+                url: '/connect/youtube',
+            });
+
+            if (r.status !== 200) {
+                throw Error('GET /connect/youtube failed.');
+            }
+
+            this.context.commit('setYoutube', r.data);
+
+            return { youtube: r.data };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    @Action
+    async update(data: IAccountUpdates) {
         try {
             const r = await axios({
                 method: 'PATCH',
@@ -116,7 +136,7 @@ class AccountModule extends VuexModule {
                 throw Error('PATCH /account failed.');
             }
 
-            this.context.commit('setUserProfile', r.data);
+            this.context.commit('setAccount', r.data);
         } catch (e) {
             return e;
         }

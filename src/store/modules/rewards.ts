@@ -25,6 +25,7 @@ export class Reward {
     state: RewardState;
     poolAddress: string;
     poll: Poll;
+    condition: IRewardCondition;
 
     constructor(data: any) {
         this.id = data.id;
@@ -33,11 +34,48 @@ export class Reward {
         this.state = data.state;
         this.poolAddress = data.poolAddress;
         this.poll = data.poll;
+        this.condition = data.condition;
     }
 }
 
 export interface IRewards {
     [address: string]: { [id: string]: Reward };
+}
+
+export enum ChannelType {
+    None = 0,
+    YouTube = 1,
+    Twitter = 2,
+    Facebook = 3,
+}
+
+export enum ChannelNoneAction {
+    None = 0,
+}
+
+export enum ChannelYoutubeAction {
+    None = 0,
+    Like = 1,
+    Subscribe = 2,
+}
+
+export interface IRewardCondition {
+    channelType: ChannelType;
+    channelAction: ChannelNoneAction | ChannelYoutubeAction;
+    channelItem: any;
+}
+
+export interface IChannel {
+    type: ChannelType;
+    name: string;
+    logoURI: string;
+    actions: IChannelAction[];
+}
+
+export interface IChannelAction {
+    type: ChannelNoneAction | ChannelYoutubeAction;
+    name: string;
+    items: any[];
 }
 
 @Module({ namespaced: true })
@@ -80,12 +118,15 @@ class RewardModule extends VuexModule {
         address,
         withdrawAmount,
         withdrawDuration,
+        condition,
     }: {
         address: string;
         withdrawAmount: number;
         withdrawDuration: number;
+        condition?: IRewardCondition;
     }) {
         try {
+            debugger;
             const r = await axios({
                 method: 'POST',
                 url: '/rewards',
@@ -95,6 +136,7 @@ class RewardModule extends VuexModule {
                 data: {
                     withdrawAmount: withdrawAmount,
                     withdrawDuration: withdrawDuration,
+                    condition,
                 },
             });
 

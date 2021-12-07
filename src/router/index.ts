@@ -7,6 +7,10 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
     {
         path: '/',
+        redirect: '/pools',
+    },
+    {
+        path: '/pools',
         component: () => import('../views/Home.vue'),
         meta: {
             requiresAuth: true,
@@ -37,6 +41,18 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/AssetPool/Authorization.vue'),
             },
         ],
+    },
+    {
+        path: '/integrations',
+        name: 'Integrations',
+        component: () => import('../views/Integrations.vue'),
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    {
+        path: '/connect/youtube/callback',
+        component: () => import('../views/Integrations.vue'),
     },
     {
         path: '/signup',

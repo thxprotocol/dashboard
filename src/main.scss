@@ -66,6 +66,10 @@ body {
     flex: 0 290px !important;
 }
 
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+
 widgetbot {
     width: 100% !important;
     max-width: 380px !important;

@@ -14,7 +14,7 @@ import { BButton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseNavbar from './components/BaseNavbar.vue';
-import { UserProfile } from './store/modules/account';
+import { IAccount } from './store/modules/account';
 
 @Component({
     components: {
@@ -26,7 +26,7 @@ import { UserProfile } from './store/modules/account';
     }),
 })
 export default class App extends Vue {
-    profile!: UserProfile;
+    profile!: IAccount;
 
     created() {
         (function (w: any, d, s, l: any, i) {

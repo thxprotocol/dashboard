@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { UserProfile } from '@/store/modules/account';
+import { IAccount } from '@/store/modules/account';
 import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
 import { BBadge, BButton, BCard, BLink, BOverlay, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
@@ -99,7 +99,7 @@ export default class BaseAssetPool extends Vue {
 
     @Prop() assetPool!: AssetPool;
 
-    profile!: UserProfile;
+    profile!: IAccount;
     assetPools!: IAssetPools;
     openUrl(url: string) {
         return (window as any).open(url, '_blank').focus();
