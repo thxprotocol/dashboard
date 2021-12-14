@@ -364,7 +364,7 @@ export default class ModalRewardCreate extends Vue {
     async submit(close: boolean) {
         this.loading = true;
         try {
-            const condition =
+            const withdrawCondition =
                 this.channel?.type !== ChannelType.None
                     ? {
                           channelType: this.channel?.type,
@@ -377,7 +377,7 @@ export default class ModalRewardCreate extends Vue {
                 address: this.assetPool.address,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
-                condition,
+                withdrawCondition,
                 isClaimOnce: this.isClaimOnce,
                 isMembershipRequired: this.isMembershipRequired,
             });

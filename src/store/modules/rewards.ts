@@ -25,7 +25,7 @@ export class Reward {
     state: RewardState;
     poolAddress: string;
     poll: Poll;
-    condition: IRewardCondition;
+    withdrawCondition: IRewardCondition;
 
     constructor(data: any) {
         this.id = data.id;
@@ -34,7 +34,7 @@ export class Reward {
         this.state = data.state;
         this.poolAddress = data.poolAddress;
         this.poll = data.poll;
-        this.condition = data.condition;
+        this.withdrawCondition = data.withdrawCondition;
     }
 }
 
@@ -120,14 +120,14 @@ class RewardModule extends VuexModule {
         withdrawDuration,
         isClaimOnce,
         isMembershipRequired,
-        condition,
+        withdrawCondition,
     }: {
         address: string;
         withdrawAmount: number;
         withdrawDuration: number;
         isClaimOnce: boolean;
         isMembershipRequired: boolean;
-        condition?: IRewardCondition;
+        withdrawCondition?: IRewardCondition;
     }) {
         try {
             const r = await axios({
@@ -137,11 +137,11 @@ class RewardModule extends VuexModule {
                     AssetPool: address,
                 },
                 data: {
-                    withdrawAmount: withdrawAmount,
-                    withdrawDuration: withdrawDuration,
+                    withdrawAmount,
+                    withdrawDuration,
+                    withdrawCondition,
                     isClaimOnce,
                     isMembershipRequired,
-                    condition,
                 },
             });
 

@@ -84,11 +84,11 @@ export default class BaseListItemReward extends Vue {
     @Prop() isGovernanceEnabled!: boolean;
 
     get channelType() {
-        return ChannelType[this.reward.condition.channelType];
+        return ChannelType[this.reward.withdrawCondition.channelType];
     }
 
     get channelAction() {
-        return ChannelYoutubeAction[this.reward.condition.channelAction];
+        return ChannelYoutubeAction[this.reward.withdrawCondition.channelAction];
     }
 
     get rewardURL() {
@@ -98,7 +98,7 @@ export default class BaseListItemReward extends Vue {
             tokenSymbol: this.assetPool.poolToken.symbol,
             rewardId: this.reward.id,
             rewardAmount: this.reward.withdrawAmount,
-            rewardCondition: this.reward.condition,
+            rewardCondition: this.reward.withdrawCondition,
         };
         return `${this.walletUrl}/claim?hash=${btoa(JSON.stringify(data))}`;
     }
