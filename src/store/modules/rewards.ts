@@ -118,15 +118,18 @@ class RewardModule extends VuexModule {
         address,
         withdrawAmount,
         withdrawDuration,
+        isClaimOnce,
+        isMembershipRequired,
         condition,
     }: {
         address: string;
         withdrawAmount: number;
         withdrawDuration: number;
+        isClaimOnce: boolean;
+        isMembershipRequired: boolean;
         condition?: IRewardCondition;
     }) {
         try {
-            debugger;
             const r = await axios({
                 method: 'POST',
                 url: '/rewards',
@@ -136,6 +139,8 @@ class RewardModule extends VuexModule {
                 data: {
                     withdrawAmount: withdrawAmount,
                     withdrawDuration: withdrawDuration,
+                    isClaimOnce,
+                    isMembershipRequired,
                     condition,
                 },
             });

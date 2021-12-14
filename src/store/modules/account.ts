@@ -20,13 +20,10 @@ const config: any = {
     client_secret: process.env.VUE_APP_OIDC_CLIENT_SECRET,
     redirect_uri: `${BASE_URL}/signin-oidc`,
     response_type: 'code',
-
     id_token_signed_response_alg: 'RS256',
     post_logout_redirect_uri: BASE_URL,
-
     silent_redirect_uri: `${BASE_URL}/silent-renew`,
     automaticSilentRenew: true,
-
     loadUserInfo: true,
     scope: 'openid dashboard',
 };
@@ -108,7 +105,7 @@ class AccountModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/connect/youtube',
+                url: '/account/youtube',
             });
 
             if (r.status !== 200) {
@@ -139,6 +136,19 @@ class AccountModule extends VuexModule {
             this.context.commit('setAccount', r.data);
         } catch (e) {
             return e;
+        }
+    }
+
+    @Action
+    async connectRedirect() {
+        try {
+            await this.userManager.signinRedirect({
+                extraQueryParams: { prompt: 'connect', return_url: BASE_URL + '/integrations' },
+            });
+        } catch (error) {
+            console.log(error);
+            debugger;
+            return { error };
         }
     }
 

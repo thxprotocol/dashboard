@@ -1,41 +1,48 @@
 <template>
-    <b-card>
-        <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
-        <h2 class="h2">
-            <img height="20" :src="require('../assets/logo-youtube.png')" alt="" />
-            Youtube
-        </h2>
-        <p v-if="youtube">
-            Channels: {{ youtube.channels.length }}<br />
-            Videos: {{ youtube.videos.length }} <br />
-            Expires: {{ Date(profile.googleAccessTokenExpires) }}
-        </p>
-        <b-button
-            v-if="!youtube"
-            :href="`https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=token&scope=https://www.googleapis.com/auth/youtube.readonly%20https://www.googleapis.com/auth/youtube.force-ssl`"
-            variant="primary"
-            block
-            class="rounded-pill"
-        >
-            Connect
-        </b-button>
-        <b-button v-if="youtube" variant="primary" block @click="disconnect()" class="rounded-pill">
-            Disconnect
-        </b-button>
-    </b-card>
+    <b-skeleton-wrapper :loading="isLoading">
+        <template #loading>
+            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
+                <b-skeleton animation="fade" width="65%"></b-skeleton>
+                <hr />
+                <b-skeleton animation="fade" width="55%"></b-skeleton>
+                <b-skeleton animation="fade" class="mb-3" width="70%"></b-skeleton>
+                <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
+            </b-card>
+        </template>
+        <b-card>
+            <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
+            <div class="mb-3 d-flex align-items-center">
+                <img height="30" class="mr-3" :src="require('../assets/logo-youtube.png')" alt="" />
+                <strong> YouTube </strong>
+                <div class="ml-auto"></div>
+            </div>
+            <hr />
+            <p class="text-muted">
+                Connect your YouTube account to reward likes and subscribes on your videos and channels.
+            </p>
+            <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
+                Connect
+            </b-button>
+            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
+                <span class="text-danger">Disconnect</span>
+            </b-button>
+        </b-card>
+    </b-skeleton-wrapper>
 </template>
 
 <script lang="ts">
-import { IYoutube } from '@/store/modules/account';
-import { BAlert, BButton, BCard } from 'bootstrap-vue';
+import { IAccount, IYoutube } from '@/store/modules/account';
+import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     components: {
-        'b-card': BCard,
-        'b-button': BButton,
-        'b-alert': BAlert,
+        BCard,
+        BButton,
+        BAlert,
+        BSkeletonWrapper,
+        BSkeleton,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -47,39 +54,44 @@ export default class Home extends Vue {
     GOOGLE_REDIRECT_URI = process.env.VUE_APP_GOOGLE_REDIRECT_URI;
     isLoading = false;
     youtube!: IYoutube;
+    profile!: IAccount;
     error = '';
 
     async mounted() {
-        if (this.$route.hash) {
+        try {
+            console.log(this.profile);
+            debugger;
             this.isLoading = true;
-
-            try {
-                const fragments = this.$route.hash.split('#access_token=');
-                const expiresIn = fragments[1].split('&expires_in=')[1].split('&scope=')[0];
-                const googleAccessToken = fragments[1].split('&token_type=')[0];
-                const googleAccessTokenExpires = Date.now() + Number(expiresIn) * 1000;
-
-                await this.$store.dispatch('account/update', {
-                    googleAccessToken,
-                    googleAccessTokenExpires,
-                });
-
-                this.$router.push('/integrations');
-            } catch (error) {
-                //
-            } finally {
-                this.isLoading = false;
+            if (this.$route.query.code) {
+                await this.$store.dispatch('account/connectYoutube', this.$route.query.code);
             }
+            await this.getYoutube();
+        } catch (error) {
+            this.error = (error as Error).toString();
+        } finally {
+            this.isLoading = false;
         }
+    }
 
+    async getYoutube() {
         const { error } = await this.$store.dispatch('account/getYoutube');
+        if (error && error.response.status !== 403) {
+            this.error = error.toString();
+        }
+    }
 
-        if (error) this.error = error.toString();
+    async connect() {
+        await this.$store.dispatch('account/connectRedirect');
     }
 
     async disconnect() {
-        // Remove googleAccessToken
-        await this.$store.dispatch('account/update', { googleAccessToken: '' });
+        try {
+            await this.$store.dispatch('account/update', { googleAccess: false });
+
+            this.$store.commit('account/setYoutube', null);
+        } catch (error) {
+            this.error = (error as Error).toString();
+        }
     }
 }
 </script>

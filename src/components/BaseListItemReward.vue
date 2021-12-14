@@ -92,8 +92,15 @@ export default class BaseListItemReward extends Vue {
     }
 
     get rewardURL() {
-        const data = { poolAddress: this.assetPool.address, network: this.assetPool.network, rewardId: this.reward.id };
-        return `${this.walletUrl}/claim/${this.assetPool.poolToken.symbol}/${btoa(JSON.stringify(data))}`;
+        const data = {
+            network: this.assetPool.network,
+            poolAddress: this.assetPool.address,
+            tokenSymbol: this.assetPool.poolToken.symbol,
+            rewardId: this.reward.id,
+            rewardAmount: this.reward.withdrawAmount,
+            rewardCondition: this.reward.condition,
+        };
+        return `${this.walletUrl}/claim?hash=${btoa(JSON.stringify(data))}`;
     }
 }
 </script>

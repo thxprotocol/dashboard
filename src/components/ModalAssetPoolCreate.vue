@@ -254,7 +254,7 @@ export default class ModalAssetPoolCreate extends Vue {
     async getLatestTokenList() {
         const r = await axios({
             method: 'GET',
-            url: `https://unpkg.com/quickswap-default-token-list@1.0.85/build/quickswap-default.tokenlist.json`,
+            url: `https://unpkg.com/quickswap-default-token-list@1.0.90/build/quickswap-default.tokenlist.json`,
             withCredentials: false,
         });
 

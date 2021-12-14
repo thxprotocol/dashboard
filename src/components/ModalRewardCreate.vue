@@ -98,7 +98,7 @@
                             <label> Engagement type:</label>
                             <b-dropdown
                                 variant="link"
-                                class="dropdown-select"
+                                class="dropdown-select bg-white"
                                 v-if="channel && channel.actions.length > 0"
                             >
                                 <template #button-content>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                 </b-form-group>
-                <b-form-group v-if="action">
+                <b-form-group>
                     <label> Item:</label>
                     <b-dropdown
                         variant="link"
@@ -138,20 +138,37 @@
                             </div>
                         </template>
                         <b-dropdown-item-button :key="item.id" v-for="item of action.items" @click="onItemClick(item)">
-                            <img
-                                :src="item.thumbnailURI"
-                                v-if="item.thumbnailURI"
-                                width="80"
-                                height="auto"
-                                class="mr-3"
-                                :alt="item.title"
-                            />
-                            {{ item.title }}
+                            <div class="d-flex">
+                                <div class="d-flex align-items-center">
+                                    <img
+                                        :src="item.thumbnailURI"
+                                        v-if="item.thumbnailURI"
+                                        height="50"
+                                        width="auto"
+                                        class="mr-3"
+                                        :alt="item.title"
+                                    />
+                                </div>
+                                <div class="d-flex flex-grow-1 flex-column">
+                                    <div>
+                                        {{ item.title }}
+                                    </div>
+                                    <div class="flex-row">
+                                        <b-badge
+                                            variant="secondary"
+                                            class="font-weight-normal mr-1"
+                                            :key="key"
+                                            v-for="(tag, key) of item.tags"
+                                        >
+                                            {{ tag }}
+                                        </b-badge>
+                                    </div>
+                                </div>
+                            </div>
                         </b-dropdown-item-button>
                     </b-dropdown>
-                    <p v-else class="small text-muted">Select an engagement type first.</p>
+                    <p v-else class="small text-muted">No items found for this engagement type.</p>
                 </b-form-group>
-
                 <b-form-group v-if="enableGovernance">
                     <label>
                         Withdraw poll duration
@@ -167,6 +184,19 @@
                     <b-input-group append="Seconds">
                         <b-form-input type="number" v-model="rewardWithdrawDuration" />
                     </b-input-group>
+                </b-form-group>
+                <hr />
+                <b-form-group class="mb-0">
+                    <b-form-checkbox v-model="isMembershipRequired">
+                        <strong> Membership required </strong>
+                        <p>Verifies that the user claiming the reward has a membership for the pool.</p>
+                    </b-form-checkbox>
+                </b-form-group>
+                <b-form-group class="mb-0">
+                    <b-form-checkbox class="mb-0" v-model="isClaimOnce">
+                        <strong> Claim once </strong>
+                        <p>Allows the user to claim the reward only once.</p>
+                    </b-form-checkbox>
                 </b-form-group>
             </b-card>
         </form>
@@ -194,6 +224,7 @@ import {
     BCollapse,
     BDropdown,
     BDropdownItemButton,
+    BFormCheckbox,
     BFormGroup,
     BFormInput,
     BFormRadio,
@@ -202,6 +233,7 @@ import {
     BInputGroup,
     BLink,
     BModal,
+    BBadge,
     BSpinner,
 } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
@@ -215,6 +247,7 @@ import { IAccount, IYoutube } from '@/store/modules/account';
         BAlert,
         BLink,
         BCard,
+        BBadge,
         BInputGroup,
         BDropdown,
         BDropdownItemButton,
@@ -226,6 +259,7 @@ import { IAccount, IYoutube } from '@/store/modules/account';
         BFormSelect,
         BFormSelectOption,
         BSpinner,
+        BFormCheckbox,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -236,6 +270,8 @@ export default class ModalRewardCreate extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
+    isClaimOnce = true;
+    isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     channel: null | IChannel = null;
@@ -342,6 +378,8 @@ export default class ModalRewardCreate extends Vue {
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
                 condition,
+                isClaimOnce: this.isClaimOnce,
+                isMembershipRequired: this.isMembershipRequired,
             });
 
             this.rewardWithdrawAmount = 0;
