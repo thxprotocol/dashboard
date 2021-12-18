@@ -14,7 +14,6 @@
             <div class="mb-3 d-flex align-items-center">
                 <img height="30" class="mr-3" :src="require('../assets/logo-youtube.png')" alt="" />
                 <strong> YouTube </strong>
-                <div class="ml-auto"></div>
             </div>
             <hr />
             <p class="text-muted">
@@ -23,7 +22,14 @@
             <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
+            <b-button
+                v-if="youtube"
+                disabled
+                variant="light"
+                block
+                @click="disconnect()"
+                class="rounded-pill cursor-not-allowed"
+            >
                 <span class="text-danger">Disconnect</span>
             </b-button>
         </b-card>
@@ -59,9 +65,8 @@ export default class Home extends Vue {
 
     async mounted() {
         try {
-            console.log(this.profile);
-            debugger;
             this.isLoading = true;
+
             if (this.$route.query.code) {
                 await this.$store.dispatch('account/connectYoutube', this.$route.query.code);
             }

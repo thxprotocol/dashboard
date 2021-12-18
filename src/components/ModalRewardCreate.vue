@@ -169,7 +169,7 @@
                     </b-dropdown>
                     <p v-else class="small text-muted">No items found for this engagement type.</p>
                 </b-form-group>
-                <b-form-group v-if="enableGovernance">
+                <b-form-group v-if="isGovernanceEnabled">
                     <label>
                         Withdraw poll duration
                         <a
@@ -312,7 +312,7 @@ export default class ModalRewardCreate extends Vue {
 
     @Prop() assetPool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
-    @Prop() enableGovernance!: boolean;
+    @Prop() isGovernanceEnabled!: boolean;
 
     async mounted() {
         this.channel = this.channelList[0];

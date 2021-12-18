@@ -20,13 +20,15 @@
                 <div class="col-md-3">
                     <strong>Withdraw amount</strong>
                 </div>
-                <div class="col-md-3">
+                <div v-if="isGovernanceEnabled" class="col-md-3">
                     <strong>Withdraw poll duration</strong>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <strong>Withdraw condition</strong>
                 </div>
-                <div class="col-md-1"></div>
+                <div v-if="isGovernanceEnabled ? 'col-md-5' : 'col-md-4'">
+                    <strong></strong>
+                </div>
             </div>
             <b-skeleton-wrapper :loading="rewardsLoading">
                 <template #loading>
@@ -54,7 +56,7 @@
                 <base-list-item-reward
                     :assetPool="assetPool"
                     :reward="reward"
-                    :isGovernanceEnabled="enableGovernance"
+                    :isGovernanceEnabled="isGovernanceEnabled"
                     :key="reward.id"
                     v-for="reward of filteredRewards"
                 />
@@ -95,7 +97,7 @@
                             </div>
                         </template>
                     </template>
-                    <b-form-checkbox @change="updateAssetPool()" class="mb-0" v-model="enableGovernance">
+                    <b-form-checkbox @change="updateAssetPool()" class="mb-0" v-model="isGovernanceEnabled">
                         <strong> Enable governance </strong>
                         (experimental)
                         <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
@@ -107,7 +109,7 @@
                         </p>
                     </b-form-checkbox>
 
-                    <template v-if="enableGovernance">
+                    <template v-if="isGovernanceEnabled">
                         <b-form-group class="mb-0">
                             <hr />
                             <div class="row">
@@ -171,7 +173,7 @@
         <base-modal-reward-create
             :assetPool="assetPool"
             :filteredRewards="filteredRewards"
-            :enableGovernance="enableGovernance"
+            :isGovernanceEnabled="isGovernanceEnabled"
         />
     </div>
 </template>
@@ -256,7 +258,7 @@ export default class AssetPoolView extends Vue {
     rewardsLoading = true;
     assetPoolLoading = true;
 
-    enableGovernance = false;
+    isGovernanceEnabled = false;
     rewardPollDuration = 0;
     proposeWithdrawPollDuration = 0;
 
@@ -279,7 +281,7 @@ export default class AssetPoolView extends Vue {
             await this.$store.dispatch('assetPools/read', this.$route.params.address);
             await this.$store.dispatch('rewards/read', this.assetPool.address);
 
-            this.enableGovernance = !this.assetPool.bypassPolls;
+            this.isGovernanceEnabled = !this.assetPool.bypassPolls;
             this.rewardPollDuration = this.assetPool.rewardPollDuration;
             this.proposeWithdrawPollDuration = this.assetPool.proposeWithdrawPollDuration;
         } catch (e) {
@@ -297,7 +299,7 @@ export default class AssetPoolView extends Vue {
             await this.$store.dispatch('assetPools/update', {
                 address: this.assetPool.address,
                 data: {
-                    bypassPolls: !this.enableGovernance,
+                    bypassPolls: !this.isGovernanceEnabled,
                     rewardPollDuration: this.rewardPollDuration,
                     proposeWithdrawPollDuration: this.proposeWithdrawPollDuration,
                 },

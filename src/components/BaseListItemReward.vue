@@ -28,13 +28,17 @@
                     <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
                 </b-input-group>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" v-if="isGovernanceEnabled">
                 <b-input-group append="Seconds">
-                    <b-form-input type="number" :disabled="!isGovernanceEnabled" v-model="reward.withdrawDuration" />
+                    <b-form-input type="number" v-model="reward.withdrawDuration" />
                 </b-input-group>
             </div>
-            <div class="col-md-3 d-flex align-items-center">
-                <a target="_blank" :href="`https://youtu.be/${reward.condition.channelItem}`">
+            <div :class="isGovernanceEnabled ? 'col-md-3' : 'col-md-6 '" class="d-flex align-items-center">
+                <a
+                    target="_blank"
+                    v-if="reward.withdrawCondition"
+                    :href="`https://youtu.be/${reward.withdrawCondition.channelItem}`"
+                >
                     <b-badge variant="primary" class="mr-1">{{ channelType }}</b-badge>
                     <b-badge variant="secondary">{{ channelAction }}</b-badge>
                 </a>
@@ -48,9 +52,9 @@
                     <i class="fas fa-qrcode ml-0 text-primary"></i>
                 </b-button>
                 <base-modal-reward-qrcode :assetPool="assetPool" :reward="reward" :rewardURL="rewardURL" />
-                <b-button class="rounded-pill cursor-not-allowed" disabled variant="light" @click="updateReward()">
+                <!-- <b-button class="rounded-pill cursor-not-allowed" disabled variant="light" @click="updateReward()">
                     <i class="fas fa-save ml-0 text-primary"></i>
-                </b-button>
+                </b-button> -->
             </div>
         </div>
     </b-form-group>
