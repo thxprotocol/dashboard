@@ -22,14 +22,7 @@
             <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button
-                v-if="youtube"
-                disabled
-                variant="light"
-                block
-                @click="disconnect()"
-                class="rounded-pill cursor-not-allowed"
-            >
+            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
                 <span class="text-danger">Disconnect</span>
             </b-button>
         </b-card>
@@ -80,7 +73,8 @@ export default class Home extends Vue {
 
     async getYoutube() {
         const { error } = await this.$store.dispatch('account/getYoutube');
-        if (error && error.response.status !== 403) {
+
+        if (error) {
             this.error = error.toString();
         }
     }

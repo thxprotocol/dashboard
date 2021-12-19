@@ -112,9 +112,15 @@ class AccountModule extends VuexModule {
                 throw Error('GET /connect/youtube failed.');
             }
 
-            this.context.commit('setYoutube', r.data);
+            if (r.data.isAuthorized) {
+                this.context.commit('setYoutube', r.data);
 
-            return { youtube: r.data };
+                return { youtube: r.data };
+            }
+
+            return {
+                isAuthorized: false,
+            };
         } catch (error) {
             return { error };
         }
@@ -146,8 +152,6 @@ class AccountModule extends VuexModule {
                 extraQueryParams: { prompt: 'connect', return_url: BASE_URL + '/integrations' },
             });
         } catch (error) {
-            console.log(error);
-            debugger;
             return { error };
         }
     }

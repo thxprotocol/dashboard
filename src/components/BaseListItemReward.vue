@@ -36,8 +36,16 @@
             <div :class="isGovernanceEnabled ? 'col-md-3' : 'col-md-6 '" class="d-flex align-items-center">
                 <a
                     target="_blank"
-                    v-if="reward.withdrawCondition"
+                    v-if="reward.withdrawCondition && reward.withdrawCondition.channelAction == 1"
                     :href="`https://youtu.be/${reward.withdrawCondition.channelItem}`"
+                >
+                    <b-badge variant="primary" class="mr-1">{{ channelType }}</b-badge>
+                    <b-badge variant="secondary">{{ channelAction }}</b-badge>
+                </a>
+                <a
+                    target="_blank"
+                    v-if="reward.withdrawCondition && reward.withdrawCondition.channelAction == 2"
+                    :href="`https://youtube.com/channel/${reward.withdrawCondition.channelItem}`"
                 >
                     <b-badge variant="primary" class="mr-1">{{ channelType }}</b-badge>
                     <b-badge variant="secondary">{{ channelAction }}</b-badge>
