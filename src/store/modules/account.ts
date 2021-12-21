@@ -191,6 +191,7 @@ class AccountModule extends VuexModule {
             const signupEmail = url.searchParams.get('signup_email');
 
             const extraQueryParams: any = {
+                prompt: 'create',
                 return_url: BASE_URL,
             };
 
@@ -198,10 +199,7 @@ class AccountModule extends VuexModule {
                 extraQueryParams['signup_email'] = signupEmail;
             }
 
-            debugger;
-
             return await this.userManager.signinRedirect({
-                prompt: 'create',
                 extraQueryParams,
             });
         } catch (e) {
