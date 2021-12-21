@@ -12,17 +12,15 @@
         <b-card>
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
-                <img height="30" class="mr-3" :src="require('../assets/logo-youtube.png')" alt="" />
-                <strong> YouTube </strong>
+                <img height="30" class="mr-3" :src="require('../assets/logo-twitter.png')" alt="" />
+                <strong> Twitter </strong>
             </div>
             <hr />
-            <p class="text-muted">
-                Connect your YouTube account to reward likes and subscribes on your videos and channels.
-            </p>
-            <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
+            <p class="text-muted">Connect your Twitter account to reward retweets and followers.</p>
+            <b-button v-if="!twitter" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
+            <b-button v-if="twitter" variant="light" block @click="disconnect()" class="rounded-pill">
                 <span class="text-danger">Disconnect</span>
             </b-button>
         </b-card>
@@ -30,10 +28,10 @@
 </template>
 
 <script lang="ts">
-import { IAccount, IYoutube } from '@/store/modules/account';
+import { IAccount, ITwitter } from '@/store/modules/account';
 import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
@@ -46,34 +44,23 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({
         profile: 'account/profile',
-        youtube: 'account/youtube',
+        twitter: 'account/twitter',
     }),
 })
 export default class Home extends Vue {
     isLoading = false;
-    youtube!: IYoutube;
+    twitter!: ITwitter;
     profile!: IAccount;
     error = '';
 
-    @Prop() channelType!: ChannelType;
-
     async mounted() {
-        try {
-            this.isLoading = true;
-
-            if (this.$route.query.code) {
-                await this.$store.dispatch('account/connectYoutube', this.$route.query.code);
-            }
-            await this.getYoutube();
-        } catch (error) {
-            this.error = (error as Error).toString();
-        } finally {
-            this.isLoading = false;
-        }
+        this.isLoading = true;
+        await this.getTwitter();
+        this.isLoading = false;
     }
 
-    async getYoutube() {
-        const { error } = await this.$store.dispatch('account/getYoutube');
+    async getTwitter() {
+        const { error } = await this.$store.dispatch('account/getTwitter');
 
         if (error) {
             this.error = error.toString();
@@ -81,14 +68,14 @@ export default class Home extends Vue {
     }
 
     async connect() {
-        await this.$store.dispatch('account/connectRedirect', ChannelType.YouTube);
+        await this.$store.dispatch('account/connectRedirect', ChannelType.Twitter);
     }
 
     async disconnect() {
         try {
-            await this.$store.dispatch('account/update', { googleAccess: false });
+            await this.$store.dispatch('account/update', { twitterAccess: false });
 
-            this.$store.commit('account/setYoutube', null);
+            this.$store.commit('account/setTwitter', null);
         } catch (error) {
             this.error = (error as Error).toString();
         }

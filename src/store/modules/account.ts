@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { User, UserManager } from 'oidc-client';
+import { ChannelType } from './rewards';
 
 const BASE_URL = process.env.VUE_APP_BASE_URL;
 
@@ -31,6 +32,11 @@ const config: any = {
 export interface IYoutube {
     channels: any;
     videos: any;
+}
+
+export interface ITwitter {
+    tweets: any;
+    profile: any;
 }
 
 @Module({ namespaced: true })
@@ -146,10 +152,10 @@ class AccountModule extends VuexModule {
     }
 
     @Action
-    async connectRedirect() {
+    async connectRedirect(channel: ChannelType) {
         try {
             await this.userManager.signinRedirect({
-                extraQueryParams: { prompt: 'connect', return_url: BASE_URL + '/integrations' },
+                extraQueryParams: { channel, prompt: 'connect', return_url: BASE_URL + '/integrations' },
             });
         } catch (error) {
             return { error };
