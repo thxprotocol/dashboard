@@ -22,9 +22,16 @@
             <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
+            <b-button
+                v-if="youtube"
+                variant="light"
+                block
+                v-b-modal="`modalDelete-${channelType}`"
+                class="rounded-pill"
+            >
                 <span class="text-danger">Disconnect</span>
             </b-button>
+            <modal-delete :id="`modalDelete-${channelType}`" :call="disconnect" subject="YouTube integration" />
         </b-card>
     </b-skeleton-wrapper>
 </template>
@@ -35,9 +42,11 @@ import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import ModalDelete from './ModalDelete.vue';
 
 @Component({
     components: {
+        ModalDelete,
         BCard,
         BButton,
         BAlert,
