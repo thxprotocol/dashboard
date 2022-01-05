@@ -47,7 +47,7 @@ import { mapGetters } from 'vuex';
         twitter: 'account/twitter',
     }),
 })
-export default class Home extends Vue {
+export default class BaseIntegrationTwitter extends Vue {
     isLoading = false;
     twitter!: ITwitter;
     profile!: IAccount;

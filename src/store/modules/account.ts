@@ -45,6 +45,7 @@ class AccountModule extends VuexModule {
     _user!: User;
     _profile: IAccount | null = null;
     _youtube: IYoutube | null = null;
+    _twitter: ITwitter | null = null;
 
     get user() {
         return this._user;
@@ -56,6 +57,10 @@ class AccountModule extends VuexModule {
 
     get youtube() {
         return this._youtube;
+    }
+
+    get twitter() {
+        return this._twitter;
     }
 
     @Mutation
@@ -71,6 +76,11 @@ class AccountModule extends VuexModule {
     @Mutation
     setYoutube(data: IYoutube) {
         this._youtube = data;
+    }
+
+    @Mutation
+    setTwitter(data: ITwitter) {
+        this._twitter = data;
     }
 
     @Action
@@ -122,6 +132,32 @@ class AccountModule extends VuexModule {
                 this.context.commit('setYoutube', r.data);
 
                 return { youtube: r.data };
+            }
+
+            return {
+                isAuthorized: false,
+            };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    @Action
+    async getTwitter() {
+        try {
+            const r = await axios({
+                method: 'GET',
+                url: '/account/twitter',
+            });
+
+            if (r.status !== 200) {
+                throw Error('GET /connect/twitter failed.');
+            }
+
+            if (r.data.isAuthorized) {
+                this.context.commit('setTwitter', r.data);
+
+                return { twitter: r.data };
             }
 
             return {

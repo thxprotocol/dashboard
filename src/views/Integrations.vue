@@ -16,6 +16,9 @@
                 <div class="col-md-6 col-lg-4">
                     <base-integration-youtube />
                 </div>
+                <div class="col-md-6 col-lg-4">
+                    <base-integration-twitter />
+                </div>
             </div>
         </div>
     </div>
@@ -26,6 +29,7 @@ import { BAlert, BButton, BCard, BJumbotron } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIntegrationYoutube from '@/components/BaseIntegrationYoutube.vue';
+import BaseIntegrationTwitter from '@/components/BaseIntegrationTwitter.vue';
 
 @Component({
     components: {
@@ -34,6 +38,7 @@ import BaseIntegrationYoutube from '@/components/BaseIntegrationYoutube.vue';
         'b-alert': BAlert,
         'b-button': BButton,
         'base-integration-youtube': BaseIntegrationYoutube,
+        BaseIntegrationTwitter,
     },
     computed: mapGetters({
         profile: 'account/profile',

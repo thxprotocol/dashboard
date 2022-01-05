@@ -96,77 +96,34 @@
                         </div>
                         <div class="col-md-6">
                             <label> Engagement type:</label>
-                            <b-dropdown
-                                variant="link"
-                                class="dropdown-select bg-white"
+                            <base-dropdown-channel-actions
                                 v-if="channel && channel.actions.length > 0"
-                            >
-                                <template #button-content>
-                                    <div v-if="action">
-                                        {{ action.name }}
-                                    </div>
-                                </template>
-                                <b-dropdown-item-button
-                                    :key="action.type"
-                                    v-for="action of channel.actions"
-                                    @click="onActionClick(action)"
-                                >
-                                    {{ action.name }}
-                                </b-dropdown-item-button>
-                            </b-dropdown>
+                                :actions="channelActions.filter((action) => channel.actions.includes(action.type))"
+                                @selected="onActionClick(channel.type, $event)"
+                            />
                             <p v-else class="small text-muted">Select a channel first.</p>
                         </div>
                     </div>
                 </b-form-group>
                 <b-form-group>
                     <label> Item:</label>
-                    <b-dropdown
-                        variant="link"
-                        class="dropdown-select bg-white"
-                        v-if="channel && action && action.items.length > 0"
-                    >
-                        <template #button-content>
-                            <div v-if="item">
-                                <img
-                                    :src="item.thumbnailURI"
-                                    v-if="item.thumbnailURI"
-                                    width="30"
-                                    class="mr-2"
-                                    :alt="item.title"
-                                />
-                                {{ item.title }}
-                            </div>
-                        </template>
-                        <b-dropdown-item-button :key="item.id" v-for="item of action.items" @click="onItemClick(item)">
-                            <div class="d-flex">
-                                <div class="d-flex align-items-center">
-                                    <img
-                                        :src="item.thumbnailURI"
-                                        v-if="item.thumbnailURI"
-                                        height="50"
-                                        width="auto"
-                                        class="mr-3"
-                                        :alt="item.title"
-                                    />
-                                </div>
-                                <div class="d-flex flex-grow-1 flex-column">
-                                    <div>
-                                        {{ item.title }}
-                                    </div>
-                                    <div class="flex-row">
-                                        <b-badge
-                                            variant="secondary"
-                                            class="font-weight-normal mr-1"
-                                            :key="key"
-                                            v-for="(tag, key) of item.tags"
-                                        >
-                                            {{ tag }}
-                                        </b-badge>
-                                    </div>
-                                </div>
-                            </div>
-                        </b-dropdown-item-button>
-                    </b-dropdown>
+                    <template v-if="channel && action && action.items.length > 0">
+                        <base-dropdown-youtube-videos
+                            v-if="action.type === 0"
+                            @selected="item = $event"
+                            :items="action.items"
+                        />
+                        <base-dropdown-youtube-channels
+                            v-if="action.type === 1"
+                            @selected="item = $event"
+                            :items="action.items"
+                        />
+                        <base-dropdown-twitter-tweets
+                            v-if="action.type === 2 || action.type === 3"
+                            @selected="item = $event"
+                            :items="action.items"
+                        />
+                    </template>
                     <p v-else class="small text-muted">No items found for this engagement type.</p>
                 </b-form-group>
                 <b-form-group v-if="isGovernanceEnabled">
@@ -238,8 +195,12 @@ import {
 } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { ChannelType, ChannelYoutubeAction, IChannel, IChannelAction, Reward } from '@/store/modules/rewards';
-import { IAccount, IYoutube } from '@/store/modules/account';
+import { ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/store/modules/rewards';
+import { IAccount, ITwitter, IYoutube } from '@/store/modules/account';
+import BaseDropdownYoutubeVideos from './BaseDropdownYoutubeVideos.vue';
+import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
+import BaseDropdownChannelActions from './BaseDropdownChannelActions.vue';
+import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
 
 @Component({
     components: {
@@ -260,10 +221,15 @@ import { IAccount, IYoutube } from '@/store/modules/account';
         BFormSelectOption,
         BSpinner,
         BFormCheckbox,
+        BaseDropdownYoutubeVideos,
+        BaseDropdownYoutubeChannels,
+        BaseDropdownTwitterTweets,
+        BaseDropdownChannelActions,
     },
     computed: mapGetters({
         profile: 'account/profile',
         youtube: 'account/youtube',
+        twitter: 'account/twitter',
     }),
 })
 export default class ModalRewardCreate extends Vue {
@@ -288,27 +254,40 @@ export default class ModalRewardCreate extends Vue {
             type: ChannelType.YouTube,
             name: ChannelType[1],
             logoURI: require('@/assets/logo-youtube.png'),
-            actions: [
-                {
-                    type: ChannelYoutubeAction.None,
-                    name: 'None',
-                    items: [],
-                },
-                {
-                    type: ChannelYoutubeAction.Like,
-                    name: 'Like',
-                    items: [],
-                },
-                {
-                    type: ChannelYoutubeAction.Subscribe,
-                    name: 'Subscribe',
-                    items: [],
-                },
-            ],
+            actions: [ChannelAction.YouTubeLike, ChannelAction.YouTubeSubscribe],
+        },
+        {
+            type: ChannelType.Twitter,
+            name: ChannelType[2],
+            logoURI: require('@/assets/logo-twitter.png'),
+            actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet],
+        },
+    ];
+    channelActions = [
+        {
+            type: ChannelAction.YouTubeLike,
+            name: 'Like',
+            items: [],
+        },
+        {
+            type: ChannelAction.YouTubeSubscribe,
+            name: 'Subscribe',
+            items: [],
+        },
+        {
+            type: ChannelAction.TwitterLike,
+            name: 'Like',
+            items: [],
+        },
+        {
+            type: ChannelAction.TwitterRetweet,
+            name: 'Retweet',
+            items: [],
         },
     ];
     profile!: IAccount;
     youtube!: IYoutube;
+    twitter!: ITwitter;
 
     @Prop() assetPool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
@@ -327,24 +306,40 @@ export default class ModalRewardCreate extends Vue {
                     ? 'Please enable the Youtube integration first.'
                     : 'An issue occured while connecting to Youtube.';
         } else if (this.channel) {
-            this.channel.actions[ChannelYoutubeAction.None].items = [];
-            this.channel.actions[ChannelYoutubeAction.Like].items = this.youtube.videos;
-            this.channel.actions[ChannelYoutubeAction.Subscribe].items = this.youtube.channels;
+            this.channelActions[ChannelAction.YouTubeLike].items = this.youtube.videos;
+            this.channelActions[ChannelAction.YouTubeSubscribe].items = this.youtube.channels;
+        }
+    }
+
+    async getTwitter() {
+        const { error } = await this.$store.dispatch('account/getTwitter');
+
+        if (error) {
+            this.error =
+                error.response.status === 403
+                    ? 'Please enable the Twitter integration first.'
+                    : 'An issue occured while connecting to Twitter.';
+        } else if (this.channel) {
+            this.channelActions[ChannelAction.TwitterLike].items = this.twitter.tweets;
+            this.channelActions[ChannelAction.TwitterRetweet].items = this.twitter.tweets;
         }
     }
 
     async onChannelClick(channel: IChannel) {
         this.action = null;
         this.item = null;
+        this.channel = channel;
 
         switch (channel.type) {
             case ChannelType.None:
-                this.channel = channel;
                 break;
             case ChannelType.YouTube:
-                this.channel = channel;
-                this.action = channel.actions[0];
+                this.action = this.channelActions[channel.actions[0]];
                 await this.getYoutube();
+                break;
+            case ChannelType.Twitter:
+                this.action = this.channelActions[channel.actions[0]];
+                await this.getTwitter();
                 break;
             default:
                 this.error = 'Channel type is not known.';
@@ -352,13 +347,9 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
-    async onActionClick(action: IChannelAction) {
+    async onActionClick(channelType: ChannelType, action: IChannelAction) {
         this.action = action;
-        this.item = this.channelList[ChannelType.YouTube].actions[action.type].items[0];
-    }
-
-    onItemClick(item: any) {
-        this.item = item;
+        this.item = this.channelActions[action.type].items[0];
     }
 
     async submit(close: boolean) {

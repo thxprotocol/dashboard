@@ -49,19 +49,16 @@ export enum ChannelType {
     Facebook = 3,
 }
 
-export enum ChannelNoneAction {
-    None = 0,
-}
-
-export enum ChannelYoutubeAction {
-    None = 0,
-    Like = 1,
-    Subscribe = 2,
+export enum ChannelAction {
+    YouTubeLike = 0,
+    YouTubeSubscribe = 1,
+    TwitterLike = 2,
+    TwitterRetweet = 3,
 }
 
 export interface IRewardCondition {
     channelType: ChannelType;
-    channelAction: ChannelNoneAction | ChannelYoutubeAction;
+    channelAction: ChannelAction;
     channelItem: any;
 }
 
@@ -69,11 +66,11 @@ export interface IChannel {
     type: ChannelType;
     name: string;
     logoURI: string;
-    actions: IChannelAction[];
+    actions: ChannelAction[];
 }
 
 export interface IChannelAction {
-    type: ChannelNoneAction | ChannelYoutubeAction;
+    type: ChannelAction;
     name: string;
     items: any[];
 }

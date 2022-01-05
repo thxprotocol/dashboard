@@ -70,7 +70,7 @@
 
 <script lang="ts">
 import { AssetPool } from '@/store/modules/assetPools';
-import { Reward, ChannelType, ChannelYoutubeAction } from '@/store/modules/rewards';
+import { Reward, ChannelType, ChannelAction } from '@/store/modules/rewards';
 import { BBadge, BButton, BFormGroup, BFormInput, BInputGroup, BPopover } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseModalRewardLink from '@/components/BaseModalRewardLink.vue';
@@ -100,7 +100,7 @@ export default class BaseListItemReward extends Vue {
     }
 
     get channelAction() {
-        return ChannelYoutubeAction[this.reward.withdrawCondition.channelAction];
+        return ChannelAction[this.reward.withdrawCondition.channelAction];
     }
 
     get rewardURL() {
