@@ -278,6 +278,7 @@ export default class AssetPoolView extends Vue {
 
     async mounted() {
         try {
+            await this.$store.dispatch('account/getProfile');
             await this.$store.dispatch('assetPools/read', this.$route.params.address);
             await this.$store.dispatch('rewards/read', this.assetPool.address);
 
