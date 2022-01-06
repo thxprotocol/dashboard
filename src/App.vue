@@ -18,8 +18,8 @@ import { IAccount } from './store/modules/account';
 
 @Component({
     components: {
-        'b-button': BButton,
-        'base-navbar': BaseNavbar,
+        BButton,
+        BaseNavbar,
     },
     computed: mapGetters({
         profile: 'account/profile',

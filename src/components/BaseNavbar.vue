@@ -118,7 +118,10 @@
                             </div>
                         </div>
                     </b-nav-item> -->
-                    <b-nav-item @click="logout()" class="nav-link-plain">
+                    <div class="p-3 border-top border-dark">
+                        <base-gas-admin v-if="profile" />
+                    </div>
+                    <b-nav-item @click="logout()" class="nav-link-plain border-top border-dark">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
                                 <i class="fas fa-sign-out-alt"></i>
@@ -147,19 +150,25 @@ import {
     BSidebar,
 } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
+import BaseGasAdmin from './BaseGasAdmin.vue';
 
 @Component({
     components: {
-        'b-sidebar': BSidebar,
-        'b-button': BButton,
-        'b-navbar': BNavbar,
-        'b-navbar-nav': BNavbarNav,
-        'b-nav-item': BNavItem,
-        'b-navbar-toggle': BNavbarToggle,
-        'b-collapse': BCollapse,
-        'b-dropdown': BDropdown,
-        'b-dropdown-item': BDropdownItem,
+        BSidebar,
+        BButton,
+        BNavbar,
+        BNavbarNav,
+        BNavItem,
+        BNavbarToggle,
+        BCollapse,
+        BDropdown,
+        BDropdownItem,
+        BaseGasAdmin,
     },
+    computed: mapGetters({
+        profile: 'account/profile',
+    }),
 })
 export default class BaseNavbar extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
