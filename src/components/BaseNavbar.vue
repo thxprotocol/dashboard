@@ -72,7 +72,10 @@
                                 <i class="fas fa-wallet"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Web Wallet</span>
+                                <span>Web Wallet</span><br />
+                                <small v-if="profile && profile.address" class="text-muted text-truncate">
+                                    {{ profile.address }}
+                                </small>
                             </div>
                         </div>
                     </b-nav-item>

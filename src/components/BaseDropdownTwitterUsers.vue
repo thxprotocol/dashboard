@@ -2,13 +2,11 @@
     <b-dropdown variant="link" class="dropdown-select bg-white">
         <template #button-content>
             <div v-if="item" class="overflow-hidden">
-                {{ item.text }}
+                {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
             </div>
         </template>
-        <b-dropdown-item-button button-class=" small" :key="item.id" v-for="item of items" @click="onItemClick(item)">
-            <span class="text-muted"> {{ item.created_at }}</span
-            ><br />
-            {{ item.text }}
+        <b-dropdown-item-button :key="item.id" v-for="item of items" @click="onItemClick(item)">
+            {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
         </b-dropdown-item-button>
     </b-dropdown>
 </template>
@@ -27,7 +25,7 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({}),
 })
-export default class BaseDropdownTwitterTweets extends Vue {
+export default class BaseDropdownTwitterUsers extends Vue {
     @Prop() items!: any;
 
     item: any = null;

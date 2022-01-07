@@ -36,7 +36,7 @@ export interface IYoutube {
 
 export interface ITwitter {
     tweets: any;
-    profile: any;
+    users: any;
 }
 
 @Module({ namespaced: true })
@@ -131,7 +131,7 @@ class AccountModule extends VuexModule {
             if (r.data.isAuthorized) {
                 this.context.commit('setYoutube', r.data);
 
-                return { youtube: r.data };
+                return { youtube: r.data, isAuthorized: r.data.isAuthorized };
             }
 
             return {

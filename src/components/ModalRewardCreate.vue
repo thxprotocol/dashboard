@@ -37,12 +37,6 @@
             </p>
         </div>
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
-            <p>
-                Create rewards that can be given to pool members.
-                <a :href="docsUrl + '/rewards#1-create-a-reward'" target="_blank">
-                    <i class="fas fa-question-circle"></i>
-                </a>
-            </p>
             <b-card class="border-0" bg-variant="light" body-class="p-5">
                 <b-form-group>
                     <label>
@@ -65,41 +59,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label> Social Channel:</label>
-                            <b-dropdown variant="link" class="dropdown-select bg-white">
-                                <template #button-content>
-                                    <div v-if="channel">
-                                        <img
-                                            :src="channel.logoURI"
-                                            v-if="channel.logoURI"
-                                            width="20"
-                                            class="mr-2"
-                                            :alt="channel.name"
-                                        />
-                                        {{ channel.name }}
-                                    </div>
-                                </template>
-                                <b-dropdown-item-button
-                                    :key="channel.id"
-                                    v-for="channel of channelList"
-                                    @click="onChannelClick(channel)"
-                                >
-                                    <img
-                                        :src="channel.logoURI"
-                                        v-if="channel.logoURI"
-                                        width="20"
-                                        class="mr-3"
-                                        :alt="channel.name"
-                                    />
-                                    {{ channel.name }}
-                                </b-dropdown-item-button>
-                            </b-dropdown>
+                            <base-dropdown-channel-types :channel="channel" @selected="onChannelClick($event)" />
                         </div>
                         <div class="col-md-6">
                             <label> Engagement type:</label>
                             <base-dropdown-channel-actions
                                 v-if="channel && channel.actions.length > 0"
                                 :actions="channelActions.filter((action) => channel.actions.includes(action.type))"
-                                @selected="onActionClick(channel.type, $event)"
+                                @selected="onActionClick($event)"
                             />
                             <p v-else class="small text-muted">Select a channel first.</p>
                         </div>
@@ -123,8 +90,20 @@
                             @selected="item = $event"
                             :items="action.items"
                         />
+                        <base-dropdown-twitter-users
+                            v-if="action.type === 4"
+                            @selected="item = $event"
+                            :items="action.items"
+                        />
                     </template>
                     <p v-else class="small text-muted">No items found for this engagement type.</p>
+                </b-form-group>
+                <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
+                    <b-alert variant="warning" show class="m-0">
+                        <template v-if="action.type == 2"> Validation is limited to the last 100 likes. </template>
+                        <template v-if="action.type == 3"> Validation is limited to the last 100 retweets. </template>
+                        <template v-if="action.type == 4"> Validation is limited to the last 5000 followers. </template>
+                    </b-alert>
                 </b-form-group>
                 <b-form-group v-if="isGovernanceEnabled">
                     <label>
@@ -195,12 +174,14 @@ import {
 } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/store/modules/rewards';
+import { channelAction, ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/store/modules/rewards';
 import { IAccount, ITwitter, IYoutube } from '@/store/modules/account';
 import BaseDropdownYoutubeVideos from './BaseDropdownYoutubeVideos.vue';
 import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
 import BaseDropdownChannelActions from './BaseDropdownChannelActions.vue';
 import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
+import BaseDropdownTwitterUsers from './BaseDropdownTwitterUsers.vue';
+import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
 
 @Component({
     components: {
@@ -224,7 +205,9 @@ import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
         BaseDropdownYoutubeVideos,
         BaseDropdownYoutubeChannels,
         BaseDropdownTwitterTweets,
+        BaseDropdownTwitterUsers,
         BaseDropdownChannelActions,
+        BaseDropdownChannelTypes,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -233,58 +216,20 @@ import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
     }),
 })
 export default class ModalRewardCreate extends Vue {
+    channelActions = channelAction;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
+
     isClaimOnce = true;
     isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
+
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
     item: any = null;
-    channelList = [
-        {
-            type: ChannelType.None,
-            name: ChannelType[0],
-            logoURI: '',
-            actions: [],
-        },
-        {
-            type: ChannelType.YouTube,
-            name: ChannelType[1],
-            logoURI: require('@/assets/logo-youtube.png'),
-            actions: [ChannelAction.YouTubeLike, ChannelAction.YouTubeSubscribe],
-        },
-        {
-            type: ChannelType.Twitter,
-            name: ChannelType[2],
-            logoURI: require('@/assets/logo-twitter.png'),
-            actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet],
-        },
-    ];
-    channelActions = [
-        {
-            type: ChannelAction.YouTubeLike,
-            name: 'Like',
-            items: [],
-        },
-        {
-            type: ChannelAction.YouTubeSubscribe,
-            name: 'Subscribe',
-            items: [],
-        },
-        {
-            type: ChannelAction.TwitterLike,
-            name: 'Like',
-            items: [],
-        },
-        {
-            type: ChannelAction.TwitterRetweet,
-            name: 'Retweet',
-            items: [],
-        },
-    ];
+
     profile!: IAccount;
     youtube!: IYoutube;
     twitter!: ITwitter;
@@ -293,19 +238,15 @@ export default class ModalRewardCreate extends Vue {
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
 
-    async mounted() {
-        this.channel = this.channelList[0];
-    }
-
     async getYoutube() {
-        const { error } = await this.$store.dispatch('account/getYoutube');
+        const { isAuthorized, error } = await this.$store.dispatch('account/getYoutube');
 
         if (error) {
-            this.error =
-                error.response.status === 403
-                    ? 'Please enable the Youtube integration first.'
-                    : 'An issue occured while connecting to Youtube.';
-        } else if (this.channel) {
+            this.error = 'An issue occured while connecting to Youtube.';
+        } else if (isAuthorized) {
+            this.error = 'Please enable the Youtube integration first.';
+        }
+        if (this.channel) {
             this.channelActions[ChannelAction.YouTubeLike].items = this.youtube.videos;
             this.channelActions[ChannelAction.YouTubeSubscribe].items = this.youtube.channels;
         }
@@ -322,12 +263,13 @@ export default class ModalRewardCreate extends Vue {
         } else if (this.channel) {
             this.channelActions[ChannelAction.TwitterLike].items = this.twitter.tweets;
             this.channelActions[ChannelAction.TwitterRetweet].items = this.twitter.tweets;
+            this.channelActions[ChannelAction.TwitterFollow].items = this.twitter.users;
         }
     }
 
     async onChannelClick(channel: IChannel) {
-        this.action = null;
         this.item = null;
+        this.action = null;
         this.channel = channel;
 
         switch (channel.type) {
@@ -347,7 +289,7 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
-    async onActionClick(channelType: ChannelType, action: IChannelAction) {
+    async onActionClick(action: IChannelAction) {
         this.action = action;
         this.item = this.channelActions[action.type].items[0];
     }
@@ -360,7 +302,7 @@ export default class ModalRewardCreate extends Vue {
                     ? {
                           channelType: this.channel?.type,
                           channelAction: this.action?.type,
-                          channelItem: this.item.id,
+                          channelItem: this.item?.id,
                       }
                     : null;
 

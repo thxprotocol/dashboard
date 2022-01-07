@@ -16,7 +16,7 @@
                 <strong> Twitter </strong>
             </div>
             <hr />
-            <p class="text-muted">Connect your Twitter account to reward retweets and followers.</p>
+            <p class="text-muted">Connect and reward likes, retweets and followers.</p>
             <b-button v-if="!twitter" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>

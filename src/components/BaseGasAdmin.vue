@@ -60,7 +60,7 @@ export default class BaseGasAdmin extends Vue {
 
     async getGasAdminHealth() {
         function getGasPriceVariant({ gasPrice }: { gasPrice: number }) {
-            if (gasPrice > 700) return 'danger';
+            if (gasPrice > 600) return 'danger';
             if (gasPrice > 300) return 'warning';
             return 'success';
         }

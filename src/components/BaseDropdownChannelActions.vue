@@ -36,7 +36,6 @@ export default class BaseDropdownChannelActions extends Vue {
 
     onActionClick(action: any) {
         this.action = action;
-        debugger;
         this.$emit('selected', action);
     }
 }

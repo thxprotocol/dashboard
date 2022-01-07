@@ -34,21 +34,17 @@
                 </b-input-group>
             </div>
             <div :class="isGovernanceEnabled ? 'col-md-3' : 'col-md-6 '" class="d-flex align-items-center">
-                <a
-                    target="_blank"
-                    v-if="reward.withdrawCondition && reward.withdrawCondition.channelAction == 1"
-                    :href="`https://youtu.be/${reward.withdrawCondition.channelItem}`"
-                >
-                    <b-badge variant="primary" class="mr-1">{{ channelType }}</b-badge>
-                    <b-badge variant="secondary">{{ channelAction }}</b-badge>
-                </a>
-                <a
-                    target="_blank"
-                    v-if="reward.withdrawCondition && reward.withdrawCondition.channelAction == 2"
-                    :href="`https://youtube.com/channel/${reward.withdrawCondition.channelItem}`"
-                >
-                    <b-badge variant="primary" class="mr-1">{{ channelType }}</b-badge>
-                    <b-badge variant="secondary">{{ channelAction }}</b-badge>
+                <a v-if="channelItemURL" target="_blank" :href="channelItemURL">
+                    <b-badge class="border p-2" variant="light">
+                        <img
+                            v-if="channelType"
+                            class="mr-2"
+                            height="15"
+                            :src="require(`@/assets/logo-${channelType.toLowerCase()}.png`)"
+                            alt=""
+                        />
+                        {{ channelAction }}
+                    </b-badge>
                 </a>
             </div>
             <div class="col-md-2 d-flex justify-content-end">
@@ -90,17 +86,40 @@ import BaseModalRewardQRCode from '@/components/BaseModalRewardQRCode.vue';
 })
 export default class BaseListItemReward extends Vue {
     walletUrl = process.env.VUE_APP_WALLET_URL;
+    channelType = '';
+    channelAction = '';
+    channelItemURL = '';
 
     @Prop() assetPool!: AssetPool;
     @Prop() reward!: Reward;
     @Prop() isGovernanceEnabled!: boolean;
 
-    get channelType() {
-        return ChannelType[this.reward.withdrawCondition.channelType];
+    mounted() {
+        if (this.reward.withdrawCondition) {
+            this.channelType = ChannelType[this.reward.withdrawCondition.channelType];
+            this.channelAction = ChannelAction[this.reward.withdrawCondition.channelAction];
+            this.channelItemURL = this.getChannelActionURL(
+                this.reward.withdrawCondition.channelAction,
+                this.reward.withdrawCondition.channelItem,
+            );
+        }
     }
 
-    get channelAction() {
-        return ChannelAction[this.reward.withdrawCondition.channelAction];
+    getChannelActionURL(channelAction: ChannelAction, channelItem: string) {
+        switch (channelAction) {
+            case ChannelAction.YouTubeLike:
+                return `https://youtu.be/${channelItem}`;
+            case ChannelAction.YouTubeSubscribe:
+                return `https://youtube.com/channel/${channelItem}`;
+            case ChannelAction.TwitterLike:
+                return `https://www.twitter.com/twitter/status/${channelItem}`;
+            case ChannelAction.TwitterRetweet:
+                return `https://www.twitter.com/twitter/status/${channelItem}`;
+            case ChannelAction.TwitterFollow:
+                return `https://www.twitter.com/i/user/${channelItem}`;
+            default:
+                return '';
+        }
     }
 
     get rewardURL() {

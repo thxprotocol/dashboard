@@ -16,9 +16,7 @@
                 <strong> YouTube </strong>
             </div>
             <hr />
-            <p class="text-muted">
-                Connect your YouTube account to reward likes and subscribes on your videos and channels.
-            </p>
+            <p class="text-muted">Connect and reward likes and subscribes.</p>
             <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>

@@ -54,7 +54,56 @@ export enum ChannelAction {
     YouTubeSubscribe = 1,
     TwitterLike = 2,
     TwitterRetweet = 3,
+    TwitterFollow = 4,
 }
+
+export const channelList = [
+    {
+        type: ChannelType.None,
+        name: ChannelType[0],
+        logoURI: '',
+        actions: [],
+    },
+    {
+        type: ChannelType.YouTube,
+        name: ChannelType[1],
+        logoURI: require('@/assets/logo-youtube.png'),
+        actions: [ChannelAction.YouTubeLike, ChannelAction.YouTubeSubscribe],
+    },
+    {
+        type: ChannelType.Twitter,
+        name: ChannelType[2],
+        logoURI: require('@/assets/logo-twitter.png'),
+        actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet, ChannelAction.TwitterFollow],
+    },
+];
+export const channelAction = [
+    {
+        type: ChannelAction.YouTubeLike,
+        name: 'Like',
+        items: [],
+    },
+    {
+        type: ChannelAction.YouTubeSubscribe,
+        name: 'Subscribe',
+        items: [],
+    },
+    {
+        type: ChannelAction.TwitterLike,
+        name: 'Like',
+        items: [],
+    },
+    {
+        type: ChannelAction.TwitterRetweet,
+        name: 'Retweet',
+        items: [],
+    },
+    {
+        type: ChannelAction.TwitterFollow,
+        name: 'Follow',
+        items: [],
+    },
+];
 
 export interface IRewardCondition {
     channelType: ChannelType;
