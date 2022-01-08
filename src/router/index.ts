@@ -51,8 +51,8 @@ const routes: Array<RouteConfig> = [
         },
     },
     {
-        path: '/connect/youtube/callback',
-        component: () => import('../views/Integrations.vue'),
+        path: '/account',
+        component: () => import('../views/Account.vue'),
     },
     {
         path: '/signup',

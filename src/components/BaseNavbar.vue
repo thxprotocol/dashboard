@@ -10,9 +10,11 @@
         shadow
     >
         <b-navbar toggleable="lg" class="sidebar">
-            <router-link to="/" class="pb-5">
-                <img :src="require('@/assets/logo.png')" width="35" alt="THX logo" />
-            </router-link>
+            <div class="w-100 p-3 pb-5">
+                <router-link to="/">
+                    <img :src="require('@/assets/logo.png')" width="40" alt="THX logo" />
+                </router-link>
+            </div>
             <div class="flex-grow-1 w-100">
                 <b-navbar-nav>
                     <b-nav-item to="/pools" class="nav-link-plain">

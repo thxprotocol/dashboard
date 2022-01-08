@@ -3,6 +3,13 @@
         <b-button class="btn-menu shadow-sm" variant="link" v-b-toggle.sidebar-left>
             <i class="fas fa-bars"> </i
         ></b-button>
+        <b-button v-if="profile" variant="darker" class="identicon shadow-sm" to="/account">
+            <img
+                :src="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
+                width="20"
+                alt="User identicon"
+            />
+        </b-button>
         <base-navbar />
         <div class="sidebar-sibling">
             <router-view />

@@ -6,7 +6,7 @@
                 'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
             }"
         >
-            <div class="container container-md pt-5 pb-5">
+            <div class="container container-md pt-10 pb-5">
                 <p class="brand-text">Integrations</p>
                 <p>Connect your social accounts and create automated token rewards for you audience.</p>
             </div>

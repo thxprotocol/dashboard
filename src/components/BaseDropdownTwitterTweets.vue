@@ -5,8 +5,13 @@
                 {{ item.text }}
             </div>
         </template>
-        <b-dropdown-item-button button-class=" small" :key="item.id" v-for="item of items" @click="onItemClick(item)">
-            <span class="text-muted"> {{ item.created_at }}</span
+        <b-dropdown-item-button
+            button-class="border-bottom small"
+            :key="item.id"
+            v-for="item of items"
+            @click="onItemClick(item)"
+        >
+            <span class="text-muted"> {{ format(new Date(item.created_at), 'HH:mm MMMM dd, yyyy') }}</span
             ><br />
             {{ item.text }}
         </b-dropdown-item-button>
@@ -17,6 +22,7 @@
 import { BDropdown, BDropdownItemButton, BBadge, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import { format } from 'date-fns';
 
 @Component({
     components: {
@@ -28,6 +34,8 @@ import { mapGetters } from 'vuex';
     computed: mapGetters({}),
 })
 export default class BaseDropdownTwitterTweets extends Vue {
+    format = format;
+
     @Prop() items!: any;
 
     item: any = null;
@@ -42,13 +50,3 @@ export default class BaseDropdownTwitterTweets extends Vue {
     }
 }
 </script>
-<style scoped lang="scss">
-.dropdown-select .dropdown-item {
-    white-space: normal;
-    border-bottom: 1px solid white;
-
-    &:last-child {
-        border-bottom: 0;
-    }
-}
-</style>
