@@ -1,8 +1,8 @@
 <template>
-    <div id="app" class="bg-light">
-        <b-button class="btn-menu shadow-sm" variant="link" v-b-toggle.sidebar-left>
-            <i class="fas fa-bars"> </i
-        ></b-button>
+    <div id="app" :class="{ 'is-alert-shown': isAlertShown }">
+        <b-button class="btn-menu shadow-sm" variant="darker" v-b-toggle.sidebar-left>
+            <i class="fas fa-bars"> </i>
+        </b-button>
         <b-button v-if="profile" variant="darker" class="identicon shadow-sm" to="/account">
             <img
                 :src="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
@@ -12,12 +12,20 @@
         </b-button>
         <base-navbar />
         <div class="sidebar-sibling">
+            <b-alert show dismissible @dismissed="isAlertShown = false" variant="info" class="alert-top">
+                <b-link
+                    target="_blank"
+                    href="https://medium.com/thxprotocol/product-update-shipped-youtube-conditional-rewards-%EF%B8%8F-and-more-93470d5322c3"
+                >
+                    <strong>New:</strong> YouTube Conditional Rewards!🎞️🏆✨
+                </b-link>
+            </b-alert>
             <router-view />
         </div>
     </div>
 </template>
 <script lang="ts">
-import { BButton } from 'bootstrap-vue';
+import { BAlert, BButton, BLink } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseNavbar from './components/BaseNavbar.vue';
@@ -25,6 +33,8 @@ import { IAccount } from './store/modules/account';
 
 @Component({
     components: {
+        BLink,
+        BAlert,
         BButton,
         BaseNavbar,
     },
@@ -33,6 +43,7 @@ import { IAccount } from './store/modules/account';
     }),
 })
 export default class App extends Vue {
+    isAlertShown = true;
     profile!: IAccount;
 
     created() {

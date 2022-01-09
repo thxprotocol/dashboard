@@ -9,7 +9,7 @@
                 <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
             </b-card>
         </template>
-        <b-card>
+        <b-card class="mb-3">
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
                 <img height="30" class="mr-3" :src="require('../assets/logo-youtube.png')" alt="" />
