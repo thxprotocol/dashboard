@@ -1,7 +1,7 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select bg-white">
         <template #button-content>
-            <div v-if="item" class="overflow-hidden">
+            <div v-if="item" class="text-overflow-ellipsis">
                 {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
             </div>
         </template>

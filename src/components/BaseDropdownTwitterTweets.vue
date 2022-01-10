@@ -1,7 +1,7 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select bg-white">
         <template #button-content>
-            <div v-if="item" class="overflow-hidden">
+            <div v-if="item" class="text-overflow-ellipsis">
                 {{ item.text }}
             </div>
         </template>

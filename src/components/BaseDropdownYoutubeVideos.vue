@@ -1,7 +1,7 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select bg-white">
         <template #button-content>
-            <div v-if="item">
+            <div v-if="item" class="text-overflow-ellipsis">
                 <img :src="item.thumbnailURI" v-if="item.thumbnailURI" width="30" class="mr-2" :alt="item.title" />
                 {{ item.title }}
             </div>

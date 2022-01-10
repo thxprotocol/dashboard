@@ -17,10 +17,10 @@
             </div>
             <hr />
             <p class="text-muted">Connect and reward likes, retweets and followers.</p>
-            <b-button v-if="!twitter" @click="connect()" variant="primary" block class="rounded-pill">
+            <b-button v-if="!twitter && !error" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button v-if="twitter" variant="light" block @click="disconnect()" class="rounded-pill">
+            <b-button v-if="twitter || error" variant="light" block @click="disconnect()" class="rounded-pill">
                 <span class="text-danger">Disconnect</span>
             </b-button>
         </b-card>

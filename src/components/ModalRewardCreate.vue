@@ -138,7 +138,7 @@
         </form>
         <template v-slot:modal-footer="{}">
             <b-button
-                :disabled="loading"
+                :disabled="isSubmitDisabled"
                 class="rounded-pill"
                 type="submit"
                 variant="primary"
@@ -174,7 +174,14 @@ import {
 } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { channelAction, ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/store/modules/rewards';
+import {
+    channelActionList,
+    ChannelType,
+    ChannelAction,
+    IChannel,
+    IChannelAction,
+    Reward,
+} from '@/store/modules/rewards';
 import { IAccount, ITwitter, IYoutube } from '@/store/modules/account';
 import BaseDropdownYoutubeVideos from './BaseDropdownYoutubeVideos.vue';
 import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
@@ -216,7 +223,7 @@ import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
     }),
 })
 export default class ModalRewardCreate extends Vue {
-    channelActions = channelAction;
+    channelActions = channelActionList;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
@@ -238,15 +245,20 @@ export default class ModalRewardCreate extends Vue {
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
 
+    get isSubmitDisabled() {
+        return (
+            this.loading || this.rewardWithdrawAmount <= 0 || (this.channel?.type !== ChannelType.None && !this.item)
+        );
+    }
+
     async getYoutube() {
         const { isAuthorized, error } = await this.$store.dispatch('account/getYoutube');
 
         if (error) {
             this.error = 'An issue occured while connecting to Youtube.';
-        } else if (isAuthorized) {
+        } else if (!isAuthorized) {
             this.error = 'Please enable the Youtube integration first.';
-        }
-        if (this.channel) {
+        } else if (this.channel) {
             this.channelActions[ChannelAction.YouTubeLike].items = this.youtube.videos;
             this.channelActions[ChannelAction.YouTubeSubscribe].items = this.youtube.channels;
         }

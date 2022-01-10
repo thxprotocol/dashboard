@@ -77,7 +77,7 @@ export const channelList = [
         actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet, ChannelAction.TwitterFollow],
     },
 ];
-export const channelAction = [
+export const channelActionList = [
     {
         type: ChannelAction.YouTubeLike,
         name: 'Like',
