@@ -15,9 +15,9 @@
             <b-alert show dismissible @dismissed="isAlertShown = false" variant="info" class="alert-top">
                 <b-link
                     target="_blank"
-                    href="https://medium.com/thxprotocol/product-update-shipped-youtube-conditional-rewards-%EF%B8%8F-and-more-93470d5322c3"
+                    href="https://medium.com/thxprotocol/product-update-shipped-twitter-conditional-rewards-ed3d03cbd5ff"
                 >
-                    <strong>New:</strong> YouTube Conditional Rewards!🎞️🏆✨
+                    <strong>New:</strong> Twitter Conditional Rewards!🐦🏆✨
                 </b-link>
             </b-alert>
             <router-view />
