@@ -75,11 +75,12 @@
                 <b-form-group>
                     <label> Item:</label>
                     <template v-if="channel && action && action.items.length > 0">
-                        <base-dropdown-youtube-videos
+                        <base-dropdown-youtube-uploads
                             v-if="action.type === 0"
                             @selected="item = $event"
                             :items="action.items"
                         />
+                        <base-dropdown-youtube-video v-if="action.type === 0" @selected="item = $event" />
                         <base-dropdown-youtube-channels
                             v-if="action.type === 1"
                             @selected="item = $event"
@@ -183,7 +184,8 @@ import {
     Reward,
 } from '@/store/modules/rewards';
 import { IAccount, ITwitter, IYoutube } from '@/store/modules/account';
-import BaseDropdownYoutubeVideos from './BaseDropdownYoutubeVideos.vue';
+import BaseDropdownYoutubeVideo from './BaseDropdownYoutubeVideo.vue';
+import BaseDropdownYoutubeUploads from './BaseDropdownYoutubeUploads.vue';
 import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
 import BaseDropdownChannelActions from './BaseDropdownChannelActions.vue';
 import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
@@ -209,7 +211,8 @@ import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
         BFormSelectOption,
         BSpinner,
         BFormCheckbox,
-        BaseDropdownYoutubeVideos,
+        BaseDropdownYoutubeVideo,
+        BaseDropdownYoutubeUploads,
         BaseDropdownYoutubeChannels,
         BaseDropdownTwitterTweets,
         BaseDropdownTwitterUsers,

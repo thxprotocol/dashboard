@@ -52,7 +52,7 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({}),
 })
-export default class BaseDropdownYoutubeVideos extends Vue {
+export default class BaseDropdownYoutubeUploads extends Vue {
     @Prop() items!: any;
 
     item: any = null;
