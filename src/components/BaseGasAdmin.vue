@@ -1,14 +1,14 @@
 <template>
     <div class="gas-admin d-flex justify-content-between small" @click="toggleNetwork()">
         <div>
-            <span :class="`text-${gasAdminHealth.gasPrice.variant}`"> {{ gasAdminHealth.gasPrice.value }} Gwei </span>
-            <a v-b-tooltip :title="`Gas Price on ${currentNetworkName}.`">
-                <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.gasPrice.variant}`"></i>
+            <span :class="`text-${gasAdminHealth.maxFee.variant}`"> {{ gasAdminHealth.maxFee.value }} Gwei </span>
+            <a v-b-tooltip :title="`MaxFeePerGas on ${currentNetworkName}.`">
+                <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.maxFee.variant}`"></i>
             </a>
         </div>
         <div>
             <span :class="`text-${gasAdminHealth.balance.variant}`"> {{ gasAdminHealth.balance.value }} MATIC </span>
-            <a v-b-tooltip :title="`Gas Admin balance on ${currentNetworkName}.`">
+            <a v-b-tooltip :title="`Gas admin balance on ${currentNetworkName}.`">
                 <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.balance.variant}`"></i>
             </a>
         </div>
@@ -30,8 +30,8 @@ export default class BaseGasAdmin extends Vue {
     apiUrl = process.env.VUE_APP_API_URL;
     currentNetwork = NetworkProvider.Main;
     health = [
-        { balance: { value: 0, variant: 'light' }, gasPrice: { value: 0, variant: 'light' } },
-        { balance: { value: 0, variant: 'light' }, gasPrice: { value: 0, variant: 'light' } },
+        { balance: { value: 0, variant: 'light' }, maxFee: { value: 0, variant: 'light' } },
+        { balance: { value: 0, variant: 'light' }, maxFee: { value: 0, variant: 'light' } },
     ];
 
     async mounted() {
@@ -59,9 +59,9 @@ export default class BaseGasAdmin extends Vue {
     }
 
     async getGasAdminHealth() {
-        function getGasPriceVariant({ gasPrice }: { gasPrice: number }) {
-            if (gasPrice > 600) return 'danger';
-            if (gasPrice > 300) return 'warning';
+        function getMaxFeeVariant({ maxFeePerGas }: { maxFeePerGas: number }) {
+            if (maxFeePerGas > 600) return 'danger';
+            if (maxFeePerGas > 300) return 'warning';
             return 'success';
         }
         function getBalanceVariant({ balance }: { balance: number }) {
@@ -84,18 +84,18 @@ export default class BaseGasAdmin extends Vue {
                 value: Math.floor(r.data.testnet.balance * 100) / 100,
                 variant: getBalanceVariant(r.data.testnet),
             };
-            this.health[NetworkProvider.Test].gasPrice = {
-                value: r.data.testnet.gasPrice,
-                variant: getGasPriceVariant(r.data.testnet),
+            this.health[NetworkProvider.Test].maxFee = {
+                value: Math.ceil(r.data.testnet.feeData.maxFeePerGas),
+                variant: getMaxFeeVariant(r.data.testnet.feeData),
             };
 
             this.health[NetworkProvider.Main].balance = {
                 value: Math.floor(r.data.mainnet.balance * 100) / 100,
                 variant: getBalanceVariant(r.data.mainnet),
             };
-            this.health[NetworkProvider.Main].gasPrice = {
-                value: r.data.mainnet.gasPrice,
-                variant: getGasPriceVariant(r.data.mainnet),
+            this.health[NetworkProvider.Main].maxFee = {
+                value: Math.ceil(r.data.mainnet.feeData.maxFeePerGas),
+                variant: getMaxFeeVariant(r.data.mainnet.feeData),
             };
         } catch (error) {
             console.error(error);
