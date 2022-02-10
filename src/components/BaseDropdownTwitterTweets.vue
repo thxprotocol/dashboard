@@ -1,21 +1,24 @@
 <template>
-    <b-dropdown variant="link" class="dropdown-select bg-white">
-        <template #button-content>
-            <div v-if="item" class="text-overflow-ellipsis">
+    <div>
+        <label> Your Tweets:</label>
+        <b-dropdown variant="link" class="dropdown-select bg-white">
+            <template #button-content>
+                <div v-if="item" class="text-overflow-ellipsis">
+                    {{ item.text }}
+                </div>
+            </template>
+            <b-dropdown-item-button
+                button-class="border-bottom small"
+                :key="item.id"
+                v-for="item of items"
+                @click="onItemClick(item)"
+            >
+                <span class="text-muted"> {{ format(new Date(item.created_at), 'HH:mm MMMM dd, yyyy') }}</span
+                ><br />
                 {{ item.text }}
-            </div>
-        </template>
-        <b-dropdown-item-button
-            button-class="border-bottom small"
-            :key="item.id"
-            v-for="item of items"
-            @click="onItemClick(item)"
-        >
-            <span class="text-muted"> {{ format(new Date(item.created_at), 'HH:mm MMMM dd, yyyy') }}</span
-            ><br />
-            {{ item.text }}
-        </b-dropdown-item-button>
-    </b-dropdown>
+            </b-dropdown-item-button>
+        </b-dropdown>
+    </div>
 </template>
 
 <script lang="ts">

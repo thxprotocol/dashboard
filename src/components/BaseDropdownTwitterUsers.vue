@@ -1,14 +1,17 @@
 <template>
-    <b-dropdown variant="link" class="dropdown-select bg-white">
-        <template #button-content>
-            <div v-if="item" class="text-overflow-ellipsis">
+    <div>
+        <label> Your Profiles:</label>
+        <b-dropdown variant="link" class="dropdown-select bg-white">
+            <template #button-content>
+                <div v-if="item" class="text-overflow-ellipsis">
+                    {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
+                </div>
+            </template>
+            <b-dropdown-item-button :key="item.id" v-for="item of items" @click="onItemClick(item)">
                 {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
-            </div>
-        </template>
-        <b-dropdown-item-button :key="item.id" v-for="item of items" @click="onItemClick(item)">
-            {{ item.name }}<b-badge class="ml-2" variant="secondary">@{{ item.username }}</b-badge>
-        </b-dropdown-item-button>
-    </b-dropdown>
+            </b-dropdown-item-button>
+        </b-dropdown>
+    </div>
 </template>
 
 <script lang="ts">

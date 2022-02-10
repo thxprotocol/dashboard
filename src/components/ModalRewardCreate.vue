@@ -73,14 +73,12 @@
                     </div>
                 </b-form-group>
                 <b-form-group>
-                    <label> Item:</label>
                     <template v-if="channel && action && action.items.length > 0">
                         <base-dropdown-youtube-uploads
                             v-if="action.type === 0"
                             @selected="item = $event"
                             :items="action.items"
                         />
-                        <base-dropdown-youtube-video v-if="action.type === 0" @selected="item = $event" />
                         <base-dropdown-youtube-channels
                             v-if="action.type === 1"
                             @selected="item = $event"
@@ -97,7 +95,10 @@
                             :items="action.items"
                         />
                     </template>
-                    <p v-else class="small text-muted">No items found for this engagement type.</p>
+                    <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
+                    <template v-if="channel && action && action.type === 0">
+                        <base-dropdown-youtube-video @selected="item = $event" />
+                    </template>
                 </b-form-group>
                 <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
                     <b-alert variant="warning" show class="m-0">
@@ -230,6 +231,7 @@ export default class ModalRewardCreate extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
+    warning = '';
 
     isClaimOnce = true;
     isMembershipRequired = false;
@@ -259,23 +261,32 @@ export default class ModalRewardCreate extends Vue {
 
         if (error) {
             this.error = 'An issue occured while connecting to Youtube.';
-        } else if (!isAuthorized) {
-            this.error = 'Please enable the Youtube integration first.';
-        } else if (this.channel) {
+        }
+
+        if (!isAuthorized) {
+            this.warning = 'Your YouTube account is not connected.';
+        }
+
+        if (isAuthorized && this.channel) {
+            this.warning = '';
             this.channelActions[ChannelAction.YouTubeLike].items = this.youtube.videos;
             this.channelActions[ChannelAction.YouTubeSubscribe].items = this.youtube.channels;
         }
     }
 
     async getTwitter() {
-        const { error } = await this.$store.dispatch('account/getTwitter');
+        const { isAuthorized, error } = await this.$store.dispatch('account/getTwitter');
 
         if (error) {
-            this.error =
-                error.response.status === 403
-                    ? 'Please enable the Twitter integration first.'
-                    : 'An issue occured while connecting to Twitter.';
-        } else if (this.channel) {
+            this.error = 'An issue occured while connecting to Twitter.';
+        }
+
+        if (!isAuthorized) {
+            this.warning = 'Your Twitter account is not connected.';
+        }
+
+        if (isAuthorized && this.channel) {
+            this.warning = '';
             this.channelActions[ChannelAction.TwitterLike].items = this.twitter.tweets;
             this.channelActions[ChannelAction.TwitterRetweet].items = this.twitter.tweets;
             this.channelActions[ChannelAction.TwitterFollow].items = this.twitter.users;

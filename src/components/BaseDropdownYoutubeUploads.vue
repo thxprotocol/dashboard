@@ -1,41 +1,44 @@
 <template>
-    <b-dropdown variant="link" class="dropdown-select bg-white">
-        <template #button-content>
-            <div v-if="item" class="text-overflow-ellipsis">
-                <img :src="item.thumbnailURI" v-if="item.thumbnailURI" width="30" class="mr-2" :alt="item.title" />
-                {{ item.title }}
-            </div>
-        </template>
-        <b-dropdown-item-button :key="item.id" v-for="item of items" @click="onItemClick(item)">
-            <div class="d-flex">
-                <div class="d-flex align-items-center">
-                    <img
-                        :src="item.thumbnailURI"
-                        v-if="item.thumbnailURI"
-                        height="50"
-                        width="auto"
-                        class="mr-3"
-                        :alt="item.title"
-                    />
+    <div>
+        <label> Your Uploads:</label>
+        <b-dropdown variant="link" class="dropdown-select bg-white">
+            <template #button-content>
+                <div v-if="item" class="text-overflow-ellipsis">
+                    <img :src="item.thumbnailURI" v-if="item.thumbnailURI" width="30" class="mr-2" :alt="item.title" />
+                    {{ item.title }}
                 </div>
-                <div class="d-flex flex-grow-1 flex-column">
-                    <div>
-                        {{ item.title }}
+            </template>
+            <b-dropdown-item-button :key="item.id" v-for="item of items" @click="onItemClick(item)">
+                <div class="d-flex">
+                    <div class="d-flex align-items-center">
+                        <img
+                            :src="item.thumbnailURI"
+                            v-if="item.thumbnailURI"
+                            height="50"
+                            width="auto"
+                            class="mr-3"
+                            :alt="item.title"
+                        />
                     </div>
-                    <div class="flex-row">
-                        <b-badge
-                            variant="secondary"
-                            class="font-weight-normal mr-1"
-                            :key="key"
-                            v-for="(tag, key) of item.tags"
-                        >
-                            {{ tag }}
-                        </b-badge>
+                    <div class="d-flex flex-grow-1 flex-column">
+                        <div>
+                            {{ item.title }}
+                        </div>
+                        <div class="flex-row">
+                            <b-badge
+                                variant="secondary"
+                                class="font-weight-normal mr-1"
+                                :key="key"
+                                v-for="(tag, key) of item.tags"
+                            >
+                                {{ tag }}
+                            </b-badge>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </b-dropdown-item-button>
-    </b-dropdown>
+            </b-dropdown-item-button>
+        </b-dropdown>
+    </div>
 </template>
 
 <script lang="ts">
