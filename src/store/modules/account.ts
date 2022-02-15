@@ -39,6 +39,10 @@ export interface ITwitter {
     users: any;
 }
 
+export interface ISpotify {
+    songs: any;
+}
+
 @Module({ namespaced: true })
 class AccountModule extends VuexModule {
     userManager: UserManager = new UserManager(config);
@@ -46,6 +50,7 @@ class AccountModule extends VuexModule {
     _profile: IAccount | null = null;
     _youtube: IYoutube | null = null;
     _twitter: ITwitter | null = null;
+    _spotify: ISpotify | null = null;
 
     get user() {
         return this._user;
@@ -61,6 +66,10 @@ class AccountModule extends VuexModule {
 
     get twitter() {
         return this._twitter;
+    }
+
+    get spotify() {
+        return this._spotify;
     }
 
     @Mutation
@@ -158,6 +167,32 @@ class AccountModule extends VuexModule {
                 this.context.commit('setTwitter', r.data);
 
                 return { twitter: r.data };
+            }
+
+            return {
+                isAuthorized: false,
+            };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    @Action
+    async getSpotify() {
+        try {
+            const r = await axios({
+                method: 'GET',
+                url: '/account/spotify',
+            });
+
+            if (r.status !== 200) {
+                throw Error('GET /connect/spotify failed.');
+            }
+
+            if (r.data.isAuthorized) {
+                this.context.commit('setSpotify', r.data);
+
+                return { spotify: r.data };
             }
 
             return {
