@@ -92,6 +92,11 @@ class AccountModule extends VuexModule {
         this._twitter = data;
     }
 
+    @Mutation
+    setSpotify(data: ISpotify) {
+        this._spotify = data;
+    }
+
     @Action
     async getUser() {
         try {
@@ -166,7 +171,7 @@ class AccountModule extends VuexModule {
             if (r.data.isAuthorized) {
                 this.context.commit('setTwitter', r.data);
 
-                return { twitter: r.data };
+                return { twitter: r.data, isAuthorized: r.data.isAuthorized };
             }
 
             return {

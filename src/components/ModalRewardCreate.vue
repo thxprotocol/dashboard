@@ -293,6 +293,25 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
+    async getSpotify() {
+        const { isAuthorized, error } = await this.$store.dispatch('account/getSpotify');
+
+        if (error) {
+            this.error = 'An issue occured while connecting to Spotify.';
+        }
+
+        if (!isAuthorized) {
+            this.warning = 'Your Spotify account is not connected.';
+        }
+
+        if (isAuthorized && this.channel) {
+            this.warning = '';
+            // this.channelActions[ChannelAction.SpotfyFollow].items = this.twitter.tweets;
+            // this.channelActions[ChannelAction.TwitterRetweet].items = this.twitter.tweets;
+            // this.channelActions[ChannelAction.TwitterFollow].items = this.twitter.users;
+        }
+    }
+
     async onChannelClick(channel: IChannel) {
         this.item = null;
         this.action = null;
