@@ -92,6 +92,11 @@ class AccountModule extends VuexModule {
         this._twitter = data;
     }
 
+    @Mutation
+    setSpotify(data: ISpotify) {
+        this._spotify = data;
+    }
+
     @Action
     async getUser() {
         try {

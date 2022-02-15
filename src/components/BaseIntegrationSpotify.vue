@@ -12,11 +12,11 @@
         <b-card class="mb-3">
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
-                <img height="30" class="mr-3" :src="require('../assets/logo-twitter.png')" alt="" />
+                <img height="30" class="mr-3" :src="require('../assets/logo-spotify.png')" alt="" />
                 <strong> Spotify </strong>
             </div>
             <hr />
-            <p class="text-muted">Connect and reward likes, retweets and followers.</p>
+            <p class="text-muted">Connect and reward streamings, saves and followers.</p>
             <b-button v-if="!spotify && !error" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
