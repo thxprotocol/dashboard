@@ -19,6 +19,9 @@
                 <div class="col-md-6 col-lg-4">
                     <base-integration-twitter />
                 </div>
+                <div class="col-md-6 col-lg-4">
+                    <base-integration-spotify />
+                </div>
             </div>
         </div>
     </div>
@@ -30,6 +33,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIntegrationYoutube from '@/components/BaseIntegrationYoutube.vue';
 import BaseIntegrationTwitter from '@/components/BaseIntegrationTwitter.vue';
+import BaseIntegrationSpotify from '@/components/BaseIntegrationSpotify.vue';
 
 @Component({
     components: {
@@ -39,6 +43,7 @@ import BaseIntegrationTwitter from '@/components/BaseIntegrationTwitter.vue';
         'b-button': BButton,
         'base-integration-youtube': BaseIntegrationYoutube,
         BaseIntegrationTwitter,
+        BaseIntegrationSpotify,
     },
     computed: mapGetters({
         profile: 'account/profile',

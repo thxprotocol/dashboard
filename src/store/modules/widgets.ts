@@ -1,5 +1,5 @@
-import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
+import { Vue } from 'vue-property-decorator';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { Reward } from './rewards';
 

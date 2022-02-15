@@ -47,6 +47,7 @@ export enum ChannelType {
     YouTube = 1,
     Twitter = 2,
     Facebook = 3,
+    Spotify = 4,
 }
 
 export enum ChannelAction {
@@ -55,6 +56,10 @@ export enum ChannelAction {
     TwitterLike = 2,
     TwitterRetweet = 3,
     TwitterFollow = 4,
+    SpotfyFollow = 5,
+    SpotifyPlaying = 7,
+    SpotifySaved = 8,
+    SpotifyPlayed = 9,
 }
 
 export const channelList = [
@@ -75,6 +80,17 @@ export const channelList = [
         name: ChannelType[2],
         logoURI: require('@/assets/logo-twitter.png'),
         actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet, ChannelAction.TwitterFollow],
+    },
+    {
+        type: ChannelType.Spotify,
+        name: ChannelType[4],
+        logoURI: require('@/assets/logo-twitter.png'),
+        actions: [
+            ChannelAction.SpotfyFollow,
+            ChannelAction.SpotifyPlaying,
+            ChannelAction.SpotifyPlayed,
+            ChannelAction.SpotifySaved,
+        ],
     },
 ];
 export const channelActionList = [
@@ -101,6 +117,26 @@ export const channelActionList = [
     {
         type: ChannelAction.TwitterFollow,
         name: 'Follow',
+        items: [],
+    },
+    {
+        type: ChannelAction.SpotifySaved,
+        name: 'Saved',
+        items: [],
+    },
+    {
+        type: ChannelAction.SpotfyFollow,
+        name: 'Follow',
+        items: [],
+    },
+    {
+        type: ChannelAction.SpotifyPlaying,
+        name: 'Playing',
+        items: [],
+    },
+    {
+        type: ChannelAction.SpotifyPlayed,
+        name: 'Played',
         items: [],
     },
 ];
