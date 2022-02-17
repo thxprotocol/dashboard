@@ -3,30 +3,33 @@
         <div class="d-flex align-items-center">
             <h1 class="mr-3">{{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}</h1>
             <b-badge variant="gray" class="text-white p-2" v-if="network === 0">Polygon Test</b-badge>
-            <b-badge variant="primary" class="p-2" v-if="network === 1">Polygon Main</b-badge>
+            <b-badge variant="success" class="p-2" v-if="network === 1">Polygon Main</b-badge>
         </div>
         <div class="lead">
             {{ assetPool.poolToken.name }}
             <strong>(Total Supply: {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }})</strong>
         </div>
-        <div class="d-flex mb-4 mt-5">
-            <router-link class="btn btn-tab shadow-sm" :to="`/pool/${assetPool.address}/rewards`">
-                <img height="30" :src="require('../assets/thx_pool_rewards.webp')" />
-                <div class="d-none d-md-block">Rewards</div>
+
+        <hr />
+        <ul class="nav nav-pills nav-justified">
+            <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/rewards`">
+                <i class="fas fa-award mr-2"></i>
+                <span class="d-none d-md-inline-block">Rewards</span>
             </router-link>
-            <router-link class="btn btn-tab shadow-sm" :to="`/pool/${assetPool.address}/promocodes`">
-                <img height="30" :src="require('../assets/thx_pool_authorization.webp')" />
-                <div class="d-none d-md-block">Promo Codes</div>
+            <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/promocodes`">
+                <i class="fas fa-tags mr-2"></i>
+                <span class="d-none d-md-inline-block">Promo Codes</span>
             </router-link>
-            <router-link class="btn btn-tab shadow-sm" :to="`/pool/${assetPool.address}/widgets`">
-                <img height="30" :src="require('../assets/thx_pool_widgets.webp')" />
-                <div class="d-none d-md-block">Widgets</div>
+            <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/widgets`">
+                <i class="fas fa-code mr-2"></i>
+                <span class="d-none d-md-inline-block">Widgets</span>
             </router-link>
-            <router-link class="btn btn-tab shadow-sm" :to="`/pool/${assetPool.address}/info`">
-                <img height="30" :src="require('../assets/thx_pool_info.webp')" />
-                <div class="d-none d-md-block">Details</div>
+            <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/info`">
+                <i class="fas fa-info-circle mr-2"></i>
+                <span class="d-none d-md-inline-block">Details</span>
             </router-link>
-        </div>
+        </ul>
+        <hr />
         <router-view></router-view>
     </div>
 </template>

@@ -23,7 +23,7 @@
                                 <i class="fas fa-chart-pie"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Asset Pools</span>
+                                <span>Token Pools</span>
                             </div>
                         </div>
 
