@@ -10,7 +10,7 @@
             </b-card>
         </template>
         <b-card
-            @click="$router.push({ path: `pool/${assetPool.address}/info` })"
+            @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
             class="mt-3 mb-3 shadow-sm cursor-pointer"
         >
             <b-button

@@ -1,7 +1,7 @@
 <template>
     <b-modal
         size="lg"
-        title="Create Asset Pool"
+        title="Create Token Pool"
         id="modalAssetPoolCreate"
         no-close-on-backdrop
         no-close-on-esc

@@ -23,22 +23,22 @@
                                 <i class="fas fa-chart-pie"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Asset Pools</span>
+                                <span>Token Pools</span>
                             </div>
                         </div>
 
                         <div v-if="poolAddress" class="bg-dark p-0">
-                            <b-nav-item :to="`/pool/${poolAddress}/info`" class="nav-link-plain">
-                                <span>Info</span>
-                            </b-nav-item>
                             <b-nav-item :to="`/pool/${poolAddress}/rewards`" class="nav-link-plain">
                                 <span>Rewards</span>
+                            </b-nav-item>
+                            <b-nav-item :to="`/pool/${poolAddress}/promocodes`" class="nav-link-plain">
+                                <span>Redeem</span>
                             </b-nav-item>
                             <b-nav-item :to="`/pool/${poolAddress}/widgets`" class="nav-link-plain">
                                 <span>Widgets</span>
                             </b-nav-item>
-                            <b-nav-item :to="`/pool/${poolAddress}/authorization`" class="nav-link-plain">
-                                <span>Authorization</span>
+                            <b-nav-item :to="`/pool/${poolAddress}/info`" class="nav-link-plain">
+                                <span>Details</span>
                             </b-nav-item>
                             <!-- <b-nav-item :to="`/pool/${poolAddress}/governance`" class="nav-link-plain">
                                 <span>Governance</span>
@@ -126,6 +126,15 @@
                     <div class="p-3 border-top border-dark">
                         <base-gas-admin v-if="profile" />
                     </div>
+                    <b-nav-item class="nav-link-plain">
+                        <b-button v-if="profile" variant="darker" class="identicon shadow-sm" to="/account">
+                            <img
+                                :src="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
+                                width="20"
+                                alt="User identicon"
+                            />
+                        </b-button>
+                    </b-nav-item>
                     <b-nav-item @click="logout()" class="nav-link-plain border-top border-dark">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
@@ -143,32 +152,12 @@
 </template>
 
 <script lang="ts">
-import {
-    BButton,
-    BCollapse,
-    BDropdown,
-    BDropdownItem,
-    BNavbar,
-    BNavbarNav,
-    BNavbarToggle,
-    BNavItem,
-    BSidebar,
-} from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseGasAdmin from './BaseGasAdmin.vue';
 
 @Component({
     components: {
-        BSidebar,
-        BButton,
-        BNavbar,
-        BNavbarNav,
-        BNavItem,
-        BNavbarToggle,
-        BCollapse,
-        BDropdown,
-        BDropdownItem,
         BaseGasAdmin,
     },
     computed: mapGetters({
