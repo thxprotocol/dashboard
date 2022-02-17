@@ -3,23 +3,8 @@
         <b-button class="btn-menu shadow-sm" variant="darker" v-b-toggle.sidebar-left>
             <i class="fas fa-bars"> </i>
         </b-button>
-        <b-button v-if="profile" variant="darker" class="identicon shadow-sm" to="/account">
-            <img
-                :src="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
-                width="20"
-                alt="User identicon"
-            />
-        </b-button>
         <base-navbar />
         <div class="sidebar-sibling">
-            <b-alert show dismissible @dismissed="isAlertShown = false" variant="info" class="alert-top">
-                <b-link
-                    target="_blank"
-                    href="https://medium.com/thxprotocol/product-update-shipped-twitter-conditional-rewards-ed3d03cbd5ff"
-                >
-                    <strong>New:</strong> Twitter Conditional Rewards!🐦🏆✨
-                </b-link>
-            </b-alert>
             <router-view />
         </div>
     </div>

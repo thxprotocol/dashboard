@@ -7,15 +7,14 @@
             }"
         >
             <div class="container container-md pt-10 pb-5">
-                <p class="brand-text">Hello!</p>
-                <p>
-                    Welcome to your personal dashboard. Here you can create and maintain your asset pools on the Polygon
-                    (Ethereum L2) blockchain.
-                </p>
-                <hr class="bg-white mt-5 mb-5" />
-                <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="light">
+                <p class="brand-text">{{ greeting }}</p>
+                <div class="lead mb-5">
+                    Welcome to the head quarters of all your token operations! This is where you create and deploy your
+                    token on the Polygon blockchain and configure rewards to share with your audience.
+                </div>
+                <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create asset pool</span>
+                    <span>Create token</span>
                 </b-button>
                 <b-button :href="docsUrl" target="_blank" variant="link" class="text-light">
                     <i class="far fa-file-alt mr-2"></i>
@@ -24,6 +23,14 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
+            <b-alert show variant="info" class="alert-top">
+                <b-link
+                    target="_blank"
+                    href="https://medium.com/thxprotocol/product-update-shipped-twitter-conditional-rewards-ed3d03cbd5ff"
+                >
+                    <strong>New:</strong> Twitter Conditional Rewards!🐦🏆✨
+                </b-link>
+            </b-alert>
             <div class="row" v-if="assetPools">
                 <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
                     <base-asset-pool :assetPool="assetPool" />
@@ -39,19 +46,20 @@ import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { IAccount } from '@/store/modules/account';
 import { IAssetPools } from '@/store/modules/assetPools';
-import { BAlert, BButton, BCard, BJumbotron, BModal } from 'bootstrap-vue';
+import { BAlert, BButton, BCard, BJumbotron, BLink, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     components: {
-        'base-asset-pool': BaseAssetPool,
-        'modal-asset-pool-create': ModalAssetPoolCreate,
-        'b-jumbotron': BJumbotron,
-        'b-alert': BAlert,
-        'b-button': BButton,
-        'b-card': BCard,
-        'b-modal': BModal,
+        BaseAssetPool,
+        ModalAssetPoolCreate,
+        BJumbotron,
+        BAlert,
+        BLink,
+        BButton,
+        BCard,
+        BModal,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -62,6 +70,11 @@ export default class Home extends Vue {
     profile!: IAccount;
     assetPools!: IAssetPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+
+    get greeting() {
+        const greetings = ['Hi there', 'Howdy', 'Hello'];
+        return greetings[Math.floor(Math.random() * greetings.length)];
+    }
 
     async mounted() {
         try {

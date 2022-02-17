@@ -37,8 +37,8 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/AssetPool/Widgets.vue'),
             },
             {
-                path: 'authorization',
-                component: () => import('../views/AssetPool/Authorization.vue'),
+                path: 'promocodes',
+                component: () => import('../views/AssetPool/PromoCodes.vue'),
             },
         ],
     },
