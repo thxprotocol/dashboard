@@ -14,7 +14,7 @@
                 </div>
                 <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create token</span>
+                    <span>Create token pool</span>
                 </b-button>
                 <b-button :href="docsUrl" target="_blank" variant="link" class="text-light">
                     <i class="far fa-file-alt mr-2"></i>
@@ -46,7 +46,6 @@ import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
 import { IAccount } from '@/store/modules/account';
 import { IAssetPools } from '@/store/modules/assetPools';
-import { BAlert, BButton, BCard, BJumbotron, BLink, BModal } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -54,12 +53,6 @@ import { mapGetters } from 'vuex';
     components: {
         BaseAssetPool,
         ModalAssetPoolCreate,
-        BJumbotron,
-        BAlert,
-        BLink,
-        BButton,
-        BCard,
-        BModal,
     },
     computed: mapGetters({
         profile: 'account/profile',
