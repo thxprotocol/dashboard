@@ -40,7 +40,9 @@ export interface ITwitter {
 }
 
 export interface ISpotify {
-    songs: any;
+    playlists: any;
+    tracks: any;
+    users: any;
 }
 
 @Module({ namespaced: true })
