@@ -46,8 +46,7 @@ export enum ChannelType {
     None = 0,
     YouTube = 1,
     Twitter = 2,
-    Facebook = 3,
-    Spotify = 4,
+    Spotify = 3,
 }
 
 export enum ChannelAction {
@@ -56,10 +55,10 @@ export enum ChannelAction {
     TwitterLike = 2,
     TwitterRetweet = 3,
     TwitterFollow = 4,
-    SpotfyFollow = 5,
-    SpotifyPlaying = 7,
-    SpotifySaved = 8,
-    SpotifyPlayed = 9,
+    SpotifyUserFollow = 5,
+    SpotifyPlaylistFollow = 6,
+    SpotifyTrackPlaying = 7,
+    SpotifyTrackSaved = 8,
 }
 
 export const channelList = [
@@ -83,13 +82,13 @@ export const channelList = [
     },
     {
         type: ChannelType.Spotify,
-        name: ChannelType[4],
-        logoURI: require('@/assets/logo-twitter.png'),
+        name: ChannelType[3],
+        logoURI: require('@/assets/logo-spotify.png'),
         actions: [
-            ChannelAction.SpotfyFollow,
-            ChannelAction.SpotifyPlaying,
-            ChannelAction.SpotifyPlayed,
-            ChannelAction.SpotifySaved,
+            ChannelAction.SpotifyUserFollow,
+            ChannelAction.SpotifyPlaylistFollow,
+            ChannelAction.SpotifyTrackPlaying,
+            ChannelAction.SpotifyTrackSaved,
         ],
     },
 ];
@@ -120,23 +119,23 @@ export const channelActionList = [
         items: [],
     },
     {
-        type: ChannelAction.SpotifySaved,
-        name: 'Saved',
+        type: ChannelAction.SpotifyUserFollow,
+        name: 'Follow me',
         items: [],
     },
     {
-        type: ChannelAction.SpotfyFollow,
-        name: 'Follow',
+        type: ChannelAction.SpotifyPlaylistFollow,
+        name: 'Follow Playlist',
         items: [],
     },
     {
-        type: ChannelAction.SpotifyPlaying,
-        name: 'Playing',
+        type: ChannelAction.SpotifyTrackPlaying,
+        name: 'Play a Track',
         items: [],
     },
     {
-        type: ChannelAction.SpotifyPlayed,
-        name: 'Played',
+        type: ChannelAction.SpotifyTrackSaved,
+        name: 'Save a Track',
         items: [],
     },
 ];

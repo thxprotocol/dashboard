@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -98,6 +108,12 @@
                     <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
                     <template v-if="channel && action && action.type === 0">
                         <base-dropdown-youtube-video @selected="item = $event" />
+                    </template>
+                    <template v-if="channel && action && (action.type === 7 || action.type === 8)">
+                        <base-dropdown-spotify-track @selected="item = $event" />
+                    </template>
+                    <template v-if="channel && action && action.type === 6">
+                        <base-dropdown-spotify-playlist @selected="item = $event" />
                     </template>
                 </b-form-group>
                 <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
@@ -184,13 +200,15 @@ import {
     IChannelAction,
     Reward,
 } from '@/store/modules/rewards';
-import { IAccount, ITwitter, IYoutube } from '@/store/modules/account';
+import { IAccount, ISpotify, ITwitter, IYoutube } from '@/store/modules/account';
 import BaseDropdownYoutubeVideo from './BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from './BaseDropdownYoutubeUploads.vue';
 import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
 import BaseDropdownChannelActions from './BaseDropdownChannelActions.vue';
 import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
 import BaseDropdownTwitterUsers from './BaseDropdownTwitterUsers.vue';
+import BaseDropdownSpotifyTrack from './BaseDropdownSpotifyTrack.vue';
+import BaseDropdownSpotifyPlaylist from './BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
 
 @Component({
@@ -219,11 +237,14 @@ import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
         BaseDropdownTwitterUsers,
         BaseDropdownChannelActions,
         BaseDropdownChannelTypes,
+        BaseDropdownSpotifyTrack,
+        BaseDropdownSpotifyPlaylist,
     },
     computed: mapGetters({
         profile: 'account/profile',
         youtube: 'account/youtube',
         twitter: 'account/twitter',
+        spotify: 'account/spotify',
     }),
 })
 export default class ModalRewardCreate extends Vue {
@@ -245,6 +266,7 @@ export default class ModalRewardCreate extends Vue {
     profile!: IAccount;
     youtube!: IYoutube;
     twitter!: ITwitter;
+    spotify!: ISpotify;
 
     @Prop() assetPool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
@@ -294,7 +316,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getSpotify() {
-        const { isAuthorized, error } = await this.$store.dispatch('account/getSpotify');
+        const { isAuthorized, error } = (await this.$store.dispatch('account/getSpotify')).spotify;
 
         if (error) {
             this.error = 'An issue occured while connecting to Spotify.';
@@ -306,9 +328,7 @@ export default class ModalRewardCreate extends Vue {
 
         if (isAuthorized && this.channel) {
             this.warning = '';
-            // this.channelActions[ChannelAction.SpotfyFollow].items = this.twitter.tweets;
-            // this.channelActions[ChannelAction.TwitterRetweet].items = this.twitter.tweets;
-            // this.channelActions[ChannelAction.TwitterFollow].items = this.twitter.users;
+            this.channelActions[ChannelAction.SpotifyUserFollow].items = this.spotify.users;
         }
     }
 
@@ -328,6 +348,12 @@ export default class ModalRewardCreate extends Vue {
                 this.action = this.channelActions[channel.actions[0]];
                 await this.getTwitter();
                 break;
+            case ChannelType.Spotify:
+                this.action = this.channelActions[channel.actions[0]];
+                await this.getSpotify();
+                this.item = this.channelActions[channel.actions[0]].items[0];
+                break;
+
             default:
                 this.error = 'Channel type is not known.';
                 break;
