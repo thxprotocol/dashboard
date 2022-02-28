@@ -59,6 +59,7 @@ export enum ChannelAction {
     SpotifyPlaylistFollow = 6,
     SpotifyTrackPlaying = 7,
     SpotifyTrackSaved = 8,
+    SpotifyTrackRecent = 9,
 }
 
 export const channelList = [

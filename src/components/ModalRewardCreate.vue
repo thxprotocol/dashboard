@@ -109,7 +109,7 @@
                     <template v-if="channel && action && action.type === 0">
                         <base-dropdown-youtube-video @selected="item = $event" />
                     </template>
-                    <template v-if="channel && action && (action.type === 7 || action.type === 8)">
+                    <template v-if="channel && action && (action.type === 7 || action.type === 8 || action.type === 9)">
                         <base-dropdown-spotify-track @selected="item = $event" />
                     </template>
                     <template v-if="channel && action && action.type === 6">
