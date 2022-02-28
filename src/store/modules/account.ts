@@ -146,8 +146,7 @@ class AccountModule extends VuexModule {
 
             if (r.data.isAuthorized) {
                 this.context.commit('setYoutube', r.data);
-
-                return { youtube: r.data, isAuthorized: r.data.isAuthorized };
+                return { youtube: r.data, isAuthorized: true };
             }
 
             return {
@@ -172,8 +171,7 @@ class AccountModule extends VuexModule {
 
             if (r.data.isAuthorized) {
                 this.context.commit('setTwitter', r.data);
-
-                return { twitter: r.data, isAuthorized: r.data.isAuthorized };
+                return { twitter: r.data, isAuthorized: true };
             }
 
             return {
@@ -198,8 +196,7 @@ class AccountModule extends VuexModule {
 
             if (r.data.isAuthorized) {
                 this.context.commit('setSpotify', r.data);
-
-                return { spotify: r.data };
+                return { spotify: r.data, isAuthorized: true };
             }
 
             return {
