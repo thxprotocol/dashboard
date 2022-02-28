@@ -13,10 +13,7 @@
         </b-row>
         <b-card class="shadow-sm">
             <div class="row pt-2 pb-2">
-                <div class="col-md-1">
-                    <strong>#</strong>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-3 offset-md-1">
                     <strong>Withdraw amount</strong>
                 </div>
                 <div v-if="isGovernanceEnabled" class="col-md-3">

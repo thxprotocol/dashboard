@@ -1,6 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
+import { AssetPool } from './assetPools';
 
 export enum RewardState {
     Disabled = 0,
@@ -152,7 +153,7 @@ class RewardModule extends VuexModule {
                 throw new Error('GET all rewards failed');
             }
             for (const reward of r.data) {
-                this.context.commit('set', new Reward({ ...reward, ...{ poolAddress: address } }));
+                this.context.commit('set', new Reward(reward));
             }
         } catch (e) {
             console.error(e);
@@ -194,7 +195,52 @@ class RewardModule extends VuexModule {
             if (r.status !== 200) {
                 throw new Error('POST rewards failed');
             }
-            this.context.commit('set', new Reward({ ...r.data, ...{ poolAddress: address } }));
+            this.context.commit('set', new Reward(r.data));
+        } catch (e) {
+            console.log(e);
+            debugger;
+        }
+    }
+
+    @Action
+    async finalize(reward: Reward) {
+        try {
+            const r = await axios({
+                method: 'POST',
+                url: `/rewards/${reward.id}/poll/finalize`,
+                headers: {
+                    AssetPool: reward.poolAddress,
+                },
+            });
+
+            if (r.status !== 200) {
+                throw new Error('POST rewards/:id/finalize failed');
+            }
+
+            this.context.commit('set', new Reward(r.data));
+        } catch (e) {
+            console.log(e);
+            debugger;
+        }
+    }
+
+    @Action
+    async update({ reward, data }: { reward: Reward; data: any }) {
+        try {
+            const r = await axios({
+                method: 'PATCH',
+                url: `/rewards/${reward.id}`,
+                headers: {
+                    AssetPool: reward.poolAddress,
+                },
+                data,
+            });
+
+            if (r.status !== 200) {
+                throw new Error('PATCH rewards failed');
+            }
+
+            this.context.commit('set', new Reward(r.data));
         } catch (e) {
             console.log(e);
             debugger;
