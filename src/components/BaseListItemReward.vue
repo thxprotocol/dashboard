@@ -115,7 +115,7 @@ export default class BaseListItemReward extends Vue {
             case ChannelAction.SpotifyUserFollow:
                 return `https://open.spotify.com/artist/${channelItem}`;
             case ChannelAction.SpotifyPlaylistFollow:
-                return `https://open.spotify.com/track/${channelItem}`;
+                return `https://open.spotify.com/playlist/${channelItem}`;
             case ChannelAction.SpotifyTrackPlaying:
                 return `https://open.spotify.com/track/${channelItem}`;
             case ChannelAction.SpotifyTrackSaved:

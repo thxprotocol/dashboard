@@ -1,7 +1,6 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { AssetPool } from './assetPools';
 
 export enum RewardState {
     Disabled = 0,
@@ -60,6 +59,7 @@ export enum ChannelAction {
     SpotifyPlaylistFollow = 6,
     SpotifyTrackPlaying = 7,
     SpotifyTrackSaved = 8,
+    SpotifyTrackRecent = 9,
 }
 
 export const channelList = [

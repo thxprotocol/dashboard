@@ -13,17 +13,7 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="
-                    w-auto
-                    center-center
-                    bg-secondary
-                    mx-n5
-                    mt-n5
-                    pt-5
-                    pb-5
-                    flex-grow-1 flex-column
-                    position-relative
-                "
+                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -109,7 +99,7 @@
                     <template v-if="channel && action && action.type === 0">
                         <base-dropdown-youtube-video @selected="item = $event" />
                     </template>
-                    <template v-if="channel && action && (action.type === 7 || action.type === 8)">
+                    <template v-if="channel && action && (action.type === 7 || action.type === 8 || action.type === 9)">
                         <base-dropdown-spotify-track @selected="item = $event" />
                     </template>
                     <template v-if="channel && action && action.type === 6">
@@ -171,25 +161,6 @@
 
 <script lang="ts">
 import { AssetPool } from '@/store/modules/assetPools';
-import {
-    BAlert,
-    BButton,
-    BCard,
-    BCollapse,
-    BDropdown,
-    BDropdownItemButton,
-    BFormCheckbox,
-    BFormGroup,
-    BFormInput,
-    BFormRadio,
-    BFormSelect,
-    BFormSelectOption,
-    BInputGroup,
-    BLink,
-    BModal,
-    BBadge,
-    BSpinner,
-} from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import {
@@ -213,23 +184,6 @@ import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
 
 @Component({
     components: {
-        BModal,
-        BAlert,
-        BLink,
-        BCard,
-        BBadge,
-        BInputGroup,
-        BDropdown,
-        BDropdownItemButton,
-        BFormRadio,
-        BFormGroup,
-        BFormInput,
-        BButton,
-        BCollapse,
-        BFormSelect,
-        BFormSelectOption,
-        BSpinner,
-        BFormCheckbox,
         BaseDropdownYoutubeVideo,
         BaseDropdownYoutubeUploads,
         BaseDropdownYoutubeChannels,
