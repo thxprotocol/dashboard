@@ -1,7 +1,7 @@
 <template>
     <div>
-        <label> Your Playlists:</label>
-        <b-dropdown variant="link" class="dropdown-select bg-white">
+        <label>Your Playlists:</label>
+        <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
             <template #button-content>
                 <div v-if="item" class="d-flex align-items-center text-overflow-ellipsis">
                     <img :src="item.images[0].url" v-if="item.images[0].url" width="30" class="mr-2" :alt="item.name" />
@@ -28,6 +28,21 @@
                 </div>
             </b-dropdown-item-button>
         </b-dropdown>
+
+        <div>
+            <label>Spotify Playlist URL:</label>
+            <b-form-input
+                :class="{ 'is-valid': trackId.length }"
+                class="mb-3"
+                placeholder="https://open.spotify.com/playlist/37i9dQZF1DWUFAJPVM3HTX"
+                @input="onChange"
+                v-model="url"
+            />
+
+            <b-alert show variant="info" v-if="trackId">
+                Spotify Playlist ID: <strong> {{ trackId }}</strong>
+            </b-alert>
+        </div>
     </div>
 </template>
 
@@ -56,12 +71,23 @@ export default class BaseDropdownSpotifyPlaylists extends Vue {
 
     mounted() {
         this.item = this.items[0];
-        console.log(this.items);
+        this.$emit('selected', { id: this.item.id });
     }
 
     onItemClick(item: any) {
         this.item = item;
         this.$emit('selected', item);
+    }
+
+    onChange(url: string) {
+        const result = url.replace(/.*\/(?:playlist)\/([\w-]{22}).*/, '$1');
+
+        if (result !== this.url) {
+            this.trackId = result;
+            this.$emit('selected', { id: result });
+        } else {
+            this.trackId = '';
+        }
     }
 }
 </script>

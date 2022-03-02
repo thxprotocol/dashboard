@@ -41,7 +41,7 @@ export interface ITwitter {
 
 export interface ISpotify {
     playlists: any;
-    tracks: any;
+    items: any;
     users: any;
 }
 
