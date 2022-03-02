@@ -103,7 +103,7 @@
                         <base-dropdown-spotify-track @selected="item = $event" />
                     </template>
                     <template v-if="channel && action && action.type === 6">
-                        <base-dropdown-spotify-playlist @selected="item = $event" />
+                        <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
                     </template>
                 </b-form-group>
                 <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
@@ -283,6 +283,7 @@ export default class ModalRewardCreate extends Vue {
         if (isAuthorized && this.channel) {
             this.warning = '';
             this.channelActions[ChannelAction.SpotifyUserFollow].items = this.spotify.users;
+            this.channelActions[ChannelAction.SpotifyPlaylistFollow].items = this.spotify.playlists;
         }
     }
 
