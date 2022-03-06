@@ -43,7 +43,7 @@ export class AssetPool {
         this.clientId = data.clientId;
         this.clientSecret = data.clientSecret;
         this.poolToken = data.token;
-        this.bypassPolls = data.bypassPolls;
+        this.bypassPolls = true;
         this.network = data.network;
         this.rewardPollDuration = Number(data.rewardPollDuration);
         this.proposeWithdrawPollDuration = Number(data.proposeWithdrawPollDuration);

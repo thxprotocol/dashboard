@@ -227,7 +227,7 @@ class RewardModule extends VuexModule {
                 },
             });
 
-            if (r.status !== 200) {
+            if (r.status !== 201) {
                 throw new Error('POST rewards failed');
             }
             this.context.commit('set', new Reward(r.data));
