@@ -16,7 +16,7 @@
                 <strong> Spotify </strong>
             </div>
             <hr />
-            <p class="text-muted">Connect and reward streamings, saves and followers.</p>
+            <p class="text-muted">Connect and reward track and playlist save and follows.</p>
             <b-button v-if="!spotify && !error" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
