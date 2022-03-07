@@ -13,17 +13,7 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="
-                    w-auto
-                    center-center
-                    bg-secondary
-                    mx-n5
-                    mt-n5
-                    pt-5
-                    pb-5
-                    flex-grow-1 flex-column
-                    position-relative
-                "
+                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;

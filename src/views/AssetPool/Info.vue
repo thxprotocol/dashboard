@@ -48,7 +48,7 @@
                     target="_blank"
                     :href="
                         (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/address/${assetPool.poolToken.address}/transactions`
+                        `/token/${assetPool.poolToken.address}`
                     "
                 >
                     View your token transactions
