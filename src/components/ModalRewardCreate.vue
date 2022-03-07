@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -100,10 +110,10 @@
                         <base-dropdown-youtube-video @selected="item = $event" />
                     </template>
                     <template v-if="channel && action && (action.type === 7 || action.type === 8 || action.type === 9)">
-                        <base-dropdown-spotify-track @selected="item = $event" />
+                        <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
                     </template>
                     <template v-if="channel && action && action.type === 6">
-                        <base-dropdown-spotify-playlist @selected="item = $event" />
+                        <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
                     </template>
                 </b-form-group>
                 <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
@@ -283,6 +293,9 @@ export default class ModalRewardCreate extends Vue {
         if (isAuthorized && this.channel) {
             this.warning = '';
             this.channelActions[ChannelAction.SpotifyUserFollow].items = this.spotify.users;
+            this.channelActions[ChannelAction.SpotifyPlaylistFollow].items = this.spotify.playlists;
+            this.channelActions[ChannelAction.SpotifyTrackPlaying].items = this.spotify.items;
+            this.channelActions[ChannelAction.SpotifyTrackSaved].items = this.spotify.items;
         }
     }
 
