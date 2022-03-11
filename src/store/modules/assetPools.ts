@@ -37,6 +37,7 @@ export class AssetPool {
     network: NetworkProvider;
     rewardPollDuration: number;
     proposeWithdrawPollDuration: number;
+    metrics: { members: number; withdrawals: number };
 
     constructor(data: any) {
         this.address = data.address;
@@ -47,6 +48,7 @@ export class AssetPool {
         this.network = data.network;
         this.rewardPollDuration = Number(data.rewardPollDuration);
         this.proposeWithdrawPollDuration = Number(data.proposeWithdrawPollDuration);
+        this.metrics = data.metrics;
     }
 }
 
