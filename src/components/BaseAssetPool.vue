@@ -21,13 +21,13 @@
             >
                 <i class="far fa-trash-alt"></i>
             </b-button>
-            <b-badge class="p-2 text-white" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
-            <b-badge class="p-2" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
-            <b-badge class="p-2 mr-2 text-muted" variant="light">
+            <b-badge class="p-2 text-white mr-1" variant="gray" v-if="assetPool.network === 0"> Polygon Test </b-badge>
+            <b-badge class="p-2 mr-1" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
+            <b-badge class="p-2 mr-1 text-muted" variant="light">
                 <i class="fas fa-users mr-1"></i>
                 {{ assetPool.metrics.members }}
             </b-badge>
-            <b-badge class="p-2 mr-2 text-muted" variant="light">
+            <b-badge class="p-2 mr-1 text-muted" variant="light">
                 <i class="fas fa-gift mr-1"></i>
                 {{ assetPool.metrics.withdrawals }}
             </b-badge>
