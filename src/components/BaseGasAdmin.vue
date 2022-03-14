@@ -1,15 +1,15 @@
 <template>
     <div class="gas-admin d-flex justify-content-between small" @click="toggleNetwork()">
         <div>
-            <span :class="`text-${gasAdminHealth.maxFee.variant}`"> {{ gasAdminHealth.maxFee.value }} Gwei </span>
-            <a v-b-tooltip :title="`MaxFeePerGas on ${currentNetworkName}.`">
-                <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.maxFee.variant}`"></i>
+            <span :class="`text-${gasAdminHealth.variant}`"> {{ gasAdminHealth.value }} Gwei </span>
+            <a v-b-tooltip :title="`THX API Admin balance on ${currentNetworkName}.`">
+                <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.variant}`"></i>
             </a>
         </div>
         <div>
-            <span :class="`text-${gasAdminHealth.balance.variant}`"> {{ gasAdminHealth.balance.value }} MATIC </span>
-            <a v-b-tooltip :title="`Gas admin balance on ${currentNetworkName}.`">
-                <i class="fas fa-question-circle" :class="`text-${gasAdminHealth.balance.variant}`"></i>
+            <span :class="`text-${gasTankHealth.variant}`"> {{ gasTankHealth.value }} MATIC </span>
+            <a v-b-tooltip :title="`ITX Gas Tank balance on ${currentNetworkName}.`">
+                <i class="fas fa-question-circle" :class="`text-${gasTankHealth.variant}`"></i>
             </a>
         </div>
     </div>
@@ -30,16 +30,20 @@ export default class BaseGasAdmin extends Vue {
     apiUrl = process.env.VUE_APP_API_URL;
     currentNetwork = NetworkProvider.Main;
     health = [
-        { balance: { value: 0, variant: 'light' }, maxFee: { value: 0, variant: 'light' } },
-        { balance: { value: 0, variant: 'light' }, maxFee: { value: 0, variant: 'light' } },
+        { admin: { value: 0, variant: 'light' }, gasTank: { value: 0, variant: 'light' } },
+        { admin: { value: 0, variant: 'light' }, gasTank: { value: 0, variant: 'light' } },
     ];
 
     async mounted() {
-        await this.getGasAdminHealth();
+        await this.getHealth();
     }
 
     get gasAdminHealth() {
-        return this.health[this.currentNetwork];
+        return this.health[this.currentNetwork].admin;
+    }
+
+    get gasTankHealth() {
+        return this.health[this.currentNetwork].gasTank;
     }
 
     get currentNetworkName() {
@@ -55,18 +59,13 @@ export default class BaseGasAdmin extends Vue {
     async toggleNetwork() {
         this.currentNetwork =
             this.currentNetwork === NetworkProvider.Main ? NetworkProvider.Test : NetworkProvider.Main;
-        await this.getGasAdminHealth();
+        await this.getHealth();
     }
 
-    async getGasAdminHealth() {
-        function getMaxFeeVariant({ maxFeePerGas }: { maxFeePerGas: number }) {
-            if (maxFeePerGas > 600) return 'danger';
-            if (maxFeePerGas > 300) return 'warning';
-            return 'success';
-        }
-        function getBalanceVariant({ balance }: { balance: number }) {
-            if (balance < 5) return 'danger';
-            if (balance < 25) return 'warning';
+    async getHealth() {
+        function getBalanceVariant({ balance }: { balance: string }) {
+            if (Number(balance) < 5) return 'danger';
+            if (Number(balance) < 25) return 'warning';
             return 'success';
         }
 
@@ -80,22 +79,22 @@ export default class BaseGasAdmin extends Vue {
                 throw new Error('Could not fetch API health.');
             }
 
-            this.health[NetworkProvider.Test].balance = {
-                value: Math.floor(r.data.testnet.balance * 100) / 100,
-                variant: getBalanceVariant(r.data.testnet),
+            this.health[NetworkProvider.Test].admin = {
+                value: Math.floor(Number(r.data.testnet.admin.balance) * 100) / 100,
+                variant: getBalanceVariant(r.data.testnet.admin),
             };
-            this.health[NetworkProvider.Test].maxFee = {
-                value: Math.ceil(r.data.testnet.feeData.maxFeePerGas),
-                variant: getMaxFeeVariant(r.data.testnet.feeData),
+            this.health[NetworkProvider.Test].gasTank = {
+                value: Math.floor(Number(r.data.testnet.gasTank.balance) * 100) / 100,
+                variant: getBalanceVariant(r.data.testnet.gasTank),
             };
 
-            this.health[NetworkProvider.Main].balance = {
-                value: Math.floor(r.data.mainnet.balance * 100) / 100,
-                variant: getBalanceVariant(r.data.mainnet),
+            this.health[NetworkProvider.Main].admin = {
+                value: Math.floor(Number(r.data.mainnet.admin.balance) * 100) / 100,
+                variant: getBalanceVariant(r.data.mainnet.admin),
             };
-            this.health[NetworkProvider.Main].maxFee = {
-                value: Math.ceil(r.data.mainnet.feeData.maxFeePerGas),
-                variant: getMaxFeeVariant(r.data.mainnet.feeData),
+            this.health[NetworkProvider.Main].gasTank = {
+                value: Math.floor(Number(r.data.mainnet.gasTank.balance) * 100) / 100,
+                variant: getBalanceVariant(r.data.mainnet.gasTank),
             };
         } catch (error) {
             console.error(error);
