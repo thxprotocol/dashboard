@@ -73,10 +73,6 @@ const routes: Array<RouteConfig> = [
         component: () => import('../views/SigninRedirect.vue'),
     },
     {
-        path: '/account-settings',
-        component: () => import('../views/AccountSetup.vue'),
-    },
-    {
         path: '/silent-renew',
         component: () => import('../views/SilentRenew.vue'),
     },
