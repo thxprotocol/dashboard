@@ -141,7 +141,7 @@
                                 <i class="fa fa-gear"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Account Setting</span>
+                                <span>Account</span>
                             </div>
                         </div>
                     </b-nav-item>
