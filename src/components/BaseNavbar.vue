@@ -135,6 +135,17 @@
                             />
                         </b-button>
                     </b-nav-item>
+                    <b-nav-item @click="accountSetting()" class="nav-link-plain border-top border-dark">
+                        <div class="nav-link-wrapper">
+                            <div class="nav-link-icon">
+                                <i class="fa fa-gear"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span>Account Setting</span>
+                            </div>
+                        </div>
+                    </b-nav-item>
+
                     <b-nav-item @click="logout()" class="nav-link-plain border-top border-dark">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
@@ -171,6 +182,14 @@ export default class BaseNavbar extends Vue {
     async logout() {
         try {
             await this.$store.dispatch('account/signoutRedirect');
+        } catch (e) {
+            return;
+        }
+    }
+
+    async accountSetting() {
+        try {
+            await this.$store.dispatch('account/accountRedirect');
         } catch (e) {
             return;
         }
