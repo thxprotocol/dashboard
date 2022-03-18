@@ -1,8 +1,23 @@
 <template>
     <div id="app" :class="{ 'is-alert-shown': isAlertShown }">
-        <b-button class="btn-menu shadow-sm" variant="darker" v-b-toggle.sidebar-left>
-            <i class="fas fa-bars"> </i>
-        </b-button>
+        <div class="d-flex position-fixed w-100 justify-content-end p-3">
+            <base-dropdown-account class="mr-3" />
+            <b-dropdown size="sm" variant="darker" no-caret toggle-class="d-flex align-items-center">
+                <template #button-content>
+                    <i
+                        class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
+                        aria-hidden="true"
+                        style="font-size: 1.5rem"
+                    ></i>
+                </template>
+                <b-dropdown-item to="/tokens"> Tokens </b-dropdown-item>
+                <b-dropdown-item to="/pools"> Pools </b-dropdown-item>
+                <b-dropdown-item to="/integrations"> Integrations </b-dropdown-item>
+                <b-dropdown-item to="/account"> Account </b-dropdown-item>
+                <b-dropdown-divider />
+                <b-dropdown-item to="/signout"> Logout </b-dropdown-item>
+            </b-dropdown>
+        </div>
         <base-navbar />
         <div class="sidebar-sibling">
             <router-view />
@@ -10,17 +25,16 @@
     </div>
 </template>
 <script lang="ts">
-import { BAlert, BButton, BLink } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseDropdownAccount from './components/BaseDropdownAccount.vue';
 import BaseNavbar from './components/BaseNavbar.vue';
-import { IAccount } from './store/modules/account';
+import { IAccount } from './types/account';
+import { initGTM } from '@/utils/ga';
 
 @Component({
     components: {
-        BLink,
-        BAlert,
-        BButton,
+        BaseDropdownAccount,
         BaseNavbar,
     },
     computed: mapGetters({
@@ -32,19 +46,7 @@ export default class App extends Vue {
     profile!: IAccount;
 
     created() {
-        (function (w: any, d, s, l: any, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start': new Date().getTime(),
-                'event': 'gtm.js',
-            });
-            const f: any = d.getElementsByTagName(s)[0],
-                j: any = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', process.env.VUE_APP_GTM);
+        initGTM;
     }
 }
 </script>

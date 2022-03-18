@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { IAccount, ITwitter } from '@/store/modules/account';
+import { IAccount, ITwitter } from '@/types/account';
 import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';

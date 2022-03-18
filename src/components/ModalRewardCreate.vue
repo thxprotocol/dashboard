@@ -37,7 +37,7 @@
             </p>
         </div>
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
-            <b-card class="border-0" bg-variant="light" body-class="p-5">
+            <b-card class="border-0" bg-variant="light" body-class="p-md-5">
                 <b-form-group>
                     <label>
                         Withdraw amount
@@ -171,7 +171,7 @@ import {
     IChannelAction,
     Reward,
 } from '@/store/modules/rewards';
-import { IAccount, ISpotify, ITwitter, IYoutube } from '@/store/modules/account';
+import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import BaseDropdownYoutubeVideo from './BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from './BaseDropdownYoutubeUploads.vue';
 import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';

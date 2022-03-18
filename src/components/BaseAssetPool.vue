@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { IAccount } from '@/store/modules/account';
+import { IAccount } from '@/types/account';
 import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
 import { BBadge, BButton, BCard, BLink, BOverlay, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';

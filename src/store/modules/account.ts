@@ -2,48 +2,9 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { User, UserManager } from 'oidc-client';
 import { ChannelType } from './rewards';
-
-const BASE_URL = process.env.VUE_APP_BASE_URL;
-
-export interface IAccount {
-    privateKey: string;
-    address: string;
-    youtube: any;
-}
-export interface IAccountUpdates {
-    address: string;
-    googleAccessToken: string;
-}
-
-const config: any = {
-    authority: process.env.VUE_APP_AUTH_URL,
-    client_id: process.env.VUE_APP_OIDC_CLIENT_ID,
-    client_secret: process.env.VUE_APP_OIDC_CLIENT_SECRET,
-    redirect_uri: `${BASE_URL}/signin-oidc`,
-    response_type: 'code',
-    id_token_signed_response_alg: 'RS256',
-    post_logout_redirect_uri: BASE_URL,
-    silent_redirect_uri: `${BASE_URL}/silent-renew`,
-    automaticSilentRenew: true,
-    loadUserInfo: true,
-    scope: 'openid dashboard',
-};
-
-export interface IYoutube {
-    channels: any;
-    videos: any;
-}
-
-export interface ITwitter {
-    tweets: any;
-    users: any;
-}
-
-export interface ISpotify {
-    playlists: any;
-    items: any;
-    users: any;
-}
+import { IAccount, IAccountUpdates, ISpotify, ITwitter, IYoutube } from '@/types/account';
+import { config } from '@/utils/oidc';
+import { BASE_URL } from '@/utils/secrets';
 
 @Module({ namespaced: true })
 class AccountModule extends VuexModule {
@@ -265,10 +226,10 @@ class AccountModule extends VuexModule {
     }
 
     @Action
-    async accountRedirect() {
+    async accountRedirect(returnPath: string) {
         try {
             await this.userManager.signinRedirect({
-                extraQueryParams: { prompt: 'account-settings', return_url: BASE_URL + '/integrations' },
+                extraQueryParams: { prompt: 'account-settings', return_url: BASE_URL + returnPath },
             });
         } catch (e) {
             return e;

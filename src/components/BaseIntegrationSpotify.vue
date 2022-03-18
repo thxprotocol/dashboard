@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { IAccount, ISpotify } from '@/store/modules/account';
+import { IAccount, ISpotify } from '@/types/account';
 import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
