@@ -20,7 +20,7 @@
                 <!-- <b-button v-b-tooltip title="Deploy tokens" to="/token" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-coins m-0"></i>
                 </b-button> -->
-                <b-button v-b-tooltip title="Deploy pools" to="/token" class="rounded-pill mr-3" variant="primary">
+                <b-button v-b-tooltip title="Deploy pools" to="/pools" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-chart-pie m-0"></i>
                 </b-button>
                 <b-button
