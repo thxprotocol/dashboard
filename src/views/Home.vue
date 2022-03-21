@@ -17,9 +17,9 @@
             >
                 <p class="brand-text">{{ greeting }}</p>
                 <div class="lead mb-5">Welcome to your Tokenization Head Quarters</div>
-                <b-button v-b-tooltip title="Deploy tokens" to="/token" class="rounded-pill mr-3" variant="primary">
+                <!-- <b-button v-b-tooltip title="Deploy tokens" to="/token" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-coins m-0"></i>
-                </b-button>
+                </b-button> -->
                 <b-button v-b-tooltip title="Deploy pools" to="/token" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-chart-pie m-0"></i>
                 </b-button>
@@ -48,7 +48,7 @@
                 </b-link>
             </b-alert>
             <b-row>
-                <b-col md="6">
+                <!-- <b-col md="6">
                     <b-card
                         @click="$router.push('/tokens')"
                         class="mt-3 mb-3 shadow-sm cursor-pointer"
@@ -59,7 +59,7 @@
                         <strong>Tokens</strong>
                         <p class="text-muted m-0">Create ERC-20 token variations.</p>
                     </b-card>
-                </b-col>
+                </b-col> -->
                 <b-col md="6">
                     <b-card
                         @click="$router.push('/pools')"

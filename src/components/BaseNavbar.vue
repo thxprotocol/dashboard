@@ -18,7 +18,7 @@
             </div>
             <div class="flex-grow-1 w-100">
                 <b-navbar-nav>
-                    <b-nav-item to="/tokens" class="nav-link-plain">
+                    <!-- <b-nav-item to="/tokens" class="nav-link-plain">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
                                 <i class="fas fa-coins"></i>
@@ -27,7 +27,7 @@
                                 <span>Tokens</span>
                             </div>
                         </div>
-                    </b-nav-item>
+                    </b-nav-item> -->
                     <b-nav-item to="/pools" class="nav-link-plain">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
