@@ -25,13 +25,13 @@
                 </div>
             </div>
         </div>
-        <modal-asset-pool-create />
+        <modal-token-create />
     </div>
 </template>
 
 <script lang="ts">
 import BaseAssetPool from '@/components/BaseAssetPool.vue';
-import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
+import ModalTokenCreate from '@/components/ModalTokenCreate.vue';
 import { IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
@@ -40,7 +40,7 @@ import { mapGetters } from 'vuex';
 @Component({
     components: {
         BaseAssetPool,
-        ModalAssetPoolCreate,
+        ModalTokenCreate,
     },
     computed: mapGetters({
         profile: 'account/profile',

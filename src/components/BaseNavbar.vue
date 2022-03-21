@@ -77,9 +77,6 @@
             </div>
             <div class="d-flex justify-content-end flex-column flex-grow-0 w-100">
                 <b-navbar-nav>
-                    <div class="p-3 border-top border-dark">
-                        <base-gas-admin v-if="profile" />
-                    </div>
                     <b-nav-item to="/account" class="nav-link-plain border-top border-dark">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
@@ -109,12 +106,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import BaseGasAdmin from './BaseGasAdmin.vue';
 
 @Component({
-    components: {
-        BaseGasAdmin,
-    },
     computed: mapGetters({
         profile: 'account/profile',
     }),
