@@ -2,6 +2,7 @@ import store from '@/store';
 import {
     assertAuthorization,
     redirectAccount,
+    redirectConfirmationLink,
     redirectPasswordResetLink,
     redirectSignin,
     redirectSigninSilent,
@@ -82,7 +83,7 @@ const routes: Array<RouteConfig> = [
     },
     {
         path: '/verify',
-        beforeEnter: assertAuthorization,
+        beforeEnter: redirectConfirmationLink,
     },
     {
         path: '/signin',
