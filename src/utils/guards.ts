@@ -8,7 +8,7 @@ export function redirectPasswordResetLink(to: Route) {
 }
 
 export function redirectConfirmationLink(to: Route) {
-    return store.dispatch('account/signinRedirect', { signupToken: to.query.signup_token || null });
+    return store.dispatch('account/signinRedirect', { signupToken: to.query.signup_token });
 }
 
 export function redirectSignin() {

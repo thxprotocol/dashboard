@@ -45,7 +45,7 @@
                 </b-form-select>
             </b-form-group>
             <b-form-group>
-                <b-form-radio v-model="tokenOption" :aria-describedby="ariaDescribedby" name="tokenOption" :value="0">
+                <b-form-radio v-model="tokenOption" name="tokenOption" :value="0">
                     <strong>
                         ERC-20 Limited
                         <a
@@ -60,7 +60,7 @@
                         worry about periodic deposits.
                     </p>
                 </b-form-radio>
-                <b-form-radio v-model="tokenOption" :aria-describedby="ariaDescribedby" name="tokenOption" :value="1">
+                <b-form-radio v-model="tokenOption" name="tokenOption" :value="1">
                     <strong>
                         ERC-20 Unlimited
                         <a
@@ -75,21 +75,39 @@
                         monetary value when publically traded.
                     </p>
                 </b-form-radio>
+
+                <b-form-radio v-model="tokenOption" name="tokenOption" :value="2">
+                    <strong>
+                        ERC-721 (NFT)
+                        <a v-b-tooltip title="Unique tokens minted on the go, also known as NFT's.">
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </strong>
+                    <p>Unique tokens minted on the go, also known as NFT's.</p>
+                </b-form-radio>
             </b-form-group>
-            <div class="row">
-                <b-form-group>
-                    <label for="erc20Address">Name</label>
-                    <b-form-input id="erc20Name" v-model="erc20Name" placeholder="XYZ Network Token" />
-                </b-form-group>
-                <b-form-group class="col-md-6">
-                    <label for="erc20Address">Symbol</label>
-                    <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="XYZ" />
-                </b-form-group>
-                <b-form-group class="col-md-12" v-if="tokenOption === 0">
-                    <label for="erc20Address">Total Supply</label>
-                    <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
-                </b-form-group>
-            </div>
+            <b-row>
+                <b-col>
+                    <b-form-group>
+                        <label for="erc20Address">Name</label>
+                        <b-form-input id="erc20Name" v-model="erc20Name" placeholder="XYZ Network Token" />
+                    </b-form-group>
+                </b-col>
+                <b-col>
+                    <b-form-group>
+                        <label for="erc20Address">Symbol</label>
+                        <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="XYZ" />
+                    </b-form-group>
+                </b-col>
+            </b-row>
+            <b-row v-if="tokenOption === 0">
+                <b-col>
+                    <b-form-group>
+                        <label for="erc20Address">Total Supply</label>
+                        <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
+                    </b-form-group>
+                </b-col>
+            </b-row>
         </form>
         <template v-slot:modal-footer="{}">
             <b-button

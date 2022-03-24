@@ -33,7 +33,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import ModalPromoCodeCreate from '@/components/ModalPromoCodeCreate.vue';
 import BasePromoCode from '@/components/BasePromoCode.vue';
 import { IAssetPools } from '@/store/modules/assetPools';
-import { IPromoCodes } from '@/store/modules/promoCodes';
+import { IPromoCodes } from '@/types/IPromoCodes';
 
 @Component({
     components: {

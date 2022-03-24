@@ -1,28 +1,16 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
+import { IPromoCodes } from '@/types/IPromoCodes';
 
-export interface IPromoCodes {
-    [poolAddress: string]: { [id: string]: PromoCode };
-}
-
-export class PromoCode {
+export type TPromoCode = {
     id: string;
     poolAddress: string;
     title: string;
     description: string;
     value: string;
     price: number;
-
-    constructor(data: any) {
-        this.id = data.id;
-        this.poolAddress = data.poolAddress;
-        this.title = data.title;
-        this.description = data.description;
-        this.value = data.value;
-        this.price = data.price;
-    }
-}
+};
 
 @Module({ namespaced: true })
 class RewardModule extends VuexModule {
@@ -33,7 +21,7 @@ class RewardModule extends VuexModule {
     }
 
     @Mutation
-    set(promoCode: PromoCode) {
+    set(promoCode: TPromoCode) {
         if (!this._all[promoCode.poolAddress]) {
             Vue.set(this._all, promoCode.poolAddress, {});
         }
@@ -41,7 +29,7 @@ class RewardModule extends VuexModule {
     }
 
     @Mutation
-    remove(promoCode: PromoCode) {
+    remove(promoCode: TPromoCode) {
         Vue.delete(this._all[promoCode.poolAddress], promoCode.id);
 
         if (!Object.values(this._all[promoCode.poolAddress]).length) {
@@ -63,7 +51,7 @@ class RewardModule extends VuexModule {
             }
 
             for (const data of r.data.results) {
-                this.context.commit('set', new PromoCode({ ...data, ...{ poolAddress } }));
+                this.context.commit('set', { ...data, ...{ poolAddress } });
             }
         } catch (error) {
             return { error };
@@ -83,7 +71,7 @@ class RewardModule extends VuexModule {
                 throw new Error('GET all rewards failed');
             }
 
-            this.context.commit('set', new PromoCode({ ...r.data, ...{ poolAddress } }));
+            this.context.commit('set', { ...r.data, ...{ poolAddress } });
         } catch (error) {
             return { error };
         }
@@ -121,7 +109,7 @@ class RewardModule extends VuexModule {
             if (r.status !== 201) {
                 throw new Error('Could not create promo code');
             }
-            const promoCode = new PromoCode({ ...r.data, ...{ poolAddress } });
+            const promoCode = { ...r.data, ...{ poolAddress } };
 
             this.context.commit('set', promoCode);
 
@@ -132,7 +120,7 @@ class RewardModule extends VuexModule {
     }
 
     @Action
-    async delete(promoCode: PromoCode) {
+    async delete(promoCode: TPromoCode) {
         try {
             const r = await axios({
                 method: 'DELETE',
