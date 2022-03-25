@@ -74,7 +74,7 @@ class AssetPoolModule extends VuexModule {
         Vue.delete(this._all, address);
     }
 
-    @Action
+    @Action({ rawError: true })
     async list() {
         try {
             const r = await axios({
@@ -98,7 +98,7 @@ class AssetPoolModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async read(address: string) {
         try {
             const r = await axios({
@@ -113,7 +113,7 @@ class AssetPoolModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async create(data: {
         network: number;
         token: { address: string; name: string; symbol: string; totalSupply: number };
@@ -149,7 +149,7 @@ class AssetPoolModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async update(payload: {
         address: string;
         data: {
@@ -179,7 +179,7 @@ class AssetPoolModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async remove(address: string) {
         try {
             await axios({

@@ -60,7 +60,7 @@ class AccountModule extends VuexModule {
         this._spotify = data;
     }
 
-    @Action
+    @Action({ rawError: true })
     async getUser() {
         try {
             const user = await this.userManager.getUser();
@@ -73,27 +73,16 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async getProfile() {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/account',
-            });
-
-            if (r.status !== 200) {
-                throw Error('GET /account failed.');
-            }
-
-            this.context.commit('setAccount', r.data);
-
-            return r.data;
-        } catch (e) {
-            return e;
-        }
+        const r = await axios({
+            method: 'GET',
+            url: '/account',
+        });
+        this.context.commit('setAccount', r.data);
     }
 
-    @Action
+    @Action({ rawError: true })
     async getYoutube() {
         try {
             const r = await axios({
@@ -118,7 +107,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async getTwitter() {
         try {
             const r = await axios({
@@ -143,7 +132,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async getSpotify() {
         try {
             const r = await axios({
@@ -168,7 +157,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async update(data: IAccountUpdates) {
         try {
             const r = await axios({
@@ -187,7 +176,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async connectRedirect(channel: ChannelType) {
         try {
             await this.userManager.signinRedirect({
@@ -198,7 +187,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signinRedirect(payload: { signupToken: string; signupEmail: string; passwordResetToken: string }) {
         try {
             const extraQueryParams: any = {
@@ -225,7 +214,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async accountRedirect(returnPath: string) {
         try {
             await this.userManager.signinRedirect({
@@ -236,7 +225,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signupRedirect() {
         try {
             await this.userManager.clearStaleState();
@@ -260,7 +249,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signinRedirectCallback() {
         try {
             const user = await this.userManager.signinRedirectCallback();
@@ -273,7 +262,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signoutRedirect() {
         try {
             await this.userManager.signoutRedirect({});
@@ -284,7 +273,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signout() {
         try {
             await this.userManager.removeUser();
@@ -299,7 +288,7 @@ class AccountModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async signinSilent() {
         try {
             return await this.userManager.signinSilent();

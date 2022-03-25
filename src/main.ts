@@ -59,6 +59,17 @@ axios.interceptors.response.use(
 // Set Vue default config and attach plugins
 Vue.config.productionTip = false;
 
+Vue.config.errorHandler = (error: Error, vm: Vue, info: string) => {
+    vm.$bvToast.toast(error.message, {
+        variant: 'danger',
+        title: 'Error',
+        noFade: true,
+        noAutoHide: true,
+        appendToast: true,
+        solid: true,
+    });
+};
+
 // Sets a container to fix issues related to bootstrap modals
 VueClipboard.config.autoSetContainer = true;
 
