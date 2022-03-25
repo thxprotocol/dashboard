@@ -59,7 +59,7 @@ axios.interceptors.response.use(
 // Set Vue default config and attach plugins
 Vue.config.productionTip = false;
 
-Vue.config.errorHandler = (error: Error, vm: Vue, info: string) => {
+Vue.config.errorHandler = (error: Error, vm: Vue) => {
     vm.$bvToast.toast(error.message, {
         variant: 'danger',
         title: 'Error',
