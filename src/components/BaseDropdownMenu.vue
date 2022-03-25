@@ -8,6 +8,20 @@
         <b-dropdown-item to="/integrations"> Integrations </b-dropdown-item>
         <b-dropdown-item to="/account"> Account </b-dropdown-item>
         <b-dropdown-divider />
-        <b-dropdown-item to="/signout"> Logout </b-dropdown-item>
+        <b-dropdown-item :href="walletUrl">
+            <span class="text-muted"><i class="fas fa-chart-line mr-3"></i>Go to Web Wallet</span>
+        </b-dropdown-item>
+        <b-dropdown-item size="sm" variant="dark" to="/signout">
+            <span class="text-muted"><i class="fas fa-sign-out-alt mr-3"></i>Logout</span>
+        </b-dropdown-item>
     </b-dropdown>
 </template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component({})
+export default class BaseDropdownMenu extends Vue {
+    walletUrl = process.env.VUE_APP_WALLET_URL;
+}
+</script>

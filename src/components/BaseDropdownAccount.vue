@@ -12,11 +12,8 @@
                 {{ profile.address }}
             </span>
         </template>
-        <b-dropdown-item class="small" v-clipboard:copy="profile.address">
-            <i class="fas fa-clipboard mr-3 text-muted"></i>Copy address
-        </b-dropdown-item>
-        <b-dropdown-item class="small" :href="walletUrl" target="_blank">
-            <i class="fas fa-wallet mr-3 text-muted"></i>Visit wallet
+        <b-dropdown-item size="sm" variant="dark" v-clipboard:copy="profile.address">
+            <span class="text-muted"><i class="fas fa-clipboard mr-3"></i>Copy address</span>
         </b-dropdown-item>
     </b-dropdown>
 </template>
@@ -34,6 +31,5 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseDropdownAccount extends Vue {
     profile!: IAccount;
-    walletUrl = process.env.VUE_APP_WALLET_URL;
 }
 </script>
