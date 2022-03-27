@@ -37,7 +37,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async list({ poolAddress }: { poolAddress: string }) {
         try {
             const r = await axios({
@@ -58,7 +58,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async read({ poolAddress, id }: { poolAddress: string; id: string }) {
         try {
             const r = await axios({
@@ -77,7 +77,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async create({
         title,
         description,
@@ -119,7 +119,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async delete(promoCode: TPromoCode) {
         try {
             const r = await axios({

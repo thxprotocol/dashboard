@@ -176,7 +176,7 @@ class RewardModule extends VuexModule {
         Vue.set(this._all[reward.poolAddress], reward.id, reward);
     }
 
-    @Action
+    @Action({ rawError: true })
     async read(address: string) {
         try {
             const r = await axios({
@@ -195,7 +195,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async create({
         address,
         withdrawAmount,
@@ -237,7 +237,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async finalize(reward: Reward) {
         try {
             const r = await axios({
@@ -259,7 +259,7 @@ class RewardModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async update({ reward, data }: { reward: Reward; data: any }) {
         try {
             const r = await axios({

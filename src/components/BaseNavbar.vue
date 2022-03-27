@@ -11,7 +11,7 @@
         shadow
     >
         <b-navbar toggleable="lg" class="sidebar">
-            <div class="w-100 p-3 pb-5">
+            <div class="w-100 pt-5 pb-4 text-center">
                 <router-link to="/">
                     <img :src="require('@/assets/logo.png')" width="40" alt="THX logo" />
                 </router-link>

@@ -54,7 +54,7 @@ class WidgetModule extends VuexModule {
         Vue.delete(this._all[data.poolAddress], data.clientId);
     }
 
-    @Action
+    @Action({ rawError: true })
     async list(poolAddress: string) {
         try {
             const r = await axios({
@@ -79,7 +79,7 @@ class WidgetModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async create(data: {
         metadata: { rewardId: number; poolAddress: string };
         requestUris: string[];
@@ -101,7 +101,7 @@ class WidgetModule extends VuexModule {
         }
     }
 
-    @Action
+    @Action({ rawError: true })
     async remove(data: { clientId: string; poolAddress: string }) {
         try {
             await axios({

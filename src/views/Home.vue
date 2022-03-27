@@ -5,17 +5,16 @@
     <div v-else>
         <b-jumbotron
             class="jumbotron-header text-left"
-            :style="{
-                'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
-            }"
+            :style="{ 'background-image': `url(${require('@/assets/thx_jumbotron.webp')})` }"
         >
             <div
-                class="container container-md pt-10 pb-5"
-                :style="{
-                    'background-image': `url(${require('@/assets/thx_diamonds.webp')})`,
-                }"
+                class="container container-md py-5"
+                :style="{ 'background-image': `url(${require('@/assets/thx_diamonds.webp')})` }"
             >
-                <p class="brand-text">{{ greeting }}</p>
+                <b-badge variant="primary" class="p-2">Plan: {{ AccountPlanType[profile.plan] }}</b-badge>
+                <p class="brand-text">
+                    {{ greeting }}
+                </p>
                 <div class="lead mb-5">Welcome to your Tokenization Head Quarters</div>
                 <b-button v-b-tooltip title="Deploy tokens" to="/tokens" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-coins m-0"></i>
@@ -93,7 +92,7 @@
 <script lang="ts">
 import BaseAssetPool from '@/components/BaseAssetPool.vue';
 import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
-import { IAccount } from '@/types/account';
+import { AccountPlanType, IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -113,17 +112,14 @@ export default class Home extends Vue {
     profile!: IAccount;
     assetPools!: IAssetPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    AccountPlanType = AccountPlanType;
 
     get greeting() {
         return 'Hi ' + (!this.profile.firstName ? 'Anon' : this.profile.firstName);
     }
 
     async mounted() {
-        try {
-            await this.$store.dispatch('account/getProfile');
-        } catch (e) {
-            debugger;
-        }
+        await this.$store.dispatch('account/getProfile');
     }
 }
 </script>

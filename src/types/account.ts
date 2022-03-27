@@ -1,8 +1,18 @@
+export enum AccountPlanType {
+    None = -1,
+    Solo = 0,
+    Community = 1,
+    Creator = 2,
+}
+
 export interface IAccount {
     privateKey: string;
     address: string;
     youtube: any;
     firstName: string;
+    lastName: string;
+    company: string;
+    plan: AccountPlanType;
 }
 export interface IAccountUpdates {
     address: string;
