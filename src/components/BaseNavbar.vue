@@ -43,7 +43,7 @@
                                 <span>Rewards</span>
                             </b-nav-item>
                             <b-nav-item :to="`/pool/${poolAddress}/promocodes`" class="nav-link-plain">
-                                <span>Redeem</span>
+                                <span>Promotions</span>
                             </b-nav-item>
                             <b-nav-item :to="`/pool/${poolAddress}/widgets`" class="nav-link-plain">
                                 <span>Widgets</span>
