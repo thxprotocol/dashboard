@@ -33,15 +33,22 @@
                 </span>
             </p>
         </div>
-        <form v-else v-on:submit.prevent="submit" id="formAssetPoolCreate">
+        <form v-if="profile && !loading" v-on:submit.prevent="submit" id="formAssetPoolCreate">
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
+            </b-alert>
+            <b-alert :show="profile.plan === AccountPlanType.None" variant="warning">
+                <i class="fas fa-rocket mr-2"></i>
+                Get on a plan and unlock Polygon Mainnet deployments.
+                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Contact us in Discord </b-link>
             </b-alert>
             <b-form-group>
                 <label for="networkId">Blockchain Network</label>
                 <b-form-select v-model="network">
                     <b-form-select-option :value="0">Polygon Test (Mumbai) Network</b-form-select-option>
-                    <b-form-select-option :value="1">Polygon Main Network</b-form-select-option>
+                    <b-form-select-option :value="1" :disabled="profile.plan === AccountPlanType.None">
+                        Polygon Main Network
+                    </b-form-select-option>
                 </b-form-select>
             </b-form-group>
             <b-form-group label="Asset Type" v-slot="{ ariaDescribedby }">
@@ -182,48 +189,19 @@
 
 <script lang="ts">
 import { NetworkProvider, PoolToken, PoolTokenType } from '@/store/modules/assetPools';
+import { AccountPlanType, IAccount } from '@/types/account';
 import axios from 'axios';
-import {
-    BAlert,
-    BButton,
-    BCard,
-    BCollapse,
-    BDropdown,
-    BDropdownDivider,
-    BDropdownItemButton,
-    BFormGroup,
-    BFormInput,
-    BFormRadio,
-    BFormSelect,
-    BFormSelectOption,
-    BLink,
-    BModal,
-    BSpinner,
-} from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
-    components: {
-        'b-modal': BModal,
-        'b-alert': BAlert,
-        'b-link': BLink,
-        'b-card': BCard,
-        'b-dropdown': BDropdown,
-        'b-dropdown-item-button': BDropdownItemButton,
-        'b-form-radio': BFormRadio,
-        'b-form-group': BFormGroup,
-        'b-form-input': BFormInput,
-        'b-button': BButton,
-        'b-collapse': BCollapse,
-        'b-form-select': BFormSelect,
-        'b-form-select-option': BFormSelectOption,
-        'b-spinner': BSpinner,
-        'b-dropdown-divider': BDropdownDivider,
-    },
-    computed: mapGetters({}),
+    components: {},
+    computed: mapGetters({
+        profile: 'account/profile',
+    }),
 })
 export default class ModalAssetPoolCreate extends Vue {
+    AccountPlanType = AccountPlanType;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
@@ -238,6 +216,8 @@ export default class ModalAssetPoolCreate extends Vue {
     erc20Name = '';
     erc20Symbol = '';
     erc20TotalSupply = 0;
+
+    profile!: IAccount;
 
     async mounted() {
         try {

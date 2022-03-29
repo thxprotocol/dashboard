@@ -18,7 +18,7 @@
             </router-link>
             <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/promocodes`">
                 <i class="fas fa-tags mr-2"></i>
-                <span class="d-none d-md-inline-block">Promo Codes</span>
+                <span class="d-none d-md-inline-block">Promotions</span>
             </router-link>
             <router-link active-class="active" class="nav-link" :to="`/pool/${assetPool.address}/widgets`">
                 <i class="fas fa-code mr-2"></i>

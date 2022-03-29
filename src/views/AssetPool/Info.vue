@@ -202,74 +202,9 @@ xhr.send(params);
                             </div>
                         </template>
                     </template>
-                    <b-form-checkbox @change="updateAssetPool()" class="mb-0" v-model="isGovernanceEnabled">
-                        <strong> Enable governance </strong>
-                        (experimental)
-                        <a :href="docsUrl + '/asset_pools#2-asset-pool-governance'" target="_blank">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                        <p class="text-muted mb-0">
-                            Enabling governance will require a voting procedure for adding, updating or withdrawing
-                            rewards.
-                        </p>
-                    </b-form-checkbox>
                 </b-skeleton-wrapper>
             </b-form-group>
         </b-card>
-        <template v-if="isGovernanceEnabled">
-            <b-form-group class="mb-0">
-                <hr />
-                <div class="row">
-                    <div class="col-md-4 d-flex align-items-center">
-                        <label for="rewardPollDuration">
-                            Default reward poll duration
-                            <a
-                                v-b-tooltip
-                                title="Default duration of the poll that is started when a reward configuration is added or
-                            changed. This poll should pass to approve the changes."
-                            >
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </label>
-                    </div>
-                    <div class="col-md-7">
-                        <b-form-input id="rewardPollDuration" type="number" v-model="rewardPollDuration" />
-                    </div>
-                    <div class="col-md-1 text-right">
-                        <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
-                            <i class="fas fa-save ml-0"></i
-                        ></b-button>
-                    </div>
-                </div>
-            </b-form-group>
-
-            <b-form-group class="mb-0">
-                <hr />
-                <div class="row">
-                    <div class="col-md-4 d-flex align-items-center">
-                        <label for="rewardPollDuration">
-                            Default withdraw poll duration
-                            <a
-                                v-b-tooltip
-                                title=" Default duration of the poll that is started when a reward is claimed by or for a member. This
-                        poll should pass to be able to withdraw the reward. Only members with a manager role can vote on
-                        this poll."
-                            >
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </label>
-                    </div>
-                    <div class="col-md-7">
-                        <b-form-input id="rewardPollDuration" type="number" v-model="proposeWithdrawPollDuration" />
-                    </div>
-                    <div class="col-md-1 text-right">
-                        <b-button class="rounded-pill" variant="primary" @click="updateAssetPool()">
-                            <i class="fas fa-save ml-0"></i
-                        ></b-button>
-                    </div>
-                </div>
-            </b-form-group>
-        </template>
     </div>
 </template>
 
@@ -297,11 +232,6 @@ export default class AssetPoolView extends Vue {
     loading = true;
     accessToken = '';
     assetPoolLoading = true;
-
-    isGovernanceEnabled = false;
-    rewardPollDuration = 0;
-    proposeWithdrawPollDuration = 0;
-
     assetPools!: IAssetPools;
 
     network: NetworkProvider = NetworkProvider.Test;
@@ -313,9 +243,6 @@ export default class AssetPoolView extends Vue {
     async mounted() {
         try {
             this.network = this.assetPool.network;
-            this.isGovernanceEnabled = !this.assetPool.bypassPolls;
-            this.rewardPollDuration = this.assetPool.rewardPollDuration;
-            this.proposeWithdrawPollDuration = this.assetPool.proposeWithdrawPollDuration;
         } catch (e) {
             this.error = 'Could get pool information.';
         } finally {
@@ -327,24 +254,6 @@ export default class AssetPoolView extends Vue {
         return btoa(`${this.assetPool.clientId}:${this.assetPool.clientSecret}`);
     }
 
-    async updateAssetPool() {
-        this.assetPoolLoading = true;
-
-        try {
-            await this.$store.dispatch('assetPools/update', {
-                address: this.assetPool.address,
-                data: {
-                    bypassPolls: !this.isGovernanceEnabled,
-                    rewardPollDuration: this.rewardPollDuration,
-                    proposeWithdrawPollDuration: this.proposeWithdrawPollDuration,
-                },
-            });
-        } catch (e) {
-            this.error = 'Could not update your asset pool.';
-        } finally {
-            this.assetPoolLoading = false;
-        }
-    }
     async getAccessToken() {
         try {
             const data = new URLSearchParams();
