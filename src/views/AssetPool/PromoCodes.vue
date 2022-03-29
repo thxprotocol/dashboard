@@ -11,7 +11,6 @@
                 </b-button>
             </b-col>
         </b-row>
-        <b-alert show variant="warning"> Warning: Promo Codes are not yet available in THX Web Wallet. </b-alert>
         <b-alert show variant="info" v-if="!promoCodesForPool">
             Let your audience redeem {{ assetPool.poolToken.symbol }} in their wallet for unique promo codes.
             <b-link v-b-modal="'modalPromoCodeCreate'">Let's create your first Promo Code!</b-link>
