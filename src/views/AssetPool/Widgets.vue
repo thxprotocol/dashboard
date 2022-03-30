@@ -101,9 +101,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
 import { IWidgets } from '@/store/modules/widgets';
-import BaseModalWidgetCreate from '@/components/ModalWidgetCreate.vue';
-import BaseModalWidgetEdit from '@/components/ModalWidgetEdit.vue';
-import ModalDelete from '@/components/ModalDelete.vue';
+import BaseModalWidgetCreate from '@/components/modals/BaseModalWidgetCreate.vue';
+import BaseModalWidgetEdit from '@/components/modals/BaseModalWidgetEdit.vue';
+import ModalDelete from '@/components/modals/BaseModalDelete.vue';
 
 @Component({
     components: {

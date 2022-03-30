@@ -17,7 +17,7 @@
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
-                    background-image: url(${require('../assets/thx_modal-header.webp')});
+                    background-image: url(${require('@/assets/thx_modal-header.webp')});
                 `"
             >
                 <h2 class="d-block">Give us a moment!</h2>
@@ -172,15 +172,15 @@ import {
     Reward,
 } from '@/store/modules/rewards';
 import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
-import BaseDropdownYoutubeVideo from './BaseDropdownYoutubeVideo.vue';
-import BaseDropdownYoutubeUploads from './BaseDropdownYoutubeUploads.vue';
-import BaseDropdownYoutubeChannels from './BaseDropdownYoutubeChannels.vue';
-import BaseDropdownChannelActions from './BaseDropdownChannelActions.vue';
-import BaseDropdownTwitterTweets from './BaseDropdownTwitterTweets.vue';
-import BaseDropdownTwitterUsers from './BaseDropdownTwitterUsers.vue';
-import BaseDropdownSpotifyTrack from './BaseDropdownSpotifyTrack.vue';
-import BaseDropdownSpotifyPlaylist from './BaseDropdownSpotifyPlaylist.vue';
-import BaseDropdownChannelTypes from './BaseDropdownChannelTypes.vue';
+import BaseDropdownYoutubeVideo from '../dropdowns/BaseDropdownYoutubeVideo.vue';
+import BaseDropdownYoutubeUploads from '../dropdowns/BaseDropdownYoutubeUploads.vue';
+import BaseDropdownYoutubeChannels from '../dropdowns/BaseDropdownYoutubeChannels.vue';
+import BaseDropdownChannelActions from '../dropdowns/BaseDropdownChannelActions.vue';
+import BaseDropdownTwitterTweets from '../dropdowns/BaseDropdownTwitterTweets.vue';
+import BaseDropdownTwitterUsers from '../dropdowns/BaseDropdownTwitterUsers.vue';
+import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue';
+import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
+import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
 
 @Component({
     components: {

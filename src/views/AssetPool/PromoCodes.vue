@@ -29,8 +29,8 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
-import ModalPromoCodeCreate from '@/components/ModalPromoCodeCreate.vue';
-import BasePromoCode from '@/components/BasePromoCode.vue';
+import ModalPromoCodeCreate from '@/components/modals/BaseModalPromoCodeCreate.vue';
+import BasePromoCode from '@/components/cards/BasePromoCode.vue';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { IPromoCodes } from '@/types/IPromoCodes';
 

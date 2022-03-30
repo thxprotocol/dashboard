@@ -3,7 +3,7 @@
         <b-jumbotron
             class="jumbotron-header text-left"
             :style="{
-                'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
             }"
         >
             <div class="container container-md pt-10 pb-5">
@@ -25,7 +25,7 @@
 import { BAlert, BButton, BCard, BJumbotron } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import BaseIntegrationYoutube from '@/components/BaseIntegrationYoutube.vue';
+import BaseIntegrationYoutube from '@/components/cards/BaseIntegrationYoutube.vue';
 
 @Component({
     components: {

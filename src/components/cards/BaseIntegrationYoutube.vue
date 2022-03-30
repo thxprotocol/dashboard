@@ -12,7 +12,7 @@
         <b-card class="mb-3">
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
-                <img height="30" class="mr-3" :src="require('../assets/logo-youtube.png')" alt="" />
+                <img height="30" class="mr-3" :src="require('@/assets/logo-youtube.png')" alt="" />
                 <strong> YouTube </strong>
             </div>
             <hr />
@@ -40,7 +40,7 @@ import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import ModalDelete from './ModalDelete.vue';
+import ModalDelete from '../modals/BaseModalDelete.vue';
 
 @Component({
     components: {

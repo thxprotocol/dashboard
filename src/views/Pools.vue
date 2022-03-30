@@ -3,7 +3,7 @@
         <b-jumbotron
             class="jumbotron-header text-left"
             :style="{
-                'background-image': `url(${require('../assets/thx_jumbotron.webp')})`,
+                'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
             }"
         >
             <div class="container container-md pt-5 pb-5">
@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts">
-import BaseAssetPool from '@/components/BaseAssetPool.vue';
-import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
+import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
+import ModalAssetPoolCreate from '@/components/modals/BaseModalAssetPoolCreate.vue';
 import { IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';

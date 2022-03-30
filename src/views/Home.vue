@@ -90,8 +90,8 @@
 </template>
 
 <script lang="ts">
-import BaseAssetPool from '@/components/BaseAssetPool.vue';
-import ModalAssetPoolCreate from '@/components/ModalAssetPoolCreate.vue';
+import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
+import ModalAssetPoolCreate from '@/components/modals/BaseModalAssetPoolCreate.vue';
 import { AccountPlanType, IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';

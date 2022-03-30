@@ -22,7 +22,7 @@
 import { mapGetters } from 'vuex';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
-import ModalDelete from './ModalDelete.vue';
+import ModalDelete from '../modals/BaseModalDelete.vue';
 import { TPromoCode } from '@/store/modules/promoCodes';
 import { IPromoCodes } from '@/types/IPromoCodes';
 

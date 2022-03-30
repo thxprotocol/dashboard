@@ -83,7 +83,7 @@ import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
 import { BBadge, BButton, BCard, BLink, BOverlay, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import ModalDelete from './ModalDelete.vue';
+import ModalDelete from '../modals/BaseModalDelete.vue';
 
 @Component({
     components: {

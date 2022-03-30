@@ -12,15 +12,15 @@
         <b-card class="mb-3">
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
-                <img height="30" class="mr-3" :src="require('../assets/logo-twitter.png')" alt="" />
-                <strong> Twitter </strong>
+                <img height="30" class="mr-3" :src="require('@/assets/logo-spotify.png')" alt="" />
+                <strong> Spotify </strong>
             </div>
             <hr />
-            <p class="text-muted">Connect and reward likes, retweets and followers.</p>
-            <b-button v-if="!twitter && !error" @click="connect()" variant="primary" block class="rounded-pill">
+            <p class="text-muted">Connect and reward track and playlist save and follows.</p>
+            <b-button v-if="!spotify && !error" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button v-if="twitter || error" variant="light" block @click="disconnect()" class="rounded-pill">
+            <b-button v-if="spotify || error" variant="light" block @click="disconnect()" class="rounded-pill">
                 <span class="text-danger">Disconnect</span>
             </b-button>
         </b-card>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { IAccount, ITwitter } from '@/types/account';
+import { IAccount, ISpotify } from '@/types/account';
 import { ChannelType } from '@/store/modules/rewards';
 import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
@@ -44,23 +44,23 @@ import { mapGetters } from 'vuex';
     },
     computed: mapGetters({
         profile: 'account/profile',
-        twitter: 'account/twitter',
+        spotify: 'account/spotify',
     }),
 })
-export default class BaseIntegrationTwitter extends Vue {
+export default class BaseIntegrationSpotify extends Vue {
     isLoading = false;
-    twitter!: ITwitter;
+    spotify!: ISpotify;
     profile!: IAccount;
     error = '';
 
     async mounted() {
         this.isLoading = true;
-        await this.getTwitter();
+        await this.getSpotify();
         this.isLoading = false;
     }
 
-    async getTwitter() {
-        const { error } = await this.$store.dispatch('account/getTwitter');
+    async getSpotify() {
+        const { error } = await this.$store.dispatch('account/getSpotify');
 
         if (error) {
             this.error = error.toString();
@@ -68,14 +68,14 @@ export default class BaseIntegrationTwitter extends Vue {
     }
 
     async connect() {
-        await this.$store.dispatch('account/connectRedirect', ChannelType.Twitter);
+        await this.$store.dispatch('account/connectRedirect', ChannelType.Spotify);
     }
 
     async disconnect() {
         try {
-            await this.$store.dispatch('account/update', { twitterAccess: false });
+            await this.$store.dispatch('account/update', { spotifyAccess: false });
 
-            this.$store.commit('account/setTwitter', null);
+            this.$store.commit('account/setSpotify', null);
         } catch (error) {
             this.error = (error as Error).toString();
         }

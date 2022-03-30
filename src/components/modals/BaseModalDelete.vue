@@ -14,7 +14,7 @@
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
-                    background-image: url(${require('../assets/thx_modal-header-danger.webp')});
+                    background-image: url(${require('@/assets/thx_modal-header-danger.webp')});
                 `"
             >
                 <h2 class="d-block">Give us a moment!</h2>

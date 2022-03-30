@@ -10,12 +10,6 @@
                     :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
                 ></i>
                 <span class="large mr-2 text-primary"></span>
-                <template v-if="reward.poll">
-                    <a :id="`rewardPoll-${reward.id}`">
-                        <i class="fas fa-poll text-primary"></i>
-                    </a>
-                    <base-popover-reward-poll :target="`rewardPoll-${reward.id}`" :reward="reward" />
-                </template>
             </div>
             <div class="col-md-3">
                 <b-input-group :append="assetPool.poolToken.symbol">
@@ -68,15 +62,13 @@
 import { AssetPool } from '@/store/modules/assetPools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import BaseModalRewardLink from '@/components/BaseModalRewardLink.vue';
-import BaseModalRewardQrcode from '@/components/BaseModalRewardQRCode.vue';
-import BasePopoverRewardPoll from '@/components/BasePopoverRewardPoll.vue';
+import BaseModalRewardLink from '@/components/modals/BaseModalRewardLink.vue';
+import BaseModalRewardQrcode from '@/components/modals/BaseModalRewardQRCode.vue';
 
 @Component({
     components: {
         BaseModalRewardLink,
         BaseModalRewardQrcode,
-        BasePopoverRewardPoll,
     },
 })
 export default class BaseListItemReward extends Vue {

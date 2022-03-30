@@ -71,8 +71,8 @@ import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
-import BaseModalRewardCreate from '@/components/ModalRewardCreate.vue';
-import BaseListItemReward from '@/components/BaseListItemReward.vue';
+import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
+import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
 
 @Component({
     components: {

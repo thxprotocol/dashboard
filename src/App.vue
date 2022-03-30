@@ -16,10 +16,10 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IAccount } from './types/account';
 import { initGTM } from '@/utils/ga';
-import BaseDropdownAccount from './components/BaseDropdownAccount.vue';
+import BaseDropdownAccount from './components/dropdowns/BaseDropdownAccount.vue';
 import BaseNavbar from './components/BaseNavbar.vue';
-import BaseDropdownAdminBalance from './components/BaseDropdownAdminBalance.vue';
-import BaseDropdownMenu from './components/BaseDropdownMenu.vue';
+import BaseDropdownAdminBalance from './components/dropdowns/BaseDropdownAdminBalance.vue';
+import BaseDropdownMenu from './components/dropdowns/BaseDropdownMenu.vue';
 
 @Component({
     components: {
