@@ -6,6 +6,7 @@ import AssetPoolStore from './modules/assetPools';
 import PromoCodeStore from './modules/promoCodes';
 import RewardStore from './modules/rewards';
 import WidgetStore from './modules/widgets';
+import ERC20Store from './modules/erc20';
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ const modules = {
     promoCodes: PromoCodeStore,
     rewards: RewardStore,
     widgets: WidgetStore,
+    erc20: ERC20Store,
 };
 
 export default new Vuex.Store({

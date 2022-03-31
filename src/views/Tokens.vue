@@ -19,9 +19,17 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <div class="row" v-if="assetPools">
-                <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
-                    <base-asset-pool :assetPool="assetPool" />
+            <h2>ERC20</h2>
+            <base-card-erc20 />
+            <div class="row" v-if="erc20s">
+                <div class="col-md-6 col-lg-4" :key="erc20.id" v-for="erc20 of erc20s">
+                    <base-card-erc20 :erc20="erc20" />
+                </div>
+            </div>
+            <h2>ERC721</h2>
+            <div class="row" v-if="erc721s">
+                <div class="col-md-6 col-lg-4" :key="erc721.id" v-for="erc721 of erc721s">
+                    <base-card-erc721 :erc721="erc721" />
                 </div>
             </div>
         </div>
@@ -32,35 +40,25 @@
 <script lang="ts">
 import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
 import ModalTokenCreate from '@/components/modals/BaseModalTokenCreate.vue';
-import { IAccount } from '@/types/account';
-import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 
 @Component({
     components: {
         BaseAssetPool,
+        BaseCardErc20,
         ModalTokenCreate,
     },
     computed: mapGetters({
-        profile: 'account/profile',
-        assetPools: 'assetPools/all',
+        erc20s: 'erc20/all',
+        erc721s: 'erc721/all',
     }),
 })
-export default class Home extends Vue {
-    profile!: IAccount;
-    assetPools!: IAssetPools;
-    docsUrl = process.env.VUE_APP_DOCS_URL;
-
-    get greeting() {
-        const greetings = ['Hi there', 'Howdy', 'Hello'];
-        return greetings[Math.floor(Math.random() * greetings.length)];
-    }
-
+export default class Tokens extends Vue {
     async mounted() {
         try {
-            await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('assetPools/list');
+            await this.$store.dispatch('erc20/list');
         } catch (e) {
             debugger;
         }
