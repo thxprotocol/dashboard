@@ -18,7 +18,7 @@
             </b-alert>
 
             <b-card
-                v-if="assetPool.network"
+                v-if="assetPool.poolToken"
                 @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
                 class="mt-3 mb-3 shadow-sm cursor-pointer"
             >
