@@ -37,7 +37,7 @@
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
             </b-alert>
-            <b-alert :show="profile.plan === AccountPlanType.None" variant="warning">
+            <b-alert :show="profile.plan === AccountPlanType.Solo" variant="warning">
                 <i class="fas fa-rocket mr-2"></i>
                 Get on a plan and unlock Polygon Mainnet deployments.
                 <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Contact us in Discord </b-link>
@@ -46,7 +46,7 @@
                 <label for="networkId">Blockchain Network</label>
                 <b-form-select v-model="network">
                     <b-form-select-option :value="0">Polygon Test (Mumbai) Network</b-form-select-option>
-                    <b-form-select-option :value="1" :disabled="profile.plan === AccountPlanType.None">
+                    <b-form-select-option :value="1" :disabled="profile.plan === AccountPlanType.Solo">
                         Polygon Main Network
                     </b-form-select-option>
                 </b-form-select>
