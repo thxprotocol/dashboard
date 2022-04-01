@@ -1,3 +1,5 @@
+import { NetworkProvider } from '@/store/modules/assetPools';
+
 export enum ERC20Type {
     Uknown = -1,
     Limited = 0,
@@ -7,7 +9,7 @@ export enum ERC20Type {
 export type TERC20 = {
     _id: string;
     type: ERC20Type;
-    network: 0;
+    network: NetworkProvider;
     address: string;
     name: string;
     symbol: string;

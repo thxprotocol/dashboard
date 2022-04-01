@@ -115,8 +115,9 @@ import { mapGetters } from 'vuex';
 @Component({
     computed: mapGetters({}),
 })
-export default class ModalAssetPoolCreate extends Vue {
+export default class ModalERC20Create extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    publicUrl = process.env.VUE_APP_PUBLIC_URL;
     loading = false;
     error = '';
 

@@ -85,23 +85,16 @@
                 </b-col>
             </b-row>
         </div>
-        <modal-asset-pool-create />
     </div>
 </template>
 
 <script lang="ts">
-import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
-import ModalAssetPoolCreate from '@/components/modals/BaseModalAssetPoolCreate.vue';
 import { AccountPlanType, IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
-    components: {
-        BaseAssetPool,
-        ModalAssetPoolCreate,
-    },
     computed: mapGetters({
         profile: 'account/profile',
         assetPools: 'assetPools/all',

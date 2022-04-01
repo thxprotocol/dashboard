@@ -195,15 +195,14 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
-    components: {},
     computed: mapGetters({
         profile: 'account/profile',
     }),
 })
 export default class ModalAssetPoolCreate extends Vue {
-    AccountPlanType = AccountPlanType;
-    docsUrl = process.env.VUE_APP_DOCS_URL;
     publicUrl = process.env.VUE_APP_PUBLIC_URL;
+    docsUrl = process.env.VUE_APP_DOCS_URL;
+    AccountPlanType = AccountPlanType;
     loading = false;
     error = '';
 

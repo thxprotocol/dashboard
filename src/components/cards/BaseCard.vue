@@ -1,5 +1,5 @@
 <template>
-    <b-skeleton-wrapper :loading="slotProps.isLoading">
+    <b-skeleton-wrapper :loading="loading">
         <template #loading>
             <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
                 <b-skeleton animation="fade" width="65%"></b-skeleton>
@@ -10,18 +10,16 @@
             </b-card>
         </template>
         <b-card class="mb-3">
-            <slot :slot-scope="slotProps"></slot>
+            <slot></slot>
         </b-card>
     </b-skeleton-wrapper>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
 export default class BaseCard extends Vue {
-    slotProps = {
-        isLoading: false,
-    };
+    @Prop() loading!: boolean;
 }
 </script>

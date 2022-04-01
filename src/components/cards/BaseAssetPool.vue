@@ -30,10 +30,7 @@
                 >
                     <i class="far fa-trash-alt"></i>
                 </b-button>
-                <b-badge class="p-2 text-white mr-1" variant="gray" v-if="assetPool.network === 0">
-                    Polygon Test
-                </b-badge>
-                <b-badge class="p-2 mr-1" variant="primary" v-if="assetPool.network === 1"> Polygon Main </b-badge>
+                <base-badge-network :network="assetPool.network" class="mr-1" />
                 <b-badge class="p-2 mr-1 text-muted" variant="light">
                     <i class="fas fa-users mr-1"></i>
                     {{ assetPool.metrics.members }}
@@ -44,44 +41,6 @@
                 </b-badge>
                 <p class="font-weight-bold text-primary h3 mt-2">
                     {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-                </p>
-                <p class="text-muted mb-0">
-                    {{ assetPool.poolToken.name }}
-                    <template v-if="assetPool.network === 0">
-                        <a
-                            target="_blank"
-                            :id="`infoTokenTest-${assetPool.address}`"
-                            @click.stop="
-                                openUrl(
-                                    `https://mumbai.polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
-                                )
-                            "
-                        >
-                            <i class="fas fa-question-circle text-gray"></i>
-                        </a>
-                        <b-tooltip :target="`infoTokenTest-${assetPool.address}`" triggers="hover">
-                            Total Supply:<br />
-                            {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                        </b-tooltip>
-                    </template>
-                    <template v-if="assetPool.network === 1">
-                        <a
-                            target="_blank"
-                            :id="`infoTokenMain-${assetPool.address}`"
-                            @click.stop="
-                                openUrl(
-                                    `https://polygonscan.com/address/${assetPool.poolToken.address}/transactions`,
-                                    '_blank',
-                                ).focus()
-                            "
-                        >
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                        <b-tooltip :target="`infoTokenMain-${assetPool.address}`" triggers="hover">
-                            Total Supply:<br />
-                            {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }}
-                        </b-tooltip>
-                    </template>
                 </p>
                 <base-modal-delete
                     :id="`modalDelete-${assetPool.address}`"
@@ -99,11 +58,13 @@ import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { AxiosError } from 'axios';
-import BaseModalDelete from '../modals/BaseModalDelete.vue';
+import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
+import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 
 @Component({
     components: {
         BaseModalDelete,
+        BaseBadgeNetwork,
     },
     computed: mapGetters({
         profile: 'account/profile',
