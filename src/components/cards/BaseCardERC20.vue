@@ -1,8 +1,8 @@
 <template>
     <base-card>
-        <template #default>
+        <template #default="{ isLoading }">
             <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
-
+            {{ isLoading }}
             <div class="mb-3 d-flex align-items-center" v-if="erc20.name">
                 <img
                     height="30"
@@ -22,7 +22,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseCard from './BaseCard.vue';
-import { TERC20 } from '@/store/modules/erc20';
+import { TERC20 } from '@/types/erc20';
 
 @Component({
     components: {
@@ -34,12 +34,13 @@ import { TERC20 } from '@/store/modules/erc20';
     }),
 })
 export default class BaseCardERC20 extends Vue {
+    isLoading!: true;
     error = '';
 
     @Prop() erc20!: TERC20;
 
     async mounted() {
-        this.$store.dispatch('erc20/read', this.erc20.id).then(() => {
+        this.$store.dispatch('erc20/read', this.erc20._id).then(() => {
             //
         });
     }

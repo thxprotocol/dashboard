@@ -1,19 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-
-export type TERC20 = {
-    id: string;
-    address: string;
-    name: string;
-    symbol: string;
-    description: string;
-    baseURL: string;
-};
-
-interface IERC20s {
-    [id: string]: TERC20[];
-}
+import { IERC20s, TERC20 } from '@/types/erc20';
 
 @Module({ namespaced: true })
 class ERC20Module extends VuexModule {
@@ -24,8 +12,8 @@ class ERC20Module extends VuexModule {
     }
 
     @Mutation
-    set(erc721: TERC20) {
-        Vue.set(this._all, erc721.id, erc721);
+    set(erc20: TERC20) {
+        Vue.set(this._all, erc20._id, erc20);
     }
 
     @Action({ rawError: true })
@@ -34,7 +22,7 @@ class ERC20Module extends VuexModule {
             method: 'GET',
             url: '/erc20',
         });
-        data.forEach((erc20: TERC20) => this.context.commit('set', erc20));
+        data.tokens.forEach((erc20: TERC20) => this.context.commit('set', erc20));
     }
 
     @Action({ rawError: true })
