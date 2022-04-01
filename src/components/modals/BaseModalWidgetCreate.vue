@@ -76,45 +76,11 @@
 
 <script lang="ts">
 import { AssetPool } from '@/store/modules/assetPools';
-import {
-    BAlert,
-    BButton,
-    BCard,
-    BCollapse,
-    BDropdown,
-    BDropdownItemButton,
-    BFormGroup,
-    BFormInput,
-    BFormRadio,
-    BFormSelect,
-    BFormSelectOption,
-    BInputGroup,
-    BLink,
-    BModal,
-    BSpinner,
-} from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { Reward } from '@/store/modules/rewards';
 
 @Component({
-    components: {
-        'b-modal': BModal,
-        'b-alert': BAlert,
-        'b-link': BLink,
-        'b-card': BCard,
-        'b-input-group': BInputGroup,
-        'b-dropdown': BDropdown,
-        'b-dropdown-item-button': BDropdownItemButton,
-        'b-form-radio': BFormRadio,
-        'b-form-group': BFormGroup,
-        'b-form-input': BFormInput,
-        'b-button': BButton,
-        'b-collapse': BCollapse,
-        'b-form-select': BFormSelect,
-        'b-form-select-option': BFormSelectOption,
-        'b-spinner': BSpinner,
-    },
     computed: mapGetters({
         clients: 'clients/all',
     }),

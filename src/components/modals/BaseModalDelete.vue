@@ -52,20 +52,10 @@
 </template>
 
 <script lang="ts">
-import { BAlert, BButton, BLink, BModal, BOverlay, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
-@Component({
-    components: {
-        'b-modal': BModal,
-        'b-link': BLink,
-        'b-alert': BAlert,
-        'b-button': BButton,
-        'b-overlay': BOverlay,
-        'b-spinner': BSpinner,
-    },
-})
-export default class ModalDelete extends Vue {
+@Component({})
+export default class BaseModalDelete extends Vue {
     loading = false;
     error = '';
 

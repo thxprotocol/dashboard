@@ -13,17 +13,10 @@
 import QrcodeVue from 'qrcode.vue';
 import { AssetPool } from '@/store/modules/assetPools';
 import { Reward } from '@/store/modules/rewards';
-import { BButton, BInputGroup, BFormInput, BModal, BInputGroupAddon, BCard } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({
     components: {
-        BCard,
-        BModal,
-        BButton,
-        BFormInput,
-        BInputGroup,
-        BInputGroupAddon,
         QrcodeVue,
     },
 })

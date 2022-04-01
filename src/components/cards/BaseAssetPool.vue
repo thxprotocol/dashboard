@@ -83,7 +83,11 @@
                         </b-tooltip>
                     </template>
                 </p>
-                <modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
+                <base-modal-delete
+                    :id="`modalDelete-${assetPool.address}`"
+                    :call="remove"
+                    :subject="assetPool.address"
+                />
             </b-card>
         </div>
     </b-skeleton-wrapper>
@@ -92,22 +96,14 @@
 <script lang="ts">
 import { IAccount } from '@/types/account';
 import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
-import { BBadge, BButton, BCard, BLink, BOverlay, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import ModalDelete from './ModalDelete.vue';
 import { AxiosError } from 'axios';
+import BaseModalDelete from '../modals/BaseModalDelete.vue';
 
 @Component({
     components: {
-        'b-link': BLink,
-        'b-button': BButton,
-        'b-badge': BBadge,
-        'b-card': BCard,
-        'b-overlay': BOverlay,
-        'modal-delete': ModalDelete,
-        'b-skeleton': BSkeleton,
-        'b-skeleton-wrapper': BSkeletonWrapper,
+        BaseModalDelete,
     },
     computed: mapGetters({
         profile: 'account/profile',
