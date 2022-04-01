@@ -68,6 +68,7 @@ export default class BaseCardERC20 extends Vue {
     @Prop() erc20!: TERC20;
 
     async mounted() {
+        this.$store.dispatch('account/getProfile');
         this.$store.dispatch('erc20/read', this.erc20._id).then(() => {
             this.loading = false;
         });

@@ -57,13 +57,9 @@ export default class Home extends Vue {
         return greetings[Math.floor(Math.random() * greetings.length)];
     }
 
-    async mounted() {
-        try {
-            await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('assetPools/list');
-        } catch (e) {
-            debugger;
-        }
+    mounted() {
+        this.$store.dispatch('account/getProfile');
+        this.$store.dispatch('assetPools/list');
     }
 }
 </script>
