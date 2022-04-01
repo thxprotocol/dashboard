@@ -9,7 +9,10 @@
             >
                 <i class="far fa-trash-alt"></i>
             </b-button>
-            <base-badge-network :network="erc20.network" />
+            <base-badge-network class="mr-2" :network="erc20.network" />
+            <b-badge variant="light" class="cursor-pointer p-2 mr-1 text-muted" @click="openTokenUrl()">
+                <i class="fas fa-external-link-alt mr-1"></i> Explore
+            </b-badge>
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <img
                     height="20"
@@ -20,21 +23,14 @@
                 />
                 <strong class="m-0">{{ erc20.name }}</strong>
             </div>
-            <hr />
             <p class="m-0">
-                <label class="text-muted">
-                    Total Supply
-                    <b-link
-                        target="_blank"
-                        v-b-tooltip
-                        title="View this ERC20 contract on Polygonscan"
-                        @click="openTokenUrl()"
-                    >
-                        <i class="fas fa-question-circle"></i>
-                    </b-link>
-                </label>
-                <br />
-                <strong>{{ erc20.totalSupply }} {{ erc20.symbol }}</strong>
+                <strong
+                    v-b-tooltip
+                    :title="erc20.type == ERC20Type.Limited ? 'Total supply' : 'Total minted supply'"
+                    class="font-weight-bold h3 text-primary"
+                >
+                    {{ erc20.totalSupply }} {{ erc20.symbol }}
+                </strong>
             </p>
         </template>
         <base-modal-delete
@@ -48,7 +44,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { TERC20 } from '@/types/erc20';
+import { ERC20Type, TERC20 } from '@/types/erc20';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import { NetworkProvider } from '@/store/modules/assetPools';
@@ -65,6 +61,7 @@ import BaseModalDelete from '../modals/BaseModalDelete.vue';
     }),
 })
 export default class BaseCardERC20 extends Vue {
+    ERC20Type = ERC20Type;
     loading = true;
     error = '';
 
