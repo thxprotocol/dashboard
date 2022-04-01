@@ -37,16 +37,16 @@
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
             </b-alert>
-            <b-alert :show="profile.plan === AccountPlanType.None" variant="warning">
+            <b-alert :show="profile.plan === AccountPlanType.Solo" variant="warning">
                 <i class="fas fa-rocket mr-2"></i>
-                Get on a plan and unlock Polygon Mainnet deployments.
-                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Contact us in Discord </b-link>
+                Choosing <strong>Polygon Main Network</strong> will change your payment plan from Solo to
+                <b-link :href="publicUrl + '/pricing'">Community</b-link>.
             </b-alert>
             <b-form-group>
                 <label for="networkId">Blockchain Network</label>
                 <b-form-select v-model="network">
                     <b-form-select-option :value="0">Polygon Test (Mumbai) Network</b-form-select-option>
-                    <b-form-select-option :value="1" :disabled="profile.plan === AccountPlanType.None">
+                    <b-form-select-option :value="1" :disabled="profile.plan === AccountPlanType.Solo">
                         Polygon Main Network
                     </b-form-select-option>
                 </b-form-select>
@@ -203,6 +203,7 @@ import { mapGetters } from 'vuex';
 export default class ModalAssetPoolCreate extends Vue {
     AccountPlanType = AccountPlanType;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    publicUrl = process.env.VUE_APP_PUBLIC_URL;
     loading = false;
     error = '';
 

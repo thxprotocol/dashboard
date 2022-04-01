@@ -76,41 +76,25 @@ class AssetPoolModule extends VuexModule {
 
     @Action({ rawError: true })
     async list() {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/asset_pools',
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/asset_pools',
+        });
 
-            for (const address of r.data) {
-                axios({
-                    method: 'GET',
-                    url: '/asset_pools/' + address,
-                    headers: {
-                        AssetPool: address,
-                    },
-                }).then((r) => {
-                    this.context.commit('set', new AssetPool(r.data));
-                });
-            }
-        } catch (e) {
-            console.error(e);
-        }
+        r.data.forEach((address: string) => {
+            this.context.commit('set', { address });
+        });
     }
 
     @Action({ rawError: true })
     async read(address: string) {
-        try {
-            const r = await axios({
-                method: 'get',
-                url: '/asset_pools/' + address,
-                headers: { AssetPool: address },
-            });
+        const r = await axios({
+            method: 'get',
+            url: '/asset_pools/' + address,
+            headers: { AssetPool: address },
+        });
 
-            this.context.commit('set', new AssetPool(r.data));
-        } catch (e) {
-            console.error(e);
-        }
+        this.context.commit('set', new AssetPool(r.data));
     }
 
     @Action({ rawError: true })
@@ -131,10 +115,6 @@ class AssetPoolModule extends VuexModule {
                     url: '/asset_pools/' + res.data.address,
                     headers: { AssetPool: res.data.address },
                 });
-
-                if (r.status != 200) {
-                    throw Error('GET /asset_pools/:address failed.');
-                }
 
                 const assetPool: AssetPool = new AssetPool(r.data);
 

@@ -36,7 +36,7 @@
         </b-jumbotron>
         <div class="container container-md">
             <b-alert show variant="info">
-                <i class="fas fa-gift mr-2"></i><strong>New:</strong> Twitter Conditional Rewards!
+                <i class="fas fa-gift mr-2"></i><strong>New:</strong> Protocol Fee and payment plans are active!
                 <b-link
                     class="float-right"
                     target="_blank"
