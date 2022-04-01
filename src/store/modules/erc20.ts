@@ -2,7 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 
-type TERC20 = {
+export type TERC20 = {
     id: string;
     address: string;
     name: string;
@@ -16,7 +16,7 @@ interface IERC20s {
 }
 
 @Module({ namespaced: true })
-class RewardModule extends VuexModule {
+class ERC20Module extends VuexModule {
     _all: IERC20s = {};
 
     get all() {
@@ -28,34 +28,35 @@ class RewardModule extends VuexModule {
         Vue.set(this._all, erc721.id, erc721);
     }
 
-    @Action
-    async read({ poolAddress, id }: { poolAddress: string; id: string }) {
-        try {
-            const { data } = await axios({
-                method: 'GET',
-                url: '/erc20/' + id,
-                headers: { AssetPool: poolAddress },
-            });
-
-            this.context.commit('set', data);
-        } catch (error) {
-            return { error };
-        }
+    @Action({ rawError: true })
+    async list() {
+        const { data } = await axios({
+            method: 'GET',
+            url: '/erc20',
+        });
+        data.forEach((erc20: TERC20) => this.context.commit('set', erc20));
     }
 
-    @Action
-    async list() {
-        try {
-            const { data } = await axios({
-                method: 'GET',
-                url: '/erc20',
-            });
-            debugger;
-            this.context.commit('set', data);
-        } catch (error) {
-            return { error };
-        }
+    @Action({ rawError: true })
+    async read(id: string) {
+        const { data } = await axios({
+            method: 'GET',
+            url: '/erc20/' + id,
+        });
+
+        this.context.commit('set', data);
+    }
+
+    @Action({ rawError: true })
+    async create(payload: any) {
+        const { data } = await axios({
+            method: 'POST',
+            url: '/erc20/',
+            data: payload,
+        });
+
+        this.context.commit('set', data);
     }
 }
 
-export default RewardModule;
+export default ERC20Module;

@@ -10,8 +10,7 @@
             </b-card>
         </template>
         <b-card class="mb-3">
-            <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
-            <slot :clicked="handleClick"></slot>
+            <slot></slot>
         </b-card>
     </b-skeleton-wrapper>
 </template>

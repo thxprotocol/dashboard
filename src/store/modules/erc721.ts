@@ -16,7 +16,7 @@ interface IERC721s {
 }
 
 @Module({ namespaced: true })
-class RewardModule extends VuexModule {
+class ERC721Module extends VuexModule {
     _all: IERC721s = {};
 
     get all() {
@@ -28,20 +28,15 @@ class RewardModule extends VuexModule {
         Vue.set(this._all, erc721.id, erc721);
     }
 
-    @Action
-    async read({ poolAddress, id }: { poolAddress: string; id: string }) {
-        try {
-            const { data } = await axios({
-                method: 'GET',
-                url: '/promo_codes/' + id,
-                headers: { AssetPool: poolAddress },
-            });
+    @Action({ rawError: true })
+    async read(id: string) {
+        const { data } = await axios({
+            method: 'GET',
+            url: '/erc721/' + id,
+        });
 
-            this.context.commit('set', data);
-        } catch (error) {
-            return { error };
-        }
+        this.context.commit('set', data);
     }
 }
 
-export default RewardModule;
+export default ERC721Module;

@@ -8,9 +8,13 @@
         >
             <div class="container container-md pt-5 pb-5">
                 <p class="brand-text">Tokens</p>
-                <b-button v-b-modal="'modalTokenCreate'" class="rounded-pill" variant="secondary">
+                <b-button v-b-modal="'modalERC20Create'" class="rounded-pill mr-2" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create Token</span>
+                </b-button>
+                <b-button v-b-modal="'modalERC20Create'" class="rounded-pill" variant="secondary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Create Collectible</span>
                 </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
@@ -20,7 +24,6 @@
         </b-jumbotron>
         <div class="container container-md">
             <h2>ERC20</h2>
-            <base-card-erc20 />
             <div class="row" v-if="erc20s">
                 <div class="col-md-6 col-lg-4" :key="erc20.id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
@@ -33,22 +36,24 @@
                 </div>
             </div>
         </div>
-        <modal-token-create />
+        <modal-erc20-create />
     </div>
 </template>
 
 <script lang="ts">
-import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
-import ModalTokenCreate from '@/components/modals/BaseModalTokenCreate.vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
+import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
+import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 
 @Component({
     components: {
         BaseAssetPool,
         BaseCardErc20,
-        ModalTokenCreate,
+        ModalErc20Create,
+        ModalErc721Create,
     },
     computed: mapGetters({
         erc20s: 'erc20/all',

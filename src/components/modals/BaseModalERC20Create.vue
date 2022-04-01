@@ -2,7 +2,7 @@
     <b-modal
         size="lg"
         title="Create Token"
-        id="modalTokenCreate"
+        id="modalERC20Create"
         no-close-on-backdrop
         no-close-on-esc
         centered
@@ -33,7 +33,7 @@
                 </span>
             </p>
         </div>
-        <form v-else v-on:submit.prevent="submit" id="formTokenCreate">
+        <form v-else>
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
             </b-alert>
@@ -75,16 +75,6 @@
                         monetary value when publically traded.
                     </p>
                 </b-form-radio>
-
-                <b-form-radio v-model="tokenOption" name="tokenOption" :value="2">
-                    <strong>
-                        ERC-721 (NFT)
-                        <a v-b-tooltip title="Unique tokens minted on the go, also known as NFT's.">
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </strong>
-                    <p>Unique tokens minted on the go, also known as NFT's.</p>
-                </b-form-radio>
             </b-form-group>
             <b-row>
                 <b-col>
@@ -110,15 +100,8 @@
             </b-row>
         </form>
         <template v-slot:modal-footer="{}">
-            <b-button
-                :disabled="loading"
-                class="rounded-pill"
-                type="submit"
-                variant="primary"
-                form="formAssetPoolCreate"
-                block
-            >
-                Create Asset Pool
+            <b-button :disabled="loading" class="rounded-pill" type="submit" variant="primary" @click="submit()" block>
+                Create ERC20
             </b-button>
         </template>
     </b-modal>
@@ -153,19 +136,14 @@ export default class ModalAssetPoolCreate extends Vue {
 
         const data = {
             network: this.network,
-            token: {
-                name: this.erc20Name,
-                symbol: this.erc20Symbol,
-                totalSupply: this.erc20TotalSupply,
-            },
+            name: this.erc20Name,
+            symbol: this.erc20Symbol,
+            totalSupply: this.erc20TotalSupply,
         };
-        const { error } = await this.$store.dispatch('tokens/create', data);
 
-        if (error) {
-            this.error = error;
-        }
+        await this.$store.dispatch('erc20/create', data);
 
-        this.$bvModal.hide(`modalAssetPoolCreate`);
+        this.$bvModal.hide(`modalERC20Create`);
         this.loading = false;
     }
 }
