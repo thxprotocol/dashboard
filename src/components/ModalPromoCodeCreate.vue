@@ -15,8 +15,8 @@
             Title: <b-form-input type="text" v-model="title" />
             <div class="text-right small" :class="description.length >= titleMaxLength ? 'text-danger' : 'text-muted'">
                 {{ title.length }}/50
-            </div></b-form-group
-        >
+            </div>
+        </b-form-group>
         <b-form-group>
             Description: <b-form-textarea v-model="description" />
             <div class="text-right small" :class="description.length >= descMaxLength ? 'text-danger' : 'text-muted'">
