@@ -23,14 +23,14 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <h2>ERC20</h2>
-            <div class="row" v-if="erc20s">
+            <h2 v-if="erc20s">ERC20</h2>
+            <div class="row">
                 <div class="col-md-6 col-lg-4" :key="erc20.id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
                 </div>
             </div>
-            <h2>ERC721</h2>
-            <div class="row" v-if="erc721s">
+            <h2 v-if="erc721s">ERC721</h2>
+            <div class="row">
                 <div class="col-md-6 col-lg-4" :key="erc721.id" v-for="erc721 of erc721s">
                     <base-card-erc721 :erc721="erc721" />
                 </div>

@@ -9,7 +9,7 @@
                 <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
             </b-card>
         </template>
-        <b-card class="mb-3">
+        <b-card class="mb-3" :class="classes" @click="$emit('click')">
             <slot></slot>
         </b-card>
     </b-skeleton-wrapper>
@@ -21,5 +21,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component({})
 export default class BaseCard extends Vue {
     @Prop() loading!: boolean;
+    @Prop() classes!: string;
 }
 </script>

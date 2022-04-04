@@ -1,55 +1,36 @@
 <template>
-    <b-skeleton-wrapper :loading="skeletonLoading">
-        <template #loading>
-            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
-                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                <b-skeleton animation="fade" width="55%"></b-skeleton>
-                <b-skeleton animation="fade" width="70%"></b-skeleton>
-                <b-skeleton animation="fade" width="60%"></b-skeleton>
-                <b-skeleton animation="fade" width="40%"></b-skeleton>
-            </b-card>
-        </template>
-        <div>
-            <b-alert class="m-0" show variant="warning" v-if="warning">
-                {{ warning }}
-                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank">
-                    Please contact us in Discord
-                </b-link>
-            </b-alert>
+    <base-card
+        class="cursor-pointer"
+        :loading="!assetPool.poolToken && skeletonLoading"
+        @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
+    >
+        <b-alert class="m-0" show variant="warning" v-if="warning">
+            {{ warning }}
+            <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Please contact us in Discord </b-link>
+        </b-alert>
 
-            <b-card
-                v-if="assetPool.poolToken"
-                @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
-                class="mt-3 mb-3 shadow-sm cursor-pointer"
-            >
-                <b-button
-                    variant="link"
-                    class="btn-remove rounded-pill float-right"
-                    size="sm"
-                    @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
-                >
-                    <i class="far fa-trash-alt"></i>
-                </b-button>
-                <base-badge-network :network="assetPool.network" class="mr-1" />
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-users mr-1"></i>
-                    {{ assetPool.metrics.members }}
-                </b-badge>
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-gift mr-1"></i>
-                    {{ assetPool.metrics.withdrawals }}
-                </b-badge>
-                <p class="font-weight-bold text-primary h3 mt-2">
-                    {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-                </p>
-                <base-modal-delete
-                    :id="`modalDelete-${assetPool.address}`"
-                    :call="remove"
-                    :subject="assetPool.address"
-                />
-            </b-card>
-        </div>
-    </b-skeleton-wrapper>
+        <b-button
+            variant="link"
+            class="btn-remove rounded-pill float-right"
+            size="sm"
+            @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+        >
+            <i class="far fa-trash-alt"></i>
+        </b-button>
+        <base-badge-network :network="assetPool.network" class="mr-1" />
+        <b-badge class="p-2 mr-1 text-muted" variant="light">
+            <i class="fas fa-users mr-1"></i>
+            {{ assetPool.metrics.members }}
+        </b-badge>
+        <b-badge class="p-2 mr-1 text-muted" variant="light">
+            <i class="fas fa-gift mr-1"></i>
+            {{ assetPool.metrics.withdrawals }}
+        </b-badge>
+        <p class="font-weight-bold text-primary h3 mt-2 mb-0">
+            {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+        </p>
+        <base-modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
+    </base-card>
 </template>
 
 <script lang="ts">
@@ -60,11 +41,13 @@ import { mapGetters } from 'vuex';
 import { AxiosError } from 'axios';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
+import BaseCard from './BaseCard.vue';
 
 @Component({
     components: {
         BaseModalDelete,
         BaseBadgeNetwork,
+        BaseCard,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -80,9 +63,6 @@ export default class BaseAssetPool extends Vue {
 
     profile!: IAccount;
     assetPools!: IAssetPools;
-    openUrl(url: string) {
-        return (window as any).open(url, '_blank').focus();
-    }
 
     async mounted() {
         try {
@@ -109,8 +89,3 @@ export default class BaseAssetPool extends Vue {
     }
 }
 </script>
-<style lang="scss" scoped>
-.card-title {
-    font-size: 1rem;
-}
-</style>
