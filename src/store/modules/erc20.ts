@@ -3,8 +3,6 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IERC20s, TERC20 } from '@/types/erc20';
 
-const POLYGONSCAN_KEY = process.env.VUE_APP_POLYGONSCAN_KEY;
-
 @Module({ namespaced: true })
 class ERC20Module extends VuexModule {
     _all: IERC20s = {};
@@ -24,7 +22,7 @@ class ERC20Module extends VuexModule {
             method: 'GET',
             url: '/erc20',
         });
-        data.tokens.forEach((erc20: TERC20) => this.context.commit('set', erc20));
+        data.forEach((erc20: TERC20) => this.context.commit('set', erc20));
     }
 
     @Action({ rawError: true })

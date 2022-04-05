@@ -15,8 +15,8 @@
                     height="40"
                     width="40"
                     style="border-radius: 50%"
-                    class="mr-2 bg-darker outline-darker"
-                    :src="`https://avatars.dicebear.com/api/identicon/${erc20.address}.svg`"
+                    class="mr-2 bg-darker"
+                    :src="erc20.logoURI"
                     alt=""
                 />
                 <div>

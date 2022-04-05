@@ -16,6 +16,7 @@ export type TERC20 = {
     totalSupply: number;
     transactionHash: string;
     createdAt: Date;
+    logoURI: string;
 };
 
 export interface IERC20s {
