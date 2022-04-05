@@ -59,8 +59,9 @@ import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
     }),
 })
 export default class Tokens extends Vue {
-    async mounted() {
-        await this.$store.dispatch('erc20/list');
+    mounted() {
+        this.$store.dispatch('account/getProfile');
+        this.$store.dispatch('erc20/list');
     }
 }
 </script>

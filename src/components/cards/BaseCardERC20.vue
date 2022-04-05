@@ -35,10 +35,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { ERC20Type, TERC20 } from '@/types/erc20';
 import { NetworkProvider } from '@/store/modules/assetPools';
+import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseModalDelete from '../modals/BaseModalDelete.vue';
-import { IAccount } from '@/types/account';
 import BaseIdenticon from '../BaseIdenticon.vue';
 
 @Component({
@@ -62,7 +62,6 @@ export default class BaseCardERC20 extends Vue {
     @Prop() erc20!: TERC20;
 
     async mounted() {
-        await this.$store.dispatch('account/getProfile');
         this.$store.dispatch('erc20/read', this.erc20._id).then(() => {
             this.loading = false;
         });
