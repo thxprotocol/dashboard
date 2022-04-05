@@ -10,7 +10,7 @@
             </b-card>
         </template>
         <b-card class="mb-3" :class="classes" @click="$emit('click')">
-            <slot></slot>
+            <slot name="card-body"></slot>
         </b-card>
     </b-skeleton-wrapper>
 </template>

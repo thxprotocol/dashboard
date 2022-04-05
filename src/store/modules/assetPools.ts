@@ -98,35 +98,24 @@ class AssetPoolModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(data: {
+    async create(payload: {
         network: number;
         token: { address: string; name: string; symbol: string; totalSupply: number };
     }) {
-        try {
-            const res = await axios({
-                method: 'POST',
-                url: '/asset_pools',
-                data,
-            });
+        const { data } = await axios({
+            method: 'POST',
+            url: '/asset_pools',
+            data: payload,
+        });
+        const r = await axios({
+            method: 'GET',
+            url: '/asset_pools/' + data.address,
+            headers: { AssetPool: data.address },
+        });
 
-            try {
-                const r = await axios({
-                    method: 'GET',
-                    url: '/asset_pools/' + res.data.address,
-                    headers: { AssetPool: res.data.address },
-                });
+        const assetPool: AssetPool = new AssetPool(r.data);
 
-                const assetPool: AssetPool = new AssetPool(r.data);
-
-                this.context.commit('set', assetPool);
-
-                return { assetPool };
-            } catch (e) {
-                return { error: e };
-            }
-        } catch (e) {
-            return { error: e };
-        }
+        this.context.commit('set', assetPool);
     }
 
     @Action({ rawError: true })

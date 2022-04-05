@@ -39,7 +39,7 @@
             </b-alert>
 
             <p>
-                Are you sure to delete the <strong>{{ subject }}</strong
+                Are you sure to delete <strong>{{ subject }}</strong
                 >? This action can not be undone.
             </p>
         </form>
@@ -67,7 +67,7 @@ export default class BaseModalDelete extends Vue {
         this.loading = true;
 
         try {
-            const r = await this.call(this.subject);
+            const r = await this.call();
 
             if (r && r.error) {
                 this.error = r.error.message;

@@ -1,27 +1,22 @@
 <template>
-    <base-modal title="Create Token Pool" id="modalAssetPoolCreate">
-        <template #modal-body>
-            <form v-if="profile && !loading">
-                <b-alert variant="danger" show v-if="error">
-                    {{ error }}
-                </b-alert>
-                <base-dropdown-select-network @selected="onSelectNetwork" />
-                <b-form-group>
-                    <label> Token Contract </label>
-                    <base-dropdown-select-erc20 @selected="onSelectToken" />
-                </b-form-group>
-                <b-form-group>
-                    <label>Token Contract Address</label>
-                    <b-input-group>
-                        <b-form-input type="text" :readonly="erc20Token" v-model="erc20TokenAddress" />
-                        <b-input-group-addon append>
-                            <b-button variant="primary" v-clipboard:copy="erc20TokenAddress">
-                                <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                            </b-button>
-                        </b-input-group-addon>
-                    </b-input-group>
-                </b-form-group>
-            </form>
+    <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
+        <template #modal-body v-if="profile && !loading">
+            <base-form-select-network @selected="onSelectNetwork" />
+            <b-form-group>
+                <label> Token Contract </label>
+                <base-dropdown-select-erc20 :network="network" @selected="onSelectToken" />
+            </b-form-group>
+            <b-form-group>
+                <label>Token Contract Address</label>
+                <b-input-group>
+                    <b-form-input :disabled="!!erc20Token" v-model="erc20TokenAddress" />
+                    <b-input-group-addon append>
+                        <b-button variant="primary" v-clipboard:copy="erc20TokenAddress">
+                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
+                        </b-button>
+                    </b-input-group-addon>
+                </b-input-group>
+            </b-form-group>
         </template>
         <template #btn-primary>
             <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
@@ -35,14 +30,15 @@
 import { NetworkProvider, PoolToken } from '@/store/modules/assetPools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import BaseDropdownSelectNetwork from '@/components/dropdowns/BaseDropdownSelectNetwork.vue';
+import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
 import BaseModal from './BaseModal.vue';
+import { AxiosError } from 'axios';
 
 @Component({
     components: {
         BaseModal,
-        BaseDropdownSelectNetwork,
+        BaseFormSelectNetwork,
         BaseDropdownSelectErc20,
     },
     computed: mapGetters({
@@ -68,16 +64,19 @@ export default class ModalAssetPoolCreate extends Vue {
 
     async submit() {
         this.loading = true;
-
-        await this.$store.dispatch('assetPools/create', {
-            network: this.network,
-            token: {
-                address: this.erc20TokenAddress,
-            },
-        });
-
-        this.$bvModal.hide(`modalAssetPoolCreate`);
-        this.loading = false;
+        try {
+            await this.$store.dispatch('assetPools/create', {
+                network: this.network,
+                token: {
+                    address: this.erc20TokenAddress,
+                },
+            });
+            this.$bvModal.hide(`modalAssetPoolCreate`);
+        } catch (error) {
+            this.error = (error as AxiosError).response?.data.error.message || 'Could not deploy your token pool.';
+        } finally {
+            this.loading = false;
+        }
     }
 }
 </script>

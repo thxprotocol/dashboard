@@ -12,10 +12,10 @@
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create Token</span>
                 </b-button>
-                <b-button v-b-modal="'modalERC20Create'" class="rounded-pill" variant="secondary">
+                <!-- <b-button v-b-modal="'modalERC20Create'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create Collectible</span>
-                </b-button>
+                </b-button> -->
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
                     <span>Deploy pool for this token</span>
@@ -23,13 +23,11 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <h2 v-if="erc20s">ERC20</h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" :key="erc20.id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
                 </div>
             </div>
-            <h2 v-if="erc721s">ERC721</h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" :key="erc721.id" v-for="erc721 of erc721s">
                     <base-card-erc721 :erc721="erc721" />

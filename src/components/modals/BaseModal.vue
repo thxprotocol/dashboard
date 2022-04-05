@@ -20,11 +20,14 @@
         </template>
         <div class="pt-5 pb-3" v-if="loading">
             <p class="text-center">
-                <strong>We are deploying your asset pool!</strong><br /><span class="text-muted">
+                <strong>We are deploying your smart contract!</strong><br /><span class="text-muted">
                     Hang tight, this can take about 20 seconds...
                 </span>
             </p>
         </div>
+        <b-alert variant="danger" show v-if="error">
+            {{ error }}
+        </b-alert>
         <slot name="modal-body"></slot>
         <template v-slot:modal-footer="{}">
             <slot name="btn-primary"></slot>
@@ -40,5 +43,6 @@ export default class BaseModal extends Vue {
     @Prop() id!: string;
     @Prop() title!: string;
     @Prop() loading!: boolean;
+    @Prop() error!: string;
 }
 </script>

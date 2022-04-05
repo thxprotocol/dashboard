@@ -1,24 +1,17 @@
 <template>
     <base-card :loading="loading" classes="cursor-pointer" @click="openTokenUrl()">
-        <template #default>
-            <b-button
+        <template #card-body>
+            <!-- <b-button
                 variant="link"
                 class="btn-remove rounded-pill float-right"
                 size="sm"
-                @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+                @click.stop="$bvModal.show(`modalDelete-${erc20._id}`)"
             >
                 <i class="far fa-trash-alt"></i>
-            </b-button>
+            </b-button> -->
             <base-badge-network class="mr-2" :network="erc20.network" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
-                <img
-                    height="40"
-                    width="40"
-                    style="border-radius: 50%"
-                    class="mr-2 bg-darker"
-                    :src="erc20.logoURI"
-                    alt=""
-                />
+                <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
                 <div>
                     <strong class="m-0">{{ erc20.symbol }}</strong>
                     <br />
@@ -33,7 +26,7 @@
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.totalSupply }} </strong>
             </p>
         </template>
-        <base-modal-delete :id="`modalDelete-${erc20._id}`" :call="remove" :subject="erc20.name" />
+        <base-modal-delete :id="`modalDelete-${erc20._id}`" :call="() => remove(erc20._id)" :subject="erc20.name" />
     </base-card>
 </template>
 
@@ -46,12 +39,14 @@ import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseModalDelete from '../modals/BaseModalDelete.vue';
 import { IAccount } from '@/types/account';
+import BaseIdenticon from '../BaseIdenticon.vue';
 
 @Component({
     components: {
         BaseCard,
         BaseBadgeNetwork,
         BaseModalDelete,
+        BaseIdenticon,
     },
     computed: mapGetters({
         profile: 'account/profile',

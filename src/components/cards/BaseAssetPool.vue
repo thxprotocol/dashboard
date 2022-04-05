@@ -1,35 +1,42 @@
 <template>
     <base-card
         class="cursor-pointer"
-        :loading="!assetPool.poolToken && skeletonLoading"
+        :loading="loading"
         @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
     >
-        <b-alert class="m-0" show variant="warning" v-if="warning">
-            {{ warning }}
-            <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Please contact us in Discord </b-link>
-        </b-alert>
-
-        <b-button
-            variant="link"
-            class="btn-remove rounded-pill float-right"
-            size="sm"
-            @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
-        >
-            <i class="far fa-trash-alt"></i>
-        </b-button>
-        <base-badge-network :network="assetPool.network" class="mr-1" />
-        <b-badge class="p-2 mr-1 text-muted" variant="light">
-            <i class="fas fa-users mr-1"></i>
-            {{ assetPool.metrics.members }}
-        </b-badge>
-        <b-badge class="p-2 mr-1 text-muted" variant="light">
-            <i class="fas fa-gift mr-1"></i>
-            {{ assetPool.metrics.withdrawals }}
-        </b-badge>
-        <p class="font-weight-bold text-primary h3 mt-2 mb-0">
-            {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
-        </p>
-        <base-modal-delete :id="`modalDelete-${assetPool.address}`" :call="remove" :subject="assetPool.address" />
+        <template #card-body v-if="assetPool.poolToken">
+            <b-alert class="m-0" show variant="warning" v-if="warning">
+                {{ warning }}
+                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank">
+                    Please contact us in Discord
+                </b-link>
+            </b-alert>
+            <b-button
+                variant="link"
+                class="btn-remove rounded-pill float-right"
+                size="sm"
+                @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+            >
+                <i class="far fa-trash-alt"></i>
+            </b-button>
+            <base-badge-network :network="assetPool.network" class="mr-1" />
+            <b-badge class="p-2 mr-1 text-muted" variant="light">
+                <i class="fas fa-users mr-1"></i>
+                {{ assetPool.metrics.members }}
+            </b-badge>
+            <b-badge class="p-2 mr-1 text-muted" variant="light">
+                <i class="fas fa-gift mr-1"></i>
+                {{ assetPool.metrics.withdrawals }}
+            </b-badge>
+            <p class="font-weight-bold text-primary h3 mt-2 mb-0">
+                {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+            </p>
+            <base-modal-delete
+                :id="`modalDelete-${assetPool.address}`"
+                :call="() => remove(assetPool.address)"
+                :subject="assetPool.address"
+            />
+        </template>
     </base-card>
 </template>
 
@@ -56,8 +63,7 @@ import BaseCard from './BaseCard.vue';
 })
 export default class BaseAssetPool extends Vue {
     warning = '';
-    loading = false;
-    skeletonLoading = true;
+    loading = true;
 
     @Prop() assetPool!: AssetPool;
 
@@ -73,7 +79,7 @@ export default class BaseAssetPool extends Vue {
             }
             throw error;
         } finally {
-            this.skeletonLoading = false;
+            this.loading = false;
         }
     }
 

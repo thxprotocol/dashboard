@@ -1,13 +1,11 @@
 <template>
     <b-dropdown size="sm" variant="darker" no-caret toggle-class="d-flex align-items-center" v-if="profile">
         <template #button-content>
-            <img
-                class="p-1 mr-md-2"
-                :src="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
-                height="32"
-                alt="User identicon"
+            <base-identicon
+                class="mr-md-2"
+                size="32"
+                :uri="`https://avatars.dicebear.com/api/identicon/${profile.id}.svg`"
             />
-
             <span class="d-none d-md-block text-muted text-overflow-75">
                 {{ profile.address }}
             </span>
@@ -22,9 +20,12 @@
 import { IAccount } from '@/types/account';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseIdenticon from '../BaseIdenticon.vue';
 
 @Component({
-    name: 'BaseDropdownAccount',
+    components: {
+        BaseIdenticon,
+    },
     computed: mapGetters({
         profile: 'account/profile',
     }),
