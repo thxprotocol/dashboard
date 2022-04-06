@@ -1,5 +1,14 @@
 <template>
-    <b-modal size="lg" :title="title" :id="id" no-close-on-backdrop no-close-on-esc centered :hide-footer="loading">
+    <b-modal
+        size="lg"
+        @show="$emit('show')"
+        :title="title"
+        :id="id"
+        no-close-on-backdrop
+        no-close-on-esc
+        centered
+        :hide-footer="loading"
+    >
         <template v-slot:modal-header v-if="loading">
             <div
                 class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"

@@ -1,14 +1,14 @@
 <template>
-    <base-card :loading="loading" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="loading" classes="cursor-pointer" @click.stop="openTokenUrl()">
         <template #card-body>
-            <!-- <b-button
+            <b-button
                 variant="link"
                 class="btn-remove rounded-pill float-right"
                 size="sm"
                 @click.stop="$bvModal.show(`modalDelete-${erc20._id}`)"
             >
                 <i class="far fa-trash-alt"></i>
-            </b-button> -->
+            </b-button>
             <base-badge-network class="mr-2" :network="erc20.network" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
@@ -19,14 +19,16 @@
                 </div>
             </div>
             <p class="m-0">
-                <label class="text-muted">
-                    {{ erc20.type == ERC20Type.Limited ? 'Total supply' : 'Total minted supply' }}</label
-                >
+                <label class="text-muted">Total supply</label>
                 <br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.totalSupply }} </strong>
             </p>
+            <base-modal-delete
+                :id="`modalDelete-${erc20._id}`"
+                :call="() => $store.dispatch('erc20/remove', erc20._id)"
+                :subject="erc20.name"
+            />
         </template>
-        <base-modal-delete :id="`modalDelete-${erc20._id}`" :call="() => remove(erc20._id)" :subject="erc20.name" />
     </base-card>
 </template>
 
@@ -72,10 +74,6 @@ export default class BaseCardERC20 extends Vue {
             this.erc20.address
         }`;
         return (window as any).open(url, '_blank').focus();
-    }
-
-    remove() {
-        this.$store.dispatch('erc20/remove', this.erc20._id);
     }
 }
 </script>

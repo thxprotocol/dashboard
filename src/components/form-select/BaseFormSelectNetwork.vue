@@ -21,7 +21,7 @@
 import { NetworkProvider } from '@/store/modules/assetPools';
 import { AccountPlanType } from '@/types/account';
 import { PUBLIC_URL } from '@/utils/secrets';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
@@ -33,15 +33,18 @@ export default class BaseFormSelectNetwork extends Vue {
     publicUrl = PUBLIC_URL;
     NetworkProvider = NetworkProvider;
     AccountPlanType = AccountPlanType;
-    network = NetworkProvider.Test;
+    selectedNetwork = NetworkProvider.Test;
+
+    @Prop() network!: NetworkProvider;
 
     mounted() {
-        this.$emit('selected', this.network);
+        this.selectedNetwork = this.network;
+        this.$emit('selected', this.selectedNetwork);
     }
 
     onSelectNetwork(network: NetworkProvider) {
-        this.network = network;
-        this.$emit('selected', this.network);
+        this.selectedNetwork = network;
+        this.$emit('selected', this.selectedNetwork);
     }
 }
 </script>

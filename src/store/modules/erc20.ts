@@ -16,6 +16,11 @@ class ERC20Module extends VuexModule {
         Vue.set(this._all, erc20._id, erc20);
     }
 
+    @Mutation
+    unset(id: string) {
+        Vue.delete(this._all, id);
+    }
+
     @Action({ rawError: true })
     async list() {
         const { data } = await axios({
@@ -44,6 +49,16 @@ class ERC20Module extends VuexModule {
         });
 
         this.context.commit('set', data);
+    }
+
+    @Action({ rawError: true })
+    async remove(id: string) {
+        await axios({
+            method: 'DELETE',
+            url: '/erc20/' + id,
+        });
+
+        this.context.commit('unset', id);
     }
 }
 

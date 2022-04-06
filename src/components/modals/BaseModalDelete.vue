@@ -33,7 +33,7 @@
                 </span>
             </p>
         </div>
-        <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
+        <template v-else>
             <b-alert variant="danger" show v-if="error">
                 {{ error }}
             </b-alert>
@@ -42,8 +42,8 @@
                 Are you sure to delete <strong>{{ subject }}</strong
                 >? This action can not be undone.
             </p>
-        </form>
-        <template v-slot:modal-footer="{}">
+        </template>
+        <template #modal-footer>
             <b-button :disabled="loading" class="rounded-pill" variant="danger" @click="remove()" block>
                 Remove
             </b-button>
@@ -67,15 +67,11 @@ export default class BaseModalDelete extends Vue {
         this.loading = true;
 
         try {
-            const r = await this.call();
+            await this.call();
 
-            if (r && r.error) {
-                this.error = r.error.message;
-                return;
-            }
             this.$bvModal.hide(this.id);
         } catch (e) {
-            console.error(e);
+            this.error = (e as Error).message;
         } finally {
             this.loading = false;
         }
