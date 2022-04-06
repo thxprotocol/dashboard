@@ -1,7 +1,7 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create Token" id="modalERC20Create">
         <template #modal-body v-if="!loading">
-            <base-form-select-network @selected="onSelectNetwork" />
+            <base-form-select-network @selected="network = $event" />
             <b-form-group>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Unlimited">
                     <strong> ERC-20 Unlimited </strong>
@@ -81,10 +81,6 @@ export default class ModalERC20Create extends Vue {
     erc20Name = '';
     erc20Symbol = '';
     erc20TotalSupply = 0;
-
-    onSelectNetwork(network: NetworkProvider) {
-        this.network = network;
-    }
 
     async submit() {
         this.loading = true;

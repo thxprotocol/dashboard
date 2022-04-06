@@ -1,7 +1,7 @@
 <template>
-    <base-modal @show="onShow" :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
+    <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
         <template #modal-body v-if="profile && !loading">
-            <base-form-select-network :network="network" @selected="onSelectNetwork" />
+            <base-form-select-network @selected="network = $event" />
             <b-form-group>
                 <label> Token Contract </label>
                 <base-dropdown-select-erc20 :network="network" @selected="onSelectToken" />
@@ -35,7 +35,7 @@ import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwor
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
 import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
-import { AccountPlanType, IAccount } from '@/types/account';
+import { IAccount } from '@/types/account';
 
 @Component({
     components: {
@@ -56,14 +56,6 @@ export default class ModalAssetPoolCreate extends Vue {
     erc20Token: PoolToken | null = null;
 
     profile!: IAccount;
-
-    onShow() {
-        this.network = this.profile.plan !== AccountPlanType.Free ? NetworkProvider.Main : NetworkProvider.Test;
-    }
-
-    onSelectNetwork(network: NetworkProvider) {
-        this.network = network;
-    }
 
     onSelectToken(erc20: PoolToken) {
         this.erc20Token = erc20;

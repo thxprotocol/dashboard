@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="loading" classes="cursor-pointer" @click.stop="openTokenUrl()">
+    <base-card :loading="loading" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-body>
             <b-button
                 variant="link"
