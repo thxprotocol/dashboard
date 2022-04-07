@@ -18,10 +18,13 @@
                     {{ erc20.name }}
                 </div>
             </div>
-            <p class="m-0">
-                <label class="text-muted">Total supply</label>
-                <br />
+            <p>
+                <span class="text-muted">Total supply</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.totalSupply }} </strong>
+            </p>
+            <p class="m-0">
+                <span class="text-muted">Treasury</span><br />
+                <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
             <base-modal-delete
                 :id="`modalDelete-${erc20._id}`"

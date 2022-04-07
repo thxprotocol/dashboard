@@ -13,6 +13,7 @@ export type TERC20 = {
     address: string;
     name: string;
     symbol: string;
+    adminBalance: number;
     totalSupply: number;
     transactionHash: string;
     createdAt: Date;
