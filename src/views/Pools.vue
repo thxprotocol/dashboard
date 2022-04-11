@@ -12,7 +12,7 @@
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create pool</span>
                 </b-button>
-                <b-button :href="docsUrl" target="_blank" variant="link" class="text-light">
+                <b-button to="/tokens" variant="link" class="text-light">
                     <i class="fas fa-coins mr-2"></i>
                     <span>Create token for this pool</span>
                 </b-button>
