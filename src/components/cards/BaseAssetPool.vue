@@ -11,7 +11,7 @@
                     Please contact us in Discord
                 </b-link>
             </b-alert>
-            <template v-if="assetPool.poolToken">
+            <template v-if="assetPool.token">
                 <b-button
                     variant="link"
                     class="btn-remove rounded-pill float-right"
@@ -30,7 +30,7 @@
                     {{ assetPool.metrics.withdrawals }}
                 </b-badge>
                 <p class="font-weight-bold text-primary h3 mt-2 mb-0">
-                    {{ assetPool.balance }} {{ assetPool.poolToken.symbol }}
+                    {{ assetPool.token.poolBalance }} {{ assetPool.token.symbol }}
                 </p>
                 <base-modal-delete
                     :id="`modalDelete-${assetPool.address}`"

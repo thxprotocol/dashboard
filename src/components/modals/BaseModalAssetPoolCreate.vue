@@ -5,7 +5,7 @@
             <b-form-group>
                 <label> Token Contract </label>
                 <base-dropdown-select-erc20 :network="network" @selected="onSelectToken" />
-                <b-link to="/tokens">Create your own token.</b-link>
+                <b-link to="/tokens">Create your own token</b-link>
             </b-form-group>
             <b-form-group>
                 <label>Token Contract Address</label>

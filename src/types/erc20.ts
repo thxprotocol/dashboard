@@ -15,8 +15,6 @@ export type TERC20 = {
     symbol: string;
     adminBalance: number;
     totalSupply: number;
-    transactionHash: string;
-    createdAt: Date;
     logoURI: string;
 };
 

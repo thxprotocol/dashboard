@@ -27,7 +27,10 @@ class ERC20Module extends VuexModule {
             method: 'GET',
             url: '/erc20',
         });
-        data.forEach((erc20: TERC20) => this.context.commit('set', erc20));
+
+        for (const _id of data) {
+            this.context.commit('set', { _id });
+        }
     }
 
     @Action({ rawError: true })

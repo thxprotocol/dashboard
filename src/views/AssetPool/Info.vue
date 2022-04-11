@@ -37,9 +37,9 @@
             <b-form-group>
                 <label for="erc20Address">Token Contract</label>
                 <div class="input-group">
-                    <b-form-input readonly id="address" v-model="assetPool.poolToken.address" />
+                    <b-form-input readonly id="address" v-model="assetPool.token.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="assetPool.poolToken.address">
+                        <button class="btn btn-primary" type="button" v-clipboard:copy="assetPool.token.address">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
@@ -48,7 +48,7 @@
                     target="_blank"
                     :href="
                         (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/token/${assetPool.poolToken.address}`
+                        `/token/${assetPool.token.address}`
                     "
                 >
                     View your token transactions

@@ -44,13 +44,13 @@
                         <a
                             :href="docsUrl + '/rewards'"
                             v-b-tooltip
-                            :title="`The amount of ${assetPool.poolToken.symbol} earned with this reward.`"
+                            :title="`The amount of ${assetPool.token.symbol} earned with this reward.`"
                             target="_blank"
                         >
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </label>
-                    <b-input-group :append="assetPool.poolToken.symbol">
+                    <b-input-group :append="assetPool.token.symbol">
                         <b-form-input type="number" v-model="rewardWithdrawAmount" />
                     </b-input-group>
                 </b-form-group>

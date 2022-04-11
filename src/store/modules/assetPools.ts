@@ -9,6 +9,7 @@ export interface PoolToken {
     decimals: number;
     chainId: number;
     logoURI: string;
+    poolBalance: number;
 }
 
 export enum PoolTokenType {
@@ -25,8 +26,7 @@ export class AssetPool {
     address: string;
     clientId: string;
     clientSecret: string;
-    balance: number;
-    poolToken: PoolToken;
+    token: PoolToken;
     bypassPolls: boolean;
     network: NetworkProvider;
     rewardPollDuration: number;
@@ -37,8 +37,7 @@ export class AssetPool {
         this.address = data.address;
         this.clientId = data.clientId;
         this.clientSecret = data.clientSecret;
-        this.balance = data.balance;
-        this.poolToken = data.token;
+        this.token = data.token;
         this.bypassPolls = true;
         this.network = data.network;
         this.rewardPollDuration = Number(data.rewardPollDuration);

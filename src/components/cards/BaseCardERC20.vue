@@ -1,6 +1,6 @@
 <template>
     <base-card :loading="loading" classes="cursor-pointer" @click="openTokenUrl()">
-        <template #card-body>
+        <template #card-body v-if="erc20.name">
             <b-button
                 variant="link"
                 class="btn-remove rounded-pill float-right"
