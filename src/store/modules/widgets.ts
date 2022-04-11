@@ -56,26 +56,18 @@ class WidgetModule extends VuexModule {
 
     @Action({ rawError: true })
     async list(poolAddress: string) {
-        try {
+        const r = await axios({
+            method: 'GET',
+            url: '/widgets?asset_pool=' + poolAddress,
+        });
+
+        for (const rat of r.data) {
             const r = await axios({
                 method: 'GET',
-                url: '/widgets?asset_pool=' + poolAddress,
+                url: '/widgets/' + rat,
             });
 
-            if (r.status !== 200) {
-                throw new Error('GET /widgets failed.');
-            }
-
-            for (const rat of r.data) {
-                const r = await axios({
-                    method: 'GET',
-                    url: '/widgets/' + rat,
-                });
-
-                this.context.commit('set', new Widget(r.data));
-            }
-        } catch (e) {
-            console.error(e);
+            this.context.commit('set', new Widget(r.data));
         }
     }
 
@@ -86,34 +78,24 @@ class WidgetModule extends VuexModule {
         redirectUris: string[];
         postLogoutRedirectUris: string[];
     }) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: '/widgets',
-                data,
-            });
-
-            if (r.status !== 201) {
-                throw new Error('POST /widgets failed.');
-            }
-        } catch (e) {
-            console.error(e);
-        }
+        await axios({
+            method: 'POST',
+            url: '/widgets',
+            data,
+            headers: {
+                AssetPool: data.metadata.poolAddress,
+            },
+        });
     }
 
     @Action({ rawError: true })
     async remove(data: { clientId: string; poolAddress: string }) {
-        try {
-            await axios({
-                method: 'DELETE',
-                url: '/widgets/' + data.clientId,
-            });
+        await axios({
+            method: 'DELETE',
+            url: '/widgets/' + data.clientId,
+        });
 
-            this.context.commit('unset', { clientId: data.clientId, poolAddress: data.poolAddress });
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
+        this.context.commit('unset', { clientId: data.clientId, poolAddress: data.poolAddress });
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="mb-5">
+    <div class="mb-5 pb-5">
         <h2 class="font-weight-normal">Information</h2>
         <p>General and event information regarding your Asset Pool.</p>
         <b-card class="shadow-sm mb-5">
@@ -167,43 +167,6 @@ xhr.send(params);
                     </b-card>
                 </b-tab>
             </b-tabs>
-        </b-card>
-        <h2>Governance</h2>
-        <b-card class="shadow-sm mb-5">
-            <b-form-group class="mb-0">
-                <b-skeleton-wrapper :loading="assetPoolLoading">
-                    <template #loading>
-                        <b-card>
-                            <b-form-group class="mb-0">
-                                <div class="row pt-2 pb-2">
-                                    <div class="col-md-1 d-flex center-center">
-                                        <b-skeleton animation="fade" width="35%"></b-skeleton>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <b-skeleton animation="fade" width="45%"></b-skeleton>
-                                        <b-skeleton animation="fade" width="80%"></b-skeleton>
-                                    </div>
-                                </div>
-                            </b-form-group>
-                        </b-card>
-                        <hr />
-                        <template>
-                            <div class="row pt-2 pb-2" v-for="index of 2" :key="index">
-                                <div class="col-md-4 d-flex align-items-center">
-                                    <b-skeleton animation="fade" width="80%"></b-skeleton>
-                                </div>
-                                <div class="col-md-7">
-                                    <b-skeleton animation="fade" width="90%"></b-skeleton>
-                                    <b-skeleton animation="fade" width="90%"></b-skeleton>
-                                </div>
-                                <div class="col-md-1">
-                                    <b-skeleton animation="fade" type="avatar"></b-skeleton>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                </b-skeleton-wrapper>
-            </b-form-group>
         </b-card>
     </div>
 </template>

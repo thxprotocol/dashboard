@@ -117,7 +117,7 @@ export default class ModalWidgetCreate extends Vue {
             this.$emit('submit');
             this.$bvModal.hide(`modalWidgetCreate`);
         } catch (e) {
-            this.error = 'Could not add the reward.';
+            this.error = 'Could not add the widget.';
         } finally {
             this.loading = false;
         }

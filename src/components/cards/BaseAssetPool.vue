@@ -30,7 +30,7 @@
                     {{ assetPool.metrics.withdrawals }}
                 </b-badge>
                 <p class="font-weight-bold text-primary h3 mt-2 mb-0">
-                    {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }}
+                    {{ assetPool.balance }} {{ assetPool.poolToken.symbol }}
                 </p>
                 <base-modal-delete
                     :id="`modalDelete-${assetPool.address}`"

@@ -7,7 +7,7 @@
         </div>
         <div class="lead">
             {{ assetPool.poolToken.name }}
-            <strong>(Total Supply: {{ assetPool.poolToken.totalSupply }} {{ assetPool.poolToken.symbol }})</strong>
+            <strong>(Balance: {{ assetPool.poolToken.balance }} {{ assetPool.poolToken.symbol }})</strong>
         </div>
 
         <hr />

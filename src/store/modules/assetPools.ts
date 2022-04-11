@@ -2,13 +2,6 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 
-interface TokenBalance {
-    name: string;
-    address: string;
-    symbol: string;
-    balance: { type: string; hex: string };
-}
-
 export interface PoolToken {
     name: string;
     address: string;
@@ -32,7 +25,8 @@ export class AssetPool {
     address: string;
     clientId: string;
     clientSecret: string;
-    poolToken: TokenBalance;
+    balance: number;
+    poolToken: PoolToken;
     bypassPolls: boolean;
     network: NetworkProvider;
     rewardPollDuration: number;
@@ -43,6 +37,7 @@ export class AssetPool {
         this.address = data.address;
         this.clientId = data.clientId;
         this.clientSecret = data.clientSecret;
+        this.balance = data.balance;
         this.poolToken = data.token;
         this.bypassPolls = true;
         this.network = data.network;
