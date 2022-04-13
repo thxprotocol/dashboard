@@ -10,12 +10,12 @@
                 <p class="brand-text">Tokens</p>
                 <b-button v-b-modal="'modalERC20Create'" class="rounded-pill mr-2" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create Token</span>
+                    <span>Create ERC20 Token</span>
                 </b-button>
-                <!-- <b-button v-b-modal="'modalERC20Create'" class="rounded-pill" variant="secondary">
+                <b-button v-b-modal="'modalERC721Create'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create Collectible</span>
-                </b-button> -->
+                    <span>Create ERC721 Token</span>
+                </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
                     <span>Deploy pool for this token</span>
@@ -35,6 +35,7 @@
             </div>
         </div>
         <modal-erc20-create />
+        <modal-erc721-create />
     </div>
 </template>
 

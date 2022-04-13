@@ -21,7 +21,7 @@
 import { NetworkProvider } from '@/store/modules/assetPools';
 import { AccountPlanType, IAccount } from '@/types/account';
 import { PUBLIC_URL } from '@/utils/secrets';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
