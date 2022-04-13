@@ -30,10 +30,6 @@ export default class BaseIdenticon extends Vue {
     @Prop() rounded!: boolean;
     @Prop() uri!: string;
 
-    get src() {
-        return this.uri.startsWith('https') ? this.uri : `https://avatars.dicebear.com/api/identicon/${this.uri}.svg`;
-    }
-
     mounted() {
         this.width = this.size || this.width;
         this.height = this.size || this.height;

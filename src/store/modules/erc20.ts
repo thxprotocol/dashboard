@@ -29,7 +29,7 @@ class ERC20Module extends VuexModule {
         });
 
         for (const _id of data) {
-            this.context.commit('set', { _id });
+            this.context.commit('set', { _id, loading: true });
         }
     }
 
@@ -40,7 +40,11 @@ class ERC20Module extends VuexModule {
             url: '/erc20/' + id,
         });
 
-        this.context.commit('set', data);
+        this.context.commit('set', {
+            ...data,
+            loading: false,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+        });
     }
 
     @Action({ rawError: true })
@@ -51,7 +55,7 @@ class ERC20Module extends VuexModule {
             data: payload,
         });
 
-        this.context.commit('set', data);
+        this.context.commit('set', { _id: data._id, loading: true });
     }
 
     @Action({ rawError: true })

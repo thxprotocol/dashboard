@@ -13,35 +13,67 @@
                 <b-col>
                     <b-form-group>
                         <label>Name</label>
-                        <b-form-input v-model="name" placeholder="XYZ Collection" />
+                        <b-form-input v-model="name" placeholder="Planets of the Galaxy" />
                     </b-form-group>
                 </b-col>
                 <b-col>
                     <b-form-group>
                         <label>Symbol</label>
-                        <b-form-input v-model="symbol" placeholder="XYZ" />
+                        <b-form-input v-model="symbol" placeholder="GLXY" />
                     </b-form-group>
                 </b-col>
             </b-row>
-            <b-row>
-                <b-col>
-                    <b-form-group>
-                        <label>Metadata Schema</label>
-                        <b-form-input
-                            :value="prop"
-                            @input="schema[key] = $event"
-                            :key="key"
-                            v-for="(prop, key) of schema"
-                            class="mt-2"
-                        />
-                        <div class="text-center mt-2">
-                            <b-button block @click="schema.push('')" variant="light" class="rounded-pill">
-                                <i class="fas fa-plus"></i> Add property
-                            </b-button>
-                        </div>
-                    </b-form-group>
-                </b-col>
-            </b-row>
+            <b-form-group>
+                <label>Description</label>
+                <b-form-textarea v-model="description" placeholder="To infinity and beyond!" />
+            </b-form-group>
+            <b-form-group>
+                <label>Properties</label>
+                <b-card bg-variant="light" :key="key" v-for="(prop, key) of schema" class="mb-2">
+                    <b-row>
+                        <b-col md="6" class="mb-2">
+                            <b-form-input
+                                placeholder="Color"
+                                :value="prop.name"
+                                @input="schema[key]['name'] = $event"
+                            />
+                        </b-col>
+                        <b-col md="6" class="mb-2">
+                            <b-select v-model="prop.propType" @change="schema[key]['propType'] = $event">
+                                <b-select-option :value="type.value" :key="key" v-for="(type, key) of propTypes">
+                                    {{ type.label }}
+                                </b-select-option>
+                            </b-select>
+                        </b-col>
+                        <b-col md="12">
+                            <b-form-textarea
+                                placeholder="Primary color of the planet"
+                                :value="prop.description"
+                                @input="schema[key]['description'] = $event"
+                            />
+                            <div class="text-right pt-2">
+                                <b-link class="text-danger" @click="$delete(schema, key)" size="sm"> Remove </b-link>
+                            </div>
+                        </b-col>
+                    </b-row>
+                </b-card>
+                <div class="text-center mt-2">
+                    <b-button
+                        block
+                        @click="
+                            schema.push({
+                                name: '',
+                                propType: 'string',
+                                description: '',
+                            })
+                        "
+                        variant="light"
+                        class="rounded-pill"
+                    >
+                        <i class="fas fa-plus"></i> Add property
+                    </b-button>
+                </div>
+            </b-form-group>
         </template>
         <template #btn-primary>
             <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
@@ -77,9 +109,21 @@ export default class ModalERC20Create extends Vue {
 
     erc721Token: PoolToken | null = null;
 
+    propTypes = [
+        { label: 'String', value: 'string' },
+        { label: 'Number', value: 'number' },
+    ];
+
     name = '';
     symbol = '';
-    schema = [''];
+    schema = [
+        {
+            name: '',
+            propType: 'string',
+            description: '',
+        },
+    ];
+    description = '';
 
     async submit() {
         this.loading = true;
@@ -88,12 +132,13 @@ export default class ModalERC20Create extends Vue {
             network: this.network,
             name: this.name,
             symbol: this.symbol,
+            description: this.description,
             schema: this.schema,
         };
 
         await this.$store.dispatch('erc721/create', data);
 
-        this.$bvModal.hide(`modalERC20Create`);
+        this.$bvModal.hide(`modalERC721Create`);
         this.loading = false;
     }
 }
