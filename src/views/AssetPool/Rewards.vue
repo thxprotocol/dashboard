@@ -22,7 +22,10 @@
                 <div class="col-md-3">
                     <strong>Withdraw condition</strong>
                 </div>
-                <div v-if="isGovernanceEnabled ? 'col-md-5' : 'col-md-4'">
+                <div class="col-md-2">
+                    <strong>Progress</strong>
+                </div>
+                <div v-if="isGovernanceEnabled ? 'col-md-4' : 'col-md-3'">
                     <strong></strong>
                 </div>
             </div>

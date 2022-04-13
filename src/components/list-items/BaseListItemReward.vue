@@ -1,7 +1,7 @@
 <template>
     <b-form-group class="mb-0">
         <hr />
-        <div class="row pt-2 pb-2">
+        <div class="row pt-2 pb-2 d-flex align-items-center">
             <div class="col-md-1 d-flex align-items-center justify-content-center">
                 <i
                     v-b-tooltip
@@ -22,6 +22,10 @@
                 </b-input-group>
             </div>
             <div class="col-md-3">
+                <b-badge v-if="reward.isClaimOnce" class="border p-2 mb-1" variant="light"> 1 time claim </b-badge>
+                <b-badge v-if="reward.isMembershipRequired" class="border p-2 mb-1" variant="light">
+                    Membership required
+                </b-badge>
                 <a v-if="channelItemURL" target="_blank" :href="channelItemURL">
                     <b-badge class="border p-2" variant="light">
                         <img
@@ -35,7 +39,11 @@
                     </b-badge>
                 </a>
             </div>
-            <div class="col-md-5">
+            <div v-if="!reward.withdrawLimit" class="col-md-2">{{ reward.progress || 0 }}</div>
+            <div v-if="!!reward.withdrawLimit" class="col-md-2">
+                {{ reward.progress || 0 }} / {{ reward.withdrawLimit }}
+            </div>
+            <div class="col-md-3">
                 <div class="d-flex justify-content-end">
                     <b-button class="rounded-pill mr-2" variant="light" v-b-modal="`modal-reward-link-${reward.id}`">
                         <i class="fas fa-link ml-0 text-primary"></i>
@@ -47,10 +55,9 @@
                     <base-modal-reward-qrcode :assetPool="assetPool" :reward="reward" :rewardURL="rewardURL" />
                     <b-button class="rounded-pill" variant="light" @click="toggleState()">
                         <i
-                            class="fas fa-power-off ml-0 mr-2"
+                            class="fas fa-power-off ml-0"
                             :class="{ 'text-danger': reward.state, 'text-success': !reward.state }"
                         ></i>
-                        {{ reward.state ? 'Disable' : 'Enable' }}
                     </b-button>
                 </div>
             </div>

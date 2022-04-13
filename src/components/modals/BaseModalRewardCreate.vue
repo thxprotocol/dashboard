@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -52,6 +62,22 @@
                     </label>
                     <b-input-group :append="assetPool.poolToken.symbol">
                         <b-form-input type="number" v-model="rewardWithdrawAmount" />
+                    </b-input-group>
+                </b-form-group>
+
+                <b-form-group>
+                    <label>
+                        Withdraw limit
+                        <a
+                            v-b-tooltip
+                            :title="`Total amount of ${assetPool.poolToken.symbol} can be earn from this reward. (leave this as zero mean unlimited)`"
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-input-group :append="assetPool.poolToken.symbol">
+                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
                     </b-input-group>
                 </b-form-group>
 
@@ -212,6 +238,7 @@ export default class ModalRewardCreate extends Vue {
     isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
+    rewardWithdrawLimit = 0;
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -228,7 +255,11 @@ export default class ModalRewardCreate extends Vue {
 
     get isSubmitDisabled() {
         return (
-            this.loading || this.rewardWithdrawAmount <= 0 || (this.channel?.type !== ChannelType.None && !this.item)
+            this.loading ||
+            this.rewardWithdrawAmount <= 0 ||
+            this.rewardWithdrawLimit <= 0 ||
+            this.rewardWithdrawAmount > this.rewardWithdrawLimit ||
+            (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
 
@@ -341,6 +372,7 @@ export default class ModalRewardCreate extends Vue {
 
             await this.$store.dispatch('rewards/create', {
                 address: this.assetPool.address,
+                withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
                 withdrawCondition,
@@ -348,6 +380,7 @@ export default class ModalRewardCreate extends Vue {
                 isMembershipRequired: this.isMembershipRequired,
             });
 
+            this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
 
