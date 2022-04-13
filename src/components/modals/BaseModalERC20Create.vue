@@ -6,15 +6,15 @@
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Unlimited">
                     <strong> ERC-20 Unlimited </strong>
                     <p>
-                        Tokens with a limited supply are considered scarce assets and have the potential to gain
-                        monetary value when publically traded.
+                        Tokens will be minted by the asset pool when an outgoing transfer is required. You don't have to
+                        worry about periodic deposits.
                     </p>
                 </b-form-radio>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Limited">
                     <strong> ERC-20 Limited </strong>
                     <p>
-                        Tokens will be minted by the asset pool when an outgoing transfer is required. You don't have to
-                        worry about periodic deposits.
+                        Tokens with a limited supply are considered scarce assets and have the potential to gain
+                        monetary value when publically traded.
                     </p>
                 </b-form-radio>
             </b-form-group>
