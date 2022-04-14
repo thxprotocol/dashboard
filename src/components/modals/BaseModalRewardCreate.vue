@@ -56,6 +56,22 @@
                 </b-form-group>
 
                 <b-form-group>
+                    <label>
+                        Withdraw limit
+                        <a
+                            v-b-tooltip
+                            title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times. `"
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-input-group :append="assetPool.token.symbol">
+                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                    </b-input-group>
+                </b-form-group>
+
+                <b-form-group>
                     <div class="row">
                         <div class="col-md-6">
                             <label> Social Channel:</label>
@@ -212,6 +228,7 @@ export default class ModalRewardCreate extends Vue {
     isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
+    rewardWithdrawLimit = 0;
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -228,16 +245,15 @@ export default class ModalRewardCreate extends Vue {
 
     get isSubmitDisabled() {
         return (
-            this.loading || this.rewardWithdrawAmount <= 0 || (this.channel?.type !== ChannelType.None && !this.item)
+            this.loading ||
+            this.rewardWithdrawAmount <= 0 ||
+            this.rewardWithdrawLimit < 0 ||
+            (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
 
     async getYoutube() {
-        const { isAuthorized, error } = await this.$store.dispatch('account/getYoutube');
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Youtube.';
-        }
+        const { isAuthorized } = await this.$store.dispatch('account/getYoutube');
 
         if (!isAuthorized) {
             this.warning = 'Your YouTube account is not connected.';
@@ -251,11 +267,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getTwitter() {
-        const { isAuthorized, error } = await this.$store.dispatch('account/getTwitter');
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Twitter.';
-        }
+        const { isAuthorized } = await this.$store.dispatch('account/getTwitter');
 
         if (!isAuthorized) {
             this.warning = 'Your Twitter account is not connected.';
@@ -270,11 +282,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getSpotify() {
-        const { isAuthorized, error } = (await this.$store.dispatch('account/getSpotify')).spotify;
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Spotify.';
-        }
+        const { isAuthorized } = (await this.$store.dispatch('account/getSpotify')).spotify;
 
         if (!isAuthorized) {
             this.warning = 'Your Spotify account is not connected.';
@@ -341,6 +349,7 @@ export default class ModalRewardCreate extends Vue {
 
             await this.$store.dispatch('rewards/create', {
                 address: this.assetPool.address,
+                withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
                 withdrawCondition,
@@ -348,6 +357,7 @@ export default class ModalRewardCreate extends Vue {
                 isMembershipRequired: this.isMembershipRequired,
             });
 
+            this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
 
@@ -362,4 +372,3 @@ export default class ModalRewardCreate extends Vue {
     }
 }
 </script>
-<style lang="scss"></style>

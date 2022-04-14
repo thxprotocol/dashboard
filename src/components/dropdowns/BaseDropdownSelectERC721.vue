@@ -1,45 +1,35 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select">
         <template #button-content>
-            <div v-if="erc20Token">
+            <div v-if="erc721Token">
                 <div class="d-flex align-items-center">
                     <img
-                        v-if="!erc20Token._id"
-                        :src="erc20Token.logoURI"
+                        v-if="!erc721Token._id"
+                        :src="erc721Token.logoURI"
                         class="mr-3"
                         width="20"
-                        :alt="erc20Token.name"
+                        :alt="erc721Token.name"
                     />
-                    <base-identicon v-else class="mr-3" :size="20" variant="darker" :uri="erc20Token.logoURI" />
-                    <strong class="mr-1">{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
+                    <base-identicon v-else class="mr-3" :size="20" variant="darker" :uri="erc721Token.logoURI" />
+                    <strong class="mr-1">{{ erc721Token.symbol }}</strong> {{ erc721Token.name }}
                 </div>
             </div>
-            <div v-else>Provide ERC20 token contract address</div>
+            <div v-else>Provide ERC721 token contract address</div>
         </template>
         <b-dropdown-item-button key="custom-token-address" @click="onTokenListItemClick(null)">
-            Provide ERC20 token contract address
+            Provide ERC721 token contract address
         </b-dropdown-item-button>
-        <b-dropdown-divider v-if="hasERC20s" />
+        <b-dropdown-divider v-if="hasERC721s" />
         <b-dropdown-item-button
-            :disabled="network !== erc20.network"
-            :key="erc20._id"
-            v-for="erc20 of erc20s"
-            @click="onTokenListItemClick(erc20)"
+            :disabled="network !== erc721.network"
+            :key="erc721._id"
+            v-for="erc721 of erc721s"
+            @click="onTokenListItemClick(erc721)"
         >
             <div class="d-flex align-items-center">
-                <base-identicon class="mr-3" size="20" variant="darker" :uri="erc20.logoURI" />
-                <strong class="mr-1">{{ erc20.symbol }}</strong> {{ erc20.name }}
+                <base-identicon class="mr-3" size="20" variant="darker" :uri="erc721.logoURI" />
+                <strong class="mr-1">{{ erc721.symbol }}</strong> {{ erc721.name }}
             </div>
-        </b-dropdown-item-button>
-        <b-dropdown-divider />
-        <b-dropdown-item-button
-            :disabled="network !== NetworkProvider.Main"
-            :key="erc20.address"
-            v-for="erc20 of tokenList"
-            @click="onTokenListItemClick(erc20)"
-        >
-            <img :src="erc20.logoURI" width="20" class="mr-3" :alt="erc20.name" />
-            <strong>{{ erc20.symbol }}</strong> {{ erc20.name }}
         </b-dropdown-item-button>
     </b-dropdown>
 </template>
@@ -78,11 +68,20 @@ export default class ModalAssetPoolCreate extends Vue {
     get hasERC20s() {
         return !!Object.values(this.erc20s).length;
     }
+    get hasERC721s() {
+        return !!Object.values(this.erc721s).length;
+    }
 
     async mounted() {
         this.$store.dispatch('erc20/list').then(() => {
             for (const id in this.erc20s) {
                 this.$store.dispatch('erc20/read', id);
+            }
+        });
+
+        this.$store.dispatch('erc721/list').then(() => {
+            for (const id in this.erc721s) {
+                this.$store.dispatch('erc721/read', id);
             }
         });
 

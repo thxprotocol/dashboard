@@ -20,15 +20,24 @@ interface Poll {
 
 export class Reward {
     id: number;
+    withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
     state: RewardState;
     poolAddress: string;
     poll: Poll;
     withdrawCondition: IRewardCondition;
+    progress: number;
+
+    isClaimOnce: boolean;
+    isMembershipRequired: boolean;
 
     constructor(data: any) {
         this.id = data.id;
+        this.progress = data.progress;
+        this.isClaimOnce = data.isClaimOnce;
+        this.isMembershipRequired = data.isMembershipRequired;
+        this.withdrawLimit = data.withdrawLimit;
         this.withdrawAmount = data.withdrawAmount;
         this.withdrawDuration = data.withdrawDuration;
         this.state = data.state;
@@ -198,6 +207,7 @@ class RewardModule extends VuexModule {
     @Action({ rawError: true })
     async create({
         address,
+        withdrawLimit,
         withdrawAmount,
         withdrawDuration,
         isClaimOnce,
@@ -205,6 +215,7 @@ class RewardModule extends VuexModule {
         withdrawCondition,
     }: {
         address: string;
+        withdrawLimit: number;
         withdrawAmount: number;
         withdrawDuration: number;
         isClaimOnce: boolean;
@@ -219,6 +230,7 @@ class RewardModule extends VuexModule {
                     AssetPool: address,
                 },
                 data: {
+                    withdrawLimit,
                     withdrawAmount,
                     withdrawDuration,
                     withdrawCondition,
@@ -230,28 +242,6 @@ class RewardModule extends VuexModule {
             if (r.status !== 201) {
                 throw new Error('POST rewards failed');
             }
-            this.context.commit('set', new Reward(r.data));
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
-    }
-
-    @Action({ rawError: true })
-    async finalize(reward: Reward) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: `/rewards/${reward.id}/poll/finalize`,
-                headers: {
-                    AssetPool: reward.poolAddress,
-                },
-            });
-
-            if (r.status !== 200) {
-                throw new Error('POST rewards/:id/finalize failed');
-            }
-
             this.context.commit('set', new Reward(r.data));
         } catch (e) {
             console.log(e);
