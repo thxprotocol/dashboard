@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-import { BAlert, BButton, BCard, BJumbotron } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIntegrationYoutube from '@/components/cards/BaseIntegrationYoutube.vue';
