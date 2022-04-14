@@ -67,9 +67,7 @@ export default class ModalAssetPoolCreate extends Vue {
         try {
             await this.$store.dispatch('assetPools/create', {
                 network: this.network,
-                token: {
-                    address: this.erc20TokenAddress,
-                },
+                token: this.erc20TokenAddress,
             });
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (error) {
