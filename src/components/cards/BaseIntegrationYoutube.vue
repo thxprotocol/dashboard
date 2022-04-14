@@ -10,7 +10,6 @@
             </b-card>
         </template>
         <b-card class="mb-3">
-            <b-alert variant="danger" show v-if="error">{{ error }}</b-alert>
             <div class="mb-3 d-flex align-items-center">
                 <img height="30" class="mr-3" :src="require('@/assets/logo-youtube.png')" alt="" />
                 <strong> YouTube </strong>
@@ -20,16 +19,9 @@
             <b-button v-if="!youtube" @click="connect()" variant="primary" block class="rounded-pill">
                 Connect
             </b-button>
-            <b-button
-                v-if="youtube"
-                variant="light"
-                block
-                v-b-modal="`modalDelete-${channelType}`"
-                class="rounded-pill"
-            >
+            <b-button v-if="youtube" variant="light" block @click="disconnect()" class="rounded-pill">
                 <span class="text-danger">Disconnect</span>
             </b-button>
-            <modal-delete :id="`modalDelete-${channelType}`" :call="disconnect" subject="YouTube integration" />
         </b-card>
     </b-skeleton-wrapper>
 </template>
@@ -37,20 +29,10 @@
 <script lang="ts">
 import { IAccount, IYoutube } from '@/types/account';
 import { ChannelType } from '@/store/modules/rewards';
-import { BAlert, BButton, BCard, BSkeletonWrapper, BSkeleton } from 'bootstrap-vue';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import ModalDelete from '../modals/BaseModalDelete.vue';
 
 @Component({
-    components: {
-        ModalDelete,
-        BCard,
-        BButton,
-        BAlert,
-        BSkeletonWrapper,
-        BSkeleton,
-    },
     computed: mapGetters({
         profile: 'account/profile',
         youtube: 'account/youtube',
@@ -60,45 +42,19 @@ export default class Home extends Vue {
     isLoading = false;
     youtube!: IYoutube;
     profile!: IAccount;
-    error = '';
 
-    @Prop() channelType!: ChannelType;
-
-    async mounted() {
-        try {
-            this.isLoading = true;
-
-            if (this.$route.query.code) {
-                await this.$store.dispatch('account/connectYoutube', this.$route.query.code);
-            }
-            await this.getYoutube();
-        } catch (error) {
-            this.error = (error as Error).toString();
-        } finally {
-            this.isLoading = false;
-        }
+    mounted() {
+        this.$store.dispatch('account/getYoutube').then(() => (this.isLoading = false));
     }
 
-    async getYoutube() {
-        const { error } = await this.$store.dispatch('account/getYoutube');
-
-        if (error) {
-            this.error = error.toString();
-        }
+    connect() {
+        this.$store.dispatch('account/connectRedirect', ChannelType.YouTube);
     }
 
-    async connect() {
-        await this.$store.dispatch('account/connectRedirect', ChannelType.YouTube);
-    }
-
-    async disconnect() {
-        try {
-            await this.$store.dispatch('account/update', { googleAccess: false });
-
-            this.$store.commit('account/setYoutube', null);
-        } catch (error) {
-            this.error = (error as Error).toString();
-        }
+    disconnect() {
+        this.$store
+            .dispatch('account/update', { youtubeAccess: false })
+            .then(() => this.$store.dispatch('account/getYoutube'));
     }
 }
 </script>

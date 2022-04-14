@@ -233,11 +233,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getYoutube() {
-        const { isAuthorized, error } = await this.$store.dispatch('account/getYoutube');
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Youtube.';
-        }
+        const { isAuthorized } = await this.$store.dispatch('account/getYoutube');
 
         if (!isAuthorized) {
             this.warning = 'Your YouTube account is not connected.';
@@ -251,11 +247,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getTwitter() {
-        const { isAuthorized, error } = await this.$store.dispatch('account/getTwitter');
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Twitter.';
-        }
+        const { isAuthorized } = await this.$store.dispatch('account/getTwitter');
 
         if (!isAuthorized) {
             this.warning = 'Your Twitter account is not connected.';
@@ -270,11 +262,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getSpotify() {
-        const { isAuthorized, error } = (await this.$store.dispatch('account/getSpotify')).spotify;
-
-        if (error) {
-            this.error = 'An issue occured while connecting to Spotify.';
-        }
+        const { isAuthorized } = (await this.$store.dispatch('account/getSpotify')).spotify;
 
         if (!isAuthorized) {
             this.warning = 'Your Spotify account is not connected.';

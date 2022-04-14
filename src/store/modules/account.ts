@@ -84,96 +84,52 @@ class AccountModule extends VuexModule {
 
     @Action({ rawError: true })
     async getYoutube() {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/account/youtube',
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/account/youtube',
+        });
 
-            if (r.status !== 200) {
-                throw Error('GET /connect/youtube failed.');
-            }
+        this.context.commit('setYoutube', r.data.isAuthorized ? r.data : null);
 
-            if (r.data.isAuthorized) {
-                this.context.commit('setYoutube', r.data);
-                return { youtube: r.data, isAuthorized: true };
-            }
-
-            return {
-                isAuthorized: false,
-            };
-        } catch (error) {
-            return { error };
-        }
+        if (r.data.isAuthorized) return { youtube: r.data, isAuthorized: true };
+        return { isAuthorized: false };
     }
 
     @Action({ rawError: true })
     async getTwitter() {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/account/twitter',
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/account/twitter',
+        });
 
-            if (r.status !== 200) {
-                throw Error('GET /connect/twitter failed.');
-            }
+        this.context.commit('setTwitter', r.data.isAuthorized ? r.data : null);
 
-            if (r.data.isAuthorized) {
-                this.context.commit('setTwitter', r.data);
-                return { twitter: r.data, isAuthorized: true };
-            }
-
-            return {
-                isAuthorized: false,
-            };
-        } catch (error) {
-            return { error };
-        }
+        if (r.data.isAuthorized) return { twitter: r.data, isAuthorized: true };
+        return { isAuthorized: false };
     }
 
     @Action({ rawError: true })
     async getSpotify() {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/account/spotify',
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/account/spotify',
+        });
 
-            if (r.status !== 200) {
-                throw Error('GET /connect/spotify failed.');
-            }
+        this.context.commit('setSpotify', r.data.isAuthorized ? r.data : null);
 
-            if (r.data.isAuthorized) {
-                this.context.commit('setSpotify', r.data);
-                return { spotify: r.data, isAuthorized: true };
-            }
-
-            return {
-                isAuthorized: false,
-            };
-        } catch (error) {
-            return { error };
-        }
+        if (r.data.isAuthorized) return { spotify: r.data, isAuthorized: true };
+        return { isAuthorized: false };
     }
 
     @Action({ rawError: true })
     async update(data: IAccountUpdates) {
-        try {
-            const r = await axios({
-                method: 'PATCH',
-                url: '/account',
-                data,
-            });
+        const r = await axios({
+            method: 'PATCH',
+            url: '/account',
+            data,
+        });
 
-            if (r.status !== 200) {
-                throw Error('PATCH /account failed.');
-            }
-
-            this.context.commit('setAccount', r.data);
-        } catch (e) {
-            return e;
-        }
+        this.context.commit('setAccount', r.data);
     }
 
     @Action({ rawError: true })
