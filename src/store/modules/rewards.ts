@@ -250,28 +250,6 @@ class RewardModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async finalize(reward: Reward) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: `/rewards/${reward.id}/poll/finalize`,
-                headers: {
-                    AssetPool: reward.poolAddress,
-                },
-            });
-
-            if (r.status !== 200) {
-                throw new Error('POST rewards/:id/finalize failed');
-            }
-
-            this.context.commit('set', new Reward(r.data));
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
-    }
-
-    @Action({ rawError: true })
     async update({ reward, data }: { reward: Reward; data: any }) {
         try {
             const r = await axios({

@@ -60,13 +60,13 @@
                         Withdraw limit
                         <a
                             v-b-tooltip
-                            :title="`Total amount of ${assetPool.poolToken.symbol} can be earn from this reward. (leave this as zero mean unlimited)`"
+                            title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times. `"
                             target="_blank"
                         >
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </label>
-                    <b-input-group :append="assetPool.poolToken.symbol">
+                    <b-input-group :append="assetPool.token.symbol">
                         <b-form-input type="number" v-model="rewardWithdrawLimit" />
                     </b-input-group>
                 </b-form-group>
@@ -247,8 +247,7 @@ export default class ModalRewardCreate extends Vue {
         return (
             this.loading ||
             this.rewardWithdrawAmount <= 0 ||
-            this.rewardWithdrawLimit <= 0 ||
-            this.rewardWithdrawAmount > this.rewardWithdrawLimit ||
+            this.rewardWithdrawLimit < 0 ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
@@ -373,4 +372,3 @@ export default class ModalRewardCreate extends Vue {
     }
 }
 </script>
-<style lang="scss"></style>
