@@ -1,20 +1,21 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Create Token" id="modalERC20Create">
+    <base-modal :loading="loading" :error="error" title="Create ERC721 contract" id="modalERC20Create">
         <template #modal-body v-if="!loading">
             <base-form-select-network @selected="network = $event" />
+            <label>Variant</label>
             <b-form-group>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Unlimited">
                     <strong> ERC-20 Unlimited </strong>
                     <p>
-                        Tokens with a limited supply are considered scarce assets and have the potential to gain
-                        monetary value when publically traded.
+                        Tokens will be minted by the asset pool when an outgoing transfer is required. You don't have to
+                        worry about periodic deposits.
                     </p>
                 </b-form-radio>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Limited">
                     <strong> ERC-20 Limited </strong>
                     <p>
-                        Tokens will be minted by the asset pool when an outgoing transfer is required. You don't have to
-                        worry about periodic deposits.
+                        Tokens with a limited supply are considered scarce assets and have the potential to gain
+                        monetary value when publically traded.
                     </p>
                 </b-form-radio>
             </b-form-group>
@@ -22,13 +23,13 @@
                 <b-col>
                     <b-form-group>
                         <label for="erc20Address">Name</label>
-                        <b-form-input id="erc20Name" v-model="erc20Name" placeholder="XYZ Network Token" />
+                        <b-form-input id="erc20Name" v-model="name" placeholder="XYZ Network Token" />
                     </b-form-group>
                 </b-col>
                 <b-col>
                     <b-form-group>
                         <label for="erc20Address">Symbol</label>
-                        <b-form-input id="erc20Symbol" v-model="erc20Symbol" placeholder="XYZ" />
+                        <b-form-input id="erc20Symbol" v-model="symbol" placeholder="XYZ" />
                     </b-form-group>
                 </b-col>
             </b-row>
@@ -36,14 +37,14 @@
                 <b-col>
                     <b-form-group>
                         <label for="erc20Address">Total Supply</label>
-                        <b-form-input id="erc20totalSupply" min="0" type="number" v-model="erc20TotalSupply" />
+                        <b-form-input id="erc20totalSupply" min="0" type="number" v-model="totalSupply" />
                     </b-form-group>
                 </b-col>
             </b-row>
         </template>
         <template #btn-primary>
             <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
-                Create Token
+                Create ERC20 Token
             </b-button>
         </template>
     </base-modal>
@@ -78,19 +79,19 @@ export default class ModalERC20Create extends Vue {
     erc20Token: PoolToken | null = null;
     erc20TokenAddress = '';
 
-    erc20Name = '';
-    erc20Symbol = '';
-    erc20TotalSupply = 0;
+    name = '';
+    symbol = '';
+    totalSupply = 0;
 
     async submit() {
         this.loading = true;
 
         const data = {
             network: this.network,
-            name: this.erc20Name,
-            symbol: this.erc20Symbol,
+            name: this.name,
+            symbol: this.symbol,
             type: this.tokenType,
-            totalSupply: this.tokenType === ERC20Type.Limited ? this.erc20TotalSupply : 0,
+            totalSupply: this.tokenType === ERC20Type.Limited ? this.totalSupply : 0,
         };
 
         await this.$store.dispatch('erc20/create', data);

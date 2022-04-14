@@ -12,7 +12,7 @@
                 <span class="large mr-2 text-primary"></span>
             </div>
             <div class="col-md-3">
-                <b-input-group :append="assetPool.poolToken.symbol">
+                <b-input-group :append="assetPool.token.symbol">
                     <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
                 </b-input-group>
             </div>
@@ -128,7 +128,7 @@ export default class BaseListItemReward extends Vue {
         const data = {
             network: this.assetPool.network,
             poolAddress: this.assetPool.address,
-            tokenSymbol: this.assetPool.poolToken.symbol,
+            tokenSymbol: this.assetPool.token.symbol,
             rewardId: this.reward.id,
             rewardAmount: this.reward.withdrawAmount,
             rewardCondition: this.reward.withdrawCondition,

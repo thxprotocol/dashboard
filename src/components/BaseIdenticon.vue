@@ -22,7 +22,6 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseIdenticon extends Vue {
-    src = '';
     width = 40;
     height = 40;
 
@@ -34,9 +33,6 @@ export default class BaseIdenticon extends Vue {
     mounted() {
         this.width = this.size || this.width;
         this.height = this.size || this.height;
-        this.src = this.uri.startsWith('https')
-            ? this.uri
-            : `https://avatars.dicebear.com/api/identicon/${this.uri}.svg`;
     }
 }
 </script>

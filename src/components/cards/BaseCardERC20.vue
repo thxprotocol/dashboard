@@ -1,6 +1,6 @@
 <template>
-    <base-card :loading="loading" classes="cursor-pointer" @click="openTokenUrl()">
-        <template #card-body>
+    <base-card :loading="erc20.loading" classes="cursor-pointer" @click="openTokenUrl()">
+        <template #card-body v-if="erc20.name">
             <b-button
                 variant="link"
                 class="btn-remove rounded-pill float-right"
@@ -66,10 +66,8 @@ export default class BaseCardERC20 extends Vue {
 
     @Prop() erc20!: TERC20;
 
-    async mounted() {
-        this.$store.dispatch('erc20/read', this.erc20._id).then(() => {
-            this.loading = false;
-        });
+    mounted() {
+        this.$store.dispatch('erc20/read', this.erc20._id);
     }
 
     openTokenUrl() {

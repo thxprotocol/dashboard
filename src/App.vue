@@ -20,6 +20,7 @@ import BaseDropdownAccount from './components/dropdowns/BaseDropdownAccount.vue'
 import BaseNavbar from './components/BaseNavbar.vue';
 import BaseDropdownAdminBalance from './components/dropdowns/BaseDropdownAdminBalance.vue';
 import BaseDropdownMenu from './components/dropdowns/BaseDropdownMenu.vue';
+import { GTM } from '@/utils/secrets';
 
 @Component({
     components: {
@@ -36,7 +37,7 @@ export default class App extends Vue {
     profile!: IAccount;
 
     created() {
-        initGTM;
+        if (GTM) initGTM();
     }
 }
 </script>

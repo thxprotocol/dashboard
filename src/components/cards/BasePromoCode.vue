@@ -11,7 +11,7 @@
             <strong>{{ promoCode.value }}</strong>
         </b-alert>
         <hr />
-        <b-input-group size="lg" :append="assetPool.poolToken.symbol">
+        <b-input-group size="lg" :append="assetPool.token.symbol">
             <b-form-input type="number" :value="promoCode.price" disabled></b-form-input>
         </b-input-group>
         <modal-delete :call="remove" :id="`modalDelete${promoCode.id}`" :subject="promoCode.id" />

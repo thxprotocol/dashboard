@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts">
-import { BAlert, BButton, BCard, BJumbotron } from 'bootstrap-vue';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIntegrationYoutube from '@/components/cards/BaseIntegrationYoutube.vue';
@@ -44,11 +43,7 @@ import BaseIntegrationSpotify from '@/components/cards/BaseIntegrationSpotify.vu
 
 @Component({
     components: {
-        'b-jumbotron': BJumbotron,
-        'b-card': BCard,
-        'b-alert': BAlert,
-        'b-button': BButton,
-        'base-integration-youtube': BaseIntegrationYoutube,
+        BaseIntegrationYoutube,
         BaseIntegrationTwitter,
         BaseIntegrationSpotify,
     },
@@ -57,12 +52,8 @@ import BaseIntegrationSpotify from '@/components/cards/BaseIntegrationSpotify.vu
     }),
 })
 export default class Home extends Vue {
-    async mounted() {
-        try {
-            await this.$store.dispatch('account/getProfile');
-        } catch (e) {
-            debugger;
-        }
+    mounted() {
+        this.$store.dispatch('account/getProfile');
     }
 }
 </script>

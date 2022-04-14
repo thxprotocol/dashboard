@@ -10,31 +10,43 @@
                 <p class="brand-text">Tokens</p>
                 <b-button v-b-modal="'modalERC20Create'" class="rounded-pill mr-2" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create Token</span>
+                    <span>Create ERC20</span>
                 </b-button>
-                <!-- <b-button v-b-modal="'modalERC20Create'" class="rounded-pill" variant="secondary">
+                <b-button v-b-modal="'modalERC721Create'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create Collectible</span>
-                </b-button> -->
+                    <span>Create ERC721</span>
+                </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
-                    <span>Deploy pool for this token</span>
+                    <span>Deploy pool a token pool</span>
                 </b-button>
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <div class="row">
-                <div class="col-md-6 col-lg-4" :key="erc20.id" v-for="erc20 of erc20s">
+            <h2>ERC-20</h2>
+            <p class="text-muted">
+                The fungible asset standard could be used for making payments, exchanging value, point systems and
+                reputation metrics.
+            </p>
+            <b-row>
+                <b-col md="6" lg="4" :key="erc20._id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 col-lg-4" :key="erc721.id" v-for="erc721 of erc721s">
+                </b-col>
+            </b-row>
+            <hr />
+            <h2 class="mt-3">ERC-721</h2>
+            <p class="text-muted">
+                The NFT standard could be used for creating digital art collections, certificates of authenticity,
+                in-game loot and social status.
+            </p>
+            <b-row>
+                <b-col md="6" lg="4" :key="erc721._id" v-for="erc721 of erc721s">
                     <base-card-erc721 :erc721="erc721" />
-                </div>
-            </div>
+                </b-col>
+            </b-row>
         </div>
         <modal-erc20-create />
+        <modal-erc721-create />
     </div>
 </template>
 
@@ -45,11 +57,13 @@ import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
 import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
 import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
+import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
 
 @Component({
     components: {
         BaseAssetPool,
         BaseCardErc20,
+        BaseCardErc721,
         ModalErc20Create,
         ModalErc721Create,
     },
@@ -62,6 +76,7 @@ export default class Tokens extends Vue {
     mounted() {
         this.$store.dispatch('account/getProfile');
         this.$store.dispatch('erc20/list');
+        this.$store.dispatch('erc721/list');
     }
 }
 </script>
