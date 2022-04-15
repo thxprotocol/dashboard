@@ -57,6 +57,22 @@
 
                 <b-form-group>
                     <label>
+                        Withdraw limit
+                        <a
+                            v-b-tooltip
+                            title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-input-group :append="assetPool.token.symbol">
+                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                    </b-input-group>
+                </b-form-group>
+
+                <b-form-group>
+                    <label>
                         Withdraw Unlock Date
                         <a
                             :href="docsUrl + '/rewards'"
@@ -67,7 +83,11 @@
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </label>
-                    <b-form-datepicker v-model="rewardWithdrawUnlockDate" class="mb-2" :min="this.getDefaultUnlockDate()" />
+                    <b-form-datepicker
+                        v-model="rewardWithdrawUnlockDate"
+                        class="mb-2"
+                        :min="this.getDefaultUnlockDate()"
+                    />
                 </b-form-group>
 
                 <b-form-group>
@@ -227,6 +247,7 @@ export default class ModalRewardCreate extends Vue {
     isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
+    rewardWithdrawLimit = 0;
     rewardWithdrawUnlockDate = undefined;
 
     channel: null | IChannel = null;
@@ -246,6 +267,7 @@ export default class ModalRewardCreate extends Vue {
         return (
             this.loading ||
             this.rewardWithdrawAmount <= 0 ||
+            this.rewardWithdrawLimit < 0 ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
@@ -286,7 +308,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getSpotify() {
-        const { isAuthorized } = (await this.$store.dispatch('account/getSpotify')).spotify;
+        const { isAuthorized } = await this.$store.dispatch('account/getSpotify');
 
         if (!isAuthorized) {
             this.warning = 'Your Spotify account is not connected.';
@@ -353,6 +375,7 @@ export default class ModalRewardCreate extends Vue {
 
             await this.$store.dispatch('rewards/create', {
                 address: this.assetPool.address,
+                withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
                 withdrawUnlockDate: this.rewardWithdrawUnlockDate,
@@ -361,6 +384,7 @@ export default class ModalRewardCreate extends Vue {
                 isMembershipRequired: this.isMembershipRequired,
             });
 
+            this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
             this.rewardWithdrawUnlockDate = undefined;
@@ -376,4 +400,3 @@ export default class ModalRewardCreate extends Vue {
     }
 }
 </script>
-<style lang="scss"></style>
