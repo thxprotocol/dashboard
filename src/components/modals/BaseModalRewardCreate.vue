@@ -282,7 +282,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async getSpotify() {
-        const { isAuthorized } = (await this.$store.dispatch('account/getSpotify')).spotify;
+        const { isAuthorized } = await this.$store.dispatch('account/getSpotify');
 
         if (!isAuthorized) {
             this.warning = 'Your Spotify account is not connected.';
