@@ -56,6 +56,21 @@
                 </b-form-group>
 
                 <b-form-group>
+                    <label>
+                        Withdraw Unlock Date
+                        <a
+                            :href="docsUrl + '/rewards'"
+                            v-b-tooltip
+                            :title="`The widthdraw will not be available until this date.`"
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-form-datepicker v-model="rewardWithdrawUnlockDate" class="mb-2" :min="this.getDefaultUnlockDate()" />
+                </b-form-group>
+
+                <b-form-group>
                     <div class="row">
                         <div class="col-md-6">
                             <label> Social Channel:</label>
@@ -212,6 +227,7 @@ export default class ModalRewardCreate extends Vue {
     isMembershipRequired = false;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
+    rewardWithdrawUnlockDate = undefined;
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -228,8 +244,16 @@ export default class ModalRewardCreate extends Vue {
 
     get isSubmitDisabled() {
         return (
-            this.loading || this.rewardWithdrawAmount <= 0 || (this.channel?.type !== ChannelType.None && !this.item)
+            this.loading ||
+            this.rewardWithdrawAmount <= 0 ||
+            (this.channel?.type !== ChannelType.None && !this.item)
         );
+    }
+
+    getDefaultUnlockDate() {
+        let date = new Date();
+        date.setDate(date.getDate() + 1); // add a day
+        return date;
     }
 
     async getYoutube() {
@@ -331,6 +355,7 @@ export default class ModalRewardCreate extends Vue {
                 address: this.assetPool.address,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
+                withdrawUnlockDate: this.rewardWithdrawUnlockDate,
                 withdrawCondition,
                 isClaimOnce: this.isClaimOnce,
                 isMembershipRequired: this.isMembershipRequired,
@@ -338,6 +363,7 @@ export default class ModalRewardCreate extends Vue {
 
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
+            this.rewardWithdrawUnlockDate = undefined;
 
             if (close) {
                 this.$bvModal.hide(`modalRewardCreate`);
