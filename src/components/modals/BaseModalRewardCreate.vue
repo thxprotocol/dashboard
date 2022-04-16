@@ -71,7 +71,7 @@
                     </b-input-group>
                 </b-form-group>
 
-                <b-form-group>
+                <b-form-group :append="assetPool.token.symbol">
                     <label>
                         Withdraw Unlock Date
                         <a

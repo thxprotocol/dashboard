@@ -14,6 +14,7 @@ interface Poll {
     totalVoted: number;
     withdrawAmount: number;
     withdrawDuration: number;
+    withdrawUnlockDate: Date;
     yesCounter: number;
     noCounter: number;
 }
@@ -23,6 +24,7 @@ export class Reward {
     withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
+    withdrawUnlockDate: Date;
     state: RewardState;
     poolAddress: string;
     poll: Poll;
@@ -40,6 +42,7 @@ export class Reward {
         this.withdrawLimit = data.withdrawLimit;
         this.withdrawAmount = data.withdrawAmount;
         this.withdrawDuration = data.withdrawDuration;
+        this.withdrawUnlockDate = data.withdrawUnlockDate;
         this.state = data.state;
         this.poolAddress = data.poolAddress;
         this.poll = data.poll;
@@ -213,11 +216,13 @@ class RewardModule extends VuexModule {
         isClaimOnce,
         isMembershipRequired,
         withdrawCondition,
+        withdrawUnlockDate,
     }: {
         address: string;
         withdrawLimit: number;
         withdrawAmount: number;
         withdrawDuration: number;
+        withdrawUnlockDate: Date;
         isClaimOnce: boolean;
         isMembershipRequired: boolean;
         withdrawCondition?: IRewardCondition;
@@ -234,6 +239,7 @@ class RewardModule extends VuexModule {
                     withdrawAmount,
                     withdrawDuration,
                     withdrawCondition,
+                    withdrawUnlockDate,
                     isClaimOnce,
                     isMembershipRequired,
                 },
