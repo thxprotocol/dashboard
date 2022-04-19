@@ -38,39 +38,41 @@
         </div>
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
             <b-card class="border-0" bg-variant="light" body-class="p-md-5">
-                <b-form-group>
-                    <label>
-                        Withdraw amount
-                        <a
-                            :href="docsUrl + '/rewards'"
-                            v-b-tooltip
-                            :title="`The amount of ${assetPool.token.symbol} earned with this reward.`"
-                            target="_blank"
-                        >
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </label>
-                    <b-input-group :append="assetPool.token.symbol">
-                        <b-form-input type="number" v-model="rewardWithdrawAmount" />
-                    </b-input-group>
-                </b-form-group>
-
-                <b-form-group>
-                    <label>
-                        Withdraw limit
-                        <a
-                            v-b-tooltip
-                            title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
-                            target="_blank"
-                        >
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </label>
-                    <b-input-group :append="assetPool.token.symbol">
-                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
-                    </b-input-group>
-                </b-form-group>
-
+                <b-row>
+                    <b-col md="6">
+                        <b-form-group>
+                            <label>
+                                Withdraw amount
+                                <a
+                                    :href="docsUrl + '/rewards'"
+                                    v-b-tooltip
+                                    :title="`The amount of ${assetPool.token.symbol} earned with this reward.`"
+                                    target="_blank"
+                                >
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                            </label>
+                            <b-input-group :append="assetPool.token.symbol">
+                                <b-form-input type="number" v-model="rewardWithdrawAmount" />
+                            </b-input-group>
+                        </b-form-group>
+                    </b-col>
+                    <b-col md="6">
+                        <b-form-group>
+                            <label>
+                                Withdraw limit
+                                <a
+                                    v-b-tooltip
+                                    title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times. `"
+                                    target="_blank"
+                                >
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                            </label>
+                            <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                        </b-form-group>
+                    </b-col>
+                </b-row>
                 <b-form-group :append="assetPool.token.symbol">
                     <label>
                         Withdraw Unlock Date
@@ -89,7 +91,6 @@
                         :min="this.getDefaultUnlockDate()"
                     />
                 </b-form-group>
-
                 <b-form-group>
                     <div class="row">
                         <div class="col-md-6">
