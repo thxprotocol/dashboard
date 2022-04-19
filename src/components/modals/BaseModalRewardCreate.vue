@@ -217,6 +217,7 @@ import BaseDropdownTwitterUsers from '../dropdowns/BaseDropdownTwitterUsers.vue'
 import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue';
 import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
+import slugify from '@/utils/slugify';
 
 @Component({
     components: {
@@ -369,7 +370,10 @@ export default class ModalRewardCreate extends Vue {
                       }
                     : null;
 
+            const slug = slugify(this.rewardTitle);
+
             await this.$store.dispatch('rewards/create', {
+                slug,
                 title: this.rewardTitle,
                 address: this.assetPool.address,
                 withdrawLimit: this.rewardWithdrawLimit,
