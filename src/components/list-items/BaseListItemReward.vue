@@ -65,10 +65,12 @@
             <label>Supply Limit:</label>
             <b-progress>
                 <b-progress-bar
-                    :label="`${reward.progress || 0}/${reward.withdrawLimit}`"
-                    :value="reward.progress || 0"
+                    :label="
+                        reward.withdrawLimit ? `${reward.progress}/${reward.withdrawLimit}` : String(reward.progress)
+                    "
+                    :value="reward.progress"
                     :min="0"
-                    :max="reward.withdrawLimit"
+                    :max="reward.withdrawLimit || reward.progress"
                 />
             </b-progress>
             <label class="mt-3">Rules:</label>
