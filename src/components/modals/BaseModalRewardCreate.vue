@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -38,6 +48,14 @@
         </div>
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
             <b-card class="border-0" bg-variant="light" body-class="p-md-5">
+                <b-row>
+                    <b-col md="12">
+                        <b-form-group>
+                            <label> Title </label>
+                            <b-form-input v-model="rewardTitle" />
+                        </b-form-group>
+                    </b-col>
+                </b-row>
                 <b-row>
                     <b-col md="6">
                         <b-form-group>
@@ -231,6 +249,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
+    rewardTitle = '';
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -250,6 +269,7 @@ export default class ModalRewardCreate extends Vue {
             this.loading ||
             this.rewardWithdrawAmount <= 0 ||
             this.rewardWithdrawLimit < 0 ||
+            !this.rewardTitle ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
@@ -350,6 +370,7 @@ export default class ModalRewardCreate extends Vue {
                     : null;
 
             await this.$store.dispatch('rewards/create', {
+                title: this.rewardTitle,
                 address: this.assetPool.address,
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
