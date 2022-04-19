@@ -11,56 +11,12 @@
                 </b-button>
             </b-col>
         </b-row>
-        <b-card class="shadow-sm">
-            <div class="row pt-2 pb-2">
-                <div class="col-md-3 offset-md-1">
-                    <strong>Withdraw amount</strong>
-                </div>
-                <div v-if="isGovernanceEnabled" class="col-md-3">
-                    <strong>Withdraw poll duration</strong>
-                </div>
-                <div class="col-md-3">
-                    <strong>Withdraw condition</strong>
-                </div>
-                <div class="col-md-2">
-                    <strong>Progress</strong>
-                </div>
-                <div v-if="isGovernanceEnabled ? 'col-md-4' : 'col-md-3'">
-                    <strong></strong>
-                </div>
-            </div>
-            <b-skeleton-wrapper :loading="rewardsLoading">
-                <template #loading>
-                    <b-form-group class="mb-0">
-                        <hr />
-                        <div class="row pt-2 pb-2">
-                            <div class="col-md-1">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-4">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-6">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-1">
-                                <b-skeleton type="avatar"></b-skeleton>
-                            </div>
-                        </div>
-                    </b-form-group>
-                </template>
-                <base-list-item-reward
-                    :assetPool="assetPool"
-                    :reward="reward"
-                    :isGovernanceEnabled="isGovernanceEnabled"
-                    :key="reward.id"
-                    v-for="reward of filteredRewards"
-                />
-            </b-skeleton-wrapper>
-        </b-card>
+
+        <b-row>
+            <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
+                <base-card-reward :assetPool="assetPool" :reward="reward" :isGovernanceEnabled="isGovernanceEnabled" />
+            </b-col>
+        </b-row>
         <base-modal-reward-create
             :assetPool="assetPool"
             :filteredRewards="filteredRewards"
@@ -80,7 +36,7 @@ import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
 @Component({
     components: {
         BaseModalRewardCreate,
-        BaseListItemReward,
+        'base-card-reward': BaseListItemReward,
     },
     computed: mapGetters({
         assetPools: 'assetPools/all',

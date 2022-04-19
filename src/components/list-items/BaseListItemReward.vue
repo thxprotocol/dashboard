@@ -1,68 +1,116 @@
 <template>
-    <b-form-group class="mb-0">
-        <hr />
-        <div class="row pt-2 pb-2 d-flex align-items-center">
-            <div class="col-md-1 d-flex align-items-center justify-content-center">
-                <i
+    <base-card>
+        <template #card-body>
+            <b-row>
+                <b-col md="4">
+                    <b-button
+                        v-b-tooltip
+                        title="Click to download the QR code as a jpg file"
+                        :download="`${reward._id}.jpg`"
+                        variant="light"
+                        class="p-3"
+                        :href="qrURL"
+                    >
+                        <vue-qr
+                            style="width: 100px; height: 100px"
+                            :callback="onQRLoaded"
+                            :logoSrc="imgData"
+                            :text="claimURL"
+                            :correctLevel="3"
+                            :logoScale="0.3"
+                            :logoCornerRadius="0"
+                            :logoMargin="0"
+                            :margin="10"
+                            :size="480"
+                        />
+                    </b-button>
+                </b-col>
+                <b-col class="d-flex flex-column">
+                    <div class="d-flex align-items-center">
+                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ assetPool.token.symbol }}</h3>
+                        <sup
+                            class="fas fa-circle ml-1 mr-auto"
+                            :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
+                            style="font-size: 0.8rem"
+                        >
+                        </sup>
+                        <b-dropdown size="sm" variant="white" no-caret>
+                            <template #button-content>
+                                <i
+                                    class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
+                                    style="font-size: 1.2rem"
+                                    aria-hidden="true"
+                                ></i>
+                            </template>
+                            <b-dropdown-item-button @click="toggleState()">
+                                <i class="fas fa-power-off mr-3"></i>{{ reward.state ? 'Disable' : 'Enable' }}
+                            </b-dropdown-item-button>
+                        </b-dropdown>
+                    </div>
+                    <!-- <b-input-group class="mt-auto" :append="assetPool.token.symbol">
+                        <b-form-input type="number" v-model="reward.withdrawAmount" />
+                    </b-input-group> -->
+                    <b-input-group class="mt-auto">
+                        <b-form-input readonly :value="claimURL" />
+                        <b-input-group-append>
+                            <b-button variant="primary" v-clipboard:copy="claimURL">
+                                <i class="far fa-copy m-0" style="font-size: 1rem"></i>
+                            </b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </b-col>
+            </b-row>
+
+            <hr />
+            <label>Supply Limit:</label>
+            <b-progress>
+                <b-progress-bar
+                    :label="`${reward.progress || 0}/${reward.withdrawLimit}`"
+                    :value="reward.progress || 0"
+                    :min="0"
+                    :max="reward.withdrawLimit"
+                />
+            </b-progress>
+            <label class="mt-3">Rules:</label>
+            <div>
+                <b-badge
                     v-b-tooltip
-                    :title="`ID #${reward.id}`"
-                    class="fas fa-power-off ml-0 mr-2"
-                    :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
-                ></i>
-                <span class="large mr-2 text-primary"></span>
-            </div>
-            <div class="col-md-3">
-                <b-input-group :append="assetPool.token.symbol">
-                    <b-form-input disabled type="number" v-model="reward.withdrawAmount" />
-                </b-input-group>
-            </div>
-            <div class="col-md-3" v-if="isGovernanceEnabled">
-                <b-input-group append="Seconds">
-                    <b-form-input type="number" v-model="reward.withdrawDuration" />
-                </b-input-group>
-            </div>
-            <div class="col-md-3">
-                <b-badge v-if="reward.isClaimOnce" class="border p-2 mb-1" variant="light"> 1 time claim </b-badge>
-                <b-badge v-if="reward.isMembershipRequired" class="border p-2 mb-1" variant="light">
-                    Membership required
+                    title="Amount of times the user is able to claim this reward per account."
+                    class="border p-2 mr-1"
+                    variant="light"
+                >
+                    {{ reward.isClaimOnce ? 'Claim once' : 'Claim unlimited' }}
                 </b-badge>
-                <a v-if="channelItemURL" target="_blank" :href="channelItemURL">
-                    <b-badge class="border p-2" variant="light">
+                <b-badge
+                    v-b-tooltip
+                    title="Verifies that the user claiming the reward has a membership for the pool."
+                    class="border p-2 mr-1"
+                    v-if="reward.isMembershipRequired"
+                    variant="light"
+                >
+                    Members only
+                </b-badge>
+                <b-link
+                    v-if="channelItemURL"
+                    v-b-tooltip
+                    title="Verifies that the user has engaged with a given item in a social channel."
+                    target="_blank"
+                    :href="channelItemURL"
+                >
+                    <b-badge class="border p-2 mr-1" variant="light">
                         <img
                             v-if="channelType"
-                            class="mr-2"
-                            height="15"
+                            height="10"
+                            class="mr-1"
                             :src="require(`@/assets/logo-${channelType.toLowerCase()}.png`)"
                             alt=""
                         />
                         {{ channelAction }}
                     </b-badge>
-                </a>
+                </b-link>
             </div>
-            <div v-if="!reward.withdrawLimit" class="col-md-2">{{ reward.progress || 0 }}</div>
-            <div v-if="!!reward.withdrawLimit" class="col-md-2">
-                {{ reward.progress || 0 }} / {{ reward.withdrawLimit }}
-            </div>
-            <div class="col-md-3">
-                <div class="d-flex justify-content-end">
-                    <b-button class="rounded-pill mr-2" variant="light" v-b-modal="`modal-reward-link-${reward.id}`">
-                        <i class="fas fa-link ml-0 text-primary"></i>
-                    </b-button>
-                    <base-modal-reward-link :assetPool="assetPool" :reward="reward" :rewardURL="rewardURL" />
-                    <b-button class="rounded-pill mr-2" variant="light" v-b-modal="`modal-reward-qrcode-${reward.id}`">
-                        <i class="fas fa-qrcode ml-0 text-primary"></i>
-                    </b-button>
-                    <base-modal-reward-qrcode :assetPool="assetPool" :reward="reward" :rewardURL="rewardURL" />
-                    <b-button class="rounded-pill" variant="light" @click="toggleState()">
-                        <i
-                            class="fas fa-power-off ml-0"
-                            :class="{ 'text-danger': reward.state, 'text-success': !reward.state }"
-                        ></i>
-                    </b-button>
-                </div>
-            </div>
-        </div>
-    </b-form-group>
+        </template>
+    </base-card>
 </template>
 
 <script lang="ts">
@@ -71,18 +119,42 @@ import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseModalRewardLink from '@/components/modals/BaseModalRewardLink.vue';
 import BaseModalRewardQrcode from '@/components/modals/BaseModalRewardQRCode.vue';
+import BaseCard from '../cards/BaseCard.vue';
+import VueQr from 'vue-qr';
+import { BASE_URL, WALLET_URL } from '@/utils/secrets';
+
+const getBase64Image = (url: string): Promise<string> => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+        };
+        img.src = url;
+    });
+};
 
 @Component({
     components: {
+        BaseCard,
         BaseModalRewardLink,
         BaseModalRewardQrcode,
+        VueQr,
     },
 })
 export default class BaseListItemReward extends Vue {
-    walletUrl = process.env.VUE_APP_WALLET_URL;
     channelType = '';
     channelAction = '';
     channelItemURL = '';
+    logoSrc = require('@/assets/qr-logo.jpg');
+    imgData = '';
+    claimURL = '';
+    qrURL = '';
 
     @Prop() assetPool!: AssetPool;
     @Prop() reward!: Reward;
@@ -97,6 +169,23 @@ export default class BaseListItemReward extends Vue {
                 this.reward.withdrawCondition.channelItem,
             );
         }
+        getBase64Image(BASE_URL + this.logoSrc).then((data) => {
+            this.imgData = data;
+            // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
+            const d = {
+                network: this.assetPool.network,
+                poolAddress: this.assetPool.address,
+                tokenSymbol: this.assetPool.token.symbol,
+                rewardId: this.reward.id,
+                rewardAmount: this.reward.withdrawAmount,
+                rewardCondition: this.reward.withdrawCondition,
+            };
+            this.claimURL = `${WALLET_URL}/claim?hash=${btoa(JSON.stringify(d))}`;
+        });
+    }
+
+    onQRLoaded(dataUrl: string) {
+        this.qrURL = dataUrl;
     }
 
     getChannelActionURL(channelAction: ChannelAction, channelItem: string) {
@@ -122,18 +211,6 @@ export default class BaseListItemReward extends Vue {
             default:
                 return '';
         }
-    }
-
-    get rewardURL() {
-        const data = {
-            network: this.assetPool.network,
-            poolAddress: this.assetPool.address,
-            tokenSymbol: this.assetPool.token.symbol,
-            rewardId: this.reward.id,
-            rewardAmount: this.reward.withdrawAmount,
-            rewardCondition: this.reward.withdrawCondition,
-        };
-        return `${this.walletUrl}/claim?hash=${btoa(JSON.stringify(data))}`;
     }
 
     toggleState() {

@@ -18,7 +18,8 @@ interface Poll {
     noCounter: number;
 }
 
-export class Reward {
+export interface Reward {
+    _id: string;
     id: number;
     withdrawLimit: number;
     withdrawAmount: number;
@@ -28,23 +29,8 @@ export class Reward {
     poll: Poll;
     withdrawCondition: IRewardCondition;
     progress: number;
-
     isClaimOnce: boolean;
     isMembershipRequired: boolean;
-
-    constructor(data: any) {
-        this.id = data.id;
-        this.progress = data.progress;
-        this.isClaimOnce = data.isClaimOnce;
-        this.isMembershipRequired = data.isMembershipRequired;
-        this.withdrawLimit = data.withdrawLimit;
-        this.withdrawAmount = data.withdrawAmount;
-        this.withdrawDuration = data.withdrawDuration;
-        this.state = data.state;
-        this.poolAddress = data.poolAddress;
-        this.poll = data.poll;
-        this.withdrawCondition = data.withdrawCondition;
-    }
 }
 
 export interface IRewards {
@@ -197,7 +183,7 @@ class RewardModule extends VuexModule {
                 throw new Error('GET all rewards failed');
             }
             for (const reward of r.data) {
-                this.context.commit('set', new Reward(reward));
+                this.context.commit('set', reward);
             }
         } catch (e) {
             console.error(e);
@@ -242,7 +228,7 @@ class RewardModule extends VuexModule {
             if (r.status !== 201) {
                 throw new Error('POST rewards failed');
             }
-            this.context.commit('set', new Reward(r.data));
+            this.context.commit('set', r.data);
         } catch (e) {
             console.log(e);
             debugger;
@@ -265,7 +251,7 @@ class RewardModule extends VuexModule {
                 throw new Error('PATCH rewards failed');
             }
 
-            this.context.commit('set', new Reward(r.data));
+            this.context.commit('set', r.data);
         } catch (e) {
             console.log(e);
             debugger;
