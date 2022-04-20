@@ -192,6 +192,8 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async create({
+        slug,
+        title,
         address,
         withdrawLimit,
         withdrawAmount,
@@ -200,6 +202,8 @@ class RewardModule extends VuexModule {
         isMembershipRequired,
         withdrawCondition,
     }: {
+        slug: string;
+        title: string;
         address: string;
         withdrawLimit: number;
         withdrawAmount: number;
@@ -216,6 +220,8 @@ class RewardModule extends VuexModule {
                     AssetPool: address,
                 },
                 data: {
+                    slug,
+                    title,
                     withdrawLimit,
                     withdrawAmount,
                     withdrawDuration,

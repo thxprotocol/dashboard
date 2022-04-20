@@ -39,6 +39,14 @@
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
             <b-card class="border-0" bg-variant="light" body-class="p-md-5">
                 <b-row>
+                    <b-col md="12">
+                        <b-form-group>
+                            <label> Title </label>
+                            <b-form-input v-model="rewardTitle" />
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+                <b-row>
                     <b-col md="6">
                         <b-form-group>
                             <label>
@@ -199,6 +207,7 @@ import BaseDropdownTwitterUsers from '../dropdowns/BaseDropdownTwitterUsers.vue'
 import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue';
 import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
+import slugify from '@/utils/slugify';
 
 @Component({
     components: {
@@ -231,6 +240,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
+    rewardTitle = '';
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -250,6 +260,7 @@ export default class ModalRewardCreate extends Vue {
             this.loading ||
             this.rewardWithdrawAmount <= 0 ||
             this.rewardWithdrawLimit < 0 ||
+            !this.rewardTitle ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
@@ -349,7 +360,11 @@ export default class ModalRewardCreate extends Vue {
                       }
                     : null;
 
+            const slug = slugify(this.rewardTitle);
+
             await this.$store.dispatch('rewards/create', {
+                slug,
+                title: this.rewardTitle,
                 address: this.pool.address,
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
