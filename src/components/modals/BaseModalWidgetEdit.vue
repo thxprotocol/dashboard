@@ -111,7 +111,7 @@
                                 frameBorder="0"
                                 :width="widget.metadata.width"
                                 :height="widget.metadata.height"
-                                :src="`${widgetUrl}/?asset_pool=${assetPool.address}&client_id=${widget.clientId}&client_secret=${widget.clientSecret}&reward_id=${widget.reward.id}&reward_amount=${widget.reward.withdrawAmount}&reward_symbol=${assetPool.token.symbol}`"
+                                :src="`${widgetUrl}/?asset_pool=${pool.address}&client_id=${widget.clientId}&client_secret=${widget.clientSecret}&reward_id=${widget.reward.id}&reward_amount=${widget.reward.withdrawAmount}&reward_symbol=${pool.token.symbol}`"
                             >
                             </iframe>
                         </div>
@@ -129,7 +129,7 @@
                                 {{ widgetEmbedCode }}
                             </div>
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" v-clipboard:copy="assetPool.address">
+                                <button class="btn btn-primary" type="button" v-clipboard:copy="pool.address">
                                     <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                                 </button>
                             </div>
@@ -148,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { Reward } from '@/store/modules/rewards';
@@ -202,7 +202,7 @@ export default class ModalWidgetEdit extends Vue {
         },
     ];
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
     @Prop() widget!: Widget;
 
@@ -217,7 +217,7 @@ export default class ModalWidgetEdit extends Vue {
         if (!this.widget.reward) {
             return '';
         }
-        return `#${this.widget.reward.id} (${this.widget.reward.withdrawAmount} ${this.assetPool.token.symbol})`;
+        return `#${this.widget.reward.id} (${this.widget.reward.withdrawAmount} ${this.pool.token.symbol})`;
     }
 
     get widgetEmbedCode() {
@@ -225,7 +225,7 @@ export default class ModalWidgetEdit extends Vue {
             return '';
         }
         return `<iframe width="${this.widget.metadata.width}" height="${this.widget.metadata.height}"
-                                frameBorder="0" src="${this.widgetUrl}/?asset_pool=${this.assetPool.address}&client_id=${this.widget.clientId}&client_secret=${this.widget.clientSecret}&reward_id=${this.widget.metadata.rewardId}&reward_amount=${this.widget.reward.withdrawAmount}&reward_symbol=${this.assetPool.token.symbol}"></iframe>`;
+                                frameBorder="0" src="${this.widgetUrl}/?asset_pool=${this.pool.address}&client_id=${this.widget.clientId}&client_secret=${this.widget.clientSecret}&reward_id=${this.widget.metadata.rewardId}&reward_amount=${this.widget.reward.withdrawAmount}&reward_symbol=${this.pool.token.symbol}"></iframe>`;
     }
 
     async submit() {

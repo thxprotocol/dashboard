@@ -27,7 +27,7 @@
                 </b-col>
                 <b-col class="d-flex flex-column">
                     <div class="d-flex align-items-center">
-                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ assetPool.token.symbol }}</h3>
+                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ pool.token.symbol }}</h3>
                         <sup
                             class="fas fa-circle ml-1 mr-auto"
                             :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
@@ -47,7 +47,7 @@
                             </b-dropdown-item-button>
                         </b-dropdown>
                     </div>
-                    <!-- <b-input-group class="mt-auto" :append="assetPool.token.symbol">
+                    <!-- <b-input-group class="mt-auto" :append="pool.token.symbol">
                         <b-form-input type="number" v-model="reward.withdrawAmount" />
                     </b-input-group> -->
                     <b-input-group class="mt-auto">
@@ -116,7 +116,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseModalRewardLink from '@/components/modals/BaseModalRewardLink.vue';
@@ -158,7 +158,7 @@ export default class BaseListItemReward extends Vue {
     claimURL = '';
     qrURL = '';
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
     @Prop() reward!: Reward;
     @Prop() isGovernanceEnabled!: boolean;
 
@@ -175,9 +175,9 @@ export default class BaseListItemReward extends Vue {
             this.imgData = data;
             // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
             const d = {
-                network: this.assetPool.network,
-                poolAddress: this.assetPool.address,
-                tokenSymbol: this.assetPool.token.symbol,
+                network: this.pool.network,
+                poolAddress: this.pool.address,
+                tokenSymbol: this.pool.token.symbol,
                 rewardId: this.reward.id,
                 rewardAmount: this.reward.withdrawAmount,
                 rewardCondition: this.reward.withdrawCondition,

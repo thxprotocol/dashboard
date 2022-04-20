@@ -33,24 +33,24 @@ const routes: Array<RouteConfig> = [
     {
         name: 'pool',
         path: '/pool/:address',
-        component: () => import('../views/AssetPool.vue'),
+        component: () => import('../views/Pool.vue'),
         beforeEnter: assertAuthorization,
         children: [
             {
                 path: 'info',
-                component: () => import('../views/AssetPool/Info.vue'),
+                component: () => import('../views/pool/Info.vue'),
             },
             {
                 path: 'rewards',
-                component: () => import('../views/AssetPool/Rewards.vue'),
+                component: () => import('../views/pool/Rewards.vue'),
             },
             {
                 path: 'widgets',
-                component: () => import('../views/AssetPool/Widgets.vue'),
+                component: () => import('../views/pool/Widgets.vue'),
             },
             {
-                path: 'promocodes',
-                component: () => import('../views/AssetPool/PromoCodes.vue'),
+                path: 'promotions',
+                component: () => import('../views/pool/Promotions.vue'),
             },
         ],
     },

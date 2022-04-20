@@ -19,47 +19,42 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <div class="row" v-if="assetPools">
-                <div class="col-md-6 col-lg-4" :key="assetPool.address" v-for="assetPool of assetPools">
-                    <base-asset-pool :assetPool="assetPool" />
+            <div class="row" v-if="pools">
+                <div class="col-md-6 col-lg-4" :key="pool.address" v-for="pool of pools">
+                    <base-card-pool :pool="pool" />
                 </div>
             </div>
         </div>
-        <modal-asset-pool-create />
+        <base-modal-pool-create />
     </div>
 </template>
 
 <script lang="ts">
-import BaseAssetPool from '@/components/cards/BaseAssetPool.vue';
-import ModalAssetPoolCreate from '@/components/modals/BaseModalAssetPoolCreate.vue';
+import BaseCardPool from '@/components/cards/BaseCardPool.vue';
+import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
 import { IAccount } from '@/types/account';
-import { IAssetPools } from '@/store/modules/assetPools';
+import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     components: {
-        BaseAssetPool,
-        ModalAssetPoolCreate,
+        BaseCardPool,
+        BaseModalPoolCreate,
     },
     computed: mapGetters({
         profile: 'account/profile',
-        assetPools: 'assetPools/all',
+        pools: 'pools/all',
     }),
 })
 export default class Home extends Vue {
     profile!: IAccount;
-    assetPools!: IAssetPools;
+    pools!: IAssetPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
-
-    get greeting() {
-        const greetings = ['Hi there', 'Howdy', 'Hello'];
-        return greetings[Math.floor(Math.random() * greetings.length)];
-    }
 
     mounted() {
         this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('assetPools/list');
+        this.$store.dispatch('pools/list');
     }
 }
 </script>

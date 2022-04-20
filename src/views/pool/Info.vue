@@ -15,11 +15,11 @@
                 </b-link>
             </b-form-group>
             <b-form-group>
-                <label for="clientId"> Asset Pool Contract </label>
+                <label for="clientId"> Pool Contract </label>
                 <div class="input-group">
-                    <b-form-input readonly id="address" v-model="assetPool.address" />
+                    <b-form-input readonly id="address" v-model="pool.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="assetPool.address">
+                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.address">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
@@ -28,18 +28,18 @@
                     target="_blank"
                     :href="
                         (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/address/${assetPool.address}/transactions`
+                        `/address/${pool.address}/transactions`
                     "
                 >
-                    View your asset pool transactions
+                    View your pool transactions
                 </b-link>
             </b-form-group>
             <b-form-group>
                 <label for="erc20Address">Token Contract</label>
                 <div class="input-group">
-                    <b-form-input readonly id="address" v-model="assetPool.token.address" />
+                    <b-form-input readonly id="address" v-model="pool.token.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="assetPool.token.address">
+                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.token.address">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
@@ -48,7 +48,7 @@
                     target="_blank"
                     :href="
                         (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/token/${assetPool.token.address}`
+                        `/token/${pool.token.address}`
                     "
                 >
                     View your token transactions
@@ -67,9 +67,9 @@
             <b-form-group>
                 <label for="clientId"> Client ID: </label>
                 <b-input-group>
-                    <b-form-input readonly id="clientId" v-model="assetPool.clientId" />
+                    <b-form-input readonly id="clientId" v-model="pool.clientId" />
                     <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="assetPool.clientId">
+                        <b-button variant="primary" v-clipboard:copy="pool.clientId">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </b-button>
                     </b-input-group-append>
@@ -78,9 +78,9 @@
             <b-form-group>
                 <label for="clientSecret"> Client Secret: </label>
                 <b-input-group>
-                    <b-form-input readonly id="clientSecret" v-model="assetPool.clientSecret" />
+                    <b-form-input readonly id="clientSecret" v-model="pool.clientSecret" />
                     <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="assetPool.clientSecret">
+                        <b-button variant="primary" v-clipboard:copy="pool.clientSecret">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </b-button>
                     </b-input-group-append>
@@ -172,14 +172,14 @@ xhr.send(params);
 </template>
 
 <script lang="ts">
-import { IAssetPools, NetworkProvider } from '@/store/modules/assetPools';
+import { IAssetPools, NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 
 @Component({
     computed: mapGetters({
-        assetPools: 'assetPools/all',
+        pools: 'pools/all',
         clients: 'clients/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
@@ -194,18 +194,18 @@ export default class AssetPoolView extends Vue {
     error = '';
     loading = true;
     accessToken = '';
-    assetPoolLoading = true;
-    assetPools!: IAssetPools;
+    poolLoading = true;
+    pools!: IAssetPools;
 
     network: NetworkProvider = NetworkProvider.Test;
 
-    get assetPool() {
-        return this.assetPools[this.$route.params.address];
+    get pool() {
+        return this.pools[this.$route.params.address];
     }
 
     async mounted() {
         try {
-            this.network = this.assetPool.network;
+            this.network = this.pool.network;
         } catch (e) {
             this.error = 'Could get pool information.';
         } finally {
@@ -214,7 +214,7 @@ export default class AssetPoolView extends Vue {
     }
 
     authHeader() {
-        return btoa(`${this.assetPool.clientId}:${this.assetPool.clientSecret}`);
+        return btoa(`${this.pool.clientId}:${this.pool.clientSecret}`);
     }
 
     async getAccessToken() {

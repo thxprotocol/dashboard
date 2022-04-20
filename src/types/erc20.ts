@@ -1,4 +1,4 @@
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 
 export enum ERC20Type {
     Uknown = -1,
