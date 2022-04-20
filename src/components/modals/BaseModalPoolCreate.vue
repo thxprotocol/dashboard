@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/assetPools';
+import { NetworkProvider, PoolToken } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
@@ -65,7 +65,7 @@ export default class ModalAssetPoolCreate extends Vue {
     async submit() {
         this.loading = true;
         try {
-            await this.$store.dispatch('assetPools/create', {
+            await this.$store.dispatch('pools/create', {
                 network: this.network,
                 token: this.erc20TokenAddress,
             });

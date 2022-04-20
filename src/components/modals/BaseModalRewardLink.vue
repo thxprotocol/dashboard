@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Reward } from '@/store/modules/rewards';
 import { BButton, BInputGroup, BFormInput, BModal, BInputGroupAppend } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';

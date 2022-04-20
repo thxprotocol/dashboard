@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { API_URL, WALLET_URL } from '@/utils/secrets';
 import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';

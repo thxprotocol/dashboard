@@ -1,18 +1,18 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Create ERC721 contract" id="modalERC20Create">
+    <base-modal :loading="loading" :error="error" title="Create Token Contract" id="modalERC20Create">
         <template #modal-body v-if="!loading">
             <base-form-select-network @selected="network = $event" />
             <label>Variant</label>
             <b-form-group>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Unlimited">
-                    <strong> ERC-20 Unlimited </strong>
+                    <strong>Unlimited Supply Token (ERC-20) </strong>
                     <p>
                         Tokens will be minted by the asset pool when an outgoing transfer is required. You don't have to
                         worry about periodic deposits.
                     </p>
                 </b-form-radio>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC20Type.Limited">
-                    <strong> ERC-20 Limited </strong>
+                    <strong> Limited Supply Token (ERC-20) </strong>
                     <p>
                         Tokens with a limited supply are considered scarce assets and have the potential to gain
                         monetary value when publically traded.
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/assetPools';
+import { NetworkProvider, PoolToken } from '@/store/modules/pools';
 import { ERC20Type } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';

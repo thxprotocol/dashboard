@@ -1,7 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { NetworkProvider } from './assetPools';
+import { NetworkProvider } from './pools';
 
 type TERC721 = {
     _id: string;

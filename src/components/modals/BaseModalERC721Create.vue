@@ -1,12 +1,12 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Create ERC721 contract" id="modalERC721Create">
+    <base-modal :loading="loading" :error="error" title="Create NFT contract" id="modalERC721Create">
         <template #modal-body v-if="!loading">
             <base-form-select-network @selected="network = $event" />
             <label>Variant</label>
             <b-form-group>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC721Type.Default">
-                    <strong> ERC-721 NFT </strong>
-                    <p>Unique tokens minted on the go, also known as NFT's.</p>
+                    <strong> NFT (ERC-721) </strong>
+                    <p>Non Fungible Tokens contract where unique tokens are minted on the go, widely known as NFT's.</p>
                 </b-form-radio>
             </b-form-group>
             <b-row>
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/assetPools';
+import { NetworkProvider, PoolToken } from '@/store/modules/pools';
 import { ERC721Type } from '@/types/erc721';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';

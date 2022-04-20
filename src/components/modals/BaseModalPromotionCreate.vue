@@ -1,8 +1,8 @@
 <template>
     <b-modal
         size="lg"
-        title="Create Promo Code"
-        id="modalPromoCodeCreate"
+        title="Create Promotion"
+        id="modalPromotionCreate"
         no-close-on-backdrop
         no-close-on-esc
         centered
@@ -38,18 +38,18 @@
                 variant="primary"
                 block
             >
-                Create Promo Code
+                Create Promotion
             </b-button>
         </template>
     </b-modal>
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
-export default class ModalPromoCodeCreate extends Vue {
+export default class ModalPromotionCreate extends Vue {
     error = '';
     loading = false;
     titleMaxLength = 50;
@@ -61,7 +61,7 @@ export default class ModalPromoCodeCreate extends Vue {
     price = 0;
     value = '';
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
 
     onShow() {
         this.title = '';
@@ -86,13 +86,13 @@ export default class ModalPromoCodeCreate extends Vue {
             description: this.description,
             price: this.price,
             value: this.value,
-            poolAddress: this.assetPool.address,
+            poolAddress: this.pool.address,
         });
 
         if (error) {
             this.error = error;
         } else {
-            this.$bvModal.hide('modalPromoCodeCreate');
+            this.$bvModal.hide('modalPromotionCreate');
         }
 
         this.loading = false;

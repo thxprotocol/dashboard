@@ -10,7 +10,10 @@
                     {{ erc721.name }}
                 </div>
             </div>
-
+            <p>
+                <span class="text-muted">Total supply</span><br />
+                <strong class="font-weight-bold h3 text-primary"> {{ erc721.totalSupply }} </strong>
+            </p>
             <p>
                 <span class="text-muted">Properties</span><br />
                 <b-badge
@@ -24,10 +27,6 @@
                     {{ prop.name }}
                 </b-badge>
             </p>
-            <p>
-                <span class="text-muted">Total supply</span><br />
-                <strong class="font-weight-bold h3 text-primary"> {{ erc721.totalSupply }} </strong>
-            </p>
         </template>
     </base-card>
 </template>
@@ -35,7 +34,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';

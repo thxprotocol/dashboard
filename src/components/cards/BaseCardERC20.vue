@@ -39,7 +39,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { ERC20Type, TERC20 } from '@/types/erc20';
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';

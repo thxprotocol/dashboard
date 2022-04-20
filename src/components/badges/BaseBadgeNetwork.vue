@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})

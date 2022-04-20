@@ -49,13 +49,13 @@
                     <label>Select reward</label>
                     <b-form-select v-model="widgetReward">
                         <b-form-select-option :key="reward.id" v-for="reward of filteredRewards" :value="reward">
-                            #{{ reward.id }} ({{ reward.withdrawAmount }} {{ assetPool.token.symbol }})
+                            #{{ reward.id }} ({{ reward.withdrawAmount }} {{ pool.token.symbol }})
                         </b-form-select-option>
                     </b-form-select>
                 </b-form-group>
                 <b-form-group>
                     <label>Page URL</label>
-                    <b-form-input v-model="widgetRequestUri" placeholder="http://localhost:8080" />
+                    <b-form-input v-model="widgetRequestUri" placeholder="http://www.yoursite.com" />
                 </b-form-group>
             </b-card>
         </form>
@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { Reward } from '@/store/modules/rewards';
@@ -94,7 +94,7 @@ export default class ModalWidgetCreate extends Vue {
     widgetReward: Reward | null = null;
     widgetRequestUri = '';
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
 
     onShow() {
@@ -111,7 +111,7 @@ export default class ModalWidgetCreate extends Vue {
                 postLogoutRedirectUris: [this.widgetRequestUri],
                 metadata: {
                     rewardId: this.widgetReward?.id,
-                    poolAddress: this.assetPool.address,
+                    poolAddress: this.pool.address,
                 },
             });
             this.$emit('submit');

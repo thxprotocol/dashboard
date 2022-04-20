@@ -13,17 +13,7 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="
-                    w-auto
-                    center-center
-                    bg-secondary
-                    mx-n5
-                    mt-n5
-                    pt-5
-                    pb-5
-                    flex-grow-1 flex-column
-                    position-relative
-                "
+                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -64,13 +54,13 @@
                                 <a
                                     :href="docsUrl + '/rewards'"
                                     v-b-tooltip
-                                    :title="`The amount of ${assetPool.token.symbol} earned with this reward.`"
+                                    :title="`The amount of ${pool.token.symbol} earned with this reward.`"
                                     target="_blank"
                                 >
                                     <i class="fas fa-question-circle"></i>
                                 </a>
                             </label>
-                            <b-input-group :append="assetPool.token.symbol">
+                            <b-input-group :append="pool.token.symbol">
                                 <b-form-input type="number" v-model="rewardWithdrawAmount" />
                             </b-input-group>
                         </b-form-group>
@@ -196,7 +186,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import {
@@ -261,7 +251,7 @@ export default class ModalRewardCreate extends Vue {
     twitter!: ITwitter;
     spotify!: ISpotify;
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
 
@@ -375,7 +365,7 @@ export default class ModalRewardCreate extends Vue {
             await this.$store.dispatch('rewards/create', {
                 slug,
                 title: this.rewardTitle,
-                address: this.assetPool.address,
+                address: this.pool.address,
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,

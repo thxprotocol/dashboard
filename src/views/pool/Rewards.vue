@@ -14,11 +14,11 @@
 
         <b-row>
             <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
-                <base-card-reward :assetPool="assetPool" :reward="reward" :isGovernanceEnabled="isGovernanceEnabled" />
+                <base-card-reward :pool="pool" :reward="reward" :isGovernanceEnabled="isGovernanceEnabled" />
             </b-col>
         </b-row>
         <base-modal-reward-create
-            :assetPool="assetPool"
+            :pool="pool"
             :filteredRewards="filteredRewards"
             :isGovernanceEnabled="isGovernanceEnabled"
         />
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { IAssetPools } from '@/store/modules/assetPools';
+import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
@@ -39,7 +39,7 @@ import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
         'base-card-reward': BaseListItemReward,
     },
     computed: mapGetters({
-        assetPools: 'assetPools/all',
+        pools: 'pools/all',
         rewards: 'rewards/all',
     }),
 })
@@ -54,25 +54,25 @@ export default class AssetPoolView extends Vue {
     assetPoolLoading = true;
     isGovernanceEnabled = false;
 
-    assetPools!: IAssetPools;
+    pools!: IAssetPools;
     rewards!: IRewards;
 
-    get assetPool() {
-        return this.assetPools[this.$route.params.address];
+    get pool() {
+        return this.pools[this.$route.params.address];
     }
 
     get filteredRewards(): Reward[] {
-        if (this.rewards[this.assetPool.address]) {
-            return Object.values(this.rewards[this.assetPool.address]);
+        if (this.rewards[this.pool.address]) {
+            return Object.values(this.rewards[this.pool.address]);
         }
         return [];
     }
 
     async mounted() {
         try {
-            await this.$store.dispatch('rewards/read', this.assetPool.address);
+            await this.$store.dispatch('rewards/read', this.pool.address);
 
-            this.isGovernanceEnabled = !this.assetPool.bypassPolls;
+            this.isGovernanceEnabled = !this.pool.bypassPolls;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {

@@ -11,7 +11,7 @@
             <strong>{{ promoCode.value }}</strong>
         </b-alert>
         <hr />
-        <b-input-group size="lg" :append="assetPool.token.symbol">
+        <b-input-group size="lg" :append="pool.token.symbol">
             <b-form-input type="number" :value="promoCode.price" disabled></b-form-input>
         </b-input-group>
         <modal-delete :call="remove" :id="`modalDelete${promoCode.id}`" :subject="promoCode.id" />
@@ -21,7 +21,7 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import ModalDelete from '../modals/BaseModalDelete.vue';
 import { TPromoCode } from '@/store/modules/promoCodes';
 import { IPromoCodes } from '@/types/IPromoCodes';
@@ -35,10 +35,9 @@ import { IPromoCodes } from '@/types/IPromoCodes';
     }),
 })
 export default class PromoCodesView extends Vue {
-    assetPools!: IAssetPools;
     promoCodes!: IPromoCodes;
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
     @Prop() promoCode!: TPromoCode;
 
     async remove() {

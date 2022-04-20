@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import AccountStore from './modules/account';
-import AssetPoolStore from './modules/assetPools';
+import PoolStore from './modules/pools';
 import PromoCodeStore from './modules/promoCodes';
 import RewardStore from './modules/rewards';
 import WidgetStore from './modules/widgets';
@@ -16,7 +16,7 @@ const actions = {};
 const getters = {};
 const modules = {
     account: AccountStore,
-    assetPools: AssetPoolStore,
+    pools: PoolStore,
     promoCodes: PromoCodeStore,
     rewards: RewardStore,
     widgets: WidgetStore,
