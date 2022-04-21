@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -98,6 +108,17 @@
                         </div>
                     </div>
                 </b-form-group>
+                <b-row>
+                    <b-col md="12"> <label> Expire Date: </label> </b-col>
+                </b-row>
+                <b-row>
+                    <b-col md="6">
+                        <b-datepicker :min="minDate" v-model="rewardExpireDate" />
+                    </b-col>
+                    <b-col md="6">
+                        <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
+                    </b-col>
+                </b-row>
                 <b-form-group>
                     <template v-if="channel && action && action.items.length > 0">
                         <base-dropdown-youtube-uploads
@@ -242,6 +263,9 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawLimit = 0;
     rewardTitle = '';
 
+    rewardExpireDate: Date | undefined = undefined;
+    rewardExpireTime = '';
+
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
     item: any = null;
@@ -254,6 +278,12 @@ export default class ModalRewardCreate extends Vue {
     @Prop() pool!: AssetPool;
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
+
+    get minDate() {
+        let date = new Date();
+        date.setDate(date.getDate() + 1); // add a day
+        return date.toISOString();
+    }
 
     get isSubmitDisabled() {
         return (
@@ -310,6 +340,13 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
+    concatDatetime(date: Date, time: string) {
+        // time will alway have format "HH:MM:SS"
+        const [hours, minutes, seconds] = time.split(':').map((item) => Number(item));
+        date.setHours(hours, minutes, seconds);
+        return date;
+    }
+
     async onChannelClick(channel: IChannel) {
         this.item = null;
         this.action = null;
@@ -346,6 +383,8 @@ export default class ModalRewardCreate extends Vue {
     async submit(close: boolean) {
         this.loading = true;
         try {
+            const expiryDate =
+                this.rewardExpireDate && this.concatDatetime(this.rewardExpireDate, this.rewardExpireTime);
             const withdrawCondition =
                 this.channel?.type !== ChannelType.None
                     ? {
@@ -364,6 +403,7 @@ export default class ModalRewardCreate extends Vue {
 
             await this.$store.dispatch('rewards/create', {
                 slug,
+                expiryDate,
                 title: this.rewardTitle,
                 address: this.pool.address,
                 withdrawLimit: this.rewardWithdrawLimit,
