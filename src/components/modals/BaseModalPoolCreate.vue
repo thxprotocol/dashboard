@@ -2,17 +2,37 @@
     <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
         <template #modal-body v-if="profile && !loading">
             <base-form-select-network @selected="network = $event" />
+            <label>Variant</label>
+            <b-form-group>
+                <b-form-radio v-model="poolVariant" name="poolVariant" value="defaultPool">
+                    <strong> Token Pool</strong>
+                    <p>Reward members of this pool with ERC-20 tokens with claim URLS, QR codes widgets and more.</p>
+                </b-form-radio>
+                <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
+                    <strong> NFT Pool </strong>
+                    <p>Mint NFT's from your collection to members of your pool.</p>
+                </b-form-radio>
+            </b-form-group>
             <b-form-group>
                 <label> Token Contract </label>
-                <base-dropdown-select-erc20 :network="network" @selected="onSelectToken" />
+                <base-dropdown-select-erc20
+                    :network="network"
+                    @selected="onSelectToken"
+                    v-if="poolVariant === 'defaultPool'"
+                />
+                <base-dropdown-select-erc-721
+                    :network="network"
+                    @selected="onSelectToken"
+                    v-if="poolVariant === 'nftPool'"
+                />
                 <b-link to="/tokens">Create a new token</b-link>
             </b-form-group>
             <b-form-group>
                 <label>Token Contract Address</label>
                 <b-input-group>
-                    <b-form-input :disabled="!!erc20Token" v-model="erc20TokenAddress" />
+                    <b-form-input :disabled="!!token" v-model="tokenAddress" />
                     <b-input-group-addon append>
-                        <b-button variant="primary" v-clipboard:copy="erc20TokenAddress">
+                        <b-button variant="primary" v-clipboard:copy="tokenAddress">
                             <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
                         </b-button>
                     </b-input-group-addon>
@@ -33,6 +53,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
+import BaseDropdownSelectErc721 from '@/components/dropdowns/BaseDropdownSelectERC721.vue';
 import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
 import { IAccount } from '@/types/account';
@@ -42,6 +63,7 @@ import { IAccount } from '@/types/account';
         BaseModal,
         BaseFormSelectNetwork,
         BaseDropdownSelectErc20,
+        BaseDropdownSelectErc721,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -52,14 +74,14 @@ export default class ModalAssetPoolCreate extends Vue {
     loading = false;
     error = '';
     network: NetworkProvider = NetworkProvider.Test;
-    erc20TokenAddress = '';
-    erc20Token: PoolToken | null = null;
-
+    poolVariant = 'defaultPool';
+    token: PoolToken | null = null;
+    tokenAddress = '';
     profile!: IAccount;
 
-    onSelectToken(erc20: PoolToken) {
-        this.erc20Token = erc20;
-        this.erc20TokenAddress = erc20 ? erc20.address : '';
+    onSelectToken(token: PoolToken) {
+        this.token = token;
+        this.tokenAddress = token ? token.address : '';
     }
 
     async submit() {
@@ -67,7 +89,8 @@ export default class ModalAssetPoolCreate extends Vue {
         try {
             await this.$store.dispatch('pools/create', {
                 network: this.network,
-                token: this.erc20TokenAddress,
+                token: this.tokenAddress,
+                variant: this.poolVariant,
             });
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (error) {

@@ -92,7 +92,7 @@ class PoolModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: number; token: string }) {
+    async create(payload: { network: number; token: string; variant: string }) {
         const { data } = await axios({
             method: 'POST',
             url: '/asset_pools',
