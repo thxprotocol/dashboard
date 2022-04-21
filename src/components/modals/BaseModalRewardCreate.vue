@@ -113,7 +113,7 @@
                 </b-row>
                 <b-row>
                     <b-col md="6">
-                        <b-datepicker :min="minDate" v-model="rewardExpireDate" />
+                        <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
                     </b-col>
                     <b-col md="6">
                         <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
@@ -263,8 +263,8 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawLimit = 0;
     rewardTitle = '';
 
-    rewardExpireDate: Date | undefined = undefined;
-    rewardExpireTime = '';
+    rewardExpireDate: Date | null = null;
+    rewardExpireTime = '00:00:00';
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -281,8 +281,8 @@ export default class ModalRewardCreate extends Vue {
 
     get minDate() {
         let date = new Date();
-        date.setDate(date.getDate() + 1); // add a day
-        return date.toISOString();
+        date.setDate(date.getDate() + 1);
+        return date;
     }
 
     get isSubmitDisabled() {
@@ -341,10 +341,11 @@ export default class ModalRewardCreate extends Vue {
     }
 
     concatDatetime(date: Date, time: string) {
+        const concatedDate = new Date(date);
         // time will alway have format "HH:MM:SS"
         const [hours, minutes, seconds] = time.split(':').map((item) => Number(item));
-        date.setHours(hours, minutes, seconds);
-        return date;
+        concatedDate.setHours(hours, minutes, seconds);
+        return concatedDate;
     }
 
     async onChannelClick(channel: IChannel) {
@@ -403,9 +404,9 @@ export default class ModalRewardCreate extends Vue {
 
             await this.$store.dispatch('rewards/create', {
                 slug,
-                expiryDate,
                 title: this.rewardTitle,
                 address: this.pool.address,
+                expiryDate: expiryDate?.toISOString(),
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
@@ -417,6 +418,9 @@ export default class ModalRewardCreate extends Vue {
             this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
+            this.rewardTitle = '';
+            this.rewardExpireDate = null;
+            this.rewardExpireTime = '00:00:00';
 
             if (close) {
                 this.$bvModal.hide(`modalRewardCreate`);
