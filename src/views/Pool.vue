@@ -11,19 +11,48 @@
 
         <hr />
         <ul class="nav nav-pills nav-justified">
-            <router-link active-class="active" class="nav-link" :to="`/pool/${pool.address}/rewards`">
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/rewards`"
+                v-if="pool.isDefaultPool"
+            >
                 <i class="fas fa-award mr-2"></i>
                 <span class="d-none d-md-inline-block">Rewards</span>
             </router-link>
-            <router-link active-class="active" class="nav-link" :to="`/pool/${pool.address}/promotions`">
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/mint-nft`"
+                v-if="pool.isNFTPool"
+            >
+                <i class="fas fa-palette mr-2"></i>
+                <span class="d-none d-md-inline-block">Mint NFT</span>
+            </router-link>
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/nft`"
+                v-if="pool.isDefaultPool"
+            >
                 <i class="fas fa-tags mr-2"></i>
                 <span class="d-none d-md-inline-block">Promotions</span>
             </router-link>
-            <router-link active-class="active" class="nav-link" :to="`/pool/${pool.address}/widgets`">
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/widgets`"
+                v-if="pool.isDefaultPool"
+            >
                 <i class="fas fa-code mr-2"></i>
                 <span class="d-none d-md-inline-block">Widgets</span>
             </router-link>
-            <router-link active-class="active" class="nav-link" :to="`/pool/${pool.address}/info`">
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/info`"
+                v-if="pool.isDefaultPool || pool.isNFTPool"
+            >
                 <i class="fas fa-info-circle mr-2"></i>
                 <span class="d-none d-md-inline-block">Details</span>
             </router-link>

@@ -41,6 +41,10 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/pool/Info.vue'),
             },
             {
+                path: 'mint-nft',
+                component: () => import('../views/pool/MintNFT.vue'),
+            },
+            {
                 path: 'rewards',
                 component: () => import('../views/pool/Rewards.vue'),
             },

@@ -11,8 +11,8 @@
                 </b-button>
             </b-col>
         </b-row>
-
-        <b-row>
+        <base-nothing-here v-if="!filteredRewards.length" />
+        <b-row v-else>
             <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
                 <base-card-reward :pool="pool" :reward="reward" :isGovernanceEnabled="isGovernanceEnabled" />
             </b-col>
@@ -32,9 +32,11 @@ import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
+import BaseNothingHere from '@/components/BaseNothingHere.vue';
 
 @Component({
     components: {
+        BaseNothingHere,
         BaseModalRewardCreate,
         'base-card-reward': BaseListItemReward,
     },

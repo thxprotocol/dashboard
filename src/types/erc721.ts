@@ -1,3 +1,4 @@
+import { TProp } from '@/store/modules/erc721';
 import { NetworkProvider } from '@/store/modules/pools';
 
 export enum ERC721Type {
@@ -14,6 +15,7 @@ export type TERC721 = {
     symbol: string;
     totalSupply: number;
     logoURI: string;
+    properties: TProp[];
 };
 
 export interface IERC721s {

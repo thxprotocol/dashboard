@@ -10,7 +10,6 @@
                     {{ erc721.name }}
                 </div>
             </div>
-            {{ erc721.owner }}
             <p>
                 <span class="text-muted">Total supply</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc721.totalSupply }} </strong>
