@@ -21,6 +21,7 @@ interface Poll {
 export interface Reward {
     _id: string;
     id: number;
+    expiryDate: number;
     withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
