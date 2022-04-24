@@ -198,10 +198,10 @@ class RewardModule extends VuexModule {
         withdrawLimit,
         withdrawAmount,
         withdrawDuration,
+        withdrawUnlockDate,
         isClaimOnce,
         isMembershipRequired,
-        withdrawCondition,
-        withdrawUnlockDate,
+        withdrawCondition
     }: {
         address: string;
         withdrawLimit: number;

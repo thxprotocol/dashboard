@@ -249,7 +249,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
-    rewardWithdrawUnlockDate = undefined;
+    rewardWithdrawUnlockDate = null;
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -276,6 +276,10 @@ export default class ModalRewardCreate extends Vue {
     getDefaultUnlockDate() {
         let date = new Date();
         date.setDate(date.getDate() + 1); // add a day
+        const yyyy = date.getFullYear().toString();                                    
+        let mm = (date.getMonth()+1).toString(); // getMonth() is zero-based   
+        mm =  +mm > 9 ? mm : '0' + mm       
+        const dd  = date.getDate().toString();  
         return date;
     }
 
@@ -388,7 +392,7 @@ export default class ModalRewardCreate extends Vue {
             this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
-            this.rewardWithdrawUnlockDate = undefined;
+            this.rewardWithdrawUnlockDate = null;
 
             if (close) {
                 this.$bvModal.hide(`modalRewardCreate`);
