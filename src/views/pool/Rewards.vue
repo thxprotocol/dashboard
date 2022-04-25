@@ -14,14 +14,10 @@
         <base-nothing-here v-if="!filteredRewards.length" />
         <b-row v-else>
             <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
-                <base-card-reward :pool="pool" :reward="reward" :isGovernanceEnabled="isGovernanceEnabled" />
+                <base-card-reward :pool="pool" :reward="reward" />
             </b-col>
         </b-row>
-        <base-modal-reward-create
-            :pool="pool"
-            :filteredRewards="filteredRewards"
-            :isGovernanceEnabled="isGovernanceEnabled"
-        />
+        <base-modal-reward-create :pool="pool" :filteredRewards="filteredRewards" />
     </div>
 </template>
 
@@ -70,17 +66,8 @@ export default class AssetPoolView extends Vue {
         return [];
     }
 
-    async mounted() {
-        try {
-            await this.$store.dispatch('rewards/read', this.pool.address);
-
-            this.isGovernanceEnabled = !this.pool.bypassPolls;
-        } catch (e) {
-            this.error = 'Could not get the rewards.';
-        } finally {
-            this.rewardsLoading = false;
-            this.assetPoolLoading = false;
-        }
+    mounted() {
+        this.$store.dispatch('rewards/read', this.pool.address);
     }
 }
 </script>

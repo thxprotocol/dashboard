@@ -172,7 +172,6 @@ export default class BaseListItemReward extends Vue {
 
     @Prop() pool!: AssetPool;
     @Prop() reward!: Reward;
-    @Prop() isGovernanceEnabled!: boolean;
 
     get expired() {
         if (!this.reward.expiryDate) return false;
