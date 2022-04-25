@@ -201,7 +201,7 @@ class RewardModule extends VuexModule {
         withdrawUnlockDate,
         isClaimOnce,
         isMembershipRequired,
-        withdrawCondition
+        withdrawCondition,
     }: {
         address: string;
         withdrawLimit: number;

@@ -274,13 +274,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     getDefaultUnlockDate() {
-        let date = new Date();
-        date.setDate(date.getDate() + 1); // add a day
-        const yyyy = date.getFullYear().toString();                                    
-        let mm = (date.getMonth()+1).toString(); // getMonth() is zero-based   
-        mm =  +mm > 9 ? mm : '0' + mm       
-        const dd  = date.getDate().toString();  
-        return date;
+        return new Date();
     }
 
     async getYoutube() {
