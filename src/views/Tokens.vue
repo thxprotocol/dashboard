@@ -29,7 +29,8 @@
                 The fungible token standard ERC-20 could be used for making payments, exchanging value, point systems
                 and reputation metrics.
             </p>
-            <b-row>
+            <base-nothing-here v-if="!Object.values(erc20s).length" />
+            <b-row v-else>
                 <b-col md="6" lg="4" :key="erc20._id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
                 </b-col>
@@ -40,7 +41,8 @@
                 The non-fungible token standard ERC-721 could be used for creating digital art collections, certificates
                 of authenticity, in-game loot and social status.
             </p>
-            <b-row>
+            <base-nothing-here v-if="!Object.values(erc721s).length" />
+            <b-row v-else>
                 <b-col md="6" lg="4" :key="erc721._id" v-for="erc721 of erc721s">
                     <base-card-erc721 :erc721="erc721" />
                 </b-col>
@@ -58,6 +60,7 @@ import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
 import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
+import BaseNothingHere from '@/components/BaseNothingHere.vue';
 
 @Component({
     components: {
@@ -65,6 +68,7 @@ import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
         BaseCardErc721,
         ModalErc20Create,
         ModalErc721Create,
+        BaseNothingHere,
     },
     computed: mapGetters({
         erc20s: 'erc20/all',
