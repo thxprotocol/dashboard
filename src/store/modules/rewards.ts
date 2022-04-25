@@ -14,6 +14,7 @@ interface Poll {
     totalVoted: number;
     withdrawAmount: number;
     withdrawDuration: number;
+    withdrawUnlockDate: Date;
     yesCounter: number;
     noCounter: number;
 }
@@ -21,10 +22,11 @@ interface Poll {
 export interface Reward {
     _id: string;
     id: number;
-    expiryDate: number;
+    expiryDate: Date;
     withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
+    withdrawUnlockDate: Date;
     state: RewardState;
     poolAddress: string;
     poll: Poll;
@@ -200,6 +202,7 @@ class RewardModule extends VuexModule {
         withdrawLimit,
         withdrawAmount,
         withdrawDuration,
+        withdrawUnlockDate,
         isClaimOnce,
         isMembershipRequired,
         withdrawCondition,
@@ -210,6 +213,7 @@ class RewardModule extends VuexModule {
         withdrawLimit: number;
         withdrawAmount: number;
         withdrawDuration: number;
+        withdrawUnlockDate: Date;
         isClaimOnce: boolean;
         isMembershipRequired: boolean;
         withdrawCondition?: IRewardCondition;
@@ -230,6 +234,7 @@ class RewardModule extends VuexModule {
                     withdrawAmount,
                     withdrawDuration,
                     withdrawCondition,
+                    withdrawUnlockDate,
                     isClaimOnce,
                     isMembershipRequired,
                 },
