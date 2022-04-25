@@ -13,7 +13,17 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -38,6 +48,14 @@
         </div>
         <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
             <b-card class="border-0" bg-variant="light" body-class="p-md-5">
+                <b-row>
+                    <b-col md="12">
+                        <b-form-group>
+                            <label> Title </label>
+                            <b-form-input v-model="rewardTitle" />
+                        </b-form-group>
+                    </b-col>
+                </b-row>
                 <b-row>
                     <b-col md="6">
                         <b-form-group>
@@ -90,6 +108,17 @@
                         </div>
                     </div>
                 </b-form-group>
+                <b-row>
+                    <b-col md="12"> <label> Expire Date: </label> </b-col>
+                </b-row>
+                <b-row>
+                    <b-col md="6">
+                        <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
+                    </b-col>
+                    <b-col md="6">
+                        <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
+                    </b-col>
+                </b-row>
                 <b-form-group>
                     <template v-if="channel && action && action.items.length > 0">
                         <base-dropdown-youtube-uploads
@@ -199,6 +228,7 @@ import BaseDropdownTwitterUsers from '../dropdowns/BaseDropdownTwitterUsers.vue'
 import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue';
 import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
+import slugify from '@/utils/slugify';
 
 @Component({
     components: {
@@ -231,6 +261,10 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
+    rewardTitle = '';
+
+    rewardExpireDate: Date | null = null;
+    rewardExpireTime = '00:00:00';
 
     channel: null | IChannel = null;
     action: null | IChannelAction = null;
@@ -245,11 +279,18 @@ export default class ModalRewardCreate extends Vue {
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
 
+    get minDate() {
+        let date = new Date();
+        date.setDate(date.getDate() + 1);
+        return date;
+    }
+
     get isSubmitDisabled() {
         return (
             this.loading ||
             this.rewardWithdrawAmount <= 0 ||
             this.rewardWithdrawLimit < 0 ||
+            !this.rewardTitle ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
@@ -299,6 +340,14 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
+    concatDatetime(date: Date, time: string) {
+        const concatedDate = new Date(date);
+        // time will alway have format "HH:MM:SS"
+        const [hours, minutes, seconds] = time.split(':').map((item) => Number(item));
+        concatedDate.setHours(hours, minutes, seconds);
+        return concatedDate;
+    }
+
     async onChannelClick(channel: IChannel) {
         this.item = null;
         this.action = null;
@@ -335,6 +384,8 @@ export default class ModalRewardCreate extends Vue {
     async submit(close: boolean) {
         this.loading = true;
         try {
+            const expiryDate =
+                this.rewardExpireDate && this.concatDatetime(this.rewardExpireDate, this.rewardExpireTime);
             const withdrawCondition =
                 this.channel?.type !== ChannelType.None
                     ? {
@@ -349,8 +400,13 @@ export default class ModalRewardCreate extends Vue {
                       }
                     : null;
 
+            const slug = slugify(this.rewardTitle);
+
             await this.$store.dispatch('rewards/create', {
+                slug,
+                title: this.rewardTitle,
                 address: this.pool.address,
+                expiryDate: expiryDate?.toISOString(),
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
@@ -362,6 +418,9 @@ export default class ModalRewardCreate extends Vue {
             this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
+            this.rewardTitle = '';
+            this.rewardExpireDate = null;
+            this.rewardExpireTime = '00:00:00';
 
             if (close) {
                 this.$bvModal.hide(`modalRewardCreate`);

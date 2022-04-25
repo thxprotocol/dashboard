@@ -83,6 +83,7 @@
                 >
                     {{ reward.isClaimOnce ? 'Claim once' : 'Claim unlimited' }}
                 </b-badge>
+
                 <b-badge
                     v-b-tooltip
                     title="Verifies that the user claiming the reward has a membership for the pool."
@@ -108,6 +109,19 @@
                             alt=""
                         />
                         {{ channelAction }}
+                    </b-badge>
+                    <b-badge
+                        v-b-tooltip
+                        v-if="reward.expiryDate"
+                        :class="{
+                            'border p-2 mr-1 text-danger': !expired,
+                            'border p-2 mr-1 text-success': expired,
+                        }"
+                        title="This reward is expired and cannot claim anymore."
+                        class="border p-2 mt-1 mr-1"
+                        variant="light"
+                    >
+                        {{ expired ? `Valid until ${new Date(reward.expiryDate).toLocaleString()}` : 'Expired' }}
                     </b-badge>
                 </b-link>
             </div>
@@ -161,6 +175,13 @@ export default class BaseListItemReward extends Vue {
     @Prop() pool!: AssetPool;
     @Prop() reward!: Reward;
     @Prop() isGovernanceEnabled!: boolean;
+
+    get expired() {
+        if (!this.reward.expiryDate) return false;
+        const currentTime = new Date().getTime();
+        const expiryTime = new Date(this.reward.expiryDate).getTime();
+        return currentTime < expiryTime;
+    }
 
     mounted() {
         if (this.reward.withdrawCondition) {
