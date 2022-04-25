@@ -38,17 +38,40 @@
                             </div>
                         </div>
 
-                        <div v-if="poolAddress" class="bg-dark p-0">
-                            <b-nav-item :to="`/pool/${poolAddress}/rewards`" class="nav-link-plain">
+                        <div v-if="pool" class="bg-dark p-0">
+                            <b-nav-item
+                                :to="`/pool/${pool.address}/rewards`"
+                                class="nav-link-plain"
+                                v-if="pool.isNFTPool"
+                            >
+                                <span>Metadata</span>
+                            </b-nav-item>
+                            <b-nav-item
+                                :to="`/pool/${pool.address}/rewards`"
+                                class="nav-link-plain"
+                                v-if="pool.isDefaultPool"
+                            >
                                 <span>Rewards</span>
                             </b-nav-item>
-                            <b-nav-item :to="`/pool/${poolAddress}/promocodes`" class="nav-link-plain">
+                            <b-nav-item
+                                :to="`/pool/${pool.address}/promocodes`"
+                                class="nav-link-plain"
+                                v-if="pool.isDefaultPool"
+                            >
                                 <span>Promotions</span>
                             </b-nav-item>
-                            <b-nav-item :to="`/pool/${poolAddress}/widgets`" class="nav-link-plain">
+                            <b-nav-item
+                                :to="`/pool/${pool.address}/widgets`"
+                                class="nav-link-plain"
+                                v-if="pool.isDefaultPool"
+                            >
                                 <span>Widgets</span>
                             </b-nav-item>
-                            <b-nav-item :to="`/pool/${poolAddress}/info`" class="nav-link-plain">
+                            <b-nav-item
+                                :to="`/pool/${pool.address}/info`"
+                                class="nav-link-plain"
+                                v-if="pool.isDefaultPool || pool.isNFTPool"
+                            >
                                 <span>Details</span>
                             </b-nav-item>
                         </div>
@@ -104,20 +127,26 @@
 </template>
 
 <script lang="ts">
+import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     computed: mapGetters({
+        pools: 'pools/all',
         profile: 'account/profile',
     }),
 })
 export default class BaseNavbar extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     walletUrl = process.env.VUE_APP_WALLET_URL;
+    pools!: IAssetPools;
 
     get poolAddress() {
         return this.$route.params.address;
+    }
+    get pool() {
+        return this.pools[this.$route.params.address];
     }
 }
 </script>

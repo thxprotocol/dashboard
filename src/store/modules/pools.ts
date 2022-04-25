@@ -33,6 +33,8 @@ export interface AssetPool {
     rewardPollDuration: number;
     proposeWithdrawPollDuration: number;
     metrics: { members: number; withdrawals: number };
+    isNFTPool: boolean;
+    isDefaultPool: boolean;
 }
 
 function Pool(data: any) {

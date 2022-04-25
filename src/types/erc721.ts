@@ -6,6 +6,14 @@ export enum ERC721Type {
     Default = 0,
 }
 
+export interface TERC721Metadata {
+    _id: string;
+    beneficiary: string;
+    metadata: { key: string; value: string }[];
+    tokenId: number;
+    createdAt: Date;
+}
+
 export type TERC721 = {
     _id: string;
     type: ERC721Type;
@@ -16,8 +24,9 @@ export type TERC721 = {
     totalSupply: number;
     logoURI: string;
     properties: TProp[];
+    metadata: TERC721Metadata[];
 };
 
 export interface IERC721s {
-    [id: string]: TERC721[];
+    [id: string]: TERC721;
 }

@@ -1,0 +1,87 @@
+<template>
+    <base-card>
+        <template #card-body>
+            <b-row class="d-none d-md-flex mb-3">
+                <b-col md="1"><strong>ID</strong></b-col>
+                <b-col md="2"> <strong>Created</strong> </b-col>
+                <b-col><strong>Beneficiary</strong></b-col>
+                <b-col><strong>Properties</strong></b-col>
+                <b-col> </b-col>
+            </b-row>
+            <b-row :key="key" v-for="(item, key) in metadata" class="mb-3 py-3 bg-light">
+                <b-col cols="12" md="1" class="pb-3 pb-md-0">
+                    <label class="d-md-none">Token ID: </label>
+                    <div class="font-weight-bold"># {{ item.tokenId }}</div>
+                </b-col>
+                <b-col cols="12" md="2" class="pb-3 pb-md-0">
+                    <label class="d-md-none">Created: </label>
+                    <div class="text-muted">
+                        {{ format(new Date(item.createdAt), 'dd-MM-yyyy HH:MM') }}
+                    </div>
+                </b-col>
+                <b-col cols="12" md="3">
+                    <label class="d-md-none">Beneficiary: </label>
+                    <div>
+                        <base-anchor-address :network="erc721.network" :address="item.beneficiary" />
+                    </div>
+                </b-col>
+                <b-col cols="12" md="3" class="pb-3 pb-md-0">
+                    <label class="d-md-none">Properties: </label>
+                    <div>
+                        <b-badge
+                            :key="key"
+                            v-for="(value, key) in item.metadata"
+                            variant="dark"
+                            v-b-tooltip
+                            :title="value.value"
+                            class="mr-2"
+                        >
+                            {{ value.key }}
+                        </b-badge>
+                    </div>
+                </b-col>
+                <b-col cols="12" md="3">
+                    <b-button
+                        block
+                        size="sm"
+                        variant="primary"
+                        class="rounded-pill"
+                        target="_blank"
+                        :href="`${apiUrl}/v1/metadata/${item._id}`"
+                    >
+                        View NFT metadata
+                    </b-button>
+                </b-col>
+            </b-row>
+        </template>
+    </base-card>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import BaseCard from './BaseCard.vue';
+import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
+import BaseIdenticon from '../BaseIdenticon.vue';
+import BaseAnchorAddress from '../BaseAnchorAddress.vue';
+import { ERC721Type, TERC721, TERC721Metadata } from '@/types/erc721';
+import { format } from 'date-fns';
+import { API_URL } from '@/utils/secrets';
+
+@Component({
+    components: {
+        BaseAnchorAddress,
+        BaseCard,
+        BaseBadgeNetwork,
+        BaseIdenticon,
+    },
+})
+export default class BaseListItemERC721Metadata extends Vue {
+    apiUrl = API_URL;
+    ERC721Type = ERC721Type;
+    format = format;
+    error = '';
+
+    @Prop() metadata!: TERC721Metadata[];
+    @Prop() erc721!: TERC721;
+}
+</script>

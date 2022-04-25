@@ -8,9 +8,17 @@
         <div class="lead">
             {{ pool.token.name }}
         </div>
-
         <hr />
         <ul class="nav nav-pills nav-justified">
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/metadata`"
+                v-if="pool.isNFTPool"
+            >
+                <i class="fas fa-palette mr-2"></i>
+                <span class="d-none d-md-inline-block">Metadata</span>
+            </router-link>
             <router-link
                 active-class="active"
                 class="nav-link"
@@ -23,16 +31,7 @@
             <router-link
                 active-class="active"
                 class="nav-link"
-                :to="`/pool/${pool.address}/mint-nft`"
-                v-if="pool.isNFTPool"
-            >
-                <i class="fas fa-palette mr-2"></i>
-                <span class="d-none d-md-inline-block">Mint NFT</span>
-            </router-link>
-            <router-link
-                active-class="active"
-                class="nav-link"
-                :to="`/pool/${pool.address}/nft`"
+                :to="`/pool/${pool.address}/promotions`"
                 v-if="pool.isDefaultPool"
             >
                 <i class="fas fa-tags mr-2"></i>

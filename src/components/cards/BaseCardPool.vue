@@ -1,9 +1,5 @@
 <template>
-    <base-card
-        class="cursor-pointer"
-        :loading="loading"
-        @click="$router.push({ path: `pool/${pool.address}/rewards` })"
-    >
+    <base-card :loading="loading">
         <template #card-body>
             <b-alert class="m-0" show variant="warning" v-if="warning">
                 {{ warning }}
@@ -29,7 +25,7 @@
                     <i class="fas fa-gift mr-1"></i>
                     {{ pool.metrics.withdrawals }}
                 </b-badge>
-                <p class="font-weight-bold text-primary h3 mt-2 mb-0">
+                <p class="font-weight-bold text-primary h3 mt-3 mb-0">
                     {{ pool.token.poolBalance }} {{ pool.token.symbol }}
                 </p>
                 <base-modal-delete
@@ -37,6 +33,8 @@
                     :call="() => remove(pool.address)"
                     :subject="pool.address"
                 />
+                <hr />
+                <b-button class="rounded-pill" variant="light" @click="openPoolUrl()" block>View Pool</b-button>
             </template>
         </template>
     </base-card>
@@ -83,6 +81,10 @@ export default class BaseCardPool extends Vue {
         } finally {
             this.loading = false;
         }
+    }
+
+    openPoolUrl() {
+        this.$router.push({ path: `pool/${this.pool.address}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
     }
 }
 </script>

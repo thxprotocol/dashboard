@@ -2,7 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { AssetPool, NetworkProvider } from './pools';
-import { TERC721, IERC721s } from '@/types/erc721';
+import { TERC721, IERC721s, TERC721Metadata } from '@/types/erc721';
 
 export type TProp = {
     name: string;
@@ -24,6 +24,11 @@ class ERC721Module extends VuexModule {
         Vue.set(this._all, erc721._id, erc721);
     }
 
+    @Mutation
+    setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata[] }) {
+        Vue.set(this._all[payload.erc721._id], 'metadata', payload.metadata);
+    }
+
     @Action({ rawError: true })
     async list() {
         const { data } = await axios({
@@ -34,6 +39,16 @@ class ERC721Module extends VuexModule {
         for (const _id of data) {
             this.context.commit('set', { _id, loading: true });
         }
+    }
+
+    @Action({ rawError: true })
+    async listMetadata(erc721: TERC721) {
+        const { data } = await axios({
+            method: 'GET',
+            url: `/erc721/${erc721._id}/metadata`,
+        });
+
+        this.context.commit('setMetadata', { erc721, metadata: data });
     }
 
     @Action({ rawError: true })

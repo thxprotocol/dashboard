@@ -2,12 +2,36 @@
     <div>
         <b-form-group>
             <label>Blockchain Network</label>
-            <b-form-select v-model="network" @change="onSelectNetwork">
-                <b-form-select-option :value="NetworkProvider.Test">
-                    Polygon Test Network (Mumbai)
-                </b-form-select-option>
-                <b-form-select-option :value="NetworkProvider.Main"> Polygon Main Network </b-form-select-option>
-            </b-form-select>
+            <b-dropdown variant="link" class="dropdown-select">
+                <template #button-content>
+                    <div class="d-flex align-items-center">
+                        <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
+                        {{
+                            network === NetworkProvider.Test ? 'Polygon Test Network (Mumbai)' : 'Polygon Main Network'
+                        }}
+                    </div>
+                </template>
+                <b-dropdown-item-button disabled>
+                    <img src="@/assets/thx_logo_ethereum.svg" width="20" height="20" class="mr-3" />
+                    Ethereum
+                </b-dropdown-item-button>
+                <b-dropdown-item-button disabled>
+                    <img src="@/assets/thx_logo_arbitrum.svg" width="20" height="20" class="mr-3" />
+                    Arbitrum
+                </b-dropdown-item-button>
+                <b-dropdown-item-button disabled>
+                    <img src="@/assets/thx_logo_bsc.svg" width="20" height="20" class="mr-3" />
+                    Binance Chain
+                </b-dropdown-item-button>
+                <b-dropdown-item-button @click="onSelectNetwork(NetworkProvider.Test)">
+                    <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
+                    Polygon Mumbai (Test Network)
+                </b-dropdown-item-button>
+                <b-dropdown-item-button @click="onSelectNetwork(NetworkProvider.Main)">
+                    <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
+                    Polygon
+                </b-dropdown-item-button>
+            </b-dropdown>
         </b-form-group>
         <b-alert :show="profile.plan === AccountPlanType.Free && network == NetworkProvider.Main" variant="warning">
             <i class="fas fa-rocket mr-2"></i>
