@@ -42,91 +42,88 @@
                     <b-col md="12">
                         <b-form-group>
                             <label> Title </label>
-                            <b-form-input v-model="rewardTitle" />
+                            <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
                         </b-form-group>
                     </b-col>
                 </b-row>
-                <b-row>
-                    <b-col md="6">
-                        <b-form-group>
-                            <label>
-                                Withdraw amount
-                                <a
-                                    :href="docsUrl + '/rewards'"
-                                    v-b-tooltip
-                                    :title="`The amount of ${pool.token.symbol} earned with this reward.`"
-                                    target="_blank"
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </label>
-                            <b-input-group :append="pool.token.symbol">
-                                <b-form-input type="number" v-model="rewardWithdrawAmount" />
-                            </b-input-group>
-                        </b-form-group>
-                    </b-col>
-                    <b-col md="6">
-                        <b-form-group>
-                            <label>
-                                Withdraw limit
-                                <a
-                                    v-b-tooltip
-                                    title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times. `"
-                                    target="_blank"
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </label>
-                            <b-form-input type="number" v-model="rewardWithdrawLimit" />
-                        </b-form-group>
-                    </b-col>
-                </b-row>
-                <b-form-group :append="pool.token.symbol">
-                    <label>
-                        Withdraw Unlock Date
-                        <a
-                            :href="docsUrl + '/rewards'"
-                            v-b-tooltip
-                            :title="`The widthdraw will not be available until this date.`"
-                            target="_blank"
-                        >
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </label>
-                    <b-form-datepicker
-                        v-model="rewardWithdrawUnlockDate"
-                        class="mb-2"
-                        :min="this.getDefaultUnlockDate()"
-                    />
-                </b-form-group>
+                <label>Withdrawal</label>
+                <b-card bg-variant="white">
+                    <b-row>
+                        <b-col md="6">
+                            <b-form-group>
+                                <label>
+                                    Amount
+                                    <a
+                                        v-b-tooltip
+                                        :title="`The amount of ${pool.token.symbol} tokens earned with this reward.`"
+                                        target="_blank"
+                                    >
+                                        <i class="fas fa-question-circle"></i>
+                                    </a>
+                                </label>
+                                <b-input-group :append="pool.token.symbol">
+                                    <b-form-input type="number" v-model="rewardWithdrawAmount" />
+                                </b-input-group>
+                            </b-form-group>
+                        </b-col>
+                        <b-col md="6">
+                            <b-form-group>
+                                <label>
+                                    Limit
+                                    <a
+                                        v-b-tooltip
+                                        title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
+                                    >
+                                        <i class="fas fa-question-circle"></i>
+                                    </a>
+                                </label>
+                                <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                            </b-form-group>
+                        </b-col>
+                    </b-row>
+                    <b-form-group :append="pool.token.symbol" class="mb-0">
+                        <label>
+                            Unlock Date
+                            <a
+                                v-b-tooltip
+                                title="The benficiary will not be able to withdraw the tokens prior to this date. Leave blank for not locking the reward."
+                            >
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </label>
+                        <b-form-datepicker v-model="rewardWithdrawUnlockDate" :min="this.getDefaultUnlockDate()" />
+                    </b-form-group>
+                </b-card>
+                <hr />
                 <b-form-group>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label> Social Channel:</label>
+                    <label> Expiration Date </label>
+                    <b-row>
+                        <b-col md="6">
+                            <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
+                        </b-col>
+                        <b-col md="6">
+                            <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
+                        </b-col>
+                    </b-row>
+                </b-form-group>
+                <hr />
+                <b-form-group>
+                    <b-row>
+                        <b-col md="6">
+                            <label> Social Channel</label>
                             <base-dropdown-channel-types :channel="channel" @selected="onChannelClick($event)" />
-                        </div>
-                        <div class="col-md-6">
-                            <label> Engagement type:</label>
+                        </b-col>
+                        <b-col md="6">
+                            <label> Channel Interaction</label>
                             <base-dropdown-channel-actions
                                 v-if="channel && channel.actions.length > 0"
                                 :actions="channelActions.filter((action) => channel.actions.includes(action.type))"
                                 @selected="onActionClick($event)"
                             />
                             <p v-else class="small text-muted">Select a channel first.</p>
-                        </div>
-                    </div>
+                        </b-col>
+                    </b-row>
                 </b-form-group>
-                <b-row>
-                    <b-col md="12"> <label> Expire Date: </label> </b-col>
-                </b-row>
-                <b-row>
-                    <b-col md="6">
-                        <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
-                    </b-col>
-                    <b-col md="6">
-                        <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
-                    </b-col>
-                </b-row>
                 <b-form-group>
                     <template v-if="channel && action && action.items.length > 0">
                         <base-dropdown-youtube-uploads
@@ -167,22 +164,6 @@
                         <template v-if="action.type == 3"> Validation is limited to the last 100 retweets. </template>
                         <template v-if="action.type == 4"> Validation is limited to the last 5000 followers. </template>
                     </b-alert>
-                </b-form-group>
-                <b-form-group v-if="isGovernanceEnabled">
-                    <label>
-                        Withdraw poll duration
-                        <a
-                            :href="docsUrl + '/rewards'"
-                            v-b-tooltip
-                            title="The duration in seconds of the withdraw poll that is started when the rewards is claimed or given."
-                            target="_blank"
-                        >
-                            <i class="fas fa-question-circle"></i>
-                        </a>
-                    </label>
-                    <b-input-group append="Seconds">
-                        <b-form-input type="number" v-model="rewardWithdrawDuration" />
-                    </b-input-group>
                 </b-form-group>
                 <hr />
                 <b-form-group class="mb-0">
