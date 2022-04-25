@@ -22,6 +22,7 @@ interface Poll {
 export interface Reward {
     _id: string;
     id: number;
+    expiryDate: Date;
     withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
@@ -194,7 +195,10 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async create({
+        slug,
+        title,
         address,
+        expiryDate,
         withdrawLimit,
         withdrawAmount,
         withdrawDuration,
@@ -203,6 +207,8 @@ class RewardModule extends VuexModule {
         isMembershipRequired,
         withdrawCondition,
     }: {
+        slug: string;
+        title: string;
         address: string;
         withdrawLimit: number;
         withdrawAmount: number;
@@ -211,6 +217,7 @@ class RewardModule extends VuexModule {
         isClaimOnce: boolean;
         isMembershipRequired: boolean;
         withdrawCondition?: IRewardCondition;
+        expiryDate?: string;
     }) {
         try {
             const r = await axios({
@@ -220,6 +227,9 @@ class RewardModule extends VuexModule {
                     AssetPool: address,
                 },
                 data: {
+                    slug,
+                    title,
+                    expiryDate,
                     withdrawLimit,
                     withdrawAmount,
                     withdrawDuration,

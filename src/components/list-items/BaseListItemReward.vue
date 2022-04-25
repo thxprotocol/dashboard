@@ -2,13 +2,13 @@
     <base-card>
         <template #card-body>
             <b-row>
-                <b-col md="4">
+                <b-col md="4" class="d-flex">
                     <b-button
                         v-b-tooltip
                         title="Click to download the QR code as a jpg file"
                         :download="`${reward._id}.jpg`"
                         variant="light"
-                        class="p-3"
+                        class="p-3 m-auto m-md-0"
                         :href="qrURL"
                     >
                         <vue-qr
@@ -47,9 +47,7 @@
                             </b-dropdown-item-button>
                         </b-dropdown>
                     </div>
-                    <!-- <b-input-group class="mt-auto" :append="pool.token.symbol">
-                        <b-form-input type="number" v-model="reward.withdrawAmount" />
-                    </b-input-group> -->
+                    <p>{{ reward.title }}</p>
                     <b-input-group class="mt-auto">
                         <b-form-input readonly :value="claimURL" />
                         <b-input-group-append>
@@ -78,15 +76,16 @@
                 <b-badge
                     v-b-tooltip
                     title="Amount of times the user is able to claim this reward per account."
-                    class="border p-2 mr-1"
+                    class="border p-2 mb-1 mr-1"
                     variant="light"
                 >
                     {{ reward.isClaimOnce ? 'Claim once' : 'Claim unlimited' }}
                 </b-badge>
+
                 <b-badge
                     v-b-tooltip
                     title="Verifies that the user claiming the reward has a membership for the pool."
-                    class="border p-2 mr-1"
+                    class="border p-2 mb-1 mr-1"
                     v-if="reward.isMembershipRequired"
                     variant="light"
                 >
@@ -99,7 +98,7 @@
                     target="_blank"
                     :href="channelItemURL"
                 >
-                    <b-badge class="border p-2 mr-1" variant="light">
+                    <b-badge class="border p-2 mb-1 mr-1" variant="light">
                         <img
                             v-if="channelType"
                             height="10"
@@ -110,6 +109,23 @@
                         {{ channelAction }}
                     </b-badge>
                 </b-link>
+                <b-badge
+                    v-b-tooltip
+                    v-if="reward.expiryDate"
+                    class="border p-2 mb-1 mr-1 font-weight-normal"
+                    :title="expired ? 'This reward is closed for new claims.' : 'This reward is still open for claims.'"
+                    variant="light"
+                >
+                    <strong>Expiry:</strong> {{ new Date(reward.expiryDate).toLocaleString() }}
+                </b-badge>
+                <b-badge
+                    v-b-tooltip
+                    v-if="reward.withdrawUnlockDate"
+                    class="border p-2 mb-1 mr-1 font-weight-normal"
+                    variant="light"
+                >
+                    <strong>Unlocked:</strong> {{ new Date(reward.withdrawUnlockDate).toLocaleString() }}
+                </b-badge>
             </div>
         </template>
     </base-card>
@@ -157,6 +173,13 @@ export default class BaseListItemReward extends Vue {
     @Prop() pool!: AssetPool;
     @Prop() reward!: Reward;
     @Prop() isGovernanceEnabled!: boolean;
+
+    get expired() {
+        if (!this.reward.expiryDate) return false;
+        const currentTime = new Date().getTime();
+        const expiryTime = new Date(this.reward.expiryDate).getTime();
+        return currentTime < expiryTime;
+    }
 
     mounted() {
         if (this.reward.withdrawCondition) {
