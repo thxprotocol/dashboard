@@ -13,17 +13,7 @@
         </b-alert>
         <template v-slot:modal-header v-if="loading">
             <div
-                class="
-                    w-auto
-                    center-center
-                    bg-secondary
-                    mx-n5
-                    mt-n5
-                    pt-5
-                    pb-5
-                    flex-grow-1 flex-column
-                    position-relative
-                "
+                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -91,6 +81,24 @@
                         </b-form-group>
                     </b-col>
                 </b-row>
+                <b-form-group :append="pool.token.symbol">
+                    <label>
+                        Withdraw Unlock Date
+                        <a
+                            :href="docsUrl + '/rewards'"
+                            v-b-tooltip
+                            :title="`The widthdraw will not be available until this date.`"
+                            target="_blank"
+                        >
+                            <i class="fas fa-question-circle"></i>
+                        </a>
+                    </label>
+                    <b-form-datepicker
+                        v-model="rewardWithdrawUnlockDate"
+                        class="mb-2"
+                        :min="this.getDefaultUnlockDate()"
+                    />
+                </b-form-group>
                 <b-form-group>
                     <div class="row">
                         <div class="col-md-6">
@@ -261,6 +269,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
+    rewardWithdrawUnlockDate = null;
     rewardTitle = '';
 
     rewardExpireDate: Date | null = null;
@@ -293,6 +302,10 @@ export default class ModalRewardCreate extends Vue {
             !this.rewardTitle ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
+    }
+
+    getDefaultUnlockDate() {
+        return new Date();
     }
 
     async getYoutube() {
@@ -410,6 +423,7 @@ export default class ModalRewardCreate extends Vue {
                 withdrawLimit: this.rewardWithdrawLimit,
                 withdrawAmount: this.rewardWithdrawAmount,
                 withdrawDuration: this.rewardWithdrawDuration,
+                withdrawUnlockDate: this.rewardWithdrawUnlockDate,
                 withdrawCondition,
                 isClaimOnce: this.isClaimOnce,
                 isMembershipRequired: this.isMembershipRequired,
@@ -418,6 +432,7 @@ export default class ModalRewardCreate extends Vue {
             this.rewardWithdrawLimit = 0;
             this.rewardWithdrawAmount = 0;
             this.rewardWithdrawDuration = 0;
+            this.rewardWithdrawUnlockDate = null;
             this.rewardTitle = '';
             this.rewardExpireDate = null;
             this.rewardExpireTime = '00:00:00';
