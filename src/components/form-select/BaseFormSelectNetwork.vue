@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/assetPools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { AccountPlanType, IAccount } from '@/types/account';
 import { PUBLIC_URL } from '@/utils/secrets';
 import { Component, Vue } from 'vue-property-decorator';

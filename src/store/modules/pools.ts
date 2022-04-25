@@ -51,7 +51,7 @@ export interface IAssetPools {
 }
 
 @Module({ namespaced: true })
-class AssetPoolModule extends VuexModule {
+class PoolModule extends VuexModule {
     _all: IAssetPools = {};
 
     get all() {
@@ -104,9 +104,7 @@ class AssetPoolModule extends VuexModule {
             headers: { AssetPool: data.address },
         });
 
-        const assetPool: AssetPool = new AssetPool(r.data);
-
-        this.context.commit('set', assetPool);
+        this.context.commit('set', new AssetPool(r.data));
     }
 
     @Action({ rawError: true })
@@ -158,4 +156,4 @@ class AssetPoolModule extends VuexModule {
     }
 }
 
-export default AssetPoolModule;
+export default PoolModule;

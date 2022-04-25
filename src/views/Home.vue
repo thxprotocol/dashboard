@@ -15,7 +15,7 @@
                 <p class="brand-text">
                     {{ greeting }}
                 </p>
-                <div class="lead mb-5">Welcome to your Tokenization Head Quarters</div>
+                <div class="lead mb-5">Welcome to your Token Head Quarters</div>
                 <b-button v-b-tooltip title="Deploy tokens" to="/tokens" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-coins m-0"></i>
                 </b-button>
@@ -56,7 +56,7 @@
                         img-top
                     >
                         <strong>Tokens</strong>
-                        <p class="text-muted m-0">Create ERC-20 token variations.</p>
+                        <p class="text-muted m-0">Create ERC-20 and ERC-721 (NFT) token variations.</p>
                     </b-card>
                 </b-col>
                 <b-col md="6">
@@ -68,7 +68,7 @@
                         img-top
                     >
                         <strong>Pools</strong>
-                        <p class="text-muted m-0">Distribute tokens in user-friendly ways.</p>
+                        <p class="text-muted m-0">Distribute your token supply in user-friendly ways.</p>
                     </b-card>
                 </b-col>
                 <b-col md="6">
@@ -80,7 +80,7 @@
                         img-top
                     >
                         <strong>Documentation</strong>
-                        <p class="text-muted m-0">View SDK, OAuth2 and API details.</p>
+                        <p class="text-muted m-0">View SDK, OAuth2 and API details and tutorials.</p>
                     </b-card>
                 </b-col>
             </b-row>
@@ -90,14 +90,14 @@
 
 <script lang="ts">
 import { AccountPlanType, IAccount } from '@/types/account';
-import { IAssetPools } from '@/store/modules/assetPools';
+import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     computed: mapGetters({
         profile: 'account/profile',
-        assetPools: 'assetPools/all',
+        pools: 'pools/all',
     }),
 })
 export default class Home extends Vue {

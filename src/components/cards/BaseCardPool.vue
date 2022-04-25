@@ -2,7 +2,7 @@
     <base-card
         class="cursor-pointer"
         :loading="loading"
-        @click="$router.push({ path: `pool/${assetPool.address}/rewards` })"
+        @click="$router.push({ path: `pool/${pool.address}/rewards` })"
     >
         <template #card-body>
             <b-alert class="m-0" show variant="warning" v-if="warning">
@@ -11,31 +11,31 @@
                     Please contact us in Discord
                 </b-link>
             </b-alert>
-            <template v-if="assetPool.token">
+            <template v-if="pool.token">
                 <b-button
                     variant="link"
                     class="btn-remove rounded-pill float-right"
                     size="sm"
-                    @click.stop="$bvModal.show(`modalDelete-${assetPool.address}`)"
+                    @click.stop="$bvModal.show(`modalDelete-${pool.address}`)"
                 >
                     <i class="far fa-trash-alt"></i>
                 </b-button>
-                <base-badge-network :network="assetPool.network" class="mr-1" />
+                <base-badge-network :network="pool.network" class="mr-1" />
                 <b-badge class="p-2 mr-1 text-muted" variant="light">
                     <i class="fas fa-users mr-1"></i>
-                    {{ assetPool.metrics.members }}
+                    {{ pool.metrics.members }}
                 </b-badge>
                 <b-badge class="p-2 mr-1 text-muted" variant="light">
                     <i class="fas fa-gift mr-1"></i>
-                    {{ assetPool.metrics.withdrawals }}
+                    {{ pool.metrics.withdrawals }}
                 </b-badge>
                 <p class="font-weight-bold text-primary h3 mt-2 mb-0">
-                    {{ assetPool.token.poolBalance }} {{ assetPool.token.symbol }}
+                    {{ pool.token.poolBalance }} {{ pool.token.symbol }}
                 </p>
                 <base-modal-delete
-                    :id="`modalDelete-${assetPool.address}`"
-                    :call="() => remove(assetPool.address)"
-                    :subject="assetPool.address"
+                    :id="`modalDelete-${pool.address}`"
+                    :call="() => remove(pool.address)"
+                    :subject="pool.address"
                 />
             </template>
         </template>
@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { IAccount } from '@/types/account';
-import { AssetPool, IAssetPools } from '@/store/modules/assetPools';
+import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
@@ -59,27 +59,25 @@ import BaseCard from './BaseCard.vue';
     },
     computed: mapGetters({
         profile: 'account/profile',
-        assetPools: 'assetPools/all',
     }),
 })
-export default class BaseAssetPool extends Vue {
+export default class BaseCardPool extends Vue {
     warning = '';
     loading = true;
 
-    @Prop() assetPool!: AssetPool;
+    @Prop() pool!: AssetPool;
 
     profile!: IAccount;
-    assetPools!: IAssetPools;
 
     async mounted() {
-        await this.$store.dispatch('assetPools/read', this.assetPool.address);
+        await this.$store.dispatch('pools/read', this.pool.address);
         this.loading = false;
     }
 
     async remove() {
         this.loading = true;
         try {
-            await this.$store.dispatch('assetPools/remove', this.assetPool.address);
+            await this.$store.dispatch('pools/remove', this.pool.address);
         } catch (e) {
             console.error(e);
         } finally {

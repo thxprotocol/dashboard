@@ -51,7 +51,7 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[assetPool.address]">
+                <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[pool.address]">
                     <hr />
                     <div class="row pt-2 pb-2">
                         <div class="col-md-4 d-flex align-items-center">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="col-md-2 d-flex align-items-center">
                             <template v-if="widget.reward"
-                                >{{ widget.reward.withdrawAmount }} {{ assetPool.token.symbol }}</template
+                                >{{ widget.reward.withdrawAmount }} {{ pool.token.symbol }}</template
                             >
                         </div>
                         <div class="col-md-2 d-flex align-items-center">Claim Button</div>
@@ -80,23 +80,18 @@
                             </b-button>
                         </div>
                     </div>
-                    <base-modal-widget-edit
-                        :assetPool="assetPool"
-                        :filteredRewards="filteredRewards"
-                        :widget="widget"
-                    />
+                    <base-modal-widget-edit :pool="pool" :filteredRewards="filteredRewards" :widget="widget" />
                     <modal-delete :id="`modalDelete-${widget.clientId}`" :call="remove" :subject="widget.clientId" />
                 </b-form-group>
             </b-skeleton-wrapper>
         </b-card>
 
-        <base-modal-widget-create @submit="getWidgets()" :assetPool="assetPool" :filteredRewards="filteredRewards" />
+        <base-modal-widget-create @submit="getWidgets()" :pool="pool" :filteredRewards="filteredRewards" />
     </div>
 </template>
 
 <script lang="ts">
-import { IAssetPools } from '@/store/modules/assetPools';
-import { BAlert, BButton, BCard, BFormGroup, BModal, BSkeleton, BSkeletonWrapper } from 'bootstrap-vue';
+import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
@@ -110,21 +105,14 @@ import ModalDelete from '@/components/modals/BaseModalDelete.vue';
         BaseModalWidgetCreate,
         BaseModalWidgetEdit,
         ModalDelete,
-        BFormGroup,
-        BModal,
-        BAlert,
-        BCard,
-        BButton,
-        BSkeleton,
-        BSkeletonWrapper,
     },
     computed: mapGetters({
-        assetPools: 'assetPools/all',
+        pools: 'pools/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
     }),
 })
-export default class AssetPoolView extends Vue {
+export default class WidgetsView extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
 
@@ -132,36 +120,36 @@ export default class AssetPoolView extends Vue {
     loading = true;
     skeletonLoading = true;
 
-    assetPools!: IAssetPools;
+    pools!: IAssetPools;
     rewards!: IRewards;
     widgets!: IWidgets;
 
-    get assetPool() {
-        return this.assetPools[this.$route.params.address];
+    get pool() {
+        return this.pools[this.$route.params.address];
     }
 
     get filteredRewards(): Reward[] {
-        if (this.rewards[this.assetPool.address]) {
-            return Object.values(this.rewards[this.assetPool.address]);
+        if (this.rewards[this.pool.address]) {
+            return Object.values(this.rewards[this.pool.address]);
         }
         return [];
     }
 
     async getWidgets() {
-        await this.$store.dispatch('widgets/list', this.assetPool.address);
+        await this.$store.dispatch('widgets/list', this.pool.address);
 
-        for (const clientId in this.widgets[this.assetPool.address]) {
-            const widget = this.widgets[this.assetPool.address][clientId];
-            const reward = this.rewards[this.assetPool.address][widget.metadata.rewardId];
+        for (const clientId in this.widgets[this.pool.address]) {
+            const widget = this.widgets[this.pool.address][clientId];
+            const reward = this.rewards[this.pool.address][widget.metadata.rewardId];
 
-            this.widgets[this.assetPool.address][clientId].setReward(reward);
+            this.widgets[this.pool.address][clientId].setReward(reward);
         }
     }
 
     async mounted() {
         try {
             await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('rewards/read', this.assetPool.address);
+            await this.$store.dispatch('rewards/read', this.pool.address);
             await this.getWidgets();
             this.skeletonLoading = false;
         } catch (e) {
@@ -174,7 +162,7 @@ export default class AssetPoolView extends Vue {
     async remove(clientId: string) {
         this.loading = true;
         try {
-            await this.$store.dispatch('widgets/remove', { clientId, poolAddress: this.assetPool.address });
+            await this.$store.dispatch('widgets/remove', { clientId, poolAddress: this.pool.address });
         } catch (e) {
             console.error(e);
         } finally {
