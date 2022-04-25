@@ -21,6 +21,7 @@ interface Poll {
 export interface Reward {
     _id: string;
     id: number;
+    expiryDate: number;
     withdrawLimit: number;
     withdrawAmount: number;
     withdrawDuration: number;
@@ -195,6 +196,7 @@ class RewardModule extends VuexModule {
         slug,
         title,
         address,
+        expiryDate,
         withdrawLimit,
         withdrawAmount,
         withdrawDuration,
@@ -211,6 +213,7 @@ class RewardModule extends VuexModule {
         isClaimOnce: boolean;
         isMembershipRequired: boolean;
         withdrawCondition?: IRewardCondition;
+        expiryDate?: string;
     }) {
         try {
             const r = await axios({
@@ -222,6 +225,7 @@ class RewardModule extends VuexModule {
                 data: {
                     slug,
                     title,
+                    expiryDate,
                     withdrawLimit,
                     withdrawAmount,
                     withdrawDuration,
