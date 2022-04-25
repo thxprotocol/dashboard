@@ -14,7 +14,8 @@
                 </b-button>
                 <b-button v-b-modal="'modalERC721Create'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create NFT</span>
+                    <span class="mr-2">Create NFT</span>
+                    <b-badge variant="primary">Beta</b-badge>
                 </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>

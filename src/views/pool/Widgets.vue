@@ -58,9 +58,9 @@
                             {{ widget.requestUri }}
                         </div>
                         <div class="col-md-2 d-flex align-items-center">
-                            <template v-if="widget.reward"
-                                >{{ widget.reward.withdrawAmount }} {{ pool.token.symbol }}</template
-                            >
+                            <template v-if="widget.reward">
+                                {{ widget.reward.withdrawAmount }} {{ pool.token.symbol }}
+                            </template>
                         </div>
                         <div class="col-md-2 d-flex align-items-center">Claim Button</div>
                         <div class="col-md-4 text-right">

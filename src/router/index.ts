@@ -41,6 +41,10 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/pool/Info.vue'),
             },
             {
+                path: 'metadata',
+                component: () => import('../views/pool/Metadata.vue'),
+            },
+            {
                 path: 'rewards',
                 component: () => import('../views/pool/Rewards.vue'),
             },

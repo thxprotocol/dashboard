@@ -11,17 +11,12 @@
                 </b-button>
             </b-col>
         </b-row>
-        <b-alert show variant="info" v-if="!promotionsForPool">
-            Let your audience redeem {{ pool.token.symbol }} in their wallet for unique promo codes.
-            <b-link v-b-modal="'modalPromotionCreate'">Let's create your first promotion!</b-link>
-        </b-alert>
-        <div class="container">
-            <b-row>
-                <b-col md="6" :key="promotion.id" v-for="promotion of promotionsForPool">
-                    <base-promo-code :promoCode="promotion" :pool="pool" />
-                </b-col>
-            </b-row>
-        </div>
+        <base-nothing-here v-if="!promotionsForPool" />
+        <b-row v-else>
+            <b-col md="6" :key="promotion.id" v-for="promotion of promotionsForPool">
+                <base-promo-code :promoCode="promotion" :pool="pool" />
+            </b-col>
+        </b-row>
         <modal-promotion-create :pool="pool" />
     </div>
 </template>
@@ -33,12 +28,10 @@ import ModalPromotionCreate from '@/components/modals/BaseModalPromotionCreate.v
 import BasePromoCode from '@/components/cards/BasePromoCode.vue';
 import { IAssetPools } from '@/store/modules/pools';
 import { IPromoCodes } from '@/types/IPromoCodes';
+import BaseNothingHere from '@/components/BaseNothingHere.vue';
 
 @Component({
-    components: {
-        ModalPromotionCreate,
-        BasePromoCode,
-    },
+    components: { BaseNothingHere, ModalPromotionCreate, BasePromoCode },
     computed: mapGetters({
         pools: 'pools/all',
         promotions: 'promoCodes/all',

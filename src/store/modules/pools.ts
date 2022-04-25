@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 
 export interface PoolToken {
+    _id: string;
     name: string;
     address: string;
     symbol: string;
@@ -22,7 +23,7 @@ export enum NetworkProvider {
     Main = 1,
 }
 
-export class AssetPool {
+export interface AssetPool {
     address: string;
     clientId: string;
     clientSecret: string;
@@ -32,18 +33,14 @@ export class AssetPool {
     rewardPollDuration: number;
     proposeWithdrawPollDuration: number;
     metrics: { members: number; withdrawals: number };
+    isNFTPool: boolean;
+    isDefaultPool: boolean;
+}
 
-    constructor(data: any) {
-        this.address = data.address;
-        this.clientId = data.clientId;
-        this.clientSecret = data.clientSecret;
-        this.token = data.token;
-        this.bypassPolls = true;
-        this.network = data.network;
-        this.rewardPollDuration = Number(data.rewardPollDuration);
-        this.proposeWithdrawPollDuration = Number(data.proposeWithdrawPollDuration);
-        this.metrics = data.metrics;
-    }
+function Pool(data: any) {
+    data.isDefaultPool = data.variant === 'defaultPool';
+    data.isNFTPool = data.variant === 'nftPool';
+    return data;
 }
 
 export interface IAssetPools {
@@ -88,11 +85,11 @@ class PoolModule extends VuexModule {
             headers: { AssetPool: address },
         });
 
-        this.context.commit('set', new AssetPool(r.data));
+        this.context.commit('set', Pool(r.data));
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: number; token: string }) {
+    async create(payload: { network: number; token: string; variant: string }) {
         const { data } = await axios({
             method: 'POST',
             url: '/asset_pools',
@@ -104,7 +101,7 @@ class PoolModule extends VuexModule {
             headers: { AssetPool: data.address },
         });
 
-        this.context.commit('set', new AssetPool(r.data));
+        this.context.commit('set', Pool(r.data));
     }
 
     @Action({ rawError: true })
@@ -130,7 +127,7 @@ class PoolModule extends VuexModule {
                 throw new Error('PATCH /asset_pools failed');
             }
 
-            return r.data;
+            return Pool(r.data);
         } catch (e) {
             console.log(e);
             debugger;
