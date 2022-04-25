@@ -9,7 +9,7 @@
                     <p>Reward members of this pool with ERC-20 tokens with claim URLS, QR codes widgets and more.</p>
                 </b-form-radio>
                 <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
-                    <strong> NFT Pool </strong>
+                    <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
                     <p>Mint NFT's from your collection to members of your pool.</p>
                 </b-form-radio>
             </b-form-group>
