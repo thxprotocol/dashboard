@@ -19,7 +19,12 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <div class="row" v-if="pools">
+            <base-nothing-here
+                v-if="!Object.values(pools).length"
+                item="a Pool"
+                @clicked="$bvModal.show('modalAssetPoolCreate')"
+            />
+            <div class="row" v-else>
                 <div class="col-md-6 col-lg-4" :key="pool.address" v-for="pool of pools">
                     <base-card-pool :pool="pool" />
                 </div>
@@ -32,6 +37,7 @@
 <script lang="ts">
 import BaseCardPool from '@/components/cards/BaseCardPool.vue';
 import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
+import BaseNothingHere from '@/components/BaseNothingHere.vue';
 import { IAccount } from '@/types/account';
 import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
@@ -39,6 +45,7 @@ import { mapGetters } from 'vuex';
 
 @Component({
     components: {
+        BaseNothingHere,
         BaseCardPool,
         BaseModalPoolCreate,
     },

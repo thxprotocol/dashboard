@@ -11,7 +11,11 @@
                 </b-button>
             </b-col>
         </b-row>
-        <base-nothing-here v-if="!promotionsForPool" />
+        <base-nothing-here
+            v-if="!promotionsForPool"
+            item="a Promotion"
+            @clicked="$bvModal.show('modalPromotionCreate')"
+        />
         <b-row v-else>
             <b-col md="6" :key="promotion.id" v-for="promotion of promotionsForPool">
                 <base-promo-code :promoCode="promotion" :pool="pool" />

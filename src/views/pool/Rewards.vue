@@ -11,7 +11,11 @@
                 </b-button>
             </b-col>
         </b-row>
-        <base-nothing-here v-if="!filteredRewards.length" />
+        <base-nothing-here
+            v-if="!filteredRewards.length"
+            item="a Reward"
+            @clicked="$bvModal.show('modalRewardCreate')"
+        />
         <b-row v-else>
             <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
                 <base-card-reward :pool="pool" :reward="reward" />

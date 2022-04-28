@@ -1,16 +1,11 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select">
         <template #button-content>
-            <div class="d-flex align-items-center">
-                <img v-if="!token._id" :src="token.logoURI" class="mr-3" width="20" :alt="token.name" />
-                <base-identicon v-else class="mr-3" :size="20" variant="darker" :uri="token.logoURI" />
+            <div class="d-flex align-items-center" v-if="token && !token.loading">
+                <base-identicon class="mr-3" :size="20" variant="darker" :uri="token.logoURI" />
                 <strong class="mr-1">{{ token.symbol }}</strong> {{ token.name }}
             </div>
         </template>
-        <b-dropdown-item-button key="custom-token-address" @click="onTokenListItemClick(null)">
-            Provide ERC721 token contract address
-        </b-dropdown-item-button>
-        <b-dropdown-divider v-if="hasERC721s" />
         <b-dropdown-item-button
             :disabled="network !== erc721.network"
             :key="erc721._id"
@@ -56,14 +51,14 @@ export default class BaseDropdownSelectERC721 extends Vue {
     async mounted() {
         this.$store.dispatch('erc721/list').then(() => {
             for (const id in this.erc721s) {
-                this.$store.dispatch('erc721/read', id);
+                this.$store.dispatch('erc721/read', id).then(() => {
+                    if (!this.token) {
+                        this.token = (this.erc721s[id] as unknown) as PoolToken;
+                        this.$emit('selected', this.token);
+                    }
+                });
             }
-            this.token = Object.values(this.erc721s).length
-                ? ((Object.values(this.erc721s)[0] as unknown) as PoolToken)
-                : null;
         });
-
-        this.$emit('selected', this.token);
     }
 
     onTokenListItemClick(token: PoolToken) {

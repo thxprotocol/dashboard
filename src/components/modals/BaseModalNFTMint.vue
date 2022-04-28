@@ -66,6 +66,8 @@ export default class ModalRewardCreate extends Vue {
             beneficiary: this.recipient,
             metadata,
         });
+
+        this.$bvModal.hide('modalNFTMint');
     }
 }
 </script>
