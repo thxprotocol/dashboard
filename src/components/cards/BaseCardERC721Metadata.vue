@@ -4,8 +4,8 @@
             <b-row class="d-none d-md-flex mb-3">
                 <b-col md="1"><strong>ID</strong></b-col>
                 <b-col md="2"> <strong>Created</strong> </b-col>
+                <b-col md="4"><strong>Properties</strong></b-col>
                 <b-col><strong>Beneficiary</strong></b-col>
-                <b-col><strong>Properties</strong></b-col>
                 <b-col> </b-col>
             </b-row>
             <b-row :key="key" v-for="(item, key) in metadata" class="mb-3 py-3 bg-light">
@@ -19,13 +19,7 @@
                         {{ format(new Date(item.createdAt), 'dd-MM-yyyy HH:MM') }}
                     </div>
                 </b-col>
-                <b-col cols="12" md="3">
-                    <label class="d-md-none">Beneficiary: </label>
-                    <div>
-                        <base-anchor-address :network="erc721.network" :address="item.beneficiary" />
-                    </div>
-                </b-col>
-                <b-col cols="12" md="3" class="pb-3 pb-md-0">
+                <b-col cols="12" md="4" class="pb-3 pb-md-0">
                     <label class="d-md-none">Properties: </label>
                     <div>
                         <b-badge
@@ -41,16 +35,31 @@
                     </div>
                 </b-col>
                 <b-col cols="12" md="3">
+                    <label class="d-md-none">Beneficiary: </label>
+                    <div>
+                        <base-anchor-address :network="erc721.network" :address="item.beneficiary" />
+                    </div>
+                </b-col>
+                <b-col cols="12" md="2" class="text-right">
                     <b-button
-                        block
                         size="sm"
                         variant="primary"
-                        class="rounded-pill"
+                        class="rounded-pill mr-1"
                         target="_blank"
                         :href="`${apiUrl}/v1/metadata/${item._id}`"
                     >
-                        View NFT metadata
+                        View
                     </b-button>
+                    <b-button
+                        :disabled="item.tokenId > 0"
+                        size="sm"
+                        variant="primary"
+                        class="rounded-pill"
+                        v-b-modal="`modalNFTMint${item._id}`"
+                    >
+                        Mint
+                    </b-button>
+                    <base-modal-erc721-metadata-mint :pool="pool" :erc721="erc721" :erc721Metadata="item" />
                 </b-col>
             </b-row>
         </template>
@@ -66,6 +75,8 @@ import BaseAnchorAddress from '../BaseAnchorAddress.vue';
 import { ERC721Type, TERC721, TERC721Metadata } from '@/types/erc721';
 import { format } from 'date-fns';
 import { API_URL } from '@/utils/secrets';
+import BaseModalErc721MetadataMint from '@/components/modals/BaseModalERC721MetadataMint.vue';
+import { AssetPool } from '@/store/modules/pools';
 
 @Component({
     components: {
@@ -73,6 +84,7 @@ import { API_URL } from '@/utils/secrets';
         BaseCard,
         BaseBadgeNetwork,
         BaseIdenticon,
+        BaseModalErc721MetadataMint,
     },
 })
 export default class BaseListItemERC721Metadata extends Vue {
@@ -83,5 +95,6 @@ export default class BaseListItemERC721Metadata extends Vue {
 
     @Prop() metadata!: TERC721Metadata[];
     @Prop() erc721!: TERC721;
+    @Prop() pool!: AssetPool;
 }
 </script>

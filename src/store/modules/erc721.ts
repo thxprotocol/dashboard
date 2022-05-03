@@ -25,8 +25,17 @@ class ERC721Module extends VuexModule {
     }
 
     @Mutation
-    setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata[] }) {
-        Vue.set(this._all[payload.erc721._id], 'metadata', payload.metadata);
+    setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata }) {
+        if (!this._all[payload.erc721._id].metadata) {
+            return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
+        }
+        const index = payload.erc721.metadata.findIndex((m: TERC721Metadata) => m._id === payload.metadata._id) || 0;
+
+        Vue.set(
+            this._all[payload.erc721._id]['metadata'],
+            index > -1 ? index : payload.erc721.metadata.length++,
+            payload.metadata,
+        );
     }
 
     @Action({ rawError: true })
@@ -48,7 +57,9 @@ class ERC721Module extends VuexModule {
             url: `/erc721/${erc721._id}/metadata`,
         });
 
-        this.context.commit('setMetadata', { erc721, metadata: data });
+        for (const metadata of data) {
+            this.context.commit('setMetadata', { erc721, metadata });
+        }
     }
 
     @Action({ rawError: true })
@@ -82,7 +93,7 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async mint({
+    async createMetadata({
         pool,
         erc721,
         metadata,
@@ -91,11 +102,11 @@ class ERC721Module extends VuexModule {
         pool: AssetPool;
         erc721: TERC721;
         metadata: any;
-        beneficiary: string;
+        beneficiary?: string;
     }) {
         const { data } = await axios({
             method: 'POST',
-            url: `/erc721/${erc721._id}/mint`,
+            url: `/erc721/${erc721._id}/metadata`,
             headers: {
                 AssetPool: pool.address,
             },
@@ -104,8 +115,33 @@ class ERC721Module extends VuexModule {
                 beneficiary,
             },
         });
+        this.context.commit('setMetadata', { erc721, metadata: data });
+    }
 
-        this.context.commit('set', data);
+    @Action({ rawError: true })
+    async mint({
+        pool,
+        erc721,
+        erc721Metadata,
+        beneficiary,
+    }: {
+        pool: AssetPool;
+        erc721: TERC721;
+        erc721Metadata: TERC721Metadata;
+        beneficiary?: string;
+    }) {
+        const { data } = await axios({
+            method: 'POST',
+            url: `/erc721/${erc721._id}/metadata/${erc721Metadata._id}/mint`,
+            headers: {
+                AssetPool: pool.address,
+            },
+            data: {
+                metadata: erc721Metadata,
+                beneficiary,
+            },
+        });
+        this.context.commit('setMetadata', { erc721, metadata: data });
     }
 }
 

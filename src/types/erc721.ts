@@ -18,6 +18,7 @@ export type TERC721 = {
     _id: string;
     type: ERC721Type;
     network: NetworkProvider;
+    poolAddress: string;
     address: string;
     name: string;
     symbol: string;

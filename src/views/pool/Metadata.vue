@@ -5,23 +5,24 @@
                 <h2 class="mb-0">Metadata</h2>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-button v-b-modal="'modalNFTMint'" class="rounded-pill" variant="primary">
+                <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span class="d-none d-md-inline">Mint an NFT</span>
+                    <span class="d-none d-md-inline">Create an NFT</span>
                 </b-button>
             </b-col>
         </b-row>
         <base-nothing-here
             v-if="!erc721 || (erc721.metadata && !erc721.metadata.length)"
-            item="a minted NFT"
-            @clicked="$bvModal.show('modalNFTMint')"
+            item="an NFT"
+            @clicked="$bvModal.show('modalNFTCreate')"
         />
         <base-card-erc721-metadata
             v-if="erc721 && erc721.metadata && erc721.metadata.length"
             :erc721="erc721"
             :metadata="erc721.metadata"
+            :pool="pool"
         />
-        <base-modal-nft-mint v-if="erc721" :pool="pool" :erc721="erc721" />
+        <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
     </div>
 </template>
 
@@ -32,12 +33,12 @@ import { mapGetters } from 'vuex';
 import { IERC721s, TERC721 } from '@/types/erc721';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
 import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vue';
-import BaseModalNftMint from '@/components/modals/BaseModalNFTMint.vue';
+import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
 
 @Component({
     components: {
         BaseNothingHere,
-        BaseModalNftMint,
+        BaseModalErc721MetadataCreate,
         BaseCardErc721Metadata,
     },
     computed: mapGetters({

@@ -1,5 +1,5 @@
 <template>
-    <base-modal :error="error" title="Mint NFT" id="modalNFTMint">
+    <base-modal :error="error" title="Create NFT" id="modalNFTCreate">
         <template #modal-body>
             <label>Recipient</label>
             <b-form-group>
@@ -13,7 +13,7 @@
         </template>
         <template #btn-primary>
             <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
-                Mint NFT
+                Create NFT
             </b-button>
         </template>
     </base-modal>
@@ -60,14 +60,14 @@ export default class ModalRewardCreate extends Vue {
                 value: prop.value,
             });
         });
-        this.$store.dispatch('erc721/mint', {
+        this.$store.dispatch('erc721/createMetadata', {
             pool: this.pool,
             erc721: this.erc721,
-            beneficiary: this.recipient,
             metadata,
+            beneficiary: this.recipient.length ? this.recipient : undefined,
         });
 
-        this.$bvModal.hide('modalNFTMint');
+        this.$bvModal.hide('modalNFTCreate');
     }
 }
 </script>
