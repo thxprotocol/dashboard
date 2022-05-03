@@ -21,7 +21,7 @@
                 <base-card-reward :pool="pool" :reward="reward" />
             </b-col>
         </b-row>
-        <base-modal-reward-create :pool="pool" :filteredRewards="filteredRewards" />
+        <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="filteredRewards" />
     </div>
 </template>
 
@@ -33,6 +33,7 @@ import { IRewards, Reward } from '@/store/modules/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import { IERC721s, TERC721 } from '@/types/erc721';
 
 @Component({
     components: {
@@ -43,6 +44,7 @@ import BaseNothingHere from '@/components/BaseNothingHere.vue';
     computed: mapGetters({
         pools: 'pools/all',
         rewards: 'rewards/all',
+        erc721s: 'erc721/all',
     }),
 })
 export default class AssetPoolView extends Vue {
@@ -58,9 +60,14 @@ export default class AssetPoolView extends Vue {
 
     pools!: IAssetPools;
     rewards!: IRewards;
+    erc721s!: IERC721s;
 
     get pool() {
         return this.pools[this.$route.params.address];
+    }
+
+    get erc721(): TERC721 {
+        return this.erc721s[this.pool.token._id];
     }
 
     get filteredRewards(): Reward[] {
@@ -72,6 +79,12 @@ export default class AssetPoolView extends Vue {
 
     mounted() {
         this.$store.dispatch('rewards/read', this.pool.address);
+
+        if (this.pool.isNFTPool) {
+            this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
+                await this.$store.dispatch('erc721/listMetadata', this.erc721);
+            });
+        }
     }
 }
 </script>

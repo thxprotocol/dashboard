@@ -3,23 +3,22 @@
         <template #card-body>
             <b-row class="d-none d-md-flex mb-3">
                 <b-col md="1"><strong>ID</strong></b-col>
-                <b-col md="2"> <strong>Created</strong> </b-col>
-                <b-col md="4"><strong>Properties</strong></b-col>
+                <b-col md="6"><strong>Properties</strong></b-col>
                 <b-col><strong>Beneficiary</strong></b-col>
                 <b-col> </b-col>
             </b-row>
             <b-row :key="key" v-for="(item, key) in metadata" class="mb-3 py-3 bg-light">
-                <b-col cols="12" md="1" class="pb-3 pb-md-0">
+                <b-col
+                    cols="12"
+                    md="1"
+                    class="pb-3 pb-md-0"
+                    v-b-tooltip
+                    :title="format(new Date(item.createdAt), 'dd-MM-yyyy HH:mm')"
+                >
                     <label class="d-md-none">Token ID: </label>
-                    <div class="font-weight-bold"># {{ item.tokenId }}</div>
+                    <div class="text-muted font-weight-bold"># {{ item.tokenId }}</div>
                 </b-col>
-                <b-col cols="12" md="2" class="pb-3 pb-md-0">
-                    <label class="d-md-none">Created: </label>
-                    <div class="text-muted">
-                        {{ format(new Date(item.createdAt), 'dd-MM-yyyy HH:MM') }}
-                    </div>
-                </b-col>
-                <b-col cols="12" md="4" class="pb-3 pb-md-0">
+                <b-col cols="12" md="6" class="pb-3 pb-md-0">
                     <label class="d-md-none">Properties: </label>
                     <div>
                         <b-badge

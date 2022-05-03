@@ -1,198 +1,225 @@
 <template>
-    <b-modal
-        size="lg"
-        title="Create Reward"
-        id="modalRewardCreate"
-        no-close-on-backdrop
-        no-close-on-esc
-        centered
-        :hide-footer="loading"
-    >
-        <b-alert variant="danger" show v-if="error && !loading">
-            {{ error }}
-        </b-alert>
-        <template v-slot:modal-header v-if="loading">
-            <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
-                :style="`
-                    border-top-left-radius: 0.5rem;
-                    border-top-right-radius: 0.5rem;
-                    background-image: url(${require('@/assets/thx_modal-header.webp')});
-                `"
-            >
-                <h2 class="d-block">Give us a moment!</h2>
-                <div
-                    class="shadow-sm bg-white p-2 rounded-pill d-flex align-items-center justify-content-center"
-                    style="position: absolute; bottom: 0; left: 50%; margin-left: -32px; margin-bottom: -32px"
-                >
-                    <b-spinner size="lg" style="width: 3rem; height: 3rem" variant="primary"></b-spinner>
-                </div>
-            </div>
-        </template>
-        <div class="pt-5 pb-3" v-if="loading">
-            <p class="text-center">
-                <strong>We are creating your reward</strong><br /><span class="text-muted">
-                    Hang tight, this can take a few seconds...
-                </span>
-            </p>
-        </div>
-        <form v-else v-on:submit.prevent="submit" id="formRewardCreate">
-            <b-card class="border-0" bg-variant="light" body-class="p-md-5">
-                <b-row>
-                    <b-col md="12">
-                        <b-form-group>
-                            <label> Title </label>
-                            <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
-                        </b-form-group>
-                    </b-col>
-                </b-row>
-                <label>Withdrawal</label>
-                <b-card bg-variant="white">
+    <base-modal title="Create Reward" id="modalRewardCreate" @show="onShow" :error="error" :loading="loading">
+        <template #modal-body v-if="profile && !loading">
+            <form v-on:submit.prevent="submit" id="formRewardCreate">
+                <b-card class="border-0" bg-variant="light" body-class="p-md-5">
                     <b-row>
-                        <b-col md="6">
+                        <b-col md="12">
                             <b-form-group>
-                                <label>
-                                    Amount
-                                    <a
-                                        v-b-tooltip
-                                        :title="`The amount of ${pool.token.symbol} tokens earned with this reward.`"
-                                        target="_blank"
-                                    >
-                                        <i class="fas fa-question-circle"></i>
-                                    </a>
-                                </label>
-                                <b-input-group :append="pool.token.symbol">
-                                    <b-form-input type="number" v-model="rewardWithdrawAmount" />
-                                </b-input-group>
-                            </b-form-group>
-                        </b-col>
-                        <b-col md="6">
-                            <b-form-group>
-                                <label>
-                                    Limit
-                                    <a
-                                        v-b-tooltip
-                                        title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
-                                    >
-                                        <i class="fas fa-question-circle"></i>
-                                    </a>
-                                </label>
-                                <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                                <label> Title </label>
+                                <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
                             </b-form-group>
                         </b-col>
                     </b-row>
-                    <b-form-group :append="pool.token.symbol" class="mb-0">
+                    <template v-if="erc721 && erc721metadata">
                         <label>
-                            Unlock Date
+                            Metadata
                             <a
+                                class="mr-2"
                                 v-b-tooltip
-                                title="The benficiary will not be able to withdraw the tokens prior to this date. Leave blank for not locking the reward."
+                                title="Select the token URI that identifies the unique NFT that should be minted for this reward."
                             >
                                 <i class="fas fa-question-circle"></i>
                             </a>
                         </label>
-                        <b-form-datepicker v-model="rewardWithdrawUnlockDate" :min="this.getDefaultUnlockDate()" />
+                        <b-dropdown variant="link" class="dropdown-select bg-white">
+                            <template #button-content>
+                                <div class="d-block" v-if="filteredMetadata.length">
+                                    <span>{{ erc721metadata._id }}</span>
+                                    <br />
+                                    <b-badge
+                                        :key="key"
+                                        v-for="(value, key) in erc721metadata.metadata"
+                                        variant="dark"
+                                        v-b-tooltip
+                                        :title="value.value"
+                                        class="mr-2"
+                                    >
+                                        {{ value.key }}
+                                    </b-badge>
+                                </div>
+                                <div v-else>Create some metadata first</div>
+                            </template>
+                            <b-dropdown-item
+                                :key="key"
+                                v-for="(metadata, key) of filteredMetadata"
+                                @click="erc721metadata = metadata"
+                                class="d-flex justify-content-between"
+                            >
+                                <b-badge
+                                    :key="key"
+                                    v-for="(value, key) in metadata.metadata"
+                                    variant="dark"
+                                    v-b-tooltip
+                                    :title="value.value"
+                                    class="mr-2"
+                                >
+                                    {{ value.key }}
+                                </b-badge>
+                                <small class="text-muted">
+                                    {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
+                                </small>
+                            </b-dropdown-item>
+                        </b-dropdown>
+                    </template>
+                    <template v-if="pool.isDefaultPool">
+                        <label>Withdrawal</label>
+                        <b-card bg-variant="white">
+                            <b-row>
+                                <b-col md="6">
+                                    <b-form-group>
+                                        <label>
+                                            Amount
+                                            <a
+                                                v-b-tooltip
+                                                :title="`The amount of ${pool.token.symbol} tokens earned with this reward.`"
+                                                target="_blank"
+                                            >
+                                                <i class="fas fa-question-circle"></i>
+                                            </a>
+                                        </label>
+                                        <b-input-group :append="pool.token.symbol">
+                                            <b-form-input type="number" v-model="rewardWithdrawAmount" />
+                                        </b-input-group>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col md="6">
+                                    <label>
+                                        Unlock Date
+                                        <a
+                                            v-b-tooltip
+                                            title="The benficiary will not be able to withdraw the tokens prior to this date. Leave blank for not locking the reward."
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                    <b-form-datepicker
+                                        v-model="rewardWithdrawUnlockDate"
+                                        :min="getDefaultUnlockDate()"
+                                    />
+                                </b-col>
+                            </b-row>
+                        </b-card>
+                    </template>
+                    <hr />
+                    <b-form-group class="mb-0">
+                        <label>
+                            Limit
+                            <a
+                                v-b-tooltip
+                                title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
+                            >
+                                <i class="fas fa-question-circle"></i>
+                            </a>
+                        </label>
+                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                    </b-form-group>
+                    <hr />
+                    <b-form-group>
+                        <label> Expiration Date </label>
+                        <b-row>
+                            <b-col md="6">
+                                <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
+                            </b-col>
+                            <b-col md="6">
+                                <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
+                            </b-col>
+                        </b-row>
+                    </b-form-group>
+                    <hr />
+                    <b-form-group>
+                        <b-row>
+                            <b-col md="6">
+                                <label> Social Channel</label>
+                                <base-dropdown-channel-types :channel="channel" @selected="onChannelClick($event)" />
+                            </b-col>
+                            <b-col md="6">
+                                <label> Channel Interaction</label>
+                                <base-dropdown-channel-actions
+                                    v-if="channel && channel.actions.length > 0"
+                                    :actions="channelActions.filter((action) => channel.actions.includes(action.type))"
+                                    @selected="onActionClick($event)"
+                                />
+                                <p v-else class="small text-muted">Select a channel first.</p>
+                            </b-col>
+                        </b-row>
+                    </b-form-group>
+                    <b-form-group>
+                        <template v-if="channel && action && action.items.length > 0">
+                            <base-dropdown-youtube-uploads
+                                v-if="action.type === 0"
+                                @selected="item = $event"
+                                :items="action.items"
+                            />
+                            <base-dropdown-youtube-channels
+                                v-if="action.type === 1"
+                                @selected="item = $event"
+                                :items="action.items"
+                            />
+                            <base-dropdown-twitter-tweets
+                                v-if="action.type === 2 || action.type === 3"
+                                @selected="item = $event"
+                                :items="action.items"
+                            />
+                            <base-dropdown-twitter-users
+                                v-if="action.type === 4"
+                                @selected="item = $event"
+                                :items="action.items"
+                            />
+                        </template>
+                        <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
+                        <template v-if="channel && action && action.type === 0">
+                            <base-dropdown-youtube-video @selected="item = $event" />
+                        </template>
+                        <template
+                            v-if="channel && action && (action.type === 7 || action.type === 8 || action.type === 9)"
+                        >
+                            <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
+                        </template>
+                        <template v-if="channel && action && action.type === 6">
+                            <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
+                        </template>
+                    </b-form-group>
+                    <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
+                        <b-alert variant="warning" show class="m-0">
+                            <template v-if="action.type == 2"> Validation is limited to the last 100 likes. </template>
+                            <template v-if="action.type == 3">
+                                Validation is limited to the last 100 retweets.
+                            </template>
+                            <template v-if="action.type == 4">
+                                Validation is limited to the last 5000 followers.
+                            </template>
+                        </b-alert>
+                    </b-form-group>
+                    <hr />
+                    <b-form-group class="mb-0">
+                        <b-form-checkbox v-model="isMembershipRequired">
+                            <strong> Membership required </strong>
+                            <p>Verifies that the user claiming the reward has a membership for the pool.</p>
+                        </b-form-checkbox>
+                    </b-form-group>
+                    <b-form-group class="mb-0">
+                        <b-form-checkbox class="mb-0" v-model="isClaimOnce">
+                            <strong> Claim once </strong>
+                            <p>Allows the user to claim the reward only once.</p>
+                        </b-form-checkbox>
                     </b-form-group>
                 </b-card>
-                <hr />
-                <b-form-group>
-                    <label> Expiration Date </label>
-                    <b-row>
-                        <b-col md="6">
-                            <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
-                        </b-col>
-                        <b-col md="6">
-                            <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
-                        </b-col>
-                    </b-row>
-                </b-form-group>
-                <hr />
-                <b-form-group>
-                    <b-row>
-                        <b-col md="6">
-                            <label> Social Channel</label>
-                            <base-dropdown-channel-types :channel="channel" @selected="onChannelClick($event)" />
-                        </b-col>
-                        <b-col md="6">
-                            <label> Channel Interaction</label>
-                            <base-dropdown-channel-actions
-                                v-if="channel && channel.actions.length > 0"
-                                :actions="channelActions.filter((action) => channel.actions.includes(action.type))"
-                                @selected="onActionClick($event)"
-                            />
-                            <p v-else class="small text-muted">Select a channel first.</p>
-                        </b-col>
-                    </b-row>
-                </b-form-group>
-                <b-form-group>
-                    <template v-if="channel && action && action.items.length > 0">
-                        <base-dropdown-youtube-uploads
-                            v-if="action.type === 0"
-                            @selected="item = $event"
-                            :items="action.items"
-                        />
-                        <base-dropdown-youtube-channels
-                            v-if="action.type === 1"
-                            @selected="item = $event"
-                            :items="action.items"
-                        />
-                        <base-dropdown-twitter-tweets
-                            v-if="action.type === 2 || action.type === 3"
-                            @selected="item = $event"
-                            :items="action.items"
-                        />
-                        <base-dropdown-twitter-users
-                            v-if="action.type === 4"
-                            @selected="item = $event"
-                            :items="action.items"
-                        />
-                    </template>
-                    <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
-                    <template v-if="channel && action && action.type === 0">
-                        <base-dropdown-youtube-video @selected="item = $event" />
-                    </template>
-                    <template v-if="channel && action && (action.type === 7 || action.type === 8 || action.type === 9)">
-                        <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
-                    </template>
-                    <template v-if="channel && action && action.type === 6">
-                        <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
-                    </template>
-                </b-form-group>
-                <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
-                    <b-alert variant="warning" show class="m-0">
-                        <template v-if="action.type == 2"> Validation is limited to the last 100 likes. </template>
-                        <template v-if="action.type == 3"> Validation is limited to the last 100 retweets. </template>
-                        <template v-if="action.type == 4"> Validation is limited to the last 5000 followers. </template>
-                    </b-alert>
-                </b-form-group>
-                <hr />
-                <b-form-group class="mb-0">
-                    <b-form-checkbox v-model="isMembershipRequired">
-                        <strong> Membership required </strong>
-                        <p>Verifies that the user claiming the reward has a membership for the pool.</p>
-                    </b-form-checkbox>
-                </b-form-group>
-                <b-form-group class="mb-0">
-                    <b-form-checkbox class="mb-0" v-model="isClaimOnce">
-                        <strong> Claim once </strong>
-                        <p>Allows the user to claim the reward only once.</p>
-                    </b-form-checkbox>
-                </b-form-group>
-            </b-card>
-        </form>
-        <template v-slot:modal-footer="{}">
+            </form>
+        </template>
+        <template #btn-primary>
             <b-button
                 :disabled="isSubmitDisabled"
                 class="rounded-pill"
                 type="submit"
-                variant="primary"
                 form="formRewardCreate"
+                variant="primary"
                 block
             >
-                Add Reward
+                Create Reward
             </b-button>
         </template>
-    </b-modal>
+    </base-modal>
 </template>
 
 <script lang="ts">
@@ -218,9 +245,13 @@ import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue'
 import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
 import slugify from '@/utils/slugify';
+import BaseModal from './BaseModal.vue';
+import { TERC721, TERC721Metadata } from '@/types/erc721';
+import { format } from 'date-fns';
 
 @Component({
     components: {
+        BaseModal,
         BaseDropdownYoutubeVideo,
         BaseDropdownYoutubeUploads,
         BaseDropdownYoutubeChannels,
@@ -244,9 +275,11 @@ export default class ModalRewardCreate extends Vue {
     loading = false;
     error = '';
     warning = '';
+    format = format;
 
     isClaimOnce = true;
     isMembershipRequired = false;
+    erc721metadata: TERC721Metadata | null = null;
     rewardWithdrawAmount = 0;
     rewardWithdrawDuration = 0;
     rewardWithdrawLimit = 0;
@@ -266,6 +299,7 @@ export default class ModalRewardCreate extends Vue {
     spotify!: ISpotify;
 
     @Prop() pool!: AssetPool;
+    @Prop() erc721!: TERC721;
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;
 
@@ -278,15 +312,22 @@ export default class ModalRewardCreate extends Vue {
     get isSubmitDisabled() {
         return (
             this.loading ||
-            this.rewardWithdrawAmount <= 0 ||
+            (this.pool.isDefaultPool && this.rewardWithdrawAmount <= 0) ||
             this.rewardWithdrawLimit < 0 ||
-            !this.rewardTitle ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
 
+    onShow() {
+        this.erc721metadata = this.filteredMetadata[0];
+    }
+
     getDefaultUnlockDate() {
         return new Date();
+    }
+
+    get filteredMetadata() {
+        return this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
     }
 
     async getYoutube() {
@@ -377,55 +418,51 @@ export default class ModalRewardCreate extends Vue {
 
     async submit(close: boolean) {
         this.loading = true;
-        try {
-            const expiryDate =
-                this.rewardExpireDate && this.concatDatetime(this.rewardExpireDate, this.rewardExpireTime);
-            const withdrawCondition =
-                this.channel?.type !== ChannelType.None
-                    ? {
-                          channelType: this.channel?.type,
-                          channelAction: this.action?.type,
-                          channelItem:
-                              this.item &&
-                              this.item.referenced_tweets &&
-                              this.item.referenced_tweets[0].type === 'retweeted'
-                                  ? this.item.referenced_tweets[0].id
-                                  : this.item.id,
-                      }
-                    : null;
+        const expiryDate = this.rewardExpireDate && this.concatDatetime(this.rewardExpireDate, this.rewardExpireTime);
+        const withdrawCondition =
+            this.channel?.type !== ChannelType.None
+                ? {
+                      channelType: this.channel?.type,
+                      channelAction: this.action?.type,
+                      channelItem:
+                          this.item &&
+                          this.item.referenced_tweets &&
+                          this.item.referenced_tweets[0].type === 'retweeted'
+                              ? this.item.referenced_tweets[0].id
+                              : this.item.id,
+                  }
+                : null;
 
-            const slug = slugify(this.rewardTitle);
+        const slug = slugify(this.rewardTitle);
 
-            await this.$store.dispatch('rewards/create', {
-                slug,
-                title: this.rewardTitle,
-                address: this.pool.address,
-                expiryDate: expiryDate?.toISOString(),
-                withdrawLimit: this.rewardWithdrawLimit,
-                withdrawAmount: this.rewardWithdrawAmount,
-                withdrawDuration: this.rewardWithdrawDuration,
-                withdrawUnlockDate: this.rewardWithdrawUnlockDate,
-                withdrawCondition,
-                isClaimOnce: this.isClaimOnce,
-                isMembershipRequired: this.isMembershipRequired,
-            });
+        await this.$store.dispatch('rewards/create', {
+            slug,
+            title: this.rewardTitle,
+            address: this.pool.address,
+            expiryDate: expiryDate?.toISOString(),
+            erc721metadataId: this.erc721metadata?._id,
+            withdrawLimit: this.rewardWithdrawLimit,
+            withdrawAmount: this.pool.isNFTPool ? 1 : this.rewardWithdrawAmount,
+            withdrawDuration: this.rewardWithdrawDuration,
+            withdrawUnlockDate: this.rewardWithdrawUnlockDate,
+            withdrawCondition,
+            isClaimOnce: this.isClaimOnce,
+            isMembershipRequired: this.isMembershipRequired,
+        });
 
-            this.rewardWithdrawLimit = 0;
-            this.rewardWithdrawAmount = 0;
-            this.rewardWithdrawDuration = 0;
-            this.rewardWithdrawUnlockDate = null;
-            this.rewardTitle = '';
-            this.rewardExpireDate = null;
-            this.rewardExpireTime = '00:00:00';
+        this.rewardWithdrawLimit = 0;
+        this.rewardWithdrawAmount = 0;
+        this.rewardWithdrawDuration = 0;
+        this.rewardWithdrawUnlockDate = null;
+        this.rewardTitle = '';
+        this.rewardExpireDate = null;
+        this.rewardExpireTime = '00:00:00';
 
-            if (close) {
-                this.$bvModal.hide(`modalRewardCreate`);
-            }
-        } catch (e) {
-            this.error = 'Could not add the reward.';
-        } finally {
-            this.loading = false;
+        if (close) {
+            this.$bvModal.hide(`modalRewardCreate`);
         }
+
+        this.loading = false;
     }
 }
 </script>

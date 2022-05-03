@@ -176,40 +176,23 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async read(address: string) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/rewards',
-                headers: { AssetPool: address },
-            });
-            if (r.status !== 200) {
-                throw new Error('GET all rewards failed');
-            }
-            for (const reward of r.data) {
-                this.context.commit('set', reward);
-            }
-        } catch (e) {
-            console.error(e);
+        const r = await axios({
+            method: 'GET',
+            url: '/rewards',
+            headers: { AssetPool: address },
+        });
+
+        for (const reward of r.data) {
+            this.context.commit('set', reward);
         }
     }
 
     @Action({ rawError: true })
-    async create({
-        slug,
-        title,
-        address,
-        expiryDate,
-        withdrawLimit,
-        withdrawAmount,
-        withdrawDuration,
-        withdrawUnlockDate,
-        isClaimOnce,
-        isMembershipRequired,
-        withdrawCondition,
-    }: {
+    async create(payload: {
         slug: string;
         title: string;
         address: string;
+        erc721metadataId: string;
         withdrawLimit: number;
         withdrawAmount: number;
         withdrawDuration: number;
@@ -219,58 +202,42 @@ class RewardModule extends VuexModule {
         withdrawCondition?: IRewardCondition;
         expiryDate?: string;
     }) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: '/rewards',
-                headers: {
-                    AssetPool: address,
-                },
-                data: {
-                    slug,
-                    title,
-                    expiryDate,
-                    withdrawLimit,
-                    withdrawAmount,
-                    withdrawDuration,
-                    withdrawCondition,
-                    withdrawUnlockDate,
-                    isClaimOnce,
-                    isMembershipRequired,
-                },
-            });
+        const r = await axios({
+            method: 'POST',
+            url: '/rewards',
+            headers: {
+                AssetPool: payload.address,
+            },
+            data: {
+                slug: payload.slug,
+                title: payload.title,
+                expiryDate: payload.expiryDate,
+                erc721metadataId: payload.erc721metadataId,
+                withdrawLimit: payload.withdrawLimit,
+                withdrawAmount: payload.withdrawAmount,
+                withdrawDuration: payload.withdrawDuration,
+                withdrawCondition: payload.withdrawCondition,
+                withdrawUnlockDate: payload.withdrawUnlockDate,
+                isClaimOnce: payload.isClaimOnce,
+                isMembershipRequired: payload.isMembershipRequired,
+            },
+        });
 
-            if (r.status !== 201) {
-                throw new Error('POST rewards failed');
-            }
-            this.context.commit('set', r.data);
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
+        this.context.commit('set', r.data);
     }
 
     @Action({ rawError: true })
     async update({ reward, data }: { reward: Reward; data: any }) {
-        try {
-            const r = await axios({
-                method: 'PATCH',
-                url: `/rewards/${reward.id}`,
-                headers: {
-                    AssetPool: reward.poolAddress,
-                },
-                data,
-            });
+        const r = await axios({
+            method: 'PATCH',
+            url: `/rewards/${reward.id}`,
+            headers: {
+                AssetPool: reward.poolAddress,
+            },
+            data,
+        });
 
-            if (r.status !== 200) {
-                throw new Error('PATCH rewards failed');
-            }
-
-            this.context.commit('set', r.data);
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
+        this.context.commit('set', r.data);
     }
 }
 

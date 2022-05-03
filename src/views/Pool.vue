@@ -23,7 +23,7 @@
                 active-class="active"
                 class="nav-link"
                 :to="`/pool/${pool.address}/rewards`"
-                v-if="pool.isDefaultPool"
+                v-if="pool.isDefaultPool || pool.isNFTPool"
             >
                 <i class="fas fa-award mr-2"></i>
                 <span class="d-none d-md-inline-block">Rewards</span>
