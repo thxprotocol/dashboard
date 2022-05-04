@@ -11,13 +11,9 @@
                 </b-button>
             </b-col>
         </b-row>
-        <base-nothing-here
-            v-if="!erc721 || (erc721.metadata && !erc721.metadata.length)"
-            item="an NFT"
-            @clicked="$bvModal.show('modalNFTCreate')"
-        />
+        <base-nothing-here v-if="erc721 && !erc721.metadata" item="an NFT" @clicked="$bvModal.show('modalNFTCreate')" />
         <base-card-erc721-metadata
-            v-if="erc721 && erc721.metadata && erc721.metadata.length"
+            v-if="erc721 && erc721.metadata"
             :erc721="erc721"
             :metadata="erc721.metadata"
             :pool="pool"

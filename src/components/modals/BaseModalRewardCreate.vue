@@ -13,23 +13,23 @@
                     </b-row>
                     <template v-if="erc721 && erc721metadata">
                         <label>
-                            Metadata
+                            NFT
                             <a
                                 class="mr-2"
                                 v-b-tooltip
-                                title="Select the token URI that identifies the unique NFT that should be minted for this reward."
+                                title="Select the metadata for the NFT that should be minted when this reward is claimed."
                             >
                                 <i class="fas fa-question-circle"></i>
                             </a>
                         </label>
-                        <b-dropdown variant="link" class="dropdown-select bg-white">
+                        <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
                             <template #button-content>
                                 <div class="d-block" v-if="filteredMetadata.length">
                                     <span>{{ erc721metadata._id }}</span>
                                     <br />
                                     <b-badge
                                         :key="key"
-                                        v-for="(value, key) in erc721metadata.metadata"
+                                        v-for="(value, key) in erc721metadata.attributes"
                                         variant="dark"
                                         v-b-tooltip
                                         :title="value.value"
@@ -44,21 +44,24 @@
                                 :key="key"
                                 v-for="(metadata, key) of filteredMetadata"
                                 @click="erc721metadata = metadata"
-                                class="d-flex justify-content-between"
                             >
-                                <b-badge
-                                    :key="key"
-                                    v-for="(value, key) in metadata.metadata"
-                                    variant="dark"
-                                    v-b-tooltip
-                                    :title="value.value"
-                                    class="mr-2"
-                                >
-                                    {{ value.key }}
-                                </b-badge>
-                                <small class="text-muted">
-                                    {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
-                                </small>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <b-badge
+                                            :key="key"
+                                            v-for="(value, key) in metadata.attributes"
+                                            variant="dark"
+                                            v-b-tooltip
+                                            :title="value.value"
+                                            class="mr-2"
+                                        >
+                                            {{ value.key }}
+                                        </b-badge>
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
+                                    </small>
+                                </div>
                             </b-dropdown-item>
                         </b-dropdown>
                     </template>
@@ -85,6 +88,18 @@
                                 </b-col>
                                 <b-col md="6">
                                     <label>
+                                        Limit
+                                        <a
+                                            v-b-tooltip
+                                            title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
+                                        >
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                    <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                                </b-col>
+                                <b-col md="12">
+                                    <label>
                                         Unlock Date
                                         <a
                                             v-b-tooltip
@@ -101,20 +116,6 @@
                             </b-row>
                         </b-card>
                     </template>
-                    <hr />
-                    <b-form-group class="mb-0">
-                        <label>
-                            Limit
-                            <a
-                                v-b-tooltip
-                                title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
-                            >
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </label>
-                        <b-form-input type="number" v-model="rewardWithdrawLimit" />
-                    </b-form-group>
-                    <hr />
                     <b-form-group>
                         <label> Expiration Date </label>
                         <b-row>
@@ -126,7 +127,6 @@
                             </b-col>
                         </b-row>
                     </b-form-group>
-                    <hr />
                     <b-form-group>
                         <b-row>
                             <b-col md="6">
@@ -312,8 +312,9 @@ export default class ModalRewardCreate extends Vue {
     get isSubmitDisabled() {
         return (
             this.loading ||
+            (this.pool.isNFTPool && !this.erc721metadata) ||
+            (this.pool.isDefaultPool && this.rewardWithdrawLimit < 0) ||
             (this.pool.isDefaultPool && this.rewardWithdrawAmount <= 0) ||
-            this.rewardWithdrawLimit < 0 ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }

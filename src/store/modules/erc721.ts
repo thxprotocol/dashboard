@@ -93,29 +93,28 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async createMetadata({
-        pool,
-        erc721,
-        metadata,
-        beneficiary,
-    }: {
+    async createMetadata(payload: {
         pool: AssetPool;
         erc721: TERC721;
-        metadata: any;
-        beneficiary?: string;
+        title?: string;
+        description?: string;
+        attributes: any;
+        recipient?: string;
     }) {
         const { data } = await axios({
             method: 'POST',
-            url: `/erc721/${erc721._id}/metadata`,
+            url: `/erc721/${payload.erc721._id}/metadata`,
             headers: {
-                AssetPool: pool.address,
+                AssetPool: payload.pool.address,
             },
             data: {
-                metadata,
-                beneficiary,
+                title: payload.title,
+                description: payload.description,
+                attributes: payload.attributes,
+                recipient: payload.recipient,
             },
         });
-        this.context.commit('setMetadata', { erc721, metadata: data });
+        this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
     }
 
     @Action({ rawError: true })

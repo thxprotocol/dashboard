@@ -3,8 +3,8 @@
         <template #card-body>
             <b-row class="d-none d-md-flex mb-3">
                 <b-col md="1"><strong>ID</strong></b-col>
-                <b-col md="6"><strong>Properties</strong></b-col>
-                <b-col><strong>Beneficiary</strong></b-col>
+                <b-col md="6"><strong>Attributes</strong></b-col>
+                <b-col><strong>Recipient</strong></b-col>
                 <b-col> </b-col>
             </b-row>
             <b-row :key="key" v-for="(item, key) in metadata" class="mb-3 py-3 bg-light">
@@ -19,11 +19,11 @@
                     <div class="text-muted font-weight-bold"># {{ item.tokenId }}</div>
                 </b-col>
                 <b-col cols="12" md="6" class="pb-3 pb-md-0">
-                    <label class="d-md-none">Properties: </label>
+                    <label class="d-md-none">Attributes: </label>
                     <div>
                         <b-badge
                             :key="key"
-                            v-for="(value, key) in item.metadata"
+                            v-for="(value, key) in item.attributes"
                             variant="dark"
                             v-b-tooltip
                             :title="value.value"
@@ -34,9 +34,9 @@
                     </div>
                 </b-col>
                 <b-col cols="12" md="3">
-                    <label class="d-md-none">Beneficiary: </label>
+                    <label class="d-md-none">Recipient: </label>
                     <div>
-                        <base-anchor-address :network="erc721.network" :address="item.beneficiary" />
+                        <base-anchor-address :network="erc721.network" :address="item.recipient" />
                     </div>
                 </b-col>
                 <b-col cols="12" md="2" class="text-right">
