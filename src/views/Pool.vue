@@ -49,6 +49,15 @@
             <router-link
                 active-class="active"
                 class="nav-link"
+                :to="`/pool/${pool.address}/members`"
+                v-if="pool.isDefaultPool"
+            >
+                <i class="fas fa-user mr-2"></i>
+                <span class="d-none d-md-inline-block">Members</span>
+            </router-link>
+            <router-link
+                active-class="active"
+                class="nav-link"
                 :to="`/pool/${pool.address}/info`"
                 v-if="pool.isDefaultPool || pool.isNFTPool"
             >

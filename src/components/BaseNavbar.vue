@@ -68,6 +68,13 @@
                                 <span>Widgets</span>
                             </b-nav-item>
                             <b-nav-item
+                                :to="`/pool/${pool.address}/members`"
+                                class="nav-link-plain"
+                                v-if="pool.isDefaultPool || pool.isNFTPool"
+                            >
+                                <span>Members</span>
+                            </b-nav-item>
+                            <b-nav-item
                                 :to="`/pool/${pool.address}/info`"
                                 class="nav-link-plain"
                                 v-if="pool.isDefaultPool || pool.isNFTPool"
