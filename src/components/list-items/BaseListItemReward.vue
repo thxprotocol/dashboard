@@ -60,17 +60,21 @@
             </b-row>
 
             <hr />
-            <label>Supply Limit:</label>
-            <b-progress>
-                <b-progress-bar
-                    :label="
-                        reward.withdrawLimit ? `${reward.progress}/${reward.withdrawLimit}` : String(reward.progress)
-                    "
-                    :value="reward.progress"
-                    :min="0"
-                    :max="reward.withdrawLimit || reward.progress"
-                />
-            </b-progress>
+            <template v-if="pool.isDefaultPool">
+                <label>Supply Limit:</label>
+                <b-progress>
+                    <b-progress-bar
+                        :label="
+                            reward.withdrawLimit
+                                ? `${reward.progress}/${reward.withdrawLimit}`
+                                : String(reward.progress)
+                        "
+                        :value="reward.progress"
+                        :min="0"
+                        :max="reward.withdrawLimit || reward.progress"
+                    />
+                </b-progress>
+            </template>
             <label class="mt-3">Rules:</label>
             <div>
                 <b-badge
@@ -113,13 +117,14 @@
                     v-b-tooltip
                     v-if="reward.expiryDate"
                     class="border p-2 mb-1 mr-1 font-weight-normal"
-                    :title="expired ? 'This reward is closed for new claims.' : 'This reward is still open for claims.'"
+                    title="Until this date and time the reward could be claimed.'"
                     variant="light"
                 >
                     <strong>Expiry:</strong> {{ new Date(reward.expiryDate).toLocaleString() }}
                 </b-badge>
                 <b-badge
                     v-b-tooltip
+                    title="This reward could be claimed, but only withdrawn after this date."
                     v-if="reward.withdrawUnlockDate"
                     class="border p-2 mb-1 mr-1 font-weight-normal"
                     variant="light"
