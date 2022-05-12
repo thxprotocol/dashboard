@@ -8,6 +8,7 @@ import RewardStore from './modules/rewards';
 import WidgetStore from './modules/widgets';
 import ERC20Store from './modules/erc20';
 import ERC721Store from './modules/erc721';
+import DepositStore from './modules/deposits';
 
 Vue.use(Vuex);
 
@@ -22,6 +23,7 @@ const modules = {
     widgets: WidgetStore,
     erc20: ERC20Store,
     erc721: ERC721Store,
+    deposits: DepositStore,
 };
 
 export default new Vuex.Store({

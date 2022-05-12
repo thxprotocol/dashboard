@@ -64,6 +64,15 @@
                 <i class="fas fa-info-circle mr-2"></i>
                 <span class="d-none d-md-inline-block">Details</span>
             </router-link>
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/deposits`"
+                v-if="pool.isDefaultPool"
+            >
+                <i class="fa fa-usd mr-2"></i>
+                <span class="d-none d-md-inline-block">Deposits</span>
+            </router-link>
         </ul>
         <hr />
         <router-view></router-view>
