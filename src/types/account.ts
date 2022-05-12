@@ -33,3 +33,11 @@ export interface ISpotify {
     items: any;
     users: any;
 }
+
+export interface IMember {
+    poolAddress: string;
+    memberId: number;
+    address: string;
+}
+
+export type IMemberByPage = { [page: number]: IMember[] };

@@ -1,6 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
+import { IMember } from '@/types/account';
 
 export interface PoolToken {
     _id: string;
@@ -36,6 +37,27 @@ export interface AssetPool {
     isNFTPool: boolean;
     isDefaultPool: boolean;
     version: string;
+}
+
+export interface GetMembersProps {
+    address: string;
+    page: number;
+    limit: number;
+}
+
+const MEMBERS_RESPONSE_ARR: IMember[] = [{ poolAddress: '0x000', memberId: 1, address: '0x11' }];
+const MEMBERS_RESPONSE: GetMembersResponse = {
+    results: MEMBERS_RESPONSE_ARR,
+    limit: 10,
+    total: 1,
+};
+
+export interface GetMembersResponse {
+    results: IMember[];
+    next?: { page: number };
+    previous?: { page: number };
+    limit: number;
+    total: number;
 }
 
 function Pool(data: any) {
@@ -151,6 +173,30 @@ class PoolModule extends VuexModule {
             console.log(e);
             debugger;
         }
+    }
+
+    @Action({ rawError: true })
+    async getMembers({ address, page, limit }: GetMembersProps): Promise<GetMembersResponse | undefined> {
+        try {
+            const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(limit));
+
+            const r = await axios({
+                method: 'GET',
+                url: '/asset_pools/' + address + '/members?' + params.toString(),
+                headers: {
+                    AssetPool: address,
+                },
+            });
+
+            return r.data.results.length ? r.data : MEMBERS_RESPONSE;
+        } catch (e) {
+            console.log(e);
+            debugger;
+        }
+
+        return undefined;
     }
 }
 
