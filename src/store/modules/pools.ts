@@ -36,6 +36,7 @@ export interface AssetPool {
     metrics: { members: number; withdrawals: number };
     isNFTPool: boolean;
     isDefaultPool: boolean;
+    version: string;
 }
 
 export interface GetMembersProps {

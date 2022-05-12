@@ -1,5 +1,5 @@
 <template>
-    <b-badge class="p-2" :class="classes" :variant="variant">
+    <b-badge v-b-tooltip :title="version" class="p-2" :class="classes" :variant="variant">
         {{ label }}
     </b-badge>
 </template>
@@ -15,6 +15,7 @@ export default class BaseBadgeNetwork extends Vue {
     classes = {};
 
     @Prop() network!: NetworkProvider;
+    @Prop() version!: string;
 
     mounted() {
         this.variant = this.network === NetworkProvider.Main ? 'primary' : 'gray';

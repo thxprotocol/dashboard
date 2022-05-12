@@ -7,6 +7,9 @@
                     Please contact us in Discord
                 </b-link>
             </b-alert>
+            <b-alert v-if="outOfDate && artifacts" variant="danger" show>
+                Version conflict ({{ pool.version }} -> {{ artifacts }}), contact the team.
+            </b-alert>
             <template v-if="pool.token">
                 <b-button
                     variant="link"
@@ -16,7 +19,7 @@
                 >
                     <i class="far fa-trash-alt"></i>
                 </b-button>
-                <base-badge-network :network="pool.network" class="mr-1" />
+                <base-badge-network :network="pool.network" :version="pool.version" class="mr-1" />
                 <b-badge class="p-2 mr-1 text-muted" variant="light">
                     <i class="fas fa-users mr-1"></i>
                     {{ pool.metrics.members }}
@@ -33,8 +36,11 @@
                     :call="() => remove(pool.address)"
                     :subject="pool.address"
                 />
+
                 <hr />
-                <b-button class="rounded-pill" variant="light" @click="openPoolUrl()" block>View Pool</b-button>
+                <b-button :disabled="outOfDate" class="rounded-pill" variant="light" @click="openPoolUrl()" block>
+                    View Pool
+                </b-button>
             </template>
         </template>
     </base-card>
@@ -44,7 +50,7 @@
 import { IAccount } from '@/types/account';
 import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from './BaseCard.vue';
@@ -55,9 +61,12 @@ import BaseCard from './BaseCard.vue';
         BaseBadgeNetwork,
         BaseCard,
     },
-    computed: mapGetters({
-        profile: 'account/profile',
-    }),
+    computed: {
+        ...mapState('account', ['version', 'artifacts']),
+        ...mapGetters({
+            profile: 'account/profile',
+        }),
+    },
 })
 export default class BaseCardPool extends Vue {
     warning = '';
@@ -66,6 +75,11 @@ export default class BaseCardPool extends Vue {
     @Prop() pool!: AssetPool;
 
     profile!: IAccount;
+    artifacts!: string;
+
+    get outOfDate() {
+        return this.pool.version !== this.artifacts;
+    }
 
     async mounted() {
         await this.$store.dispatch('pools/read', this.pool.address);
