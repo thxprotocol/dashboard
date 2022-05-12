@@ -10,11 +10,15 @@
                 <p class="brand-text">Pools</p>
                 <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span>Create pool</span>
+                    <span>Create Pool</span>
                 </b-button>
                 <b-button to="/tokens" variant="link" class="text-light">
                     <i class="fas fa-coins mr-2"></i>
-                    <span>Create token for this pool</span>
+                    <span>Create a token</span>
+                </b-button>
+                <b-button to="/nft" variant="link" class="text-light">
+                    <i class="fas fa-palette mr-2"></i>
+                    <span>Create an NFT</span>
                 </b-button>
             </div>
         </b-jumbotron>

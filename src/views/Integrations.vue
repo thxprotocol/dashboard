@@ -8,17 +8,11 @@
         >
             <div class="container container-md pt-10 pb-5">
                 <p class="brand-text">Integrations</p>
-                <p>Connect your social accounts and create automated token rewards for you audience.</p>
+                <!-- <p>Connect your social accounts and create automated token rewards for you audience.</p> -->
             </div>
         </b-jumbotron>
 
         <div class="container container-md" v-if="profile">
-            <b-alert variant="info" show>
-                🚧 The Spotify integration is undergoing a verification procedure by the Spotify team. We are currently
-                limitted to <strong>25 test users</strong>.
-                <b-link href="https://discord.com/invite/TzbbSmkE7Y">Contact the THX team</b-link> in Discord if you
-                want to try it out!
-            </b-alert>
             <div class="row">
                 <div class="col-md-6 col-lg-4">
                     <base-integration-youtube />

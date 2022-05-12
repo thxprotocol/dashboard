@@ -28,6 +28,17 @@
                             </div>
                         </div>
                     </b-nav-item>
+                    <b-nav-item to="/nft" class="nav-link-plain">
+                        <div class="nav-link-wrapper">
+                            <div class="nav-link-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="mr-2">NFT</span>
+                                <b-badge variant="primary">Beta</b-badge>
+                            </div>
+                        </div>
+                    </b-nav-item>
                     <b-nav-item to="/pools" class="nav-link-plain">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">

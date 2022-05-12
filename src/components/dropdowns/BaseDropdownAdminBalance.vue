@@ -39,10 +39,12 @@
 <script lang="ts">
 import { NetworkProvider } from '@/store/modules/pools';
 import { API_URL, WALLET_URL } from '@/utils/secrets';
-import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
+import { mapGetters, mapState } from 'vuex';
 
-@Component({})
+@Component({
+    computed: { ...mapState('account', ['version', 'artifacts']), ...mapGetters('account', ['networkHealth']) },
+})
 export default class BaseDropdownAdminBalance extends Vue {
     loading = true;
     apiUrl = API_URL;
@@ -51,6 +53,11 @@ export default class BaseDropdownAdminBalance extends Vue {
         { admin: { address: '', value: 0, variant: 'light' }, gasTank: { value: 0, variant: 'light' } },
         { admin: { address: '', value: 0, variant: 'light' }, gasTank: { value: 0, variant: 'light' } },
     ];
+    networkHealth!: any;
+
+    mounted() {
+        this.getHealth();
+    }
 
     async getHealth() {
         this.loading = true;
@@ -61,33 +68,26 @@ export default class BaseDropdownAdminBalance extends Vue {
             return 'success';
         }
 
-        const r = await axios({
-            method: 'GET',
-            url: '/health',
-        });
-
-        if (r.status !== 200) {
-            throw new Error('Could not fetch API health.');
-        }
+        await this.$store.dispatch('account/getHealth');
 
         this.health[NetworkProvider.Test].admin = {
-            address: r.data.testnet.admin.address,
-            value: Math.floor(Number(r.data.testnet.admin.balance) * 100) / 100,
-            variant: getBalanceVariant(r.data.testnet.admin),
+            address: this.networkHealth.testnet.admin.address,
+            value: Math.floor(Number(this.networkHealth.testnet.admin.balance) * 100) / 100,
+            variant: getBalanceVariant(this.networkHealth.testnet.admin),
         };
         this.health[NetworkProvider.Test].gasTank = {
-            value: Math.floor(Number(r.data.testnet.gasTank.balance) * 100) / 100,
-            variant: getBalanceVariant(r.data.testnet.gasTank),
+            value: Math.floor(Number(this.networkHealth.testnet.gasTank.balance) * 100) / 100,
+            variant: getBalanceVariant(this.networkHealth.testnet.gasTank),
         };
 
         this.health[NetworkProvider.Main].admin = {
-            address: r.data.mainnet.admin.address,
-            value: Math.floor(Number(r.data.mainnet.admin.balance) * 100) / 100,
-            variant: getBalanceVariant(r.data.mainnet.admin),
+            address: this.networkHealth.mainnet.admin.address,
+            value: Math.floor(Number(this.networkHealth.mainnet.admin.balance) * 100) / 100,
+            variant: getBalanceVariant(this.networkHealth.mainnet.admin),
         };
         this.health[NetworkProvider.Main].gasTank = {
-            value: Math.floor(Number(r.data.mainnet.gasTank.balance) * 100) / 100,
-            variant: getBalanceVariant(r.data.mainnet.gasTank),
+            value: Math.floor(Number(this.networkHealth.mainnet.gasTank.balance) * 100) / 100,
+            variant: getBalanceVariant(this.networkHealth.mainnet.gasTank),
         };
 
         this.loading = false;

@@ -26,6 +26,11 @@ const routes: Array<RouteConfig> = [
         beforeEnter: assertAuthorization,
     },
     {
+        path: '/nft',
+        component: () => import('../views/NFT.vue'),
+        beforeEnter: assertAuthorization,
+    },
+    {
         path: '/pools',
         component: () => import('../views/Pools.vue'),
         beforeEnter: assertAuthorization,
