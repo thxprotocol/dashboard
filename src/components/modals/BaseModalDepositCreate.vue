@@ -67,7 +67,6 @@
 import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { Reward } from '@/store/modules/rewards';
 
 @Component({
     computed: mapGetters({
@@ -75,13 +74,11 @@ import { Reward } from '@/store/modules/rewards';
     }),
 })
 export default class ModalDepositCreate extends Vue {
-    docsUrl = process.env.VUE_APP_DOCS_URL;
     loading = false;
     error = '';
     amount = 0;
 
     @Prop() pool!: AssetPool;
-    @Prop() filteredRewards!: Reward[];
 
     onShow() {
         this.amount = 0;
