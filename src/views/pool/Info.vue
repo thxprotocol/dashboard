@@ -228,7 +228,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 
-const URL_CHECK_REGEX = /^(http|https):\/\/[w\d]+\.[\w](\/[\w\d]+)?$/;
+const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
 const DEFAULT_SKIN: ISkin = {
     logoImgUrl: '',
