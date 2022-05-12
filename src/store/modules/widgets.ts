@@ -30,7 +30,7 @@ export class Widget {
 }
 
 export interface IWidgets {
-    [poolAddress: string]: { [rat: string]: Widget };
+    [poolAddress: string]: Widget[];
 }
 
 @Module({ namespaced: true })

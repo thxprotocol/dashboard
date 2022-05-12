@@ -1,20 +1,34 @@
 <template>
     <div>
-        <b-button
-            v-b-modal="'modalWidgetCreate'"
+        <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Widgets</h2>
+            </b-col>
+            <b-col class="d-flex justify-content-end">
+                <b-button
+                    v-b-modal="'modalWidgetCreate'"
+                    :disabled="!filteredRewards.length"
+                    class="float-right rounded-pill"
+                    variant="primary"
+                >
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Create a widget</span>
+                </b-button>
+            </b-col>
+        </b-row>
+
+        <b-alert v-if="!filteredRewards.length" variant="info" show>
+            Your asset pool has no rewards configured.
+        </b-alert>
+
+        <base-nothing-here
+            v-if="!filteredWidgets.length"
+            item="a Widget"
             :disabled="!filteredRewards.length"
-            class="float-right rounded-pill"
-            variant="primary"
-        >
-            <i class="fas fa-plus mr-2"></i>
-            <span>Create a widget</span>
-        </b-button>
-        <h2>Widgets</h2>
-        <p>Use THX widgets for adding engagement features without too much effort.</p>
-        <b-card class="shadow-sm">
-            <b-alert v-if="!filteredRewards.length" variant="info" show>
-                Your asset pool has no rewards configured.
-            </b-alert>
+            @clicked="$bvModal.show('modalWidgetCreate')"
+        />
+
+        <b-card class="shadow-sm" v-else>
             <div class="row pt-2 pb-2">
                 <div class="col-md-4">
                     <strong>Page URL</strong>
@@ -95,13 +109,15 @@ import { IAssetPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
-import { IWidgets } from '@/store/modules/widgets';
+import { IWidgets, Widget } from '@/store/modules/widgets';
+import BaseNothingHere from '@/components/BaseNothingHere.vue';
 import BaseModalWidgetCreate from '@/components/modals/BaseModalWidgetCreate.vue';
 import BaseModalWidgetEdit from '@/components/modals/BaseModalWidgetEdit.vue';
 import ModalDelete from '@/components/modals/BaseModalDelete.vue';
 
 @Component({
     components: {
+        BaseNothingHere,
         BaseModalWidgetCreate,
         BaseModalWidgetEdit,
         ModalDelete,
@@ -126,6 +142,10 @@ export default class WidgetsView extends Vue {
 
     get pool() {
         return this.pools[this.$route.params.address];
+    }
+
+    get filteredWidgets(): Widget[] {
+        return this.widgets[this.pool.address] || [];
     }
 
     get filteredRewards(): Reward[] {

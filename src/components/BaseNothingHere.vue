@@ -3,7 +3,13 @@
         <i class="far fa-sticky-note mr-1 h2"></i><br />
         <strong> You have not added {{ item.toLowerCase() }} yet</strong><br />
         <span>Do you want to add one now?</span><br />
-        <b-button size="sm" class="rounded-pill mt-3" variant="outline-primary" @click="$emit('clicked')">
+        <b-button
+            :disabled="disabled"
+            size="sm"
+            class="rounded-pill mt-3"
+            variant="outline-primary"
+            @click="$emit('clicked')"
+        >
             Add {{ item }}
         </b-button>
     </div>
@@ -20,6 +26,8 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseListStateEmpty extends Vue {
     @Prop() item!: string;
+
+    disabled!: boolean;
 
     mounted() {
         if (!this.item) {

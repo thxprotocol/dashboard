@@ -67,7 +67,7 @@
                     </template>
                     <template v-if="pool.isDefaultPool">
                         <label>Withdrawal</label>
-                        <b-card bg-variant="white">
+                        <b-card bg-variant="white" class="mb-3">
                             <b-row>
                                 <b-col md="6">
                                     <b-form-group>
@@ -320,7 +320,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     onShow() {
-        this.erc721metadata = this.filteredMetadata[0];
+        this.erc721metadata = this.filteredMetadata ? this.filteredMetadata[0] : null;
     }
 
     getDefaultUnlockDate() {
@@ -328,7 +328,7 @@ export default class ModalRewardCreate extends Vue {
     }
 
     get filteredMetadata() {
-        return this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
+        return this.erc721 && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
     }
 
     async getYoutube() {

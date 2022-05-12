@@ -97,9 +97,8 @@ export default class AssetPoolView extends Vue {
 
     async mounted() {
         try {
-            await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('pools/read', this.$route.params.address);
-
+            this.$store.dispatch('account/getProfile');
+            this.$store.dispatch('pools/read', this.$route.params.address);
             this.network = this.pool.network;
         } catch (e) {
             this.error = 'Could not get the rewards.';
