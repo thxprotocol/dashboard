@@ -39,6 +39,9 @@ import { IDeposits } from '@/types/IDeposits';
 export default class DepositView extends Vue {
     pools!: IAssetPools;
     deposit!: IDeposits;
+    error = '';
+    loading = true;
+    skeletonLoading = true;
 
     get pool() {
         return this.pools[this.$route.params.address];
@@ -49,7 +52,15 @@ export default class DepositView extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('deposits/list', { poolAddress: this.pool.address });
+        try {
+            await this.$store.dispatch('deposits/list', { poolAddress: this.pool.address });
+            this.skeletonLoading = false;
+        } catch (e) {
+            this.error = 'Could not get the deposits.';
+        } finally {
+            this.loading = false;
+        }
+        
     }
 }
 </script>

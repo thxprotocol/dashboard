@@ -68,7 +68,7 @@
                 active-class="active"
                 class="nav-link"
                 :to="`/pool/${pool.address}/deposits`"
-                v-if="pool.isDefaultPool"
+                v-if="isDepositAllowed"
             >
                 <i class="fa fa-usd mr-2"></i>
                 <span class="d-none d-md-inline-block">Deposits</span>
@@ -89,6 +89,7 @@ import { mapGetters } from 'vuex';
         pools: 'pools/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
+        deposits: 'deposits/all'
     }),
 })
 export default class AssetPoolView extends Vue {
@@ -99,6 +100,7 @@ export default class AssetPoolView extends Vue {
     loading = true;
     network: NetworkProvider = NetworkProvider.Test;
     pools!: IAssetPools;
+    isDepositAllowed = false;
 
     get pool() {
         return this.pools[this.$route.params.address];
@@ -109,6 +111,7 @@ export default class AssetPoolView extends Vue {
             this.$store.dispatch('account/getProfile');
             this.$store.dispatch('pools/read', this.$route.params.address);
             this.network = this.pool.network;
+            this.isDepositAllowed = this.pool.isDefaultPool;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {

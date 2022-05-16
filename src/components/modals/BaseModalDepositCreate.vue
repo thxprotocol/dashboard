@@ -83,7 +83,7 @@ export default class ModalDepositCreate extends Vue {
     onShow() {
         this.amount = 0;
     }
-
+    
     async submit() {
         this.loading = true;
         try {

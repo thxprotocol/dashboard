@@ -68,7 +68,7 @@ class DepositModule extends VuexModule {
             });
 
             if (r.status !== 200) {
-                throw new Error('GET all rewards failed');
+                throw new Error('GET deposit failed');
             }
 
             this.context.commit('set', { ...r.data, ...{ poolAddress } });
