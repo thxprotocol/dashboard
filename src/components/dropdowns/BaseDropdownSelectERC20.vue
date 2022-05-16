@@ -54,7 +54,7 @@ import BaseIdenticon from '../BaseIdenticon.vue';
 import { IERC721s } from '@/types/erc721';
 
 const QUICKSWAP_TOKEN_LIST =
-    'https://unpkg.com/quickswap-default-token-list@1.2.29/build/quickswap-default.tokenlist.json';
+    'https://unpkg.com/quickswap-default-token-list@1.2.34/build/quickswap-default.tokenlist.json';
 
 @Component({
     components: {

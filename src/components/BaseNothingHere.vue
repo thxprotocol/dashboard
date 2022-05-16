@@ -26,8 +26,7 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseListStateEmpty extends Vue {
     @Prop() item!: string;
-
-    disabled!: boolean;
+    @Prop() disabled!: boolean;
 
     mounted() {
         if (!this.item) {

@@ -19,6 +19,9 @@
                 <b-button v-b-tooltip title="Deploy tokens" to="/tokens" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-coins m-0"></i>
                 </b-button>
+                <b-button v-b-tooltip title="Deploy NFT" to="/nft" class="rounded-pill mr-3" variant="primary">
+                    <i class="fas fa-palette m-0"></i>
+                </b-button>
                 <b-button v-b-tooltip title="Deploy pools" to="/pools" class="rounded-pill mr-3" variant="primary">
                     <i class="fas fa-chart-pie m-0"></i>
                 </b-button>
@@ -56,7 +59,19 @@
                         img-top
                     >
                         <strong>Tokens</strong>
-                        <p class="text-muted m-0">Create ERC-20 and ERC-721 (NFT) token variations.</p>
+                        <p class="text-muted m-0">Create ERC-20 token variations.</p>
+                    </b-card>
+                </b-col>
+                <b-col md="6">
+                    <b-card
+                        @click="$router.push('/nft')"
+                        class="mt-3 mb-3 shadow-sm cursor-pointer"
+                        :img-src="require('@/assets/thx_nft.webp')"
+                        img-alt="Image"
+                        img-top
+                    >
+                        <strong>NFT</strong>
+                        <p class="text-muted m-0">Create ERC-721 (NFT) token variations.</p>
                     </b-card>
                 </b-col>
                 <b-col md="6">
