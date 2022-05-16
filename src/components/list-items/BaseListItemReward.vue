@@ -204,6 +204,7 @@ export default class BaseListItemReward extends Vue {
                 rewardId: this.reward.id,
                 rewardAmount: this.reward.withdrawAmount,
                 rewardCondition: this.reward.withdrawCondition,
+                clientId: this.pool.clientId,
             };
             this.claimURL = `${WALLET_URL}/claim?hash=${btoa(JSON.stringify(d))}`;
         });
