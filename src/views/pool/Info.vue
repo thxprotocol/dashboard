@@ -54,6 +54,57 @@
                     View your token transactions
                 </b-link>
             </b-form-group>
+
+            <b-form-group>
+                <label for="backgroundImgUrl">Pool Background URL</label>
+                <div class="input-group">
+                    <b-form-input
+                        id="backgroundImgUrl"
+                        @input.native="onBackgroundImgChange"
+                        :aria-invalid="!backgroundImgUrlValid"
+                        v-model="skin.backgroundImgUrl"
+                    />
+                    <div v-if="!backgroundImgUrlModified" class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
+                        </button>
+                    </div>
+
+                    <div v-if="backgroundImgUrlModified" class="input-group-append">
+                        <button
+                            :disabled="!backgroundImgUrlValid"
+                            @click="updateBackgroundUrl"
+                            class="btn btn-danger"
+                            type="button"
+                        >
+                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                        </button>
+                    </div>
+                </div>
+            </b-form-group>
+
+            <b-form-group>
+                <label for="logoImgUrl">Pool Logo URL</label>
+                <div class="input-group">
+                    <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="skin.logoImgUrl" />
+                    <div v-if="!logoImgUrlModified" class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
+                        </button>
+                    </div>
+
+                    <div v-if="logoImgUrlModified" class="input-group-append">
+                        <button
+                            class="btn btn-danger"
+                            :disabled="!logoImgUrlValid"
+                            @click="updateLogoUrl"
+                            type="button"
+                        >
+                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                        </button>
+                    </div>
+                </div>
+            </b-form-group>
         </b-card>
         <h2 class="font-weight-normal">Authorization</h2>
         <p>
@@ -177,6 +228,18 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 
+const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+
+const DEFAULT_SKIN: ISkin = {
+    logoImgUrl: '',
+    backgroundImgUrl: '',
+};
+
+interface ISkin {
+    logoImgUrl: string;
+    backgroundImgUrl: string;
+}
+
 @Component({
     computed: mapGetters({
         pools: 'pools/all',
@@ -196,16 +259,88 @@ export default class AssetPoolView extends Vue {
     accessToken = '';
     poolLoading = true;
     pools!: IAssetPools;
+    skin: ISkin = { ...DEFAULT_SKIN };
+    remoteSkin: ISkin = { ...DEFAULT_SKIN };
 
     network: NetworkProvider = NetworkProvider.Test;
+
+    get backgroundImgUrlModified() {
+        return this.skin.backgroundImgUrl !== this.remoteSkin.backgroundImgUrl;
+    }
+
+    get backgroundImgUrlValid() {
+        return URL_CHECK_REGEX.test(this.skin.backgroundImgUrl);
+    }
+
+    get logoImgUrlModified() {
+        return this.skin.logoImgUrl !== this.remoteSkin.logoImgUrl;
+    }
+
+    get logoImgUrlValid() {
+        return URL_CHECK_REGEX.test(this.skin.logoImgUrl);
+    }
 
     get pool() {
         return this.pools[this.$route.params.address];
     }
 
+    async onBackgroundImgChange(e: any) {
+        Vue.set(this.skin, 'backgroundImgUrl', e.target.value);
+    }
+
+    async onLogoImgChange(e: any) {
+        Vue.set(this.skin, 'logoImgUrl', e.target.value);
+    }
+
+    async updateSkin(skin: Partial<ISkin>) {
+        try {
+            const r = await axios({
+                url: this.authUrl + '/skin' + `/${this.pool.address}`,
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + this.authHeader(),
+                },
+                data: skin,
+            });
+
+            this.skin = JSON.parse(JSON.stringify(r.data));
+            this.remoteSkin = JSON.parse(JSON.stringify(r.data));
+        } catch {
+            /* NO-OP */
+        }
+    }
+
+    async updateBackgroundUrl() {
+        await this.updateSkin({ backgroundImgUrl: this.skin.backgroundImgUrl, logoImgUrl: this.remoteSkin.logoImgUrl });
+    }
+
+    async updateLogoUrl() {
+        await this.updateSkin({ backgroundImgUrl: this.remoteSkin.backgroundImgUrl, logoImgUrl: this.skin.logoImgUrl });
+    }
+
+    async getSkin() {
+        try {
+            const r = await axios({
+                url: this.authUrl + '/skin' + `/${this.pool.address}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + this.authHeader(),
+                },
+            });
+
+            this.skin = JSON.parse(JSON.stringify(r.data));
+            this.remoteSkin = JSON.parse(JSON.stringify(r.data));
+        } catch {
+            /* NO-OP */
+        }
+    }
+
     async mounted() {
         try {
             this.network = this.pool.network;
+            await this.getSkin();
         } catch (e) {
             this.error = 'Could get pool information.';
         } finally {
