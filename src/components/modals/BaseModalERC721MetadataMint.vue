@@ -46,7 +46,7 @@ export default class ModalRewardCreate extends Vue {
             pool: this.pool,
             erc721: this.erc721,
             erc721Metadata: this.erc721Metadata,
-            beneficiary: this.recipient,
+            recipient: this.recipient,
         });
 
         this.$bvModal.hide(`modalNFTMint${this.erc721Metadata._id}`);
