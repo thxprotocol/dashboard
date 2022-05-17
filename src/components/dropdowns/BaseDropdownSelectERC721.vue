@@ -21,11 +21,11 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/pools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIdenticon from '../BaseIdenticon.vue';
-import { IERC721s } from '@/types/erc721';
+import { IERC721s, TERC721 } from '@/types/erc721';
 
 @Component({
     components: {
@@ -37,8 +37,8 @@ import { IERC721s } from '@/types/erc721';
 })
 export default class BaseDropdownSelectERC721 extends Vue {
     NetworkProvider = NetworkProvider;
-    token: PoolToken | null = null;
-    tokenList: PoolToken[] = [];
+    token: TERC721 | null = null;
+    tokenList: TERC721[] = [];
 
     erc721s!: IERC721s;
 
@@ -53,7 +53,7 @@ export default class BaseDropdownSelectERC721 extends Vue {
             for (const id in this.erc721s) {
                 this.$store.dispatch('erc721/read', id).then(() => {
                     if (!this.token) {
-                        this.token = (this.erc721s[id] as unknown) as PoolToken;
+                        this.token = (this.erc721s[id] as unknown) as TERC721;
                         this.$emit('selected', this.token);
                     }
                 });
@@ -61,7 +61,7 @@ export default class BaseDropdownSelectERC721 extends Vue {
         });
     }
 
-    onTokenListItemClick(token: PoolToken) {
+    onTokenListItemClick(token: TERC721) {
         this.token = token;
         this.$emit('selected', this.token);
     }

@@ -31,11 +31,7 @@
                 <p class="font-weight-bold text-primary h3 mt-3 mb-0">
                     {{ pool.token.poolBalance }} {{ pool.token.symbol }}
                 </p>
-                <base-modal-delete
-                    :id="`modalDelete-${pool.address}`"
-                    :call="() => remove(pool.address)"
-                    :subject="pool.address"
-                />
+                <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
 
                 <hr />
                 <b-button :disabled="outOfDate" class="rounded-pill" variant="light" @click="openPoolUrl()" block>

@@ -12,11 +12,7 @@
             </b-col>
         </b-row>
         <base-nothing-here v-if="!depositForPool" item="a Deposit" @clicked="$bvModal.show('modalDepositCreate')" />
-        <b-row v-else>
-            <b-col md="6" :key="deposit.id" v-for="deposit of depositForPool">
-                <base-promo-code :promoCode="deposit" :pool="pool" />
-            </b-col>
-        </b-row>
+
         <modal-deposit-create :pool="pool" />
     </div>
 </template>
@@ -60,7 +56,6 @@ export default class DepositView extends Vue {
         } finally {
             this.loading = false;
         }
-        
     }
 }
 </script>

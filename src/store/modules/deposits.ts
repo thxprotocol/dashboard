@@ -79,27 +79,23 @@ class DepositModule extends VuexModule {
 
     @Action({ rawError: true })
     async create({ amount, poolAddress }: { amount: number; poolAddress: string }) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: '/deposits/' + poolAddress,
-                headers: {
-                    AssetPool: poolAddress,
-                },
-                data: { amount },
-            });
+        const r = await axios({
+            method: 'POST',
+            url: '/deposits/' + poolAddress,
+            headers: {
+                AssetPool: poolAddress,
+            },
+            data: { amount },
+        });
 
-            if (r.status !== 201) {
-                throw new Error('Could not create deposit');
-            }
-            const deposit = { ...r.data, ...{ poolAddress } };
-
-            this.context.commit('set', deposit);
-
-            return { deposit };
-        } catch (error) {
-            return { error };
+        if (r.status !== 200) {
+            throw new Error('Could not create deposit');
         }
+        const deposit = { ...r.data, ...{ poolAddress } };
+
+        this.context.commit('set', deposit);
+
+        return { deposit };
     }
 }
 

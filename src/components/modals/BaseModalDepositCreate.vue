@@ -39,18 +39,14 @@
                 {{ error }}
             </b-alert>
             <b-card bg-variant="light" class="border-0" body-class="p-5" v-else>
-                <b-form-group>
-                    <label>Amount </label
-                    ><a title="The amount of the Deposit expressed in WEI" target="_blank"
-                        ><i class="fas fa-question-circle" aria-hidden="true"></i
-                    ></a>
-                    <b-form-input v-model="amount" placeholder="0" type="number" min="1" />
-                </b-form-group>
+                <b-input-group :append="pool.token.symbol">
+                    <b-form-input type="number" v-model="amount" />
+                </b-input-group>
             </b-card>
         </form>
         <template v-slot:modal-footer="{}">
             <b-button
-                :disabled="loading"
+                :disabled="loading || error != ''"
                 class="rounded-pill"
                 type="submit"
                 variant="primary"
@@ -70,7 +66,7 @@ import { mapGetters } from 'vuex';
 
 @Component({
     computed: mapGetters({
-        clients: 'clients/all',
+        pools: 'pools/all',
     }),
 })
 export default class ModalDepositCreate extends Vue {
@@ -82,8 +78,9 @@ export default class ModalDepositCreate extends Vue {
 
     onShow() {
         this.amount = 0;
+        this.error = '';
     }
-    
+
     async submit() {
         this.loading = true;
         try {
@@ -92,6 +89,7 @@ export default class ModalDepositCreate extends Vue {
                 poolAddress: this.pool.address,
             });
             this.$emit('submit');
+            await this.$store.dispatch('pools/read', this.pool.address);
             this.$bvModal.hide(`modalDepositCreate`);
         } catch (e) {
             this.error = 'Could not send the Deposit';
