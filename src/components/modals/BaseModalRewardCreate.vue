@@ -25,18 +25,7 @@
                         <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
                             <template #button-content>
                                 <div class="d-block" v-if="filteredMetadata.length">
-                                    <span>{{ erc721metadata._id }}</span>
-                                    <br />
-                                    <b-badge
-                                        :key="key"
-                                        v-for="(value, key) in erc721metadata.attributes"
-                                        variant="dark"
-                                        v-b-tooltip
-                                        :title="value.value"
-                                        class="mr-2"
-                                    >
-                                        {{ value.key }}
-                                    </b-badge>
+                                    {{ erc721metadata.title }}
                                 </div>
                                 <div v-else>Create some metadata first</div>
                             </template>
@@ -47,16 +36,7 @@
                             >
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <b-badge
-                                            :key="key"
-                                            v-for="(value, key) in metadata.attributes"
-                                            variant="dark"
-                                            v-b-tooltip
-                                            :title="value.value"
-                                            class="mr-2"
-                                        >
-                                            {{ value.key }}
-                                        </b-badge>
+                                        {{ erc721metadata.title }}
                                     </div>
                                     <small class="text-muted">
                                         {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}

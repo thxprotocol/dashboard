@@ -4,11 +4,14 @@ import { NetworkProvider } from '@/store/modules/pools';
 export enum ERC721Type {
     Uknown = -1,
     Default = 0,
+    NonTransferable = 0,
 }
 
 export interface TERC721Metadata {
     _id: string;
     beneficiary: string;
+    title: string;
+    description: string;
     metadata: { key: string; value: string }[];
     tokenId: number;
     createdAt: Date;
