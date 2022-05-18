@@ -39,7 +39,8 @@
         </b-jumbotron>
         <div class="container container-md">
             <b-alert show variant="info">
-                <i class="fas fa-gift mr-2"></i><strong>New:</strong> Protocol Fee and payment plans are active!
+                <i class="fas fa-gift mr-2"></i><strong>New:</strong> Create NFT projects and mint them with pool
+                rewards!
                 <b-link
                     class="float-right"
                     target="_blank"

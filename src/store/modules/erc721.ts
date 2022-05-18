@@ -122,12 +122,12 @@ class ERC721Module extends VuexModule {
         pool,
         erc721,
         erc721Metadata,
-        beneficiary,
+        recipient,
     }: {
         pool: AssetPool;
         erc721: TERC721;
         erc721Metadata: TERC721Metadata;
-        beneficiary?: string;
+        recipient?: string;
     }) {
         const { data } = await axios({
             method: 'POST',
@@ -136,8 +136,7 @@ class ERC721Module extends VuexModule {
                 AssetPool: pool.address,
             },
             data: {
-                metadata: erc721Metadata,
-                beneficiary,
+                recipient,
             },
         });
         this.context.commit('setMetadata', { erc721, metadata: data });

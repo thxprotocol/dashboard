@@ -2,23 +2,19 @@
     <base-card>
         <template #card-body>
             <b-row class="d-none d-md-flex mb-3">
-                <b-col md="1"><strong>ID</strong></b-col>
-                <b-col md="6"><strong>Attributes</strong></b-col>
-                <b-col><strong>Recipient</strong></b-col>
+                <b-col md="2"><strong>Created</strong></b-col>
+                <b-col md="5"><strong>Attributes</strong></b-col>
+                <b-col><strong>Tokens</strong></b-col>
                 <b-col> </b-col>
             </b-row>
             <b-row :key="key" v-for="(item, key) in metadata" class="mb-3 py-3 bg-light">
-                <b-col
-                    cols="12"
-                    md="1"
-                    class="pb-3 pb-md-0"
-                    v-b-tooltip
-                    :title="format(new Date(item.createdAt), 'dd-MM-yyyy HH:mm')"
-                >
-                    <label class="d-md-none">Token ID: </label>
-                    <div class="text-muted font-weight-bold"># {{ item.tokenId }}</div>
+                <b-col cols="12" md="2" class="pb-3 pb-md-0">
+                    <label class="d-md-none">Created: </label>
+                    <small class="text-muted font-weight-bold">
+                        {{ format(new Date(item.createdAt), 'dd-MM-yyyy HH:mm') }}
+                    </small>
                 </b-col>
-                <b-col cols="12" md="6" class="pb-3 pb-md-0">
+                <b-col cols="12" md="5" class="pb-3 pb-md-0">
                     <label class="d-md-none">Attributes: </label>
                     <div>
                         <b-badge
@@ -34,10 +30,17 @@
                     </div>
                 </b-col>
                 <b-col cols="12" md="3">
-                    <label class="d-md-none">Recipient: </label>
-                    <div>
-                        <base-anchor-address :network="erc721.network" :address="item.recipient" />
-                    </div>
+                    <label class="d-md-none">Tokens: </label>
+                    <b-badge
+                        class="mr-2"
+                        variant="dark"
+                        :key="token.tokenId"
+                        v-for="token of item.tokens"
+                        v-b-tooltip
+                        :title="`Minted at: ${format(new Date(token.createdAt), 'dd-MM-yyyy HH:mm')}`"
+                    >
+                        #{{ token.tokenId }}
+                    </b-badge>
                 </b-col>
                 <b-col cols="12" md="2" class="text-right">
                     <b-button

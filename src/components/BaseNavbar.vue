@@ -60,7 +60,7 @@
                             <b-nav-item
                                 :to="`/pool/${pool.address}/rewards`"
                                 class="nav-link-plain"
-                                v-if="pool.isDefaultPool"
+                                v-if="pool.isDefaultPool || pool.isNFTPool"
                             >
                                 <span>Rewards</span>
                             </b-nav-item>
@@ -81,7 +81,7 @@
                             <b-nav-item
                                 :to="`/pool/${pool.address}/members`"
                                 class="nav-link-plain"
-                                v-if="pool.isDefaultPool || pool.isNFTPool"
+                                v-if="pool.isDefaultPool"
                             >
                                 <span>Members</span>
                             </b-nav-item>
