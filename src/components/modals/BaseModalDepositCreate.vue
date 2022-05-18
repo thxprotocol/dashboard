@@ -6,9 +6,9 @@
         @show="onShow"
         :hide-footer="loading"
         :loading="loading"
-        :error="error" 
+        :error="error"
     >
-    <template v-slot:modal-header v-if="loading">
+        <template v-slot:modal-header v-if="loading">
             <div
                 class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
@@ -25,30 +25,27 @@
                     <b-spinner size="lg" style="width: 3rem; height: 3rem" variant="primary"></b-spinner>
                 </div>
             </div>
-    </template>
-    <template #modal-body v-if="!loading">
-        <form v-on:submit.prevent="submit" id="formDepositCreate">
-            <b-alert variant="danger" show v-if="error && error.length > 0">
-                {{ error }}
-            </b-alert>
-            <b-card bg-variant="light" class="border-0" body-class="p-5" v-else>
-                <b-input-group :append="pool.token.symbol">
-                    <b-form-input type="number" v-model="amount" />
-                </b-input-group>
-            </b-card>
-        </form>
-    </template>
-    
-    <template #btn-primary>
+        </template>
+        <template #modal-body v-if="!loading">
+            <form v-on:submit.prevent="submit" id="formDepositCreate">
+                <b-card bg-variant="light" class="border-0" body-class="p-5">
+                    <b-input-group :append="pool.token.symbol">
+                        <b-form-input type="number" v-model="amount" />
+                    </b-input-group>
+                </b-card>
+            </form>
+        </template>
+
+        <template #btn-primary>
             <b-button
-                :disabled="loading || error != ''"
+                :disabled="loading"
                 class="rounded-pill"
                 type="submit"
                 form="formDepositCreate"
                 variant="primary"
                 block
             >
-                 Send Deposit
+                Send Deposit
             </b-button>
         </template>
     </base-modal>
@@ -62,7 +59,7 @@ import BaseModal from './BaseModal.vue';
 
 @Component({
     components: {
-        BaseModal
+        BaseModal,
     },
     computed: mapGetters({
         pools: 'pools/all',
