@@ -13,7 +13,7 @@
         </b-row>
         <base-nothing-here v-if="!depositForPool" item="a Deposit" @clicked="$bvModal.show('modalDepositCreate')" />
 
-        <modal-deposit-create :pool="pool" />
+        <base-modal-deposit-create :pool="pool" />
     </div>
 </template>
 
@@ -22,11 +22,11 @@ import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { IAssetPools } from '@/store/modules/pools';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
-import ModalDepositCreate from '@/components/modals/BaseModalDepositCreate.vue';
+import BaseModalDepositCreate from '@/components/modals/BaseModalDepositCreate.vue';
 import { IDeposits } from '@/types/IDeposits';
 
 @Component({
-    components: { BaseNothingHere, ModalDepositCreate },
+    components: { BaseNothingHere, BaseModalDepositCreate },
     computed: mapGetters({
         pools: 'pools/all',
         deposit: 'deposits/all',

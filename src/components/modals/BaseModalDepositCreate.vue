@@ -1,15 +1,14 @@
 <template>
-    <b-modal
+    <base-modal
         size="lg"
         title="Add a Deposit"
         id="modalDepositCreate"
-        no-close-on-backdrop
-        no-close-on-esc
-        centered
-        @show="onShow()"
+        @show="onShow"
         :hide-footer="loading"
+        :loading="loading"
+        :error="error" 
     >
-        <template v-slot:modal-header v-if="loading">
+    <template v-slot:modal-header v-if="loading">
             <div
                 class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
                 :style="`
@@ -26,16 +25,10 @@
                     <b-spinner size="lg" style="width: 3rem; height: 3rem" variant="primary"></b-spinner>
                 </div>
             </div>
-        </template>
-        <div class="pt-5 pb-3" v-if="loading">
-            <p class="text-center">
-                <strong>We are sending your deposit</strong><br /><span class="text-muted">
-                    This should be done real soon.
-                </span>
-            </p>
-        </div>
-        <form v-else v-on:submit.prevent="submit" id="formDepositCreate">
-            <b-alert variant="danger" show v-if="error">
+    </template>
+    <template #modal-body v-if="!loading">
+        <form v-on:submit.prevent="submit" id="formDepositCreate">
+            <b-alert variant="danger" show v-if="error && error.length > 0">
                 {{ error }}
             </b-alert>
             <b-card bg-variant="light" class="border-0" body-class="p-5" v-else>
@@ -44,32 +37,38 @@
                 </b-input-group>
             </b-card>
         </form>
-        <template v-slot:modal-footer="{}">
+    </template>
+    
+    <template #btn-primary>
             <b-button
                 :disabled="loading || error != ''"
                 class="rounded-pill"
                 type="submit"
-                variant="primary"
                 form="formDepositCreate"
+                variant="primary"
                 block
             >
-                Send Deposit
+                 Send Deposit
             </b-button>
         </template>
-    </b-modal>
+    </base-modal>
 </template>
 
 <script lang="ts">
 import { AssetPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseModal from './BaseModal.vue';
 
 @Component({
+    components: {
+        BaseModal
+    },
     computed: mapGetters({
         pools: 'pools/all',
     }),
 })
-export default class ModalDepositCreate extends Vue {
+export default class BaseModalDepositCreate extends Vue {
     loading = false;
     error = '';
     amount = 0;
