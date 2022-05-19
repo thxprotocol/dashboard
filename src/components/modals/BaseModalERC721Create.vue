@@ -84,8 +84,8 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/pools';
-import { ERC721Type } from '@/types/erc721';
+import { NetworkProvider } from '@/store/modules/pools';
+import { ERC721Type, TERC721 } from '@/types/erc721';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
@@ -98,16 +98,16 @@ import BaseModal from './BaseModal.vue';
     },
     computed: mapGetters({}),
 })
-export default class ModalERC20Create extends Vue {
+export default class ModalERC721Create extends Vue {
     ERC721Type = ERC721Type;
     loading = false;
     error = '';
 
     tokenType = ERC721Type.Default;
-    tokenList: PoolToken[] = [];
+    tokenList: TERC721[] = [];
     network: NetworkProvider = NetworkProvider.Test;
 
-    erc721Token: PoolToken | null = null;
+    erc721Token: TERC721 | null = null;
 
     propTypes = [
         { label: 'String', value: 'string' },

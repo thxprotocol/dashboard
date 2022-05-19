@@ -34,6 +34,7 @@ export interface Reward {
     progress: number;
     isClaimOnce: boolean;
     isMembershipRequired: boolean;
+    title: string;
 }
 
 export interface IRewards {

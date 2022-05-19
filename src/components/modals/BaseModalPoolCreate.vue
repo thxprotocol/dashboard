@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/pools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
@@ -57,6 +57,7 @@ import BaseDropdownSelectErc721 from '@/components/dropdowns/BaseDropdownSelectE
 import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
 import { IAccount } from '@/types/account';
+import { TERC20 } from '@/types/erc20';
 
 @Component({
     components: {
@@ -75,11 +76,11 @@ export default class ModalAssetPoolCreate extends Vue {
     error = '';
     network: NetworkProvider = NetworkProvider.Test;
     poolVariant = 'defaultPool';
-    token: PoolToken | null = null;
+    token: TERC20 | null = null;
     tokenAddress = '';
     profile!: IAccount;
 
-    onSelectToken(token: PoolToken) {
+    onSelectToken(token: TERC20) {
         this.token = token;
         this.tokenAddress = token ? token.address : '';
     }

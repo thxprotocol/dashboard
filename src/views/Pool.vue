@@ -64,6 +64,15 @@
                 <i class="fas fa-info-circle mr-2"></i>
                 <span class="d-none d-md-inline-block">Details</span>
             </router-link>
+            <router-link
+                active-class="active"
+                class="nav-link"
+                :to="`/pool/${pool.address}/deposits`"
+                v-if="isDepositAllowed"
+            >
+                <i class="fa fa-usd mr-2"></i>
+                <span class="d-none d-md-inline-block">Deposits</span>
+            </router-link>
         </ul>
         <hr />
         <router-view></router-view>
@@ -72,6 +81,7 @@
 
 <script lang="ts">
 import { IAssetPools, NetworkProvider } from '@/store/modules/pools';
+import { ERC20Type } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -80,6 +90,7 @@ import { mapGetters } from 'vuex';
         pools: 'pools/all',
         rewards: 'rewards/all',
         widgets: 'widgets/all',
+        deposits: 'deposits/all',
     }),
 })
 export default class AssetPoolView extends Vue {
@@ -90,6 +101,7 @@ export default class AssetPoolView extends Vue {
     loading = true;
     network: NetworkProvider = NetworkProvider.Test;
     pools!: IAssetPools;
+    isDepositAllowed = false;
 
     get pool() {
         return this.pools[this.$route.params.address];
@@ -98,8 +110,9 @@ export default class AssetPoolView extends Vue {
     async mounted() {
         try {
             this.$store.dispatch('account/getProfile');
-            this.$store.dispatch('pools/read', this.$route.params.address);
+            await this.$store.dispatch('pools/read', this.$route.params.address);
             this.network = this.pool.network;
+            this.isDepositAllowed = this.pool.isDefaultPool && this.pool.token.type === ERC20Type.Limited;
         } catch (e) {
             this.error = 'Could not get the rewards.';
         } finally {

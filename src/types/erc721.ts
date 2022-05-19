@@ -15,6 +15,7 @@ export interface TERC721Metadata {
     metadata: { key: string; value: string }[];
     tokenId: number;
     createdAt: Date;
+    attributes: [{ key: string; value: string }];
 }
 
 export type TERC721 = {

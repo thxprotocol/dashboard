@@ -45,11 +45,11 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/pools';
+import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
-import { IERC20s } from '@/types/erc20';
+import { IERC20s, TERC20 } from '@/types/erc20';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import { IERC721s } from '@/types/erc721';
 
@@ -67,8 +67,8 @@ const QUICKSWAP_TOKEN_LIST =
 })
 export default class ModalAssetPoolCreate extends Vue {
     NetworkProvider = NetworkProvider;
-    erc20Token: PoolToken | null = null;
-    tokenList: PoolToken[] = [];
+    erc20Token: TERC20 | null = null;
+    tokenList: TERC20[] = [];
 
     erc20s!: IERC20s;
     erc721s!: IERC721s;
@@ -84,7 +84,7 @@ export default class ModalAssetPoolCreate extends Vue {
             for (const id in this.erc20s) {
                 this.$store.dispatch('erc20/read', id).then(() => {
                     if (!this.erc20Token) {
-                        this.erc20Token = (this.erc20s[id] as unknown) as PoolToken;
+                        this.erc20Token = this.erc20s[id] as TERC20;
                         this.$emit('selected', this.erc20Token);
                     }
                 });
@@ -106,7 +106,7 @@ export default class ModalAssetPoolCreate extends Vue {
         return r.data;
     }
 
-    onTokenListItemClick(erc20: PoolToken) {
+    onTokenListItemClick(erc20: TERC20 | null) {
         this.erc20Token = erc20;
         this.$emit('selected', this.erc20Token);
     }

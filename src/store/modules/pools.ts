@@ -2,6 +2,8 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IMember } from '@/types/account';
+import { TERC20 } from '@/types/erc20';
+import { TERC721 } from '@/types/erc721';
 
 export interface PoolToken {
     _id: string;
@@ -28,7 +30,7 @@ export interface AssetPool {
     address: string;
     clientId: string;
     clientSecret: string;
-    token: PoolToken;
+    token: TERC20 | TERC721;
     bypassPolls: boolean;
     network: NetworkProvider;
     rewardPollDuration: number;
@@ -153,7 +155,6 @@ class PoolModule extends VuexModule {
             return Pool(r.data);
         } catch (e) {
             console.log(e);
-            debugger;
         }
     }
 
