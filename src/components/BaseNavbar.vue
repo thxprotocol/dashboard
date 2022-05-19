@@ -12,8 +12,15 @@
     >
         <b-navbar toggleable="lg" class="sidebar">
             <div class="w-100 pt-5 pb-4 text-center">
-                <router-link to="/">
-                    <img :src="require('@/assets/logo.png')" width="40" alt="THX logo" />
+                <router-link to="/" custom v-slot="{ navigate }">
+                    <img
+                        :src="require('@/assets/logo.png')"
+                        width="40"
+                        alt="THX logo"
+                        @click="navigate"
+                        @keypress.enter="navigate"
+                        role="link"
+                    />
                 </router-link>
             </div>
             <div class="flex-grow-1 w-100">
@@ -81,7 +88,7 @@
                             <b-nav-item
                                 :to="`/pool/${pool.address}/members`"
                                 class="nav-link-plain"
-                                v-if="pool.isDefaultPool"
+                                v-if="pool.isDefaultPool || pool.isNFTPool"
                             >
                                 <span>Members</span>
                             </b-nav-item>
