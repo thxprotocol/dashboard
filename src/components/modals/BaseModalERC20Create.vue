@@ -51,8 +51,8 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider, PoolToken } from '@/store/modules/pools';
-import { ERC20Type } from '@/types/erc20';
+import { NetworkProvider } from '@/store/modules/pools';
+import { ERC20Type, TERC20 } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
@@ -73,10 +73,10 @@ export default class ModalERC20Create extends Vue {
     error = '';
 
     tokenType = ERC20Type.Unlimited;
-    tokenList: PoolToken[] = [];
+    tokenList: TERC20[] = [];
     network: NetworkProvider = NetworkProvider.Test;
 
-    erc20Token: PoolToken | null = null;
+    erc20Token: TERC20 | null = null;
     erc20TokenAddress = '';
 
     name = '';
