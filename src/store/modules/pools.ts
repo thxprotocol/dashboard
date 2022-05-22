@@ -4,6 +4,7 @@ import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IMember } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
 import { TERC721 } from '@/types/erc721';
+import { IDeposits } from '@/types/IDeposits';
 
 export interface PoolToken {
     _id: string;
@@ -61,6 +62,27 @@ export interface GetMembersResponse {
     limit: number;
     total: number;
 }
+
+export interface GetDepositsProps {
+    address: string;
+    page: number;
+    limit: number;
+}
+
+export interface GetDepositsResponse {
+    results: IDeposits[];
+    next?: { page: number };
+    previous?: { page: number };
+    limit: number;
+    total: number;
+}
+
+const DEPOSITS_RESPONSE_ARR: IDeposits[] = [];
+const DEPOSITS_RESPONSE: GetDepositsResponse = {
+    results: DEPOSITS_RESPONSE_ARR,
+    limit: 10,
+    total: 1,
+};
 
 function Pool(data: any) {
     data.isDefaultPool = data.variant === 'defaultPool';
@@ -197,6 +219,30 @@ class PoolModule extends VuexModule {
             debugger;
         }
 
+        return undefined;
+    }
+
+    @Action({ rawError: true })
+    async getDeposits({ address, page, limit }: GetDepositsProps): Promise<GetDepositsResponse | undefined> {
+        const params = new URLSearchParams();
+            params.set('page', String(page));
+            params.set('limit', String(limit));
+
+        try {
+            const r = await axios({
+                method: 'GET',
+                url: '/deposits',
+                headers: { AssetPool: address },
+            });
+
+            if (r.status !== 200) {
+                throw new Error('Could not list deposits.');
+            }
+
+            return r.data.results.length ? r.data : DEPOSITS_RESPONSE;
+        } catch (error) {
+            console.log('ERROR ON DEPOSIT LIST', error)
+        }
         return undefined;
     }
 }

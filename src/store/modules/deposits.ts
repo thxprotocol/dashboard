@@ -37,26 +37,7 @@ class DepositModule extends VuexModule {
     //     Vue.set(this._all[deposit.poolAddress], deposit.id, deposit);
     // }
 
-    @Action({ rawError: true })
-    async list({ poolAddress }: { poolAddress: string }) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/deposits',
-                headers: { AssetPool: poolAddress },
-            });
-
-            if (r.status !== 200) {
-                throw new Error('Could not list deposits.');
-            }
-
-            for (const data of r.data.results) {
-                this.context.commit('set', { ...data, ...{ poolAddress } });
-            }
-        } catch (error) {
-            return { error };
-        }
-    }
+    
 
     @Action({ rawError: true })
     async read({ poolAddress, id }: { poolAddress: string; id: string }) {
@@ -81,7 +62,7 @@ class DepositModule extends VuexModule {
     async create({ amount, poolAddress }: { amount: number; poolAddress: string }) {
         const r = await axios({
             method: 'POST',
-            url: '/deposits/' + poolAddress,
+            url: '/deposits/admin',
             headers: {
                 AssetPool: poolAddress,
             },
