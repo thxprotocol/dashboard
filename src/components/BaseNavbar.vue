@@ -52,52 +52,24 @@
                                 <i class="fas fa-chart-pie"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Pools</span>
+                                <span class="mr-2">Pools</span>
+                                <small v-if="pool" class="text-truncate w-10 m-0">{{ pool.address }}</small>
                             </div>
                         </div>
-
                         <div v-if="pool" class="bg-dark p-0">
                             <b-nav-item
-                                :to="`/pool/${pool.address}/rewards`"
+                                :to="`/pool/${pool.address}/${route.path}`"
                                 class="nav-link-plain"
-                                v-if="pool.isNFTPool"
+                                link-classes="nav-link-wrapper"
+                                :key="key"
+                                v-for="(route, key) of visibleRoutes"
                             >
-                                <span>Metadata</span>
-                            </b-nav-item>
-                            <b-nav-item
-                                :to="`/pool/${pool.address}/rewards`"
-                                class="nav-link-plain"
-                                v-if="pool.isDefaultPool || pool.isNFTPool"
-                            >
-                                <span>Rewards</span>
-                            </b-nav-item>
-                            <b-nav-item
-                                :to="`/pool/${pool.address}/promocodes`"
-                                class="nav-link-plain"
-                                v-if="pool.isDefaultPool"
-                            >
-                                <span>Promotions</span>
-                            </b-nav-item>
-                            <b-nav-item
-                                :to="`/pool/${pool.address}/widgets`"
-                                class="nav-link-plain"
-                                v-if="pool.isDefaultPool"
-                            >
-                                <span>Widgets</span>
-                            </b-nav-item>
-                            <b-nav-item
-                                :to="`/pool/${pool.address}/members`"
-                                class="nav-link-plain"
-                                v-if="pool.isDefaultPool || pool.isNFTPool"
-                            >
-                                <span>Members</span>
-                            </b-nav-item>
-                            <b-nav-item
-                                :to="`/pool/${pool.address}/info`"
-                                class="nav-link-plain"
-                                v-if="pool.isDefaultPool || pool.isNFTPool"
-                            >
-                                <span>Details</span>
+                                <div class="nav-link-icon text-center">
+                                    <i :class="route.iconClasses"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <span>{{ route.label }}</span>
+                                </div>
                             </b-nav-item>
                         </div>
                     </b-nav-item>
@@ -153,6 +125,7 @@
 
 <script lang="ts">
 import { IAssetPools } from '@/store/modules/pools';
+import { ERC20Type } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -163,6 +136,7 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseNavbar extends Vue {
+    ERC20Type = ERC20Type;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     walletUrl = process.env.VUE_APP_WALLET_URL;
     pools!: IAssetPools;
@@ -172,6 +146,54 @@ export default class BaseNavbar extends Vue {
     }
     get pool() {
         return this.pools[this.$route.params.address];
+    }
+    get visibleRoutes() {
+        const routes = [
+            {
+                path: 'metadata',
+                label: 'Metadata',
+                iconClasses: 'fas fa-palette',
+                visible: this.pool.isNFTPool,
+            },
+            {
+                path: 'rewards',
+                label: 'Rewards',
+                iconClasses: 'fas fa-award',
+                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
+            },
+            {
+                path: 'promotions',
+                label: 'Promotions',
+                iconClasses: 'fas fa-tags',
+                visible: this.pool.isDefaultPool,
+            },
+            {
+                path: 'widgets',
+                label: 'Widgets',
+                iconClasses: 'fas fa-code',
+                visible: this.pool.isDefaultPool,
+            },
+            {
+                path: 'members',
+                label: 'Members',
+                iconClasses: 'fas fa-user',
+                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
+            },
+            {
+                path: 'deposits',
+                label: 'Deposits',
+                iconClasses: 'fa fa-usd',
+                visible: this.pool.isDefaultPool && this.pool.token.type === ERC20Type.Limited,
+            },
+            {
+                path: 'info',
+                label: 'Details',
+                iconClasses: 'fas fa-info-circle',
+                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
+            },
+        ];
+
+        return routes.filter((r: { visible: boolean }) => r.visible);
     }
 }
 </script>
