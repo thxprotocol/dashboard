@@ -22,8 +22,7 @@ import { mapGetters } from 'vuex';
     computed: mapGetters({
         pools: 'pools/all',
         rewards: 'rewards/all',
-        widgets: 'widgets/all',
-        deposits: 'deposits/all',
+        widgets: 'widgets/all'
     }),
 })
 export default class AssetPoolView extends Vue {

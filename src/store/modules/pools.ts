@@ -84,6 +84,8 @@ const DEPOSITS_RESPONSE: GetDepositsResponse = {
     total: 1,
 };
 
+export type IDepositsByPage = { [page: number]: IDeposits[] };
+
 function Pool(data: any) {
     data.isDefaultPool = data.variant === 'defaultPool';
     data.isNFTPool = data.variant === 'nftPool';
@@ -231,7 +233,7 @@ class PoolModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/deposits',
+                url: '/asset_pools/' + address + '/deposits?' + params.toString(),
                 headers: { AssetPool: address },
             });
 
@@ -241,7 +243,7 @@ class PoolModule extends VuexModule {
 
             return r.data.results.length ? r.data : DEPOSITS_RESPONSE;
         } catch (error) {
-            console.log('ERROR ON DEPOSIT LIST', error)
+            console.log('ERROR ON GET DEPOSITS', error)
         }
         return undefined;
     }
