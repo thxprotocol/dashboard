@@ -62,6 +62,7 @@
                     v-model="skin.background"
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
+                    accept="image/*"
                 />
             </b-form-group>
 
@@ -72,6 +73,7 @@
                     v-model="skin.logo"
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
+                    accept="image/*"
                 />
             </b-form-group>
             <b-form-group>
