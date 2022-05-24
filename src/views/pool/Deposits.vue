@@ -2,6 +2,17 @@
 
 
     <div class="container pt-3 h-100 d-flex flex-column">
+         <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Deposit</h2>
+            </b-col>
+            <b-col class="d-flex justify-content-end">
+                <b-button v-b-modal="'modalDepositCreate'" class="rounded-pill" variant="primary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="d-none d-md-inline">Add a deposit</span>
+                </b-button>
+            </b-col>
+        </b-row>
         <b-card class="shadow-sm">
             <b-alert v-if="deposits.length === 0" variant="info" show> There no deposit on this pool yet. </b-alert>
             <div class="row pt-3 pb-2">
@@ -59,7 +70,7 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
-        <base-nothing-here item="a Deposit" @clicked="$bvModal.show('modalDepositCreate')" />
+        <base-nothing-here v-if="total == 0" item="a Deposit" @clicked="$bvModal.show('modalDepositCreate')" />
         <base-modal-deposit-create :pool="pool" />
     </div>
 </template>
