@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool, IAssetPools } from '@/store/modules/pools';
+import { IPool, IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IERC721s, TERC721 } from '@/types/erc721';
@@ -50,11 +50,11 @@ export default class MetadataView extends Vue {
     error = '';
     loading = true;
 
-    pools!: IAssetPools;
+    pools!: IPools;
     erc721s!: IERC721s;
 
-    get pool(): AssetPool {
-        return this.pools[this.$route.params.address];
+    get pool(): IPool {
+        return this.pools[this.$route.params.id];
     }
 
     get erc721(): TERC721 {

@@ -78,7 +78,7 @@ import { ERC721Type, TERC721, TERC721Metadata } from '@/types/erc721';
 import { format } from 'date-fns';
 import { API_URL } from '@/utils/secrets';
 import BaseModalErc721MetadataMint from '@/components/modals/BaseModalERC721MetadataMint.vue';
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 
 @Component({
     components: {
@@ -97,6 +97,6 @@ export default class BaseListItemERC721Metadata extends Vue {
 
     @Prop() metadata!: TERC721Metadata[];
     @Prop() erc721!: TERC721;
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
 }
 </script>

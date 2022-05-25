@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { GetMembersProps, GetMembersResponse, IAssetPools } from '@/store/modules/pools';
+import { GetMembersProps, GetMembersResponse, IPools } from '@/store/modules/pools';
 import { IMemberByPage } from '@/types/account';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -83,14 +83,14 @@ export default class Members extends Vue {
     perPage = 10;
     total = 0;
 
-    pools!: IAssetPools;
+    pools!: IPools;
 
     get members() {
         return this.memberPerPage[this.currentPage] || [];
     }
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     async getMoreMembers({ address, page, limit }: GetMembersProps) {

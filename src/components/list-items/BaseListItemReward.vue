@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
@@ -175,7 +175,7 @@ export default class BaseListItemReward extends Vue {
     claimURL = '';
     qrURL = '';
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() reward!: Reward;
 
     get expired() {

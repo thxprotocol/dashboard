@@ -30,7 +30,7 @@ import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import ModalPromotionCreate from '@/components/modals/BaseModalPromotionCreate.vue';
 import BasePromoCode from '@/components/cards/BasePromoCode.vue';
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { IPromoCodes } from '@/types/IPromoCodes';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
 
@@ -42,15 +42,15 @@ import BaseNothingHere from '@/components/BaseNothingHere.vue';
     }),
 })
 export default class PromotionsView extends Vue {
-    pools!: IAssetPools;
+    pools!: IPools;
     promotions!: IPromoCodes;
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     get promotionsForPool() {
-        return this.promotions[this.$route.params.address];
+        return this.promotions[this.$route.params.id];
     }
 
     async mounted() {

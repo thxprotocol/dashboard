@@ -1,7 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { AssetPool, NetworkProvider } from './pools';
+import { IPool, NetworkProvider } from './pools';
 import { TERC721, IERC721s, TERC721Metadata } from '@/types/erc721';
 
 export type TProp = {
@@ -94,7 +94,7 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async createMetadata(payload: {
-        pool: AssetPool;
+        pool: IPool;
         erc721: TERC721;
         title?: string;
         description?: string;
@@ -124,7 +124,7 @@ class ERC721Module extends VuexModule {
         erc721Metadata,
         recipient,
     }: {
-        pool: AssetPool;
+        pool: IPool;
         erc721: TERC721;
         erc721Metadata: TERC721Metadata;
         recipient?: string;

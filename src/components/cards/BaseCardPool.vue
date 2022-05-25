@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { IAccount } from '@/types/account';
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters, mapState } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
@@ -68,7 +68,7 @@ export default class BaseCardPool extends Vue {
     warning = '';
     loading = true;
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
 
     profile!: IAccount;
     artifacts!: string;
@@ -78,14 +78,14 @@ export default class BaseCardPool extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('pools/read', this.pool.address);
+        await this.$store.dispatch('pools/read', this.pool._id);
         this.loading = false;
     }
 
     async remove() {
         this.loading = true;
         try {
-            await this.$store.dispatch('pools/remove', this.pool.address);
+            await this.$store.dispatch('pools/remove', this.pool);
         } catch (e) {
             console.error(e);
         } finally {
@@ -94,7 +94,7 @@ export default class BaseCardPool extends Vue {
     }
 
     openPoolUrl() {
-        this.$router.push({ path: `pool/${this.pool.address}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
+        this.$router.push({ path: `pool/${this.pool._id}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
     }
 }
 </script>

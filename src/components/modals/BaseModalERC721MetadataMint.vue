@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { TERC721, TERC721Metadata } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -33,7 +33,7 @@ export default class ModalRewardCreate extends Vue {
     error = '';
     recipient = '';
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
     @Prop() erc721Metadata!: TERC721Metadata;
 

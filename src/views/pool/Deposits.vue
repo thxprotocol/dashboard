@@ -20,7 +20,7 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
 import BaseModalDepositCreate from '@/components/modals/BaseModalDepositCreate.vue';
 import { IDeposits } from '@/types/IDeposits';
@@ -33,15 +33,15 @@ import { IDeposits } from '@/types/IDeposits';
     }),
 })
 export default class DepositView extends Vue {
-    pools!: IAssetPools;
+    pools!: IPools;
     deposit!: IDeposits;
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     get depositForPool() {
-        return this.deposit[this.$route.params.address];
+        return this.deposit[this.$route.params.id];
     }
 
     async mounted() {

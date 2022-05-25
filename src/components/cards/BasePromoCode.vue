@@ -21,7 +21,7 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import ModalDelete from '../modals/BaseModalDelete.vue';
 import { TPromoCode } from '@/store/modules/promoCodes';
 import { IPromoCodes } from '@/types/IPromoCodes';
@@ -37,7 +37,7 @@ import { IPromoCodes } from '@/types/IPromoCodes';
 export default class PromoCodesView extends Vue {
     promoCodes!: IPromoCodes;
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() promoCode!: TPromoCode;
 
     async remove() {

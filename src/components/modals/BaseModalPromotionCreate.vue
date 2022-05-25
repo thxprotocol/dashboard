@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
@@ -61,7 +61,7 @@ export default class ModalPromotionCreate extends Vue {
     price = 0;
     value = '';
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
 
     onShow() {
         this.title = '';
