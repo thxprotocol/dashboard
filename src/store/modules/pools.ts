@@ -43,7 +43,7 @@ export interface IPool {
 }
 
 export interface GetMembersProps {
-    address: string;
+    pool: IPool;
     page: number;
     limit: number;
 }
@@ -173,7 +173,7 @@ class PoolModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async getMembers({ address, page, limit }: GetMembersProps): Promise<GetMembersResponse | undefined> {
+    async getMembers({ pool, page, limit }: GetMembersProps): Promise<GetMembersResponse | undefined> {
         try {
             const params = new URLSearchParams();
             params.set('page', String(page));
@@ -181,9 +181,9 @@ class PoolModule extends VuexModule {
 
             const r = await axios({
                 method: 'GET',
-                url: '/pools/' + address + '/members?' + params.toString(),
+                url: '/pools/' + pool._id + '/members?' + params.toString(),
                 headers: {
-                    AssetPool: address,
+                    AssetPool: pool.address,
                 },
             });
 

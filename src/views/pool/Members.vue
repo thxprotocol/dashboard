@@ -52,16 +52,6 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
-
-        <!-- <b-pagination
-            class="mt-3"
-            v-if="total > perPage"
-            @change="onChangePage"
-            v-model="currentPage"
-            :per-page="perPage"
-            :total-rows="total"
-            align="fill"
-        ></b-pagination> -->
     </div>
 </template>
 
@@ -93,10 +83,10 @@ export default class Members extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    async getMoreMembers({ address, page, limit }: GetMembersProps) {
+    async getMoreMembers({ pool, page, limit }: GetMembersProps) {
         this.loading = true;
         const response: GetMembersResponse = await this.$store.dispatch('pools/getMembers', {
-            address,
+            pool,
             page,
             limit,
         });
@@ -108,7 +98,7 @@ export default class Members extends Vue {
 
     async onChangePage(page: number) {
         await this.getMoreMembers({
-            address: this.pool.address,
+            pool: this.pool,
             page: page,
             limit: this.perPage,
         });
@@ -116,7 +106,7 @@ export default class Members extends Vue {
 
     async mounted() {
         await this.getMoreMembers({
-            address: this.pool.address,
+            pool: this.pool,
             page: this.currentPage,
             limit: this.perPage,
         });
