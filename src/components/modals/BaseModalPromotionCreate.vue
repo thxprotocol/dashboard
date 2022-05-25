@@ -81,7 +81,7 @@ export default class ModalPromotionCreate extends Vue {
             return;
         }
 
-        const { error } = await this.$store.dispatch('promoCodes/create', {
+        const { error } = await this.$store.dispatch('promotions/create', {
             title: this.title,
             description: this.description,
             price: this.price,

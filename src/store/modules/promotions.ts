@@ -1,9 +1,10 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { IPromoCodes } from '@/types/IPromoCodes';
+import { IPromotions } from '@/types/IPromotions';
+import { IPool } from './pools';
 
-export type TPromoCode = {
+export type TPromotion = {
     id: string;
     poolAddress: string;
     title: string;
@@ -14,44 +15,44 @@ export type TPromoCode = {
 
 @Module({ namespaced: true })
 class RewardModule extends VuexModule {
-    _all: IPromoCodes = {};
+    _all: IPromotions = {};
 
     get all() {
         return this._all;
     }
 
     @Mutation
-    set(promoCode: TPromoCode) {
-        if (!this._all[promoCode.poolAddress]) {
-            Vue.set(this._all, promoCode.poolAddress, {});
+    set({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
+        if (!this._all[pool._id]) {
+            Vue.set(this._all, pool._id, {});
         }
-        Vue.set(this._all[promoCode.poolAddress], promoCode.id, promoCode);
+        Vue.set(this._all[pool._id], promotion.id, promotion);
     }
 
     @Mutation
-    remove(promoCode: TPromoCode) {
-        Vue.delete(this._all[promoCode.poolAddress], promoCode.id);
+    remove({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
+        Vue.delete(this._all[pool._id], promotion.id);
 
-        if (!Object.values(this._all[promoCode.poolAddress]).length) {
-            Vue.delete(this._all, promoCode.poolAddress);
+        if (!Object.values(this._all[pool._id]).length) {
+            Vue.delete(this._all, pool._id);
         }
     }
 
     @Action({ rawError: true })
-    async list({ poolAddress }: { poolAddress: string }) {
+    async list(pool: IPool) {
         try {
             const r = await axios({
                 method: 'GET',
                 url: '/promotions',
-                headers: { 'X-PoolAddress': poolAddress },
+                headers: { 'X-PoolAddress': pool.address },
             });
 
             if (r.status !== 200) {
                 throw new Error('Could not list promo codes.');
             }
 
-            for (const data of r.data.results) {
-                this.context.commit('set', { ...data, ...{ poolAddress } });
+            for (const promotion of r.data.results) {
+                this.context.commit('set', { promotion, pool });
             }
         } catch (error) {
             return { error };
@@ -107,30 +108,30 @@ class RewardModule extends VuexModule {
             if (r.status !== 201) {
                 throw new Error('Could not create promo code');
             }
-            const promoCode = { ...r.data, ...{ poolAddress } };
+            const promotion = { ...r.data, ...{ poolAddress } };
 
-            this.context.commit('set', promoCode);
+            this.context.commit('set', promotion);
 
-            return { promoCode };
+            return { promotion };
         } catch (error) {
             return { error };
         }
     }
 
     @Action({ rawError: true })
-    async delete(promoCode: TPromoCode) {
+    async delete(promotion: TPromotion) {
         try {
             const r = await axios({
                 method: 'DELETE',
-                url: '/promotions/' + promoCode.id,
-                headers: { 'X-PoolAddress': promoCode.poolAddress },
+                url: '/promotions/' + promotion.id,
+                headers: { 'X-PoolAddress': promotion.poolAddress },
             });
 
             if (r.status !== 204) {
                 throw new Error('Could not delete promo code');
             }
 
-            this.context.commit('remove', promoCode);
+            this.context.commit('remove', promotion);
         } catch (error) {
             console.log(error);
             debugger;

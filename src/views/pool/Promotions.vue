@@ -18,7 +18,7 @@
         />
         <b-row v-else>
             <b-col md="6" :key="promotion.id" v-for="promotion of promotionsForPool">
-                <base-promo-code :promoCode="promotion" :pool="pool" />
+                <base-promotion :promotion="promotion" :pool="pool" />
             </b-col>
         </b-row>
         <modal-promotion-create :pool="pool" />
@@ -28,22 +28,22 @@
 <script lang="ts">
 import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
-import ModalPromotionCreate from '@/components/modals/BaseModalPromotionCreate.vue';
-import BasePromoCode from '@/components/cards/BasePromoCode.vue';
 import { IPools } from '@/store/modules/pools';
-import { IPromoCodes } from '@/types/IPromoCodes';
+import { IPromotions } from '@/types/IPromotions';
+import ModalPromotionCreate from '@/components/modals/BaseModalPromotionCreate.vue';
+import BasePromotion from '@/components/cards/BasePromotion.vue';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
 
 @Component({
-    components: { BaseNothingHere, ModalPromotionCreate, BasePromoCode },
+    components: { BaseNothingHere, ModalPromotionCreate, BasePromotion },
     computed: mapGetters({
         pools: 'pools/all',
-        promotions: 'promoCodes/all',
+        promotions: 'promotions/all',
     }),
 })
 export default class PromotionsView extends Vue {
     pools!: IPools;
-    promotions!: IPromoCodes;
+    promotions!: IPromotions;
 
     get pool() {
         return this.pools[this.$route.params.id];
@@ -54,7 +54,7 @@ export default class PromotionsView extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('promoCodes/list', { poolAddress: this.pool.address });
+        await this.$store.dispatch('promotions/list', this.pool);
     }
 }
 </script>
