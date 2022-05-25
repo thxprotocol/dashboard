@@ -123,7 +123,7 @@ class PoolModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/pools/' + data._id,
-            headers: { AssetPool: data.address },
+            headers: { 'X-PoolAddress': data.address },
         });
 
         this.context.commit('set', Pool(r.data));
@@ -143,9 +143,7 @@ class PoolModule extends VuexModule {
                 method: 'PATCH',
                 url: '/asset_pools/' + payload.pool._id,
                 data: payload.data,
-                headers: {
-                    AssetPool: payload.pool.address,
-                },
+                headers: { 'X-PoolAddress': payload.pool.address },
             });
 
             if (r.status !== 200) {
@@ -164,9 +162,7 @@ class PoolModule extends VuexModule {
             await axios({
                 method: 'DELETE',
                 url: '/pools/' + pool._id,
-                headers: {
-                    AssetPool: pool.address,
-                },
+                headers: { 'X-PoolAddress': pool.address },
             });
 
             this.context.commit('unset', pool._id);

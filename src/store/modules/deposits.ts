@@ -43,7 +43,7 @@ class DepositModule extends VuexModule {
             const r = await axios({
                 method: 'GET',
                 url: '/deposits',
-                headers: { AssetPool: poolAddress },
+                headers: { 'X-PoolAddress': poolAddress },
             });
 
             if (r.status !== 200) {
@@ -64,7 +64,7 @@ class DepositModule extends VuexModule {
             const r = await axios({
                 method: 'GET',
                 url: '/deposits/' + id,
-                headers: { AssetPool: poolAddress },
+                headers: { 'X-PoolAddress': poolAddress },
             });
 
             if (r.status !== 200) {
@@ -82,9 +82,7 @@ class DepositModule extends VuexModule {
         const r = await axios({
             method: 'POST',
             url: '/deposits/admin',
-            headers: {
-                AssetPool: poolAddress,
-            },
+            headers: { 'X-PoolAddress': poolAddress },
             data: { amount },
         });
 

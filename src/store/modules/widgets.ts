@@ -82,9 +82,7 @@ class WidgetModule extends VuexModule {
             method: 'POST',
             url: '/widgets',
             data,
-            headers: {
-                AssetPool: data.metadata.poolAddress,
-            },
+            headers: { 'X-PoolAddress': data.metadata.poolAddress },
         });
     }
 

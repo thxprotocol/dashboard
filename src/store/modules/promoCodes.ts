@@ -42,8 +42,8 @@ class RewardModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/promo_codes',
-                headers: { AssetPool: poolAddress },
+                url: '/promotions',
+                headers: { 'X-PoolAddress': poolAddress },
             });
 
             if (r.status !== 200) {
@@ -63,8 +63,8 @@ class RewardModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'GET',
-                url: '/promo_codes/' + id,
-                headers: { AssetPool: poolAddress },
+                url: '/promotions/' + id,
+                headers: { 'X-PoolAddress': poolAddress },
             });
 
             if (r.status !== 200) {
@@ -94,10 +94,8 @@ class RewardModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'POST',
-                url: '/promo_codes',
-                headers: {
-                    AssetPool: poolAddress,
-                },
+                url: '/promotions',
+                headers: { 'X-PoolAddress': poolAddress },
                 data: {
                     title,
                     description,
@@ -124,10 +122,8 @@ class RewardModule extends VuexModule {
         try {
             const r = await axios({
                 method: 'DELETE',
-                url: '/promo_codes/' + promoCode.id,
-                headers: {
-                    AssetPool: promoCode.poolAddress,
-                },
+                url: '/promotions/' + promoCode.id,
+                headers: { 'X-PoolAddress': promoCode.poolAddress },
             });
 
             if (r.status !== 204) {
