@@ -81,20 +81,17 @@ export default class ModalPromotionCreate extends Vue {
             return;
         }
 
-        const { error } = await this.$store.dispatch('promotions/create', {
+        const promotion = {
             title: this.title,
             description: this.description,
             price: this.price,
             value: this.value,
             poolAddress: this.pool.address,
-        });
+        };
 
-        if (error) {
-            this.error = error;
-        } else {
-            this.$bvModal.hide('modalPromotionCreate');
-        }
+        await this.$store.dispatch('promotions/create', { promotion, pool: this.pool });
 
+        this.$bvModal.hide('modalPromotionCreate');
         this.loading = false;
     }
 }

@@ -40,82 +40,38 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async list(pool: IPool) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/promotions',
-                headers: { 'X-PoolAddress': pool.address },
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/promotions',
+            headers: { 'X-PoolAddress': pool.address },
+        });
 
-            if (r.status !== 200) {
-                throw new Error('Could not list promo codes.');
-            }
-
-            for (const promotion of r.data.results) {
-                this.context.commit('set', { promotion, pool });
-            }
-        } catch (error) {
-            return { error };
+        for (const promotion of r.data.results) {
+            this.context.commit('set', { promotion, pool });
         }
     }
 
     @Action({ rawError: true })
-    async read({ poolAddress, id }: { poolAddress: string; id: string }) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/promotions/' + id,
-                headers: { 'X-PoolAddress': poolAddress },
-            });
+    async read({ pool, id }: { pool: IPool; id: string }) {
+        const r = await axios({
+            method: 'GET',
+            url: '/promotions/' + id,
+            headers: { 'X-PoolAddress': pool.address },
+        });
 
-            if (r.status !== 200) {
-                throw new Error('GET all rewards failed');
-            }
-
-            this.context.commit('set', { ...r.data, ...{ poolAddress } });
-        } catch (error) {
-            return { error };
-        }
+        this.context.commit('set', { pool, promotion: r.data });
     }
 
     @Action({ rawError: true })
-    async create({
-        title,
-        description,
-        price,
-        value,
-        poolAddress,
-    }: {
-        title: string;
-        description: string;
-        price: number;
-        value: string;
-        poolAddress: string;
-    }) {
-        try {
-            const r = await axios({
-                method: 'POST',
-                url: '/promotions',
-                headers: { 'X-PoolAddress': poolAddress },
-                data: {
-                    title,
-                    description,
-                    price,
-                    value,
-                },
-            });
+    async create({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
+        const r = await axios({
+            method: 'POST',
+            url: '/promotions',
+            headers: { 'X-PoolAddress': pool.address },
+            data: promotion,
+        });
 
-            if (r.status !== 201) {
-                throw new Error('Could not create promo code');
-            }
-            const promotion = { ...r.data, ...{ poolAddress } };
-
-            this.context.commit('set', promotion);
-
-            return { promotion };
-        } catch (error) {
-            return { error };
-        }
+        this.context.commit('set', { promotion, pool });
     }
 
     @Action({ rawError: true })
