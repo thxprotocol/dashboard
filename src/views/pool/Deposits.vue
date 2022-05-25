@@ -46,14 +46,14 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="deposit.id" v-for="deposit of deposits">
+                <b-form-group class="mb-0" :key="deposit._id" v-for="deposit of deposits">
                     <hr />
                     <div class="row pt-2 pb-2">
                         <div class="col-md-3 d-flex align-items-center">
                             {{ toEther(Number(deposit.amount)) }}
                         </div>
                         <div class="col-md d-flex align-items-center">
-                            {{ new Date(deposit.createdAt.toString()).toLocaleString() }}
+                            {{ toLocalDate(deposit.createdAt) }}
                         </div>
                         <div class="col-md d-flex align-items-center">
                             {{  getdepositState(Number(deposit.state))  }}
@@ -87,7 +87,8 @@ components: { BaseNothingHere, BaseModalDepositCreate },
 
     computed: mapGetters({
         pools: 'pools/all',
-    }),
+        deposits: 'deposits/all'
+    })
 })
 export default class Deposits extends Vue {
     depositPerPage: IDepositsByPage = {};
@@ -108,6 +109,10 @@ export default class Deposits extends Vue {
 
     toEther(value: number) {
         return value > 0 ? value / 1e18 : 0;
+    }
+
+    toLocalDate(value:Date | string) {
+        return new Date(value.toString()).toLocaleString()
     }
 
     getdepositState(value: number) {

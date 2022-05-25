@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IDeposits } from '@/types/IDeposits';
 import { Vue } from 'vue-property-decorator';
+import PoolModule, { IDepositsByPage } from './pools';
 
 export enum DepositState {
     Pending = 0,
@@ -24,21 +25,24 @@ export type TDeposit = {
 
 @Module({ namespaced: true })
 class DepositModule extends VuexModule {
-    _all: IDeposits = {};
+    _all: IDepositsByPage = {};
 
     get all() {
         return this._all;
     }
 
-    @Mutation
-    set(deposit: TDeposit) {
-        if (!this._all[deposit.receiver]) {
-            Vue.set(this._all, deposit.receiver, {});
-        }
-        Vue.set(this._all[deposit.receiver], deposit.id, deposit);
-    }
+    // @Mutation
+    // set(deposit: TDeposit) {
+    //     if (!this._all[deposit.receiver]) {
+    //         Vue.set(this._all, deposit.receiver, deposit);
+    //     }
+    //     Vue.set(this._all[deposit.receiver], deposit.id, deposit);
+    // }
 
-    
+    @Mutation
+    setDepositPerPage(depositPerPage: IDepositsByPage) {
+        Vue.set(this._all, 'depositPerPage', depositPerPage);
+    }
 
     @Action({ rawError: true })
     async read({ poolAddress, id }: { poolAddress: string; id: string }) {
@@ -75,7 +79,31 @@ class DepositModule extends VuexModule {
         }
         const deposit = { ...r.data, ...{ poolAddress } };
 
-        this.context.commit('set', deposit);
+        //this.context.commit('set', deposit);
+
+        const params = new URLSearchParams();
+            params.set('page', String(1));
+            params.set('limit', String(10));
+
+        try {
+            const r = await axios({
+                method: 'GET',
+                url: '/asset_pools/' + poolAddress + '/deposits?' + params.toString(),
+                headers: { AssetPool: poolAddress },
+            });
+
+            if (r.status !== 200) {
+                throw new Error('Could not list deposits.');
+            } 
+
+            if(r.data.results.length) {
+                debugger;
+                this.context.commit('setDepositPerPage', r.data);
+            }
+
+        } catch (error) {
+            console.log('ERROR ON GET DEPOSITS', error)
+        }
 
         return { deposit };
     }

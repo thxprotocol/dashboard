@@ -196,7 +196,6 @@ class PoolModule extends VuexModule {
             this.context.commit('unset', address);
         } catch (e) {
             console.log(e);
-            debugger;
         }
     }
 
