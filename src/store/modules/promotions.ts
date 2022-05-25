@@ -64,7 +64,7 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async create({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
-        const r = await axios({
+        await axios({
             method: 'POST',
             url: '/promotions',
             headers: { 'X-PoolAddress': pool.address },
@@ -76,23 +76,13 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async delete(promotion: TPromotion) {
-        try {
-            const r = await axios({
-                method: 'DELETE',
-                url: '/promotions/' + promotion.id,
-                headers: { 'X-PoolAddress': promotion.poolAddress },
-            });
+        await axios({
+            method: 'DELETE',
+            url: '/promotions/' + promotion.id,
+            headers: { 'X-PoolAddress': promotion.poolAddress },
+        });
 
-            if (r.status !== 204) {
-                throw new Error('Could not delete promo code');
-            }
-
-            this.context.commit('remove', promotion);
-        } catch (error) {
-            console.log(error);
-            debugger;
-            return { error };
-        }
+        this.context.commit('remove', promotion);
     }
 }
 
