@@ -50,7 +50,7 @@ import { mapGetters, mapState } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from './BaseCard.vue';
-import promisePoller, { CANCEL_TOKEN } from 'promise-poller';
+import promisePoller from 'promise-poller';
 
 @Component({
     components: {
