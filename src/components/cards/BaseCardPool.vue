@@ -50,6 +50,7 @@ import { mapGetters, mapState } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from './BaseCard.vue';
+import promisePoller, { CANCEL_TOKEN } from 'promise-poller';
 
 @Component({
     components: {
@@ -79,7 +80,30 @@ export default class BaseCardPool extends Vue {
 
     async mounted() {
         await this.$store.dispatch('pools/read', this.pool._id);
-        this.loading = false;
+
+        if (!this.pool.address) {
+            this.waitForAddress();
+        } else {
+            this.loading = false;
+        }
+    }
+
+    waitForAddress() {
+        const taskFn = async () => {
+            const pool = await this.$store.dispatch('pools/read', this.pool._id);
+            if (pool.address.length) {
+                this.loading = false;
+                return Promise.resolve(pool);
+            } else {
+                return Promise.reject(pool);
+            }
+        };
+
+        promisePoller({
+            taskFn,
+            interval: 3000,
+            retries: 10,
+        });
     }
 
     async remove() {

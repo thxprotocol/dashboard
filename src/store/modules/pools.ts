@@ -109,8 +109,9 @@ class PoolModule extends VuexModule {
             method: 'get',
             url: '/pools/' + _id,
         });
-
-        this.context.commit('set', Pool(r.data));
+        const pool = Pool(r.data);
+        this.context.commit('set', pool);
+        return pool;
     }
 
     @Action({ rawError: true })
