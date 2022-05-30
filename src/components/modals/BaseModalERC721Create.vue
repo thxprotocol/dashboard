@@ -46,11 +46,14 @@
                             </b-select>
                         </b-col>
                         <b-col md="12">
-                            <b-form-textarea
-                                placeholder="Primary color of the planet"
+                            <b-form-file @change="(data) => onDescChange(key, data)" v-if="prop.propType === 'image'" />
+                            <b-form-textarea                                 accept="image/*"
+ :value="prop.description" />
+                            <component
                                 :value="prop.description"
-                                @input="schema[key]['description'] = $event"
-                            />
+                                placeholder="Primary color of the planet"
+                            ></component>
+
                             <div class="text-right pt-2">
                                 <b-link class="text-danger" @click="$delete(schema, key)" size="sm"> Remove </b-link>
                             </div>
@@ -112,6 +115,7 @@ export default class ModalERC721Create extends Vue {
     propTypes = [
         { label: 'String', value: 'string' },
         { label: 'Number', value: 'number' },
+        { label: 'Image', value: 'image' },
     ];
 
     name = '';
@@ -124,6 +128,21 @@ export default class ModalERC721Create extends Vue {
         },
     ];
     description = '';
+
+    getInputComponent(name: string) {
+        switch (name) {
+            case 'image':
+                return 'b-form-file';
+            default: {
+                return 'b-form-textarea';
+            }
+        }
+    }
+
+    onDescChange(index: number, data: any) {
+        // console.log(index, data.target.files[0]);
+        Vue.set(this.schema[index], 'description', data.target.files[0]);
+    }
 
     async submit() {
         this.loading = true;
