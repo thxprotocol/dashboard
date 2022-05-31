@@ -47,12 +47,12 @@
                         </b-col>
                         <b-col md="12">
                             <b-form-file @change="(data) => onDescChange(key, data)" v-if="prop.propType === 'image'" />
-                            <b-form-textarea                                 accept="image/*"
- :value="prop.description" />
-                            <component
-                                :value="prop.description"
+                            <b-form-textarea
+                                v-else
                                 placeholder="Primary color of the planet"
-                            ></component>
+                                :value="prop.description"
+                                @input="schema[key]['description'] = $event"
+                            />
 
                             <div class="text-right pt-2">
                                 <b-link class="text-danger" @click="$delete(schema, key)" size="sm"> Remove </b-link>
@@ -89,6 +89,7 @@
 <script lang="ts">
 import { NetworkProvider } from '@/store/modules/pools';
 import { ERC721Type, TERC721 } from '@/types/erc721';
+import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
@@ -109,6 +110,8 @@ export default class ModalERC721Create extends Vue {
     tokenType = ERC721Type.Default;
     tokenList: TERC721[] = [];
     network: NetworkProvider = NetworkProvider.Test;
+
+    authUrl = process.env.VUE_APP_AUTH_URL;
 
     erc721Token: TERC721 | null = null;
 
@@ -139,9 +142,30 @@ export default class ModalERC721Create extends Vue {
         }
     }
 
-    onDescChange(index: number, data: any) {
-        // console.log(index, data.target.files[0]);
-        Vue.set(this.schema[index], 'description', data.target.files[0]);
+    async upload(file: File) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await axios({
+                url: '/upload',
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData,
+            });
+
+            return response.data.publicUrl;
+        } catch {
+            /* NO-OP */
+        }
+    }
+
+    async onDescChange(index: number, data: any) {
+        const publicUrl = await this.upload(data.target.files[0]);
+        console.log(publicUrl);
+        Vue.set(this.schema[index], 'description', publicUrl);
     }
 
     async submit() {

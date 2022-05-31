@@ -101,17 +101,13 @@ class ERC721Module extends VuexModule {
         attributes: any;
         recipient?: string;
     }) {
-        const formData = new FormData();
-        formData.append('title', payload.title || '');
-        formData.append('description', payload.description || '');
-        formData.append('attributes', payload.attributes || '');
-        formData.append('recipient', payload.recipient || '');
-
         const { data } = await axios({
             method: 'POST',
             url: `/erc721/${payload.erc721._id}/metadata`,
-            headers: { 'X-PoolAddress': payload.pool.address, 'Content-Type': 'multipart/form-data' },
-            data: formData,
+            headers: {
+                AssetPool: payload.pool.address,
+            },
+            data: payload,
         });
         this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
     }
