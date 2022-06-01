@@ -164,7 +164,6 @@ export default class ModalERC721Create extends Vue {
 
     async onDescChange(index: number, data: any) {
         const publicUrl = await this.upload(data.target.files[0]);
-        console.log(publicUrl);
         Vue.set(this.schema[index], 'description', publicUrl);
     }
 
