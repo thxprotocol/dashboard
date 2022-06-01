@@ -50,6 +50,7 @@
                             <b-form-textarea
                                 v-else
                                 placeholder="Primary color of the planet"
+                                :state="getPropValidation(prop.propType, prop.description)"
                                 :value="prop.description"
                                 @input="schema[key]['description'] = $event"
                             />
@@ -79,7 +80,13 @@
             </b-form-group>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button
+                :disabled="loading || schemaHaveErrors"
+                class="rounded-pill"
+                @click="submit()"
+                variant="primary"
+                block
+            >
                 Create ERC721 Token
             </b-button>
         </template>
@@ -94,6 +101,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
 import BaseModal from './BaseModal.vue';
+
+const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
 
 @Component({
     components: {
@@ -117,6 +126,7 @@ export default class ModalERC721Create extends Vue {
 
     propTypes = [
         { label: 'String', value: 'string' },
+        { label: 'Link', value: 'link' },
         { label: 'Number', value: 'number' },
         { label: 'Image', value: 'image' },
     ];
@@ -132,14 +142,30 @@ export default class ModalERC721Create extends Vue {
     ];
     description = '';
 
-    getInputComponent(name: string) {
+    propValidation = {
+        link: this.validateLink,
+    };
+
+    get schemaHaveErrors() {
+        return this.schema.reduce((pre, cur) => {
+            if (pre) return pre;
+            const currentFieldValid = this.getPropValidation(cur.propType, cur.description);
+            if (currentFieldValid === false) return true;
+            return false;
+        }, false);
+    }
+
+    getPropValidation = (name: string, value: string) => {
         switch (name) {
-            case 'image':
-                return 'b-form-file';
-            default: {
-                return 'b-form-textarea';
-            }
+            case 'link':
+                return this.validateLink(value);
+            default:
+                return undefined;
         }
+    };
+
+    validateLink(str: string) {
+        return URL_REGEX.test(str);
     }
 
     async upload(file: File) {
@@ -168,6 +194,8 @@ export default class ModalERC721Create extends Vue {
     }
 
     async submit() {
+        if (this.schemaHaveErrors) return;
+
         this.loading = true;
 
         const data = {
