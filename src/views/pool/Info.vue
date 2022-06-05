@@ -178,7 +178,7 @@ curl "https://api.thx.network/token" \
     -X "POST" \
     -H 'Content-Type: application/x-www-form-urlencoded' \
     -H 'Authorization: Basic {{ authHeader() }}' \
-    -d 'grant_type=client_credentials&scope=openid admin'
+    -d 'grant_type=client_credentials&scope={{ adminScope }}'
                             </pre
                         >
                     </b-card>
@@ -195,7 +195,7 @@ axios({
     },
     data: {
         grant_type: 'client_credentials',
-        scope: 'openid admin',
+        scope: '{{ adminScope }}',
     }
 });
                             </pre
@@ -207,7 +207,7 @@ axios({
                         <pre>
 var params = new URLSearchParams();
 params.append('grant_type', 'client_credentials');
-params.append('scope', 'openid admin');
+params.append('scope', '{{ adminScope }}');
 var xhr = new XMLHttpRequest();
 xhr.open("POST", "https://api.thx.network/token", true);
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -227,6 +227,7 @@ import { IPools, NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
+import { ADMIN_SCOPE } from '@/utils/oidc';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
@@ -261,6 +262,7 @@ export default class AssetPoolView extends Vue {
     pools!: IPools;
     skin: ISkin = { ...DEFAULT_SKIN };
     remoteSkin: ISkin = { ...DEFAULT_SKIN };
+    adminScope = ADMIN_SCOPE;
 
     network: NetworkProvider = NetworkProvider.Test;
 
@@ -356,7 +358,7 @@ export default class AssetPoolView extends Vue {
         try {
             const data = new URLSearchParams();
             data.append('grant_type', 'client_credentials');
-            data.append('scope', 'openid admin');
+            data.append('scope', this.adminScope);
 
             const r = await axios({
                 url: this.authUrl + '/token',
