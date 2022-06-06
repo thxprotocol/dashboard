@@ -105,7 +105,7 @@
 </template>
 
 <script lang="ts">
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
@@ -136,12 +136,12 @@ export default class WidgetsView extends Vue {
     loading = true;
     skeletonLoading = true;
 
-    pools!: IAssetPools;
+    pools!: IPools;
     rewards!: IRewards;
     widgets!: IWidgets;
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     get filteredWidgets(): Widget[] {

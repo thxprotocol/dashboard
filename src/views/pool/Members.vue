@@ -52,21 +52,11 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
-
-        <!-- <b-pagination
-            class="mt-3"
-            v-if="total > perPage"
-            @change="onChangePage"
-            v-model="currentPage"
-            :per-page="perPage"
-            :total-rows="total"
-            align="fill"
-        ></b-pagination> -->
     </div>
 </template>
 
 <script lang="ts">
-import { GetMembersProps, GetMembersResponse, IAssetPools } from '@/store/modules/pools';
+import { GetMembersProps, GetMembersResponse, IPools } from '@/store/modules/pools';
 import { IMemberByPage } from '@/types/account';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -83,20 +73,20 @@ export default class Members extends Vue {
     perPage = 10;
     total = 0;
 
-    pools!: IAssetPools;
+    pools!: IPools;
 
     get members() {
         return this.memberPerPage[this.currentPage] || [];
     }
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
-    async getMoreMembers({ address, page, limit }: GetMembersProps) {
+    async getMoreMembers({ pool, page, limit }: GetMembersProps) {
         this.loading = true;
         const response: GetMembersResponse = await this.$store.dispatch('pools/getMembers', {
-            address,
+            pool,
             page,
             limit,
         });
@@ -108,7 +98,7 @@ export default class Members extends Vue {
 
     async onChangePage(page: number) {
         await this.getMoreMembers({
-            address: this.pool.address,
+            pool: this.pool,
             page: page,
             limit: this.perPage,
         });
@@ -116,7 +106,7 @@ export default class Members extends Vue {
 
     async mounted() {
         await this.getMoreMembers({
-            address: this.pool.address,
+            pool: this.pool,
             page: this.currentPage,
             limit: this.perPage,
         });

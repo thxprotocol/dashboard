@@ -1,11 +1,10 @@
 <template>
     <b-skeleton-wrapper :loading="loading">
         <template #loading>
-            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
-                <b-skeleton animation="fade" width="65%"></b-skeleton>
+            <b-card class="mb-3 shadow-sm cursor-pointer">
+                <b-skeleton animation="fade" class="mb-3" width="75%"></b-skeleton>
+                <b-skeleton animation="fade" class="mb-3" width="50%"></b-skeleton>
                 <hr />
-                <b-skeleton animation="fade" width="55%"></b-skeleton>
-                <b-skeleton animation="fade" class="mb-3" width="70%"></b-skeleton>
                 <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
             </b-card>
         </template>

@@ -200,7 +200,7 @@ xhr.send(params);
 </template>
 
 <script lang="ts">
-import { IAssetPools, NetworkProvider } from '@/store/modules/pools';
+import { IPools, NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
@@ -233,14 +233,14 @@ export default class AssetPoolView extends Vue {
     loading = true;
     accessToken = '';
     poolLoading = true;
-    pools!: IAssetPools;
+    pools!: IPools;
     skin: ISkin = { ...DEFAULT_SKIN };
     updating = false;
 
     network: NetworkProvider = NetworkProvider.Test;
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     async onUpdateSkin() {

@@ -29,7 +29,7 @@
                 @clicked="$bvModal.show('modalAssetPoolCreate')"
             />
             <div class="row" v-else>
-                <div class="col-md-6 col-lg-4" :key="pool.address" v-for="pool of pools">
+                <div class="col-md-6 col-lg-4" :key="pool._id" v-for="pool of pools">
                     <base-card-pool :pool="pool" />
                 </div>
             </div>
@@ -43,7 +43,7 @@ import BaseCardPool from '@/components/cards/BaseCardPool.vue';
 import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
 import { IAccount } from '@/types/account';
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -60,7 +60,7 @@ import { mapGetters } from 'vuex';
 })
 export default class Home extends Vue {
     profile!: IAccount;
-    pools!: IAssetPools;
+    pools!: IPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
 
     mounted() {

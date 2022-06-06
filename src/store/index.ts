@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 import AccountStore from './modules/account';
 import PoolStore from './modules/pools';
-import PromoCodeStore from './modules/promoCodes';
+import PromotionStore from './modules/promotions';
 import RewardStore from './modules/rewards';
 import WidgetStore from './modules/widgets';
 import ERC20Store from './modules/erc20';
@@ -18,7 +18,7 @@ const getters = {};
 const modules = {
     account: AccountStore,
     pools: PoolStore,
-    promoCodes: PromoCodeStore,
+    promotions: PromotionStore,
     rewards: RewardStore,
     widgets: WidgetStore,
     erc20: ERC20Store,

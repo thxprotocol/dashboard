@@ -203,7 +203,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import {
@@ -278,7 +278,7 @@ export default class ModalRewardCreate extends Vue {
     twitter!: ITwitter;
     spotify!: ISpotify;
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
     @Prop() filteredRewards!: Reward[];
     @Prop() isGovernanceEnabled!: boolean;

@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { TProp } from '@/store/modules/erc721';
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { TERC721 } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -70,7 +70,7 @@ export default class ModalRewardCreate extends Vue {
     title = '';
     description = '';
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
 
     get isSubmitDisabled() {

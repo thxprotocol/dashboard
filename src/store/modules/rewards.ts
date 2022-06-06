@@ -180,7 +180,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/rewards',
-            headers: { AssetPool: address },
+            headers: { 'X-PoolAddress': address },
         });
 
         for (const reward of r.data) {
@@ -206,9 +206,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'POST',
             url: '/rewards',
-            headers: {
-                AssetPool: payload.address,
-            },
+            headers: { 'X-PoolAddress': payload.address },
             data: {
                 slug: payload.slug,
                 title: payload.title,
@@ -232,9 +230,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'PATCH',
             url: `/rewards/${reward.id}`,
-            headers: {
-                AssetPool: reward.poolAddress,
-            },
+            headers: { 'X-PoolAddress': reward.poolAddress },
             data,
         });
 

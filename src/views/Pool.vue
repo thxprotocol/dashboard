@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { IAssetPools, NetworkProvider } from '@/store/modules/pools';
+import { IPools, NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -32,15 +32,15 @@ export default class AssetPoolView extends Vue {
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
     error = '';
     network: NetworkProvider = NetworkProvider.Test;
-    pools!: IAssetPools;
+    pools!: IPools;
 
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
 
     async mounted() {
         this.$store.dispatch('account/getProfile');
-        await this.$store.dispatch('pools/read', this.$route.params.address);
+        await this.$store.dispatch('pools/read', this.$route.params.id);
         this.network = this.pool.network;
     }
 }

@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
@@ -70,7 +70,7 @@ export default class BaseModalDepositCreate extends Vue {
     error = '';
     amount = 0;
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
 
     onShow() {
         this.amount = 0;
@@ -85,7 +85,7 @@ export default class BaseModalDepositCreate extends Vue {
                 poolAddress: this.pool.address,
             });
             this.$emit('submit');
-            await this.$store.dispatch('pools/read', this.pool.address);
+            await this.$store.dispatch('pools/read', this.pool._id);
             this.$bvModal.hide(`modalDepositCreate`);
         } catch (e) {
             this.error = 'Could not send the Deposit';

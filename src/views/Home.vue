@@ -106,7 +106,7 @@
 
 <script lang="ts">
 import { AccountPlanType, IAccount } from '@/types/account';
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -119,7 +119,7 @@ import { mapGetters } from 'vuex';
 export default class Home extends Vue {
     window = window;
     profile!: IAccount;
-    assetPools!: IAssetPools;
+    assetPools!: IPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     AccountPlanType = AccountPlanType;
 

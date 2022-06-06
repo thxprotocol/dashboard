@@ -148,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { Reward } from '@/store/modules/rewards';
@@ -202,7 +202,7 @@ export default class ModalWidgetEdit extends Vue {
         },
     ];
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
     @Prop() filteredRewards!: Reward[];
     @Prop() widget!: Widget;
 

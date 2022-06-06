@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { AssetPool } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
@@ -61,7 +61,7 @@ export default class ModalPromotionCreate extends Vue {
     price = 0;
     value = '';
 
-    @Prop() pool!: AssetPool;
+    @Prop() pool!: IPool;
 
     onShow() {
         this.title = '';
@@ -81,20 +81,17 @@ export default class ModalPromotionCreate extends Vue {
             return;
         }
 
-        const { error } = await this.$store.dispatch('promoCodes/create', {
+        const promotion = {
             title: this.title,
             description: this.description,
             price: this.price,
             value: this.value,
             poolAddress: this.pool.address,
-        });
+        };
 
-        if (error) {
-            this.error = error;
-        } else {
-            this.$bvModal.hide('modalPromotionCreate');
-        }
+        await this.$store.dispatch('promotions/create', { promotion, pool: this.pool });
 
+        this.$bvModal.hide('modalPromotionCreate');
         this.loading = false;
     }
 }

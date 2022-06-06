@@ -58,7 +58,7 @@
                         </div>
                         <div v-if="pool" class="bg-dark p-0">
                             <b-nav-item
-                                :to="`/pool/${pool.address}/${route.path}`"
+                                :to="`/pool/${pool._id}/${route.path}`"
                                 class="nav-link-plain"
                                 link-classes="nav-link-wrapper"
                                 :key="key"
@@ -124,7 +124,7 @@
 </template>
 
 <script lang="ts">
-import { IAssetPools } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { ERC20Type } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -139,14 +139,12 @@ export default class BaseNavbar extends Vue {
     ERC20Type = ERC20Type;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     walletUrl = process.env.VUE_APP_WALLET_URL;
-    pools!: IAssetPools;
+    pools!: IPools;
 
-    get poolAddress() {
-        return this.$route.params.address;
-    }
     get pool() {
-        return this.pools[this.$route.params.address];
+        return this.pools[this.$route.params.id];
     }
+
     get visibleRoutes() {
         const routes = [
             {
@@ -182,7 +180,7 @@ export default class BaseNavbar extends Vue {
             {
                 path: 'deposits',
                 label: 'Deposits',
-                iconClasses: 'fa fa-usd',
+                iconClasses: 'fas fa-chart-line',
                 visible: this.pool.isDefaultPool && this.pool.token.type === ERC20Type.Limited,
             },
             {
