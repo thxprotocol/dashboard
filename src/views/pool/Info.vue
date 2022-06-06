@@ -54,10 +54,21 @@
                     View your token transactions
                 </b-link>
             </b-form-group>
-
+        </b-card>
+        <h2 class="font-weight-normal">Branding</h2>
+        <b-card class="shadow-sm mb-5">
             <b-form-group>
-                <label for="backgroundImgUrl">Pool Background URL</label>
-                <div class="input-group">
+                <label for="backgroundImgUrl">Background URL</label>
+                <b-input-group>
+                    <template #prepend>
+                        <b-card
+                            body-class="py-1 px-2 d-flex align-items-center"
+                            v-if="skin.backgroundImgUrl"
+                            bg-variant="light"
+                        >
+                            <img height="30" width="30" class="m-0" :src="skin.backgroundImgUrl" />
+                        </b-card>
+                    </template>
                     <b-form-input
                         id="backgroundImgUrl"
                         @input.native="onBackgroundImgChange"
@@ -74,18 +85,27 @@
                         <button
                             :disabled="!backgroundImgUrlValid"
                             @click="updateBackgroundUrl"
-                            class="btn btn-danger"
+                            class="btn btn-dark"
                             type="button"
                         >
-                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
-                </div>
+                </b-input-group>
             </b-form-group>
 
             <b-form-group>
-                <label for="logoImgUrl">Pool Logo URL</label>
-                <div class="input-group">
+                <label for="logoImgUrl">Token Icon URL</label>
+                <b-input-group>
+                    <template #prepend>
+                        <b-card
+                            body-class="py-1 px-2 d-flex align-items-center"
+                            v-if="skin.logoImgUrl"
+                            bg-variant="light"
+                        >
+                            <img height="30" width="30" class="m-0" :src="skin.logoImgUrl" />
+                        </b-card>
+                    </template>
                     <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="skin.logoImgUrl" />
                     <div v-if="!logoImgUrlModified" class="input-group-append">
                         <button class="btn btn-primary" type="button">
@@ -94,16 +114,11 @@
                     </div>
 
                     <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button
-                            class="btn btn-danger"
-                            :disabled="!logoImgUrlValid"
-                            @click="updateLogoUrl"
-                            type="button"
-                        >
-                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                        <button class="btn btn-dark" :disabled="!logoImgUrlValid" @click="updateLogoUrl" type="button">
+                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
-                </div>
+                </b-input-group>
             </b-form-group>
         </b-card>
         <h2 class="font-weight-normal">Authorization</h2>
