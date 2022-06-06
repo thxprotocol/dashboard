@@ -46,11 +46,15 @@
                             </b-select>
                         </b-col>
                         <b-col md="12">
+                            <b-form-file @change="(data) => onDescChange(key, data)" v-if="prop.propType === 'image'" />
                             <b-form-textarea
+                                v-else
                                 placeholder="Primary color of the planet"
+                                :state="getPropValidation(prop.propType, prop.description)"
                                 :value="prop.description"
                                 @input="schema[key]['description'] = $event"
                             />
+
                             <div class="text-right pt-2">
                                 <b-link class="text-danger" @click="$delete(schema, key)" size="sm"> Remove </b-link>
                             </div>
@@ -76,7 +80,13 @@
             </b-form-group>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button
+                :disabled="loading || schemaHaveErrors"
+                class="rounded-pill"
+                @click="submit()"
+                variant="primary"
+                block
+            >
                 Create ERC721 Token
             </b-button>
         </template>
@@ -86,10 +96,13 @@
 <script lang="ts">
 import { NetworkProvider } from '@/store/modules/pools';
 import { ERC721Type, TERC721 } from '@/types/erc721';
+import axios from 'axios';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
 import BaseModal from './BaseModal.vue';
+
+const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
 
 @Component({
     components: {
@@ -107,11 +120,15 @@ export default class ModalERC721Create extends Vue {
     tokenList: TERC721[] = [];
     network: NetworkProvider = NetworkProvider.Test;
 
+    authUrl = process.env.VUE_APP_AUTH_URL;
+
     erc721Token: TERC721 | null = null;
 
     propTypes = [
         { label: 'String', value: 'string' },
+        { label: 'Link', value: 'link' },
         { label: 'Number', value: 'number' },
+        { label: 'Image', value: 'image' },
     ];
 
     name = '';
@@ -125,7 +142,60 @@ export default class ModalERC721Create extends Vue {
     ];
     description = '';
 
+    propValidation = {
+        link: this.validateLink,
+    };
+
+    get schemaHaveErrors() {
+        return this.schema.reduce((pre, cur) => {
+            if (pre) return pre;
+            const currentFieldValid = this.getPropValidation(cur.propType, cur.description);
+            if (currentFieldValid === false) return true;
+            return false;
+        }, false);
+    }
+
+    getPropValidation = (name: string, value: string) => {
+        switch (name) {
+            case 'link':
+                return this.validateLink(value);
+            default:
+                return undefined;
+        }
+    };
+
+    validateLink(str: string) {
+        return URL_REGEX.test(str);
+    }
+
+    async upload(file: File) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await axios({
+                url: '/upload',
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData,
+            });
+
+            return response.data.publicUrl;
+        } catch {
+            /* NO-OP */
+        }
+    }
+
+    async onDescChange(index: number, data: any) {
+        const publicUrl = await this.upload(data.target.files[0]);
+        Vue.set(this.schema[index], 'description', publicUrl);
+    }
+
     async submit() {
+        if (this.schemaHaveErrors) return;
+
         this.loading = true;
 
         const data = {
