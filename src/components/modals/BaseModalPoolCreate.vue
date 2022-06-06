@@ -6,11 +6,20 @@
             <b-form-group>
                 <b-form-radio v-model="poolVariant" name="poolVariant" value="defaultPool">
                     <strong> Token Pool</strong>
-                    <p>Reward members of this pool with ERC-20 tokens with claim URLS, QR codes widgets and more.</p>
+                    <p>Reward your users with ERC-20 tokens via claim URLS, QR codes, widgets and more.</p>
+                    <small class="text-muted">2.5% protocol fee on pool deposits and withdrawals</small>
+                </b-form-radio>
+                <b-form-radio v-model="poolVariant" name="poolVariant" value="paymentPool">
+                    <strong> Payment Pool <b-badge variant="primary">Beta</b-badge> </strong>
+                    <p>
+                        Integrate our payment gateway or send payment URL's to ask your customers for a crypto payment
+                        in any token.
+                    </p>
+                    <small class="text-muted">2.5% protocol fee on pool withdrawals</small>
                 </b-form-radio>
                 <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
                     <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
-                    <p>Mint NFT's from your collection to members of your pool.</p>
+                    <p>Mint NFT's from your collection for your users.</p>
                 </b-form-radio>
             </b-form-group>
             <b-form-group>
@@ -25,18 +34,11 @@
                     @selected="onSelectToken"
                     v-if="poolVariant === 'nftPool'"
                 />
-                <b-link to="/tokens">Create a new token</b-link>
-            </b-form-group>
-            <b-form-group>
-                <label>Token Contract Address</label>
-                <b-input-group>
-                    <b-form-input :disabled="!!token" v-model="tokenAddress" />
-                    <b-input-group-addon append>
-                        <b-button variant="primary" v-clipboard:copy="tokenAddress">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-addon>
-                </b-input-group>
+                <base-dropdown-select-multiple-erc20
+                    v-if="poolVariant === 'paymentPool'"
+                    :network="network"
+                    @selected="onSelectTokens"
+                />
             </b-form-group>
         </template>
         <template #btn-primary>
@@ -53,6 +55,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
+import BaseDropdownSelectMultipleErc20 from '@/components/dropdowns/BaseDropdownSelectMultipleERC20.vue';
 import BaseDropdownSelectErc721 from '@/components/dropdowns/BaseDropdownSelectERC721.vue';
 import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
@@ -64,6 +67,7 @@ import { TERC20 } from '@/types/erc20';
         BaseModal,
         BaseFormSelectNetwork,
         BaseDropdownSelectErc20,
+        BaseDropdownSelectMultipleErc20,
         BaseDropdownSelectErc721,
     },
     computed: mapGetters({
@@ -76,13 +80,15 @@ export default class ModalAssetPoolCreate extends Vue {
     error = '';
     network: NetworkProvider = NetworkProvider.Test;
     poolVariant = 'defaultPool';
-    token: TERC20 | null = null;
-    tokenAddress = '';
+    tokens: TERC20[] = [];
     profile!: IAccount;
 
     onSelectToken(token: TERC20) {
-        this.token = token;
-        this.tokenAddress = token ? token.address : '';
+        this.tokens = [token];
+    }
+
+    onSelectTokens(tokens: TERC20[]) {
+        this.tokens = tokens;
     }
 
     async submit() {
@@ -90,7 +96,7 @@ export default class ModalAssetPoolCreate extends Vue {
         try {
             await this.$store.dispatch('pools/create', {
                 network: this.network,
-                token: this.tokenAddress,
+                tokens: this.tokens.map((erc20) => erc20.address),
                 variant: this.poolVariant,
             });
             this.$bvModal.hide(`modalAssetPoolCreate`);

@@ -81,7 +81,7 @@ class DepositModule extends VuexModule {
     async create({ amount, poolAddress }: { amount: number; poolAddress: string }) {
         const r = await axios({
             method: 'POST',
-            url: '/deposits/admin',
+            url: '/pools/' + poolAddress + '/topup',
             headers: { 'X-PoolAddress': poolAddress },
             data: { amount },
         });
