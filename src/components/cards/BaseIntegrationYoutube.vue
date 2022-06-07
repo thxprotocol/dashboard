@@ -53,7 +53,7 @@ export default class Home extends Vue {
 
     disconnect() {
         this.$store
-            .dispatch('account/update', { youtubeAccess: false })
+            .dispatch('account/update', { googleAccess: false })
             .then(() => this.$store.dispatch('account/getYoutube'));
     }
 }
