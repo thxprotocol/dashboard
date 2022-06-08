@@ -30,8 +30,16 @@
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </template>
+                    <b-form-file
+                        @change="(data) => onDescChange(key, data)"
+                        v-if="parsePropType(prop.propType) === 'image'"
+                        accept="image/*"
+                    />
+
                     <b-form-input
+                        v-else
                         :type="parsePropType(prop.propType)"
+                        :state="getPropValidation(prop.propType, prop.value || '')"
                         v-model="prop.value"
                         required
                         :placeholder="`Provide a ${prop.propType} value in this field.`"
@@ -48,12 +56,22 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { TProp } from '@/store/modules/erc721';
 import { IPool } from '@/store/modules/pools';
 import { TERC721 } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
+
+const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
+
+const PROPTYPE_MAP: { [key: string]: string } = {
+    string: 'text',
+    number: 'number',
+    image: 'image',
+    link: 'link',
+};
 
 @Component({
     components: {
@@ -62,7 +80,8 @@ import BaseModal from './BaseModal.vue';
     computed: mapGetters({}),
 })
 export default class ModalRewardCreate extends Vue {
-    docsUrl = process.env.VUE_APP_DOCS_URL;
+    authUrl = process.env['VUE_APP_AUTH_URL'];
+    docsUrl = process.env['VUE_APP_DOCS_URL'];
     loading = false;
     error = '';
 
@@ -77,12 +96,56 @@ export default class ModalRewardCreate extends Vue {
         return this.loading;
     }
 
+    get schemaHaveErrors() {
+        return this.erc721.properties.reduce((pre, cur) => {
+            if (pre) return pre;
+            const currentFieldValid = this.getPropValidation(cur.propType, cur.description);
+            if (currentFieldValid === false) return true;
+            return false;
+        }, false);
+    }
+    getPropValidation = (name: string, value: string) => {
+        switch (name) {
+            case 'link':
+                return this.validateLink(value);
+            default:
+                return undefined;
+        }
+    };
+
+    validateLink(str: string) {
+        return URL_REGEX.test(str);
+    }
+
     parsePropType(propType: string) {
-        if (propType === 'string') return 'text';
-        if (propType === 'number') return 'number';
+        return PROPTYPE_MAP[propType];
+    }
+
+    async upload(file: File) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await axios({
+                url: '/upload',
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                data: formData,
+            });
+            return response.data.publicUrl;
+        } catch {
+            /* NO-OP */
+        }
+    }
+    async onDescChange(index: number, data: any) {
+        const publicUrl = await this.upload(data.target.files[0]);
+        Vue.set(this.erc721.properties[index], 'value', publicUrl);
     }
 
     submit() {
+        if (this.schemaHaveErrors) return;
+
         const attributes: { key: string; value: string | number | undefined }[] = [];
 
         this.erc721.properties.forEach((prop: TProp) => {

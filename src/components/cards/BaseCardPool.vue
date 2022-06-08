@@ -80,7 +80,7 @@ export default class BaseCardPool extends Vue {
 
     async mounted() {
         await this.$store.dispatch('pools/read', this.pool._id);
-
+        console.log(this.pool);
         if (!this.pool.address) {
             this.waitForAddress();
         } else {
