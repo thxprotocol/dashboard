@@ -1,37 +1,33 @@
 <template>
     <base-modal
         size="lg"
-        title="Add a Deposit"
+        :title="`Top up a pool with ${erc20.symbol}`"
         id="modalDepositCreate"
         @show="onShow"
         :hide-footer="loading"
         :loading="loading"
         :error="error"
     >
-        <template v-slot:modal-header v-if="loading">
-            <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
-                :style="`
-                    border-top-left-radius: 0.5rem;
-                    border-top-right-radius: 0.5rem;
-                    background-image: url(${require('@/assets/thx_modal-header.webp')});
-                `"
-            >
-                <h2 class="d-block">Uno momento!</h2>
-                <div
-                    class="shadow-sm bg-white p-2 rounded-pill d-flex align-items-center justify-content-center"
-                    style="position: absolute; bottom: 0; left: 50%; margin-left: -32px; margin-bottom: -32px"
-                >
-                    <b-spinner size="lg" style="width: 3rem; height: 3rem" variant="primary"></b-spinner>
-                </div>
-            </div>
-        </template>
         <template #modal-body v-if="!loading">
+            <p>Pick any of your {{ erc20.symbol }} pools and choose the amount for a top up.</p>
             <form v-on:submit.prevent="submit" id="formDepositCreate">
                 <b-card bg-variant="light" class="border-0" body-class="p-5">
-                    <b-input-group :append="pool.token.symbol">
-                        <b-form-input type="number" v-model="amount" />
-                    </b-input-group>
+                    <b-form-group>
+                        <b-form-select v-model="pool">
+                            <b-form-select-option :value="pool" :key="key" v-for="(pool, key) of filteredPools">
+                                {{ pool.token.symbol }} Pool - {{ pool.token.poolBalance }} {{ pool.token.symbol }}
+                            </b-form-select-option>
+                        </b-form-select>
+                    </b-form-group>
+                    <b-form-group>
+                        <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
+                            <b-form-input type="number" v-model="amount" />
+                        </b-input-group>
+                        <small class="text-muted"
+                            >Your treasury holds <strong>{{ erc20.adminBalance }} {{ erc20.symbol }}</strong
+                            >. <b-link @click="amount = erc20.adminBalance">Set max amount</b-link>
+                        </small>
+                    </b-form-group>
                 </b-card>
             </form>
         </template>
@@ -45,14 +41,15 @@
                 variant="primary"
                 block
             >
-                Send Deposit
+                Transfer to pool
             </b-button>
         </template>
     </base-modal>
 </template>
 
 <script lang="ts">
-import { IPool } from '@/store/modules/pools';
+import { IPool, IPools } from '@/store/modules/pools';
+import { TERC20 } from '@/types/erc20';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
@@ -69,29 +66,44 @@ export default class BaseModalDepositCreate extends Vue {
     loading = false;
     error = '';
     amount = 0;
+    pool: IPool | null = null;
+    pools!: IPools;
 
-    @Prop() pool!: IPool;
+    @Prop() erc20!: TERC20;
+
+    get filteredPools() {
+        return Object.values(this.pools).filter((pool: IPool) => {
+            return this.erc20.address === pool.token.address && this.erc20.network === pool.network;
+        });
+    }
 
     onShow() {
         this.amount = 0;
         this.error = '';
+        this.loading = true;
+        this.$store.dispatch('pools/list').then(async () => {
+            await Promise.all(
+                Object.values(this.pools).map((pool: IPool) => this.$store.dispatch('pools/read', pool._id)),
+            );
+            this.pool = Object.values(this.pools)[0];
+            this.loading = false;
+        });
     }
 
     async submit() {
+        if (!this.pool) return;
+
         this.loading = true;
-        try {
-            await this.$store.dispatch('deposits/create', {
-                amount: this.amount,
-                poolAddress: this.pool.address,
-            });
-            this.$emit('submit');
-            await this.$store.dispatch('pools/read', this.pool._id);
-            this.$bvModal.hide(`modalDepositCreate`);
-        } catch (e) {
-            this.error = 'Could not send the Deposit';
-        } finally {
-            this.loading = false;
-        }
+
+        await this.$store.dispatch('deposits/create', {
+            amount: this.amount,
+            poolAddress: this.pool.address,
+        });
+
+        await this.$store.dispatch('pools/read', this.pool._id);
+
+        this.$bvModal.hide(`modalDepositCreate`);
+        this.loading = false;
     }
 }
 </script>
