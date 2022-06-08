@@ -99,7 +99,7 @@ export default class ModalRewardCreate extends Vue {
     get schemaHaveErrors() {
         return this.erc721.properties.reduce((pre, cur) => {
             if (pre) return pre;
-            const currentFieldValid = this.getPropValidation(cur.propType, cur.description);
+            const currentFieldValid = this.getPropValidation(cur.propType, cur.value);
             if (currentFieldValid === false) return true;
             return false;
         }, false);
