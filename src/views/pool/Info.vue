@@ -1,61 +1,55 @@
 <template>
     <div class="mb-5 pb-5">
         <h2 class="font-weight-normal">Information</h2>
-        <p>General and event information regarding your Asset Pool.</p>
+        <p>Addresses and links to the block explorer pages regarding the smart contracts related to your pool.</p>
         <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label> Blockchain Network </label>
-                <b-form-input readonly v-if="network === 0" value="Polygon Test" />
-                <b-form-input readonly v-if="network === 1" value="Polygon Mainnet" />
-                <b-link
-                    target="_blank"
-                    :href="network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`"
-                >
-                    Visit the Block Explorer
-                </b-link>
-            </b-form-group>
             <b-form-group>
                 <label for="clientId"> Pool Contract </label>
                 <div class="input-group">
                     <b-form-input readonly id="address" v-model="pool.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.address">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </button>
+                        <b-button
+                            class="btn btn-primary"
+                            type="button"
+                            variant="primary"
+                            target="_blank"
+                            v-b-tooltip
+                            title="View your pool transactions on the Polygon block explorer"
+                            :href="
+                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                `/address/${pool.address}/transactions`
+                            "
+                        >
+                            <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
+                        </b-button>
                     </div>
                 </div>
-                <b-link
-                    target="_blank"
-                    :href="
-                        (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/address/${pool.address}/transactions`
-                    "
-                >
-                    View your pool transactions
-                </b-link>
             </b-form-group>
             <b-form-group>
                 <label for="erc20Address">Token Contract</label>
                 <div class="input-group">
                     <b-form-input readonly id="address" v-model="pool.token.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.token.address">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </button>
+                        <b-button
+                            class="btn btn-primary"
+                            type="button"
+                            variant="primary"
+                            target="_blank"
+                            v-b-tooltip
+                            title="View your token transactions on the Polygon block explorer"
+                            :href="
+                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                `/token/${pool.token.address}`
+                            "
+                        >
+                            <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
+                        </b-button>
                     </div>
                 </div>
-                <b-link
-                    target="_blank"
-                    :href="
-                        (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/token/${pool.token.address}`
-                    "
-                >
-                    View your token transactions
-                </b-link>
             </b-form-group>
         </b-card>
-        <h2 class="font-weight-normal">Branding</h2>
+        <h2 class="font-weight-normal">Appearance</h2>
+        <p>Change the appearance of the claim page people will see when claiming your rewards.</p>
         <b-card class="shadow-sm mb-5">
             <b-form-group>
                 <label for="backgroundImgUrl">Background URL</label>
