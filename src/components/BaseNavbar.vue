@@ -178,6 +178,12 @@ export default class BaseNavbar extends Vue {
                 visible: this.pool.isDefaultPool || this.pool.isNFTPool,
             },
             {
+                path: 'transactions',
+                label: 'Transactions',
+                iconClasses: 'fas fa-chart-line',
+                visible: this.pool.isDefaultPool,
+            },
+            {
                 path: 'info',
                 label: 'Details',
                 iconClasses: 'fas fa-info-circle',
