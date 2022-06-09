@@ -1,32 +1,31 @@
 <template>
     <div>
-        <b-row class="mb-3">
-            <b-col class="d-flex align-items-center">
-                <h2 class="mb-0">Pool Transactions in the last 30 days</h2>
+        <h2 class="mb-0">Transactions (30 days)</h2>
+        <div class="py-5" v-if="loading">
+            <b-spinner variant="primary" />
+        </div>
+        <bar-chart v-else :chartData="chartData" :chart-options="chartOptions" />
+        <hr />
+        <b-row>
+            <b-col md="4">
+                <b-card bg-variant="light">
+                    <span>Withdrawals:</span><br />
+                    <div class="h2">{{ pool.metrics.withdrawals }}</div>
+                </b-card>
+            </b-col>
+            <b-col md="4">
+                <b-card bg-variant="light">
+                    <span>Deposits:</span><br />
+                    <div class="h2">{{ pool.metrics.deposits || '-' }}</div>
+                </b-card>
+            </b-col>
+            <b-col md="4">
+                <b-card bg-variant="light">
+                    <span>Members:</span><br />
+                    <div class="h2">{{ pool.metrics.members }}</div>
+                </b-card>
             </b-col>
         </b-row>
-        <b-skeleton-wrapper :loading="loading">
-            <template #loading>
-                <b-form-group class="mb-0">
-                    <hr />
-                    <div class="row pt-2 pb-2">
-                        <div class="col-md-4">
-                            <b-skeleton animation="fade" width="85%"></b-skeleton>
-                            <b-skeleton animation="fade" width="80%"></b-skeleton>
-                        </div>
-                        <div class="col-md-2">
-                            <b-skeleton animation="fade" width="85%"></b-skeleton>
-                            <b-skeleton animation="fade" width="80%"></b-skeleton>
-                        </div>
-                        <div class="col-md-4 text-right d-flex justify-content-end">
-                            <b-skeleton type="avatar" class="inline"></b-skeleton>
-                            <b-skeleton type="avatar" class="inline ml-1"></b-skeleton>
-                        </div>
-                    </div>
-                </b-form-group>
-            </template>
-            <BarChart :chartData="chartData" :chart-options="chartOptions" />
-        </b-skeleton-wrapper>
     </div>
 </template>
 
@@ -103,7 +102,6 @@ export default class TransactionsView extends Vue {
         const data = [];
 
         while (startDate.getTime() <= lastDate.getTime()) {
-
             labels.push(this.formatDateLabel(startDate));
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 1);
