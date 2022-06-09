@@ -2,7 +2,7 @@
     <div>
         <b-row class="mb-3">
             <b-col class="d-flex align-items-center">
-                <h2 class="mb-0">Num of Transactions in the last 30 days</h2>
+                <h2 class="mb-0">Pool Transactions in the last 30 days</h2>
             </b-col>
         </b-row>
         <b-skeleton-wrapper :loading="loading">
@@ -55,7 +55,7 @@ export default class TransactionsView extends Vue {
         labels: [],
         datasets: [
             {
-                label: 'Num of Transactions per day',
+                label: 'Num of Transactions',
                 backgroundColor: '#5942c1',
                 data: [],
             },
@@ -91,6 +91,8 @@ export default class TransactionsView extends Vue {
 
     async mounted() {
         this.loading = true;
+
+        // CREATE THE DATE RANGES FOR THE QUERY
         let lastDate = new Date();
         lastDate.setHours(0, 0, 0, 0);
 
@@ -101,9 +103,7 @@ export default class TransactionsView extends Vue {
         const data = [];
 
         while (startDate.getTime() <= lastDate.getTime()) {
-            console.log('startDate', startDate);
 
-            // CREATE THE CHART LABELS
             labels.push(this.formatDateLabel(startDate));
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 1);
@@ -121,8 +121,6 @@ export default class TransactionsView extends Vue {
         this.chartData.labels = labels;
         this.chartData.datasets[0].data = data;
         this.loading = false;
-
-        console.log('chartData', this.chartData);
     }
 }
 </script>
