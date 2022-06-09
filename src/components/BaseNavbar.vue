@@ -187,7 +187,7 @@ export default class BaseNavbar extends Vue {
                 path: 'transactions',
                 label: 'Transactions',
                 iconClasses: 'fas fa-chart-line',
-                visible: this.pool.isDefaultPool && this.pool.token.type === ERC20Type.Limited,
+                visible: this.pool.isDefaultPool,
             },
             {
                 path: 'info',

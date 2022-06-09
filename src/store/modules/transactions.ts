@@ -32,6 +32,27 @@ export type TTransaction = {
     maxPriorityFeeForGas?: string;
 };
 
+export interface GetTransactionsProps {
+    poolAddress: string;
+    page?: number;
+    limit?: number;
+    startDate?: number;
+    endDate?: number;
+}
+
+const TRANSACTIONS_RESPONSE: GetTransactionsResponse = {
+    results: [],
+    total: 0,
+};
+
+export interface GetTransactionsResponse {
+    results: TTransaction[];
+    next?: { page: number };
+    previous?: { page: number };
+    limit?: number;
+    total: number;
+}
+
 @Module({ namespaced: true })
 class TransactionModule extends VuexModule {
     _all: ITransactions = {};
@@ -49,16 +70,40 @@ class TransactionModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async list(pool: IPool) {
-        const r = await axios({
-            method: 'GET',
-            url: '/transactions',
-            headers: { 'X-PoolAddress': pool.address },
-        });
+    async list({
+        poolAddress,
+        page,
+        limit,
+        startDate,
+        endDate,
+    }: GetTransactionsProps): Promise<GetTransactionsResponse | undefined> {
+        try {
+            const params = new URLSearchParams();
+            if (page) {
+                params.set('page', String(page));
+            }
+            if (limit) {
+                params.set('limit', String(limit));
+            }
+            if (startDate) {
+                params.set('startDate', String(startDate));
+            }
+            if (endDate) {
+                params.set('endDate', String(endDate));
+            }
 
-        for (const transaction of r.data.results) {
-            this.context.commit('set', { transaction, pool });
+            const r = await axios({
+                method: 'GET',
+                url: '/transactions?' + params.toString(),
+                headers: { 'X-PoolAddress': poolAddress },
+            });
+
+            return r.data.results.length ? r.data : TRANSACTIONS_RESPONSE;
+        } catch (e) {
+            console.log(e);
         }
+
+        return undefined;
     }
 }
 export default TransactionModule;

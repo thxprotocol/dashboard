@@ -25,7 +25,7 @@ const modules = {
     erc20: ERC20Store,
     erc721: ERC721Store,
     deposits: DepositStore,
-    transactions: TransactionStore
+    transactions: TransactionStore,
 };
 
 export default new Vuex.Store({
