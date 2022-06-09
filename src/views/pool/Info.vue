@@ -1,63 +1,68 @@
 <template>
     <div class="mb-5 pb-5">
         <h2 class="font-weight-normal">Information</h2>
-        <p>General and event information regarding your Asset Pool.</p>
+        <p>Addresses and links to the block explorer pages regarding the smart contracts related to your pool.</p>
         <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label> Blockchain Network </label>
-                <b-form-input readonly v-if="network === 0" value="Polygon Test" />
-                <b-form-input readonly v-if="network === 1" value="Polygon Mainnet" />
-                <b-link
-                    target="_blank"
-                    :href="network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`"
-                >
-                    Visit the Block Explorer
-                </b-link>
-            </b-form-group>
             <b-form-group>
                 <label for="clientId"> Pool Contract </label>
                 <div class="input-group">
                     <b-form-input readonly id="address" v-model="pool.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.address">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </button>
+                        <b-button
+                            class="btn btn-primary"
+                            type="button"
+                            variant="primary"
+                            target="_blank"
+                            v-b-tooltip
+                            title="View your pool transactions on the Polygon block explorer"
+                            :href="
+                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                `/address/${pool.address}/transactions`
+                            "
+                        >
+                            <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
+                        </b-button>
                     </div>
                 </div>
-                <b-link
-                    target="_blank"
-                    :href="
-                        (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/address/${pool.address}/transactions`
-                    "
-                >
-                    View your pool transactions
-                </b-link>
             </b-form-group>
             <b-form-group>
                 <label for="erc20Address">Token Contract</label>
                 <div class="input-group">
                     <b-form-input readonly id="address" v-model="pool.token.address" />
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" v-clipboard:copy="pool.token.address">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </button>
+                        <b-button
+                            class="btn btn-primary"
+                            type="button"
+                            variant="primary"
+                            target="_blank"
+                            v-b-tooltip
+                            title="View your token transactions on the Polygon block explorer"
+                            :href="
+                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                `/token/${pool.token.address}`
+                            "
+                        >
+                            <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
+                        </b-button>
                     </div>
                 </div>
-                <b-link
-                    target="_blank"
-                    :href="
-                        (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                        `/token/${pool.token.address}`
-                    "
-                >
-                    View your token transactions
-                </b-link>
             </b-form-group>
-
+        </b-card>
+        <h2 class="font-weight-normal">Appearance</h2>
+        <p>Change the appearance of the claim page people will see when claiming your rewards.</p>
+        <b-card class="shadow-sm mb-5">
             <b-form-group>
-                <label for="backgroundImgUrl">Pool Background URL</label>
-                <div class="input-group">
+                <label for="backgroundImgUrl">Background URL</label>
+                <b-input-group>
+                    <template #prepend>
+                        <b-card
+                            body-class="py-1 px-2 d-flex align-items-center"
+                            v-if="skin.backgroundImgUrl"
+                            bg-variant="light"
+                        >
+                            <img height="30" width="30" class="m-0" :src="skin.backgroundImgUrl" />
+                        </b-card>
+                    </template>
                     <b-form-input
                         id="backgroundImgUrl"
                         @input.native="onBackgroundImgChange"
@@ -74,18 +79,27 @@
                         <button
                             :disabled="!backgroundImgUrlValid"
                             @click="updateBackgroundUrl"
-                            class="btn btn-danger"
+                            class="btn btn-dark"
                             type="button"
                         >
-                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
-                </div>
+                </b-input-group>
             </b-form-group>
 
             <b-form-group>
-                <label for="logoImgUrl">Pool Logo URL</label>
-                <div class="input-group">
+                <label for="logoImgUrl">Token Icon URL</label>
+                <b-input-group>
+                    <template #prepend>
+                        <b-card
+                            body-class="py-1 px-2 d-flex align-items-center"
+                            v-if="skin.logoImgUrl"
+                            bg-variant="light"
+                        >
+                            <img height="30" width="30" class="m-0" :src="skin.logoImgUrl" />
+                        </b-card>
+                    </template>
                     <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="skin.logoImgUrl" />
                     <div v-if="!logoImgUrlModified" class="input-group-append">
                         <button class="btn btn-primary" type="button">
@@ -94,16 +108,11 @@
                     </div>
 
                     <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button
-                            class="btn btn-danger"
-                            :disabled="!logoImgUrlValid"
-                            @click="updateLogoUrl"
-                            type="button"
-                        >
-                            <i class="fa fa-sync m-0" style="font-size: 1.2rem"></i>
+                        <button class="btn btn-dark" :disabled="!logoImgUrlValid" @click="updateLogoUrl" type="button">
+                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
-                </div>
+                </b-input-group>
             </b-form-group>
         </b-card>
         <h2 class="font-weight-normal">Authorization</h2>
@@ -178,7 +187,7 @@ curl "https://api.thx.network/token" \
     -X "POST" \
     -H 'Content-Type: application/x-www-form-urlencoded' \
     -H 'Authorization: Basic {{ authHeader() }}' \
-    -d 'grant_type=client_credentials&scope=openid admin'
+    -d 'grant_type=client_credentials&scope={{ adminScope }}'
                             </pre
                         >
                     </b-card>
@@ -195,7 +204,7 @@ axios({
     },
     data: {
         grant_type: 'client_credentials',
-        scope: 'openid admin',
+        scope: '{{ adminScope }}',
     }
 });
                             </pre
@@ -207,7 +216,7 @@ axios({
                         <pre>
 var params = new URLSearchParams();
 params.append('grant_type', 'client_credentials');
-params.append('scope', 'openid admin');
+params.append('scope', '{{ adminScope }}');
 var xhr = new XMLHttpRequest();
 xhr.open("POST", "https://api.thx.network/token", true);
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -227,6 +236,7 @@ import { IPools, NetworkProvider } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
+import { ADMIN_SCOPE } from '@/utils/oidc';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
@@ -261,6 +271,7 @@ export default class AssetPoolView extends Vue {
     pools!: IPools;
     skin: ISkin = { ...DEFAULT_SKIN };
     remoteSkin: ISkin = { ...DEFAULT_SKIN };
+    adminScope = ADMIN_SCOPE;
 
     network: NetworkProvider = NetworkProvider.Test;
 
@@ -356,7 +367,7 @@ export default class AssetPoolView extends Vue {
         try {
             const data = new URLSearchParams();
             data.append('grant_type', 'client_credentials');
-            data.append('scope', 'openid admin');
+            data.append('scope', this.adminScope);
 
             const r = await axios({
                 url: this.authUrl + '/token',

@@ -26,6 +26,16 @@
                 <span class="text-muted">Treasury</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
+            <b-button
+                block
+                @click.stop="$bvModal.show('modalDepositCreate')"
+                class="rounded-pill mt-3"
+                variant="primary"
+            >
+                <i class="fas fa-plus mr-2" aria-hidden="true"></i>
+                Top up pool
+            </b-button>
+            <base-modal-deposit-create :erc20="erc20" />
             <base-modal-delete
                 :id="`modalDelete-${erc20._id}`"
                 :call="() => $store.dispatch('erc20/remove', erc20._id)"
@@ -45,9 +55,11 @@ import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseModalDelete from '../modals/BaseModalDelete.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
+import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 
 @Component({
     components: {
+        BaseModalDepositCreate,
         BaseCard,
         BaseBadgeNetwork,
         BaseModalDelete,

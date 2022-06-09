@@ -21,16 +21,9 @@ import { mapGetters } from 'vuex';
 @Component({
     computed: mapGetters({
         pools: 'pools/all',
-        rewards: 'rewards/all',
-        widgets: 'widgets/all',
-        deposits: 'deposits/all',
     }),
 })
 export default class AssetPoolView extends Vue {
-    docsUrl = process.env.VUE_APP_DOCS_URL;
-    apiUrl = process.env.VUE_APP_API_ROOT;
-    widgetUrl = process.env.VUE_APP_WIDGET_URL;
-    error = '';
     network: NetworkProvider = NetworkProvider.Test;
     pools!: IPools;
 
