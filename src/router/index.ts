@@ -66,10 +66,6 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/pool/Members.vue'),
             },
             {
-                path: 'deposits',
-                component: () => import('../views/pool/Deposits.vue'),
-            },
-            {
                 path: 'transactions',
                 component: () => import('../views/pool/Transactions.vue'),
             },
