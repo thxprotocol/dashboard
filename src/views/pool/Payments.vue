@@ -17,39 +17,74 @@
             item="a payment request"
             @clicked="$bvModal.show('modalPaymentCreate')"
         />
-        <b-card class="shadow-sm" v-else>
-            <b-row class="pt-2 pb-2">
-                <div class="col-md-3">
-                    <strong>Payment ID</strong>
-                </div>
-                <div class="col-md-2">
-                    <strong>Amount</strong>
-                </div>
-                <div class="col-md-2">
-                    <strong>Status</strong>
-                </div>
-                <div class="col-md-4">
-                    <strong>Created/Updated</strong>
-                </div>
-            </b-row>
-            <b-form-group class="mb-0" :key="payment._id" v-for="payment of paymentsForPool">
-                <hr />
-                <b-row>
-                    <b-col md="3">{{ payment._id }}</b-col>
-                    <b-col md="2">{{ payment.amount }}</b-col>
-                    <b-col md="2">{{ payment.state }}</b-col>
-                    <b-col md="4">
+        <b-card class="shadow-sm mb-2" v-else :key="payment._id" v-for="payment of paymentsForPool">
+            <b-row>
+                <b-col md="12">
+                    <small class="float-md-right text-muted" v-b-tooltip :title="`Updated: ${payment.updatedAt}`">
                         {{ payment.createdAt }}
-                        <br />
-                        {{ payment.updatedAt }}
-                    </b-col>
-                </b-row>
-                <hr />
-                <b-col md="12">{{ payment.paymentUrl }}</b-col>
-                <b-col md="12">{{ payment.successUrl }}</b-col>
-                <b-col md="12">{{ payment.cancelUrl }}</b-col>
-                <b-col md="12">{{ payment.failUrl }}</b-col>
-            </b-form-group>
+                    </small>
+                    <div class="d-flex align-items-start">
+                        <strong class="h3 text-primary mr-2">
+                            {{ fromWei(payment.amount, 'ether') }} {{ pool.token.symbol }}
+                        </strong>
+                        <b-badge class="rounded-pill bg-light" :class="{ 'text-success': payment.state }">{{
+                            PaymentState[payment.state]
+                        }}</b-badge>
+                    </div>
+                </b-col>
+                <b-col md="4"> </b-col>
+            </b-row>
+            <hr />
+            <b-row>
+                <b-col md="6">
+                    <b-input-group size="sm">
+                        <b-form-input size="sm" :value="payment.paymentUrl" readonly />
+                        <template #append>
+                            <b-button variant="primary" v-clipboard:copy="payment.paymentUrl">
+                                <i class="fas fa-clipboard ml-0"></i>
+                            </b-button>
+                        </template>
+                    </b-input-group>
+                </b-col>
+                <b-col md="6" class="text-md-right">
+                    <b-button
+                        size="sm"
+                        v-b-tooltip
+                        :title="payment.successUrl"
+                        target="_blank"
+                        :href="payment.successUrl"
+                        variant="light"
+                        class="rounded-pill ml-md-2"
+                    >
+                        <i class="fas fa-check-circle text-success mr-2"></i>
+                        Success URL
+                    </b-button>
+                    <b-button
+                        size="sm"
+                        v-b-tooltip
+                        :title="payment.failUrl"
+                        target="_blank"
+                        :href="payment.failUrl"
+                        variant="light"
+                        class="rounded-pill ml-md-2"
+                    >
+                        <i class="fas fa-exclamation-circle text-danger mr-2"></i>
+                        Fail URL
+                    </b-button>
+                    <b-button
+                        size="sm"
+                        v-b-tooltip
+                        :title="payment.warningUrl"
+                        target="_blank"
+                        :href="payment.warningUrl"
+                        variant="light"
+                        class="rounded-pill ml-md-2"
+                    >
+                        <i class="fas fa-arrow-alt-circle-left text-gray mr-2"></i>
+                        Cancel URL
+                    </b-button>
+                </b-col>
+            </b-row>
         </b-card>
     </div>
 </template>
@@ -61,6 +96,12 @@ import { mapGetters } from 'vuex';
 import { IPayments } from '@/types/IPayments';
 import BaseModalPaymentCreate from '@/components/modals/BaseModalPaymentCreate.vue';
 import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import { fromWei } from 'web3-utils';
+
+enum PaymentState {
+    Pending = 0,
+    Completed = 1,
+}
 
 @Component({
     components: {
@@ -73,6 +114,8 @@ import BaseNothingHere from '@/components/BaseNothingHere.vue';
     }),
 })
 export default class Payments extends Vue {
+    PaymentState = PaymentState;
+    fromWei = fromWei;
     loading = false;
     pools!: IPools;
     payments!: IPayments;

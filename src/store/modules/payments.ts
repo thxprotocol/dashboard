@@ -16,7 +16,9 @@ export type TPayment = {
     transactions: string[];
     state: PaymentState;
     paymentUrl: string;
-    returnUrl: string;
+    successUrl: string;
+    failUrl: string;
+    cancelUrl: string;
     createdAt: Date;
     updatedAt: Date;
 };

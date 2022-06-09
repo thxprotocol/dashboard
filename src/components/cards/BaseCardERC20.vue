@@ -1,14 +1,6 @@
 <template>
     <base-card :loading="erc20.loading" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-body v-if="erc20.name">
-            <b-button
-                variant="link"
-                class="btn-remove rounded-pill float-right"
-                size="sm"
-                @click.stop="$bvModal.show(`modalDelete-${erc20._id}`)"
-            >
-                <i class="far fa-trash-alt"></i>
-            </b-button>
             <base-badge-network class="mr-2" :network="erc20.network" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
@@ -28,14 +20,15 @@
             </p>
             <b-button
                 block
-                @click.stop="$bvModal.show('modalDepositCreate')"
+                @click.stop="$bvModal.show(`modalDepositCreate-${erc20._id}`)"
                 class="rounded-pill mt-3"
                 variant="primary"
+                :disabled="erc20.type !== ERC20Type.Limited"
             >
                 <i class="fas fa-plus mr-2" aria-hidden="true"></i>
                 Top up pool
             </b-button>
-            <base-modal-deposit-create :erc20="erc20" />
+            <base-modal-deposit-create @submit="getERC20" :erc20="erc20" />
             <base-modal-delete
                 :id="`modalDelete-${erc20._id}`"
                 :call="() => $store.dispatch('erc20/remove', erc20._id)"
@@ -79,6 +72,10 @@ export default class BaseCardERC20 extends Vue {
     @Prop() erc20!: TERC20;
 
     mounted() {
+        this.getERC20();
+    }
+
+    getERC20() {
         this.$store.dispatch('erc20/read', this.erc20._id);
     }
 

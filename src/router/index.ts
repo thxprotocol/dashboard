@@ -65,6 +65,10 @@ const routes: Array<RouteConfig> = [
                 path: 'members',
                 component: () => import('../views/pool/Members.vue'),
             },
+            {
+                path: 'payments',
+                component: () => import('../views/pool/Payments.vue'),
+            },
         ],
     },
     {
