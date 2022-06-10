@@ -1,5 +1,8 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
+        <b-button block @click.stop="$bvModal.show('modalPoolMemberAdd')" class="my-3" variant="primary">
+            <b-icon-plus /> Add Members
+        </b-button>
         <b-card class="shadow-sm">
             <b-alert v-if="members.length === 0" variant="info" show> There no member on this pool yet. </b-alert>
             <div class="row pt-2 pb-2">
@@ -31,7 +34,7 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="member.id" v-for="member of members">
+                <b-form-group class="mb-0" :key="member.memberId" v-for="member of members">
                     <hr />
                     <div class="row pt-2 pb-2">
                         <div class="col-md-4 d-flex align-items-center">
@@ -52,6 +55,7 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
+        <base-modal-member-add :pool="pool" :onSuccess="onMemberAdded" />
     </div>
 </template>
 
@@ -61,7 +65,12 @@ import { IMemberByPage } from '@/types/account';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
+import BaseModalMemberAdd from '@/components/modals/BaseModalMemberAdd.vue';
+
 @Component({
+    components: {
+        BaseModalMemberAdd,
+    },
     computed: mapGetters({
         pools: 'pools/all',
     }),
@@ -102,6 +111,12 @@ export default class Members extends Vue {
             page: page,
             limit: this.perPage,
         });
+    }
+
+    async onMemberAdded() {
+        this.currentPage = 1;
+        this.onChangePage(1);
+        this.$bvModal.hide('modalPoolMemberAdd');
     }
 
     async mounted() {
