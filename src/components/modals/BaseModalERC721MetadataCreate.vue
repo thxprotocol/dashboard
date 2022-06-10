@@ -31,7 +31,8 @@
                         </a>
                     </template>
                     <b-form-file
-                        @change="(data) => onDescChange(key, data)"
+                        @change="onDescChange"
+                        :data-key="key"
                         v-if="parsePropType(prop.propType) === 'image'"
                         accept="image/*"
                     />
@@ -64,6 +65,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
 
+// eslint-disable-next-line no-useless-escape
 const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
 
 const PROPTYPE_MAP: { [key: string]: string } = {
@@ -99,7 +101,7 @@ export default class ModalRewardCreate extends Vue {
     get schemaHaveErrors() {
         return this.erc721.properties.reduce((pre, cur) => {
             if (pre) return pre;
-            const currentFieldValid = this.getPropValidation(cur.propType, cur.value);
+            const currentFieldValid = this.getPropValidation(cur.propType, cur.value || '');
             if (currentFieldValid === false) return true;
             return false;
         }, false);
@@ -138,9 +140,9 @@ export default class ModalRewardCreate extends Vue {
             /* NO-OP */
         }
     }
-    async onDescChange(index: number, data: any) {
-        const publicUrl = await this.upload(data.target.files[0]);
-        Vue.set(this.erc721.properties[index], 'value', publicUrl);
+    async onDescChange(event: any) {
+        const publicUrl = await this.upload(event.target.files[0]);
+        Vue.set(this.erc721.properties[event.target.dataset['key']], 'value', publicUrl);
     }
 
     submit() {
