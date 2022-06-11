@@ -111,7 +111,9 @@ export default class ModalERC721Create extends Vue {
 
     propTypes = [
         { label: 'String', value: 'string' },
+        { label: 'Link', value: 'link' },
         { label: 'Number', value: 'number' },
+        { label: 'Image', value: 'image' },
     ];
 
     name = '';

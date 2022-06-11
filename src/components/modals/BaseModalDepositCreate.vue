@@ -75,7 +75,7 @@ export default class BaseModalDepositCreate extends Vue {
 
     get filteredPools() {
         return Object.values(this.pools).filter((pool: IPool) => {
-            return this.erc20.address === pool.token.address && this.erc20.network === pool.network;
+            return pool.address && this.erc20.address === pool.token.address && this.erc20.network === pool.network;
         });
     }
 
