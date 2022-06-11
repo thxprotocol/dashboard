@@ -14,12 +14,8 @@
                     <strong class="mr-1">{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
                 </div>
             </div>
-            <div v-else>Provide ERC20 token contract address</div>
+            <div v-else>Select an ERC20 token</div>
         </template>
-        <b-dropdown-item-button key="custom-token-address" @click="onTokenListItemClick(null)">
-            Provide ERC20 token contract address
-        </b-dropdown-item-button>
-        <b-dropdown-divider v-if="hasERC20s" />
         <b-dropdown-item-button
             :disabled="network !== erc20.network"
             :key="erc20._id"

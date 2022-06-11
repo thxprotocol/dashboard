@@ -12,6 +12,9 @@
             <p>Pick any of your {{ erc20.symbol }} pools and choose the amount for a top up.</p>
             <form v-on:submit.prevent="submit" id="formDepositCreate">
                 <b-card bg-variant="light" class="border-0" body-class="p-5">
+                    <b-alert variant="warning" show v-if="!filteredPools.length">
+                        You can only top up pools that are connected to this token.
+                    </b-alert>
                     <b-form-group>
                         <b-form-select v-model="pool">
                             <b-form-select-option :value="pool" :key="key" v-for="(pool, key) of filteredPools">
@@ -23,15 +26,14 @@
                         <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
                             <b-form-input type="number" v-model="amount" />
                         </b-input-group>
-                        <small class="text-muted"
-                            >Your treasury holds <strong>{{ erc20.adminBalance }} {{ erc20.symbol }}</strong
-                            >. <b-link @click="amount = erc20.adminBalance">Set max amount</b-link>
+                        <small class="text-muted">
+                            Your treasury holds <strong>{{ erc20.adminBalance }} {{ erc20.symbol }} </strong>.
+                            <b-link @click="amount = erc20.adminBalance">Set max amount</b-link>
                         </small>
                     </b-form-group>
                 </b-card>
             </form>
         </template>
-
         <template #btn-primary>
             <b-button
                 :disabled="loading"
@@ -41,7 +43,7 @@
                 variant="primary"
                 block
             >
-                Transfer to pool
+                Top up {{ amount }} {{ pool.token.symbol }}
             </b-button>
         </template>
     </base-modal>
@@ -78,14 +80,15 @@ export default class BaseModalDepositCreate extends Vue {
     }
 
     onShow() {
+        this.loading = true;
         this.amount = 0;
         this.error = '';
-        this.loading = true;
         this.$store.dispatch('pools/list').then(async () => {
-            await Promise.all(
-                Object.values(this.pools).map((pool: IPool) => this.$store.dispatch('pools/read', pool._id)),
+            const promises = Object.values(this.pools).map((pool: IPool) =>
+                this.$store.dispatch('pools/read', pool._id),
             );
-            this.pool = Object.values(this.pools)[0];
+            await Promise.all(promises);
+            this.pool = Object.values(this.filteredPools)[0];
             this.loading = false;
         });
     }
@@ -97,11 +100,13 @@ export default class BaseModalDepositCreate extends Vue {
 
         await this.$store.dispatch('deposits/create', {
             amount: this.amount,
+            id: this.pool._id,
             poolAddress: this.pool.address,
         });
 
         await this.$store.dispatch('pools/read', this.pool._id);
 
+        this.$emit('submit');
         this.$bvModal.hide(`modalDepositCreate-${this.erc20._id}`);
         this.loading = false;
     }
