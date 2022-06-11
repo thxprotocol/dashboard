@@ -36,11 +36,6 @@
                 Top up pool
             </b-button>
             <base-modal-deposit-create :erc20="erc20" />
-            <base-modal-delete
-                :id="`modalDelete-${erc20._id}`"
-                :call="() => $store.dispatch('erc20/remove', erc20._id)"
-                :subject="erc20.name"
-            />
         </template>
     </base-card>
 </template>
@@ -53,7 +48,6 @@ import { NetworkProvider } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
-import BaseModalDelete from '../modals/BaseModalDelete.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 
@@ -62,7 +56,6 @@ import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
         BaseModalDepositCreate,
         BaseCard,
         BaseBadgeNetwork,
-        BaseModalDelete,
         BaseIdenticon,
     },
     computed: mapGetters({
