@@ -28,7 +28,7 @@
             </p>
             <b-button
                 block
-                @click.stop="$bvModal.show('modalDepositCreate')"
+                @click.stop="$bvModal.show(`modalDepositCreate-${erc20._id}`)"
                 class="rounded-pill mt-3"
                 variant="primary"
             >

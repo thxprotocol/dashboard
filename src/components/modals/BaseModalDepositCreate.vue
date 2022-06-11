@@ -2,7 +2,7 @@
     <base-modal
         size="lg"
         :title="`Top up a pool with ${erc20.symbol}`"
-        id="modalDepositCreate"
+        :id="`modalDepositCreate-${erc20._id}`"
         @show="onShow"
         :hide-footer="loading"
         :loading="loading"
@@ -102,7 +102,7 @@ export default class BaseModalDepositCreate extends Vue {
 
         await this.$store.dispatch('pools/read', this.pool._id);
 
-        this.$bvModal.hide(`modalDepositCreate`);
+        this.$bvModal.hide(`modalDepositCreate-${this.erc20._id}`);
         this.loading = false;
     }
 }
