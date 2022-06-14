@@ -3,7 +3,7 @@
         <b-dropdown variant="link" class="dropdown-select mb-2">
             <template #button-content> Select the currencies you want to support </template>
             <b-dropdown-item-button
-                :disabled="network !== erc20.network"
+                :disabled="chainId !== erc20.chainId"
                 :key="erc20._id"
                 v-for="erc20 of erc20s"
                 @click="onTokenListItemClick(erc20)"
@@ -15,7 +15,7 @@
             </b-dropdown-item-button>
             <b-dropdown-divider />
             <b-dropdown-item-button
-                :disabled="network !== NetworkProvider.Main"
+                :disabled="chainId !== ChainId.Polygon"
                 :key="erc20.address"
                 v-for="erc20 of tokenList"
                 @click="onTokenListItemClick(erc20)"
@@ -55,13 +55,13 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { IERC20s, TERC20 } from '@/types/erc20';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import { IERC721s } from '@/types/erc721';
+import { ChainId } from '@/types/enums/ChainId';
 
 const QUICKSWAP_TOKEN_LIST =
     'https://unpkg.com/quickswap-default-token-list@1.2.36/build/quickswap-default.tokenlist.json';
@@ -76,14 +76,14 @@ const QUICKSWAP_TOKEN_LIST =
     }),
 })
 export default class ModalAssetPoolCreate extends Vue {
-    NetworkProvider = NetworkProvider;
+    ChainId = ChainId;
     erc20Tokens: TERC20[] = [];
     tokenList: TERC20[] = [];
 
     erc20s!: IERC20s;
     erc721s!: IERC721s;
 
-    @Prop() network!: NetworkProvider;
+    @Prop() chainId!: ChainId;
 
     get hasERC20s() {
         return !!Object.values(this.erc20s).length;

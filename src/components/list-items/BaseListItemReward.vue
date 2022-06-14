@@ -198,7 +198,7 @@ export default class BaseListItemReward extends Vue {
             this.imgData = data;
             // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
             const d = {
-                network: this.pool.network,
+                chainId: this.pool.chainId,
                 poolAddress: this.pool.address,
                 tokenSymbol: this.pool.token.symbol,
                 rewardId: this.reward.id,

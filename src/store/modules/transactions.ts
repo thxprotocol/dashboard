@@ -1,7 +1,8 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { IPool, NetworkProvider } from '@/store/modules/pools';
+import { IPool } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 import { ITransactions } from '@/types/ITransactions';
 
 export enum TransactionType {
@@ -23,7 +24,7 @@ export type TTransaction = {
     to: string;
     nonce: number;
     gas: string;
-    network: NetworkProvider;
+    network: ChainId;
     transactionHash: string;
     relayTransactionHash?: string;
     call?: { fn: string; args: string };

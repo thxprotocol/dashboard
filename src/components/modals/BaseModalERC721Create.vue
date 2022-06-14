@@ -1,7 +1,7 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create NFT contract" id="modalERC721Create">
         <template #modal-body v-if="!loading">
-            <base-form-select-network @selected="network = $event" />
+            <base-form-select-network @selected="chainId = $event" />
             <label>Variant</label>
             <b-form-group>
                 <b-form-radio v-model="tokenType" name="tokenType" :value="ERC721Type.Default">
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 import { ERC721Type, TERC721 } from '@/types/erc721';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -105,7 +105,7 @@ export default class ModalERC721Create extends Vue {
 
     tokenType = ERC721Type.Default;
     tokenList: TERC721[] = [];
-    network: NetworkProvider = NetworkProvider.Test;
+    chainId: ChainId = ChainId.PolygonMumbai;
 
     erc721Token: TERC721 | null = null;
 
@@ -131,7 +131,7 @@ export default class ModalERC721Create extends Vue {
         this.loading = true;
 
         const data = {
-            network: this.network,
+            chainId: this.chainId,
             name: this.name,
             symbol: this.symbol,
             description: this.description,

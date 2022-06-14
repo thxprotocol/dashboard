@@ -1,5 +1,5 @@
 import { TProp } from '@/store/modules/erc721';
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 
 export enum ERC721Type {
     Uknown = -1,
@@ -21,7 +21,7 @@ export interface TERC721Metadata {
 export type TERC721 = {
     _id: string;
     type: ERC721Type;
-    network: NetworkProvider;
+    chainId: ChainId;
     poolAddress: string;
     address: string;
     name: string;

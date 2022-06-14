@@ -232,11 +232,12 @@ xhr.send(params);
 </template>
 
 <script lang="ts">
-import { IPools, NetworkProvider } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
+import { ChainId } from '@/types/enums/ChainId';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
@@ -272,8 +273,7 @@ export default class AssetPoolView extends Vue {
     skin: ISkin = { ...DEFAULT_SKIN };
     remoteSkin: ISkin = { ...DEFAULT_SKIN };
     adminScope = ADMIN_SCOPE;
-
-    network: NetworkProvider = NetworkProvider.Test;
+    chainId: ChainId = ChainId.PolygonMumbai;
 
     get backgroundImgUrlModified() {
         return this.skin.backgroundImgUrl !== this.remoteSkin.backgroundImgUrl;
@@ -350,7 +350,7 @@ export default class AssetPoolView extends Vue {
 
     async mounted() {
         try {
-            this.network = this.pool.network;
+            this.chainId = this.pool.chainId;
             await this.getSkin();
         } catch (e) {
             this.error = 'Could get pool information.';

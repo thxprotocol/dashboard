@@ -3,7 +3,6 @@
         <base-navbar />
         <div class="sidebar-sibling">
             <div v-if="profile" class="d-flex position-fixed justify-content-end p-3" style="right: 0">
-                <base-dropdown-admin-balance class="mr-2" />
                 <base-dropdown-account class="mr-2" />
                 <base-dropdown-menu />
             </div>
@@ -18,13 +17,11 @@ import { IAccount } from './types/account';
 import { initGTM } from '@/utils/ga';
 import BaseDropdownAccount from './components/dropdowns/BaseDropdownAccount.vue';
 import BaseNavbar from './components/BaseNavbar.vue';
-import BaseDropdownAdminBalance from './components/dropdowns/BaseDropdownAdminBalance.vue';
 import BaseDropdownMenu from './components/dropdowns/BaseDropdownMenu.vue';
 import { GTM } from '@/utils/secrets';
 
 @Component({
     components: {
-        BaseDropdownAdminBalance,
         BaseDropdownAccount,
         BaseDropdownMenu,
         BaseNavbar,

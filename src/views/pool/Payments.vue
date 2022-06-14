@@ -74,9 +74,9 @@
                     <b-button
                         size="sm"
                         v-b-tooltip
-                        :title="payment.warningUrl"
+                        :title="payment.cancelUrl"
                         target="_blank"
-                        :href="payment.warningUrl"
+                        :href="payment.cancelUrl"
                         variant="light"
                         class="rounded-pill ml-md-2"
                     >

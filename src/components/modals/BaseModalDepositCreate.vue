@@ -43,7 +43,7 @@
                 variant="primary"
                 block
             >
-                Top up {{ amount }} {{ pool.token.symbol }}
+                Top up {{ amount }} {{ erc20.symbol }}
             </b-button>
         </template>
     </base-modal>
@@ -75,7 +75,7 @@ export default class BaseModalDepositCreate extends Vue {
 
     get filteredPools() {
         return Object.values(this.pools).filter((pool: IPool) => {
-            return pool.address && this.erc20.address === pool.token.address && this.erc20.network === pool.network;
+            return pool.address && this.erc20.address === pool.token.address && this.erc20.chainId === pool.chainId;
         });
     }
 

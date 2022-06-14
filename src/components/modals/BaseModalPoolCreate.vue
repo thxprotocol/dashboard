@@ -1,7 +1,7 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
         <template #modal-body v-if="profile && !loading">
-            <base-form-select-network @selected="network = $event" />
+            <base-form-select-network @selected="chainId = $event" />
             <label>Variant</label>
             <b-form-group>
                 <b-form-radio v-model="poolVariant" name="poolVariant" value="defaultPool">
@@ -9,34 +9,34 @@
                     <p>Reward your users with ERC-20 tokens via claim URLS, QR codes, widgets and more.</p>
                     <small class="text-muted">2.5% protocol fee on pool deposits and withdrawals</small>
                 </b-form-radio>
-                <b-form-radio v-model="poolVariant" name="poolVariant" value="paymentPool">
-                    <strong> Payment Pool <b-badge variant="primary">Beta</b-badge> </strong>
+                <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
+                    <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
+                    <p>Mint NFT's from your collection for your users.</p>
+                </b-form-radio>
+                <b-form-radio :disabled="true" v-model="poolVariant" name="poolVariant" value="paymentPool">
+                    <strong> Payment Pool <b-badge variant="primary">New</b-badge> </strong>
                     <p>
                         Integrate our payment gateway or send payment URL's to ask your customers for a crypto payment
                         in any token.
                     </p>
                     <small class="text-muted">2.5% protocol fee on pool withdrawals</small>
                 </b-form-radio>
-                <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
-                    <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
-                    <p>Mint NFT's from your collection for your users.</p>
-                </b-form-radio>
             </b-form-group>
             <b-form-group>
                 <label> Token Contract </label>
                 <base-dropdown-select-erc20
-                    :network="network"
+                    :chainId="chainId"
                     @selected="onSelectToken"
                     v-if="poolVariant === 'defaultPool'"
                 />
                 <base-dropdown-select-erc-721
-                    :network="network"
+                    :chainId="chainId"
                     @selected="onSelectToken"
                     v-if="poolVariant === 'nftPool'"
                 />
                 <base-dropdown-select-multiple-erc20
                     v-if="poolVariant === 'paymentPool'"
-                    :network="network"
+                    :chainId="chainId"
                     @selected="onSelectTokens"
                 />
             </b-form-group>
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
@@ -78,7 +78,7 @@ import { TERC20 } from '@/types/erc20';
 export default class ModalAssetPoolCreate extends Vue {
     loading = false;
     error = '';
-    network: NetworkProvider = NetworkProvider.Test;
+    chainId: ChainId = ChainId.PolygonMumbai;
     poolVariant = 'defaultPool';
     tokens: TERC20[] = [];
     profile!: IAccount;
@@ -95,7 +95,7 @@ export default class ModalAssetPoolCreate extends Vue {
         this.loading = true;
         try {
             await this.$store.dispatch('pools/create', {
-                network: this.network,
+                chainId: this.chainId,
                 tokens: this.tokens.map((erc20) => erc20.address),
                 variant: this.poolVariant,
             });

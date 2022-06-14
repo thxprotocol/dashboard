@@ -32,5 +32,9 @@ import BaseIdenticon from '../BaseIdenticon.vue';
 })
 export default class BaseDropdownAccount extends Vue {
     profile!: IAccount;
+
+    mounted() {
+        this.$store.dispatch('account/getHealth');
+    }
 }
 </script>
