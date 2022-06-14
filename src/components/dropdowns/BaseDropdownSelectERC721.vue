@@ -1,13 +1,13 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select">
         <template #button-content>
-            <div class="d-flex align-items-center" v-if="token && !token.loading">
+            <div class="d-flex align-items-center" v-if="token">
                 <base-identicon class="mr-3" :size="20" variant="darker" :uri="token.logoURI" />
                 <strong class="mr-1">{{ token.symbol }}</strong> {{ token.name }}
             </div>
         </template>
         <b-dropdown-item-button
-            :disabled="network !== erc721.network"
+            :disabled="chainId !== erc721.chainId"
             :key="erc721._id"
             v-for="erc721 of erc721s"
             @click="onTokenListItemClick(erc721)"
@@ -21,11 +21,11 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import { IERC721s, TERC721 } from '@/types/erc721';
+import { ChainId } from '@/types/enums/ChainId';
 
 @Component({
     components: {
@@ -36,13 +36,13 @@ import { IERC721s, TERC721 } from '@/types/erc721';
     }),
 })
 export default class BaseDropdownSelectERC721 extends Vue {
-    NetworkProvider = NetworkProvider;
+    ChainId = ChainId;
     token: TERC721 | null = null;
     tokenList: TERC721[] = [];
 
     erc721s!: IERC721s;
 
-    @Prop() network!: NetworkProvider;
+    @Prop() chainId!: ChainId;
 
     get hasERC721s() {
         return !!Object.values(this.erc721s).length;

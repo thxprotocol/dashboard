@@ -4,6 +4,7 @@ import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IMember } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
 import { TERC721 } from '@/types/erc721';
+import { ChainId } from '@/types/enums/ChainId';
 
 export interface PoolToken {
     _id: string;
@@ -21,19 +22,14 @@ export enum PoolTokenType {
     New = 1,
 }
 
-export enum NetworkProvider {
-    Test = 0,
-    Main = 1,
-}
-
 export interface IPool {
     _id: string;
     address: string;
     clientId: string;
     clientSecret: string;
-    token: TERC20 | TERC721;
+    token: (TERC20 | TERC721) & PoolToken;
     bypassPolls: boolean;
-    network: NetworkProvider;
+    chainId: ChainId;
     rewardPollDuration: number;
     proposeWithdrawPollDuration: number;
     metrics: { members: number; withdrawals: number };

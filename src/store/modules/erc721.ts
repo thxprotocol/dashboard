@@ -1,7 +1,8 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { IPool, NetworkProvider } from './pools';
+import { IPool } from './pools';
+import { ChainId } from '@/types/enums/ChainId';
 import { TERC721, IERC721s, TERC721Metadata } from '@/types/erc721';
 
 export type TProp = {
@@ -82,7 +83,7 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: NetworkProvider; name: string; symbol: string; schema: string[] }) {
+    async create(payload: { network: ChainId; name: string; symbol: string; schema: string[] }) {
         const { data } = await axios({
             method: 'POST',
             url: '/erc721',

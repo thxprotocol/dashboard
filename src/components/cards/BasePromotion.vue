@@ -41,7 +41,7 @@ export default class PromoCodesView extends Vue {
     @Prop() promotion!: TPromotion;
 
     remove() {
-        this.$store.dispatch('promotions/delete', this.promotion);
+        this.$store.dispatch('promotions/delete', { pool: this.pool, promotion: this.promotion });
     }
 }
 </script>

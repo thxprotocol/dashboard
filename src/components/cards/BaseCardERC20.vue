@@ -1,7 +1,7 @@
 <template>
-    <base-card :loading="erc20.loading" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="erc20 && erc20.loading" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-body v-if="erc20.name">
-            <base-badge-network class="mr-2" :network="erc20.network" />
+            <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
                 <div>
@@ -37,12 +37,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { ERC20Type, TERC20 } from '@/types/erc20';
-import { NetworkProvider } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
+import { chainInfo } from '@/utils/chains';
 
 @Component({
     components: {
@@ -73,9 +73,7 @@ export default class BaseCardERC20 extends Vue {
     }
 
     openTokenUrl() {
-        const url = `https://${this.erc20.network === NetworkProvider.Test ? 'mumbai.' : ''}polygonscan.com/token/${
-            this.erc20.address
-        }`;
+        const url = `${chainInfo[this.erc20.chainId].blockExplorer}/token/${this.erc20.address}`;
         return (window as any).open(url, '_blank').focus();
     }
 }

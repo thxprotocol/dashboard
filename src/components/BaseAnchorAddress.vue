@@ -5,18 +5,17 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
+import { chainInfo } from '@/utils/chains';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
 export default class BaseAnchorAddress extends Vue {
     @Prop() address!: string;
-    @Prop() network!: NetworkProvider;
+    @Prop() chainId!: ChainId;
 
     openAddressUrl() {
-        const url = `https://${this.network === NetworkProvider.Test ? 'mumbai.' : ''}polygonscan.com/address/${
-            this.address
-        }`;
+        const url = `${chainInfo[this.chainId].blockExplorer}/address/${this.address}`;
         return (window as any).open(url, '_blank').focus();
     }
 }

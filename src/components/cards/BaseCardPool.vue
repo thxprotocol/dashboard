@@ -19,22 +19,14 @@
                 >
                     <i class="far fa-trash-alt"></i>
                 </b-button>
-                <base-badge-network :network="pool.network" :version="pool.version" class="mr-1" />
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-users mr-1"></i>
-                    {{ pool.metrics.members }}
-                </b-badge>
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-gift mr-1"></i>
-                    {{ pool.metrics.withdrawals }}
-                </b-badge>
+                <base-badge-network :chainId="pool.chainId" class="mr-1" />
                 <p class="font-weight-bold text-primary h3 mt-3 mb-0">
                     {{ pool.token.poolBalance }} {{ pool.token.symbol }}
                 </p>
                 <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
 
                 <hr />
-                <b-button :disabled="outOfDate" class="rounded-pill" variant="light" @click="openPoolUrl()" block>
+                <b-button :disabled="outOfDate" class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
                     View Pool
                 </b-button>
             </template>
@@ -80,7 +72,7 @@ export default class BaseCardPool extends Vue {
 
     async mounted() {
         await this.$store.dispatch('pools/read', this.pool._id);
-        console.log(this.pool);
+
         if (!this.pool.address) {
             this.waitForAddress();
         } else {
