@@ -65,7 +65,6 @@ export default class BaseModalPaymentCreate extends Vue {
     successUrl = '';
     failUrl = '';
     cancelUrl = '';
-    chainId = 31337; // Default hardhat
 
     get amountInWei() {
         return this.amount * this.units[this.unit];
@@ -77,7 +76,7 @@ export default class BaseModalPaymentCreate extends Vue {
         this.loading = true;
 
         const payment = {
-            chainId: this.chainId,
+            chainId: this.pool.chainId,
             amount: this.amountInWei,
             successUrl: this.successUrl,
             failUrl: this.failUrl,
