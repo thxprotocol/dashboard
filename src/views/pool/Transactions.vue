@@ -34,7 +34,7 @@ import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { IPools } from '@/store/modules/pools';
 import { ITransactions } from '@/types/ITransactions';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BarChart from '@/components/charts/BarChart.vue';
 import { GetTransactionsResponse } from '@/store/modules/transactions';
 

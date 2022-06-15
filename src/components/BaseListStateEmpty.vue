@@ -1,8 +1,13 @@
 <template>
     <div class="text-center text-gray py-5">
         <i class="far fa-sticky-note mr-1 h2"></i><br />
-        <strong> You have not added {{ item.toLowerCase() }} yet</strong><br />
-        <span>Do you want to add one now?</span><br />
+        <strong> {{ title }}</strong>
+        <br />
+        <p>
+            {{ description }}
+            <br /><span>Do you want to add one now?</span>
+        </p>
+
         <b-button
             :disabled="disabled"
             size="sm"
@@ -10,7 +15,7 @@
             variant="outline-primary"
             @click="$emit('clicked')"
         >
-            Add {{ item }}
+            {{ textSubmit }}
         </b-button>
     </div>
 </template>
@@ -25,13 +30,9 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseListStateEmpty extends Vue {
-    @Prop() item!: string;
+    @Prop() textSubmit!: string;
+    @Prop() title!: string;
+    @Prop() description!: string;
     @Prop() disabled!: boolean;
-
-    mounted() {
-        if (!this.item) {
-            this.item = 'item';
-        }
-    }
 }
 </script>

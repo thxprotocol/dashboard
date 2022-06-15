@@ -28,7 +28,10 @@
         <div class="container container-md">
             <base-nothing-here
                 v-if="!Object.values(erc20s).length"
-                item="a Token"
+                text-submit="Create a Token"
+                title="You have not created a Token yet"
+                description="Tokens could be used for making payments, exchanging value, point systems
+                and reputation metrics."
                 @clicked="$bvModal.show('modalERC20Create')"
             />
             <b-row v-else>
@@ -46,7 +49,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 
 @Component({
     components: {

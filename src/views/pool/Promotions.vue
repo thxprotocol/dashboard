@@ -13,7 +13,9 @@
         </b-row>
         <base-nothing-here
             v-if="!promotionsForPool"
-            item="a Promotion"
+            text-submit="Create a Promotion"
+            title="You have not created a promotion yet"
+            description="Let people redeem your tokens for secret URL's, discount codes, passwords or any other thing you can fit in a text box."
             @clicked="$bvModal.show('modalPromotionCreate')"
         />
         <b-row v-else>
@@ -32,7 +34,7 @@ import { IPools } from '@/store/modules/pools';
 import { IPromotions } from '@/types/IPromotions';
 import ModalPromotionCreate from '@/components/modals/BaseModalPromotionCreate.vue';
 import BasePromotion from '@/components/cards/BasePromotion.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 
 @Component({
     components: { BaseNothingHere, ModalPromotionCreate, BasePromotion },

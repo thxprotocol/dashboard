@@ -23,7 +23,9 @@
 
         <base-nothing-here
             v-if="!filteredWidgets.length"
-            item="a Widget"
+            text-submit="Create a Widget"
+            title="You have not created a widget yet"
+            description="Embed HTML widgets in your website or blog and let people claim your tokens."
             :disabled="!filteredRewards.length"
             @clicked="$bvModal.show('modalWidgetCreate')"
         />
@@ -110,7 +112,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
 import { IWidgets, Widget } from '@/store/modules/widgets';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseModalWidgetCreate from '@/components/modals/BaseModalWidgetCreate.vue';
 import BaseModalWidgetEdit from '@/components/modals/BaseModalWidgetEdit.vue';
 import ModalDelete from '@/components/modals/BaseModalDelete.vue';

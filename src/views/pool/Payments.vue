@@ -14,7 +14,9 @@
         </b-row>
         <base-nothing-here
             v-if="paymentsForPool && !paymentsForPool.length"
-            item="a payment request"
+            text-submit="Create a Payment Request"
+            title="You have not requested a payment yet"
+            description="Ask people to pay you with the configured pool token."
             @clicked="$bvModal.show('modalPaymentCreate')"
         />
         <b-card class="shadow-sm mb-2" v-else :key="payment._id" v-for="payment of paymentsForPool">
@@ -95,7 +97,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IPayments } from '@/types/IPayments';
 import BaseModalPaymentCreate from '@/components/modals/BaseModalPaymentCreate.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { fromWei } from 'web3-utils';
 
 enum PaymentState {

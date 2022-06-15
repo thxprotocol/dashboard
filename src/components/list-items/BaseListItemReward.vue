@@ -61,7 +61,9 @@
 
             <hr />
             <template v-if="pool.isDefaultPool">
-                <label>Supply Limit:</label>
+                <label>
+                    Supply Limit: <strong v-if="reward.withdrawLimit" class="">{{ reward.withdrawLimit }}</strong>
+                </label>
                 <b-progress>
                     <b-progress-bar
                         :label="

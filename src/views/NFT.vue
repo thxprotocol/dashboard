@@ -29,7 +29,10 @@
         <div class="container container-md">
             <base-nothing-here
                 v-if="!Object.values(erc721s).length"
-                item="an NFT"
+                text-submit="Create an NFT"
+                title="You have not created an NFT yet"
+                description="NFT's could be used for creating digital art collections, certificates
+                of authenticity, in-game loot and social status."
                 @clicked="$bvModal.show('modalERC721Create')"
             />
             <b-row v-else>
@@ -47,7 +50,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 
 @Component({
     components: {
