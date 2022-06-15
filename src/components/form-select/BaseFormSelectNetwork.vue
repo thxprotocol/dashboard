@@ -9,21 +9,14 @@
                         {{ chainInfo[chainId].name }}
                     </div>
                 </template>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_ethereum.svg" width="20" height="20" class="mr-3" />
-                    Ethereum
-                </b-dropdown-item-button>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_arbitrum.svg" width="20" height="20" class="mr-3" />
-                    Arbitrum
-                </b-dropdown-item-button>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_bsc.svg" width="20" height="20" class="mr-3" />
-                    Binance Chain
-                </b-dropdown-item-button>
-                <b-dropdown-item-button @click="onSelectNetwork(n.chainId)" :key="key" v-for="(n, key) of chainInfo">
+                <b-dropdown-item-button
+                    :disabled="n.disabled"
+                    @click="onSelectNetwork(n.chainId)"
+                    :key="key"
+                    v-for="(n, key) of chainInfo"
+                >
                     <img :src="n.logo" width="20" height="20" class="mr-3" />
-                    {{ n.name }}
+                    <span>{{ n.name }}</span>
                 </b-dropdown-item-button>
             </b-dropdown>
         </b-form-group>
