@@ -1,7 +1,8 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
         <b-button block @click.stop="$bvModal.show('modalPoolMemberAdd')" class="my-3" variant="primary">
-            <b-icon-plus /> Add Members
+            <i class="fas fa-plus mr-1"></i>
+            Add Members
         </b-button>
         <b-card class="shadow-sm">
             <b-alert v-if="members.length === 0" variant="info" show> There no member on this pool yet. </b-alert>
