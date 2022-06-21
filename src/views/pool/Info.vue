@@ -241,12 +241,12 @@ import { ChainId } from '@/types/enums/ChainId';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
-const DEFAULT_brand: Ibrand = {
+const DEFAULT_brand: IBrand = {
     logoImgUrl: '',
     backgroundImgUrl: '',
 };
 
-interface Ibrand {
+interface IBrand {
     logoImgUrl: string;
     backgroundImgUrl: string;
 }
@@ -270,8 +270,8 @@ export default class AssetPoolView extends Vue {
     accessToken = '';
     poolLoading = true;
     pools!: IPools;
-    brand: Ibrand = { ...DEFAULT_brand };
-    remotebrand: Ibrand = { ...DEFAULT_brand };
+    brand: IBrand = { ...DEFAULT_brand };
+    remotebrand: IBrand = { ...DEFAULT_brand };
     adminScope = ADMIN_SCOPE;
     chainId: ChainId = ChainId.PolygonMumbai;
 
@@ -303,7 +303,7 @@ export default class AssetPoolView extends Vue {
         Vue.set(this.brand, 'logoImgUrl', e.target.value);
     }
 
-    async updatebrand(brand: Partial<Ibrand>) {
+    async updatebrand(brand: Partial<IBrand>) {
         try {
             const r = await axios({
                 url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
