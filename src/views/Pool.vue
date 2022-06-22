@@ -1,5 +1,5 @@
 <template>
-    <div v-if="pool" class="p-3">
+    <div v-if="pool" class="p-3 d-inline-block">
         <b-dropdown size="sm" variant="link">
             <template #button-content>
                 <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
