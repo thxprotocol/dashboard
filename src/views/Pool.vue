@@ -1,6 +1,13 @@
 <template>
-    <div v-if="pool" class="p-3 d-inline-block">
-        <b-dropdown size="sm" variant="link">
+    <div class="container container-md pt-5" v-if="pool && pool.token">
+        <div class="d-flex align-items-center">
+            <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
+            <base-badge-network :chainId="pool.chainId" />
+        </div>
+        <span class="lead">
+            {{ pool.token.name }}
+        </span>
+        <b-dropdown size="sm" variant="link" class="d-inline-block">
             <template #button-content>
                 <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
             </template>
@@ -15,17 +22,8 @@
                 <i class="fas fa-arrow-alt-circle-right text-muted ml-2"></i>
             </b-dropdown-item-btn>
         </b-dropdown>
-        <div class="container container-md pt-10" v-if="pool.token">
-            <div class="d-flex align-items-center">
-                <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
-                <base-badge-network :chainId="pool.chainId" />
-            </div>
-            <div class="lead">
-                {{ pool.token.name }}
-            </div>
-            <hr />
-            <router-view></router-view>
-        </div>
+        <hr />
+        <router-view></router-view>
     </div>
 </template>
 
