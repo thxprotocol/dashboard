@@ -78,7 +78,12 @@
                     <div v-if="backgroundImgUrlModified" class="input-group-append">
                         <button
                             :disabled="!backgroundImgUrlValid"
-                            @click="updateBackgroundUrl"
+                            @click="
+                                updateBrand({
+                                    backgroundImgUrl: brand.backgroundImgUrl,
+                                    logoImgUrl: remotebrand.logoImgUrl,
+                                })
+                            "
                             class="btn btn-dark"
                             type="button"
                         >
@@ -108,7 +113,17 @@
                     </div>
 
                     <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button class="btn btn-dark" :disabled="!logoImgUrlValid" @click="updateLogoUrl" type="button">
+                        <button
+                            class="btn btn-dark"
+                            :disabled="!logoImgUrlValid"
+                            @click="
+                                updateBrand({
+                                    backgroundImgUrl: remotebrand.backgroundImgUrl,
+                                    logoImgUrl: brand.logoImgUrl,
+                                })
+                            "
+                            type="button"
+                        >
                             <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
@@ -238,10 +253,11 @@ import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
+import { OidcMetadata } from 'oidc-client';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
-const DEFAULT_brand: IBrand = {
+const DEFAULT_BRANDING: IBrand = {
     logoImgUrl: '',
     backgroundImgUrl: '',
 };
@@ -267,11 +283,11 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
-    accessToken = '';
+    accessToken: any = null;
     poolLoading = true;
     pools!: IPools;
-    brand: IBrand = { ...DEFAULT_brand };
-    remotebrand: IBrand = { ...DEFAULT_brand };
+    brand: IBrand = DEFAULT_BRANDING;
+    remotebrand: IBrand = DEFAULT_BRANDING;
     adminScope = ADMIN_SCOPE;
     chainId: ChainId = ChainId.PolygonMumbai;
 
@@ -303,64 +319,37 @@ export default class AssetPoolView extends Vue {
         Vue.set(this.brand, 'logoImgUrl', e.target.value);
     }
 
-    async updatebrand(brand: Partial<IBrand>) {
-        try {
-            const r = await axios({
-                url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: brand,
-            });
-
-            this.brand = JSON.parse(JSON.stringify(r.data));
-            this.remotebrand = JSON.parse(JSON.stringify(r.data));
-        } catch {
-            /* NO-OP */
-        }
-    }
-
-    async updateBackgroundUrl() {
-        await this.updatebrand({
-            backgroundImgUrl: this.brand.backgroundImgUrl,
-            logoImgUrl: this.remotebrand.logoImgUrl,
+    async updateBrand(brand: Partial<IBrand>) {
+        const r = await axios({
+            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: brand,
         });
+
+        this.brand = JSON.parse(JSON.stringify(r.data));
+        this.remotebrand = JSON.parse(JSON.stringify(r.data));
     }
 
-    async updateLogoUrl() {
-        await this.updatebrand({
-            backgroundImgUrl: this.remotebrand.backgroundImgUrl,
-            logoImgUrl: this.brand.logoImgUrl,
+    async getBrand() {
+        const r = await axios({
+            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
         });
-    }
 
-    async getbrand() {
-        try {
-            const r = await axios({
-                url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            });
-
-            this.brand = JSON.parse(JSON.stringify(r.data));
-            this.remotebrand = JSON.parse(JSON.stringify(r.data));
-        } catch {
-            /* NO-OP */
-        }
+        this.brand = JSON.parse(JSON.stringify(r.data));
+        this.remotebrand = JSON.parse(JSON.stringify(r.data));
     }
 
     async mounted() {
-        try {
-            this.chainId = this.pool.chainId;
-            await this.getbrand();
-        } catch (e) {
-            this.error = 'Could get pool information.';
-        } finally {
-            this.loading = false;
-        }
+        this.chainId = this.pool.chainId;
+        await this.getBrand();
+        this.loading = false;
     }
 
     authHeader() {

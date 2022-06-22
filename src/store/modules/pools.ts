@@ -117,6 +117,7 @@ class PoolModule extends VuexModule {
             url: '/pools',
             data: payload,
         });
+
         const r = await axios({
             method: 'GET',
             url: '/pools/' + data._id,
@@ -124,6 +125,18 @@ class PoolModule extends VuexModule {
         });
 
         this.context.commit('set', Pool(r.data));
+    }
+
+    @Action({ rawError: true })
+    async addMember(payload: { pool: string; address: string }) {
+        const { data } = await axios({
+            method: 'POST',
+            url: '/members',
+            headers: { 'X-PoolAddress': payload.pool },
+            data: { address: payload.address },
+        });
+
+        return data;
     }
 
     @Action({ rawError: true })
