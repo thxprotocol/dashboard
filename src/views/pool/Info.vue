@@ -16,7 +16,7 @@
                             v-b-tooltip
                             title="View your pool transactions on the Polygon block explorer"
                             :href="
-                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
                                 `/address/${pool.address}/transactions`
                             "
                         >
@@ -38,7 +38,7 @@
                             v-b-tooltip
                             title="View your token transactions on the Polygon block explorer"
                             :href="
-                                (network === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
+                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
                                 `/token/${pool.token.address}`
                             "
                         >

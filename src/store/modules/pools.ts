@@ -24,6 +24,7 @@ export enum PoolTokenType {
 
 export interface IPool {
     _id: string;
+    variant: string;
     address: string;
     clientId: string;
     clientSecret: string;
@@ -106,6 +107,7 @@ class PoolModule extends VuexModule {
             url: '/pools/' + _id,
         });
         const pool = Pool(r.data);
+        // delete pool.address;
         this.context.commit('set', pool);
         return pool;
     }

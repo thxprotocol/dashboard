@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="erc20 && erc20.loading" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-body v-if="erc20.name">
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
@@ -28,7 +28,7 @@
                 <i class="fas fa-plus mr-2" aria-hidden="true"></i>
                 Top up pool
             </b-button>
-            <base-modal-deposit-create @submit="getERC20" :erc20="erc20" />
+            <base-modal-deposit-create @submit="$store.dispatch('erc20/read', erc20._id)" :erc20="erc20" />
         </template>
     </base-card>
 </template>
@@ -43,6 +43,7 @@ import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 import { chainInfo } from '@/utils/chains';
+import promisePoller from 'promise-poller';
 
 @Component({
     components: {
@@ -57,19 +58,43 @@ import { chainInfo } from '@/utils/chains';
 })
 export default class BaseCardERC20 extends Vue {
     ERC20Type = ERC20Type;
-    loading = true;
     error = '';
-
+    isLoading = true;
+    isDeploying = false;
     profile!: IAccount;
 
     @Prop() erc20!: TERC20;
 
     mounted() {
-        this.getERC20();
+        this.$store.dispatch('erc20/read', this.erc20._id);
+
+        if (!this.erc20.address) {
+            this.isDeploying = true;
+            this.waitForAddress();
+        } else {
+            this.isDeploying = false;
+            this.isLoading = false;
+        }
     }
 
-    getERC20() {
-        this.$store.dispatch('erc20/read', this.erc20._id);
+    waitForAddress() {
+        const taskFn = async () => {
+            const erc20 = await this.$store.dispatch('erc20/read', this.erc20._id);
+            if (erc20.address.length) {
+                this.isDeploying = false;
+                this.isLoading = false;
+                return Promise.resolve(erc20);
+            } else {
+                this.isLoading = false;
+                return Promise.reject(erc20);
+            }
+        };
+
+        promisePoller({
+            taskFn,
+            interval: 3000,
+            retries: 10,
+        });
     }
 
     openTokenUrl() {

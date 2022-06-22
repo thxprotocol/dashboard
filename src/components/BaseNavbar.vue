@@ -11,7 +11,7 @@
         shadow
     >
         <b-navbar toggleable="lg" class="sidebar">
-            <div class="w-100 pt-5 pb-4 text-center">
+            <div class="w-100 pt-4 pb-4 text-center">
                 <router-link to="/" custom v-slot="{ navigate }">
                     <img
                         :src="require('@/assets/logo.png')"
@@ -23,7 +23,7 @@
                     />
                 </router-link>
             </div>
-            <div class="flex-grow-1 w-100">
+            <div class="flex-grow-1 w-100 h-25 overflow-auto">
                 <b-navbar-nav>
                     <b-nav-item to="/tokens" class="nav-link-plain">
                         <div class="nav-link-wrapper">
@@ -97,6 +97,20 @@
             </div>
             <div class="d-flex justify-content-end flex-column flex-grow-0 w-100">
                 <b-navbar-nav>
+                    <b-nav-item class="nav-link-plain border-top border-dark" v-if="profile">
+                        <div class="nav-link-wrapper">
+                            <div class="flex-grow-1">
+                                <b-badge variant="dark">{{ plans[profile.plan].name }}</b-badge
+                                ><br />
+                                <small class="text-muted">{{ plans[profile.plan].text }}</small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <b-button size="sm" variant="dark" disabled href="https://docs.thx.network/pricing">
+                                    Upgrade
+                                </b-button>
+                            </div>
+                        </div>
+                    </b-nav-item>
                     <b-nav-item to="/account" class="nav-link-plain border-top border-dark">
                         <div class="nav-link-wrapper">
                             <div class="nav-link-icon">
@@ -125,8 +139,10 @@
 
 <script lang="ts">
 import { IPools } from '@/store/modules/pools';
+import { IAccount } from '@/types/account';
 import { ChainId } from '@/types/enums/ChainId';
 import { ERC20Type } from '@/types/erc20';
+import { plans } from '@/utils/plans';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -137,10 +153,12 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseNavbar extends Vue {
+    plans = plans;
     ERC20Type = ERC20Type;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     walletUrl = process.env.VUE_APP_WALLET_URL;
     pools!: IPools;
+    profile!: IAccount;
 
     get pool() {
         return this.pools[this.$route.params.id];
@@ -212,8 +230,13 @@ export default class BaseNavbar extends Vue {
     }
 
     .nav-link-wrapper {
-        padding: 1rem;
+        padding: 0.7rem 1rem;
         display: flex;
+        transition: 0.2s background-color ease;
+
+        &:hover {
+            background-color: #211359;
+        }
     }
 
     .nav-link-icon {
@@ -227,7 +250,7 @@ export default class BaseNavbar extends Vue {
 
     .nav-link-plain {
         .nav-link {
-            padding: 1rem;
+            padding: 0.7rem 1rem;
         }
         border-bottom: 1px solid black;
     }

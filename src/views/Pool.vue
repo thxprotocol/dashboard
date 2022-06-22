@@ -1,14 +1,25 @@
 <template>
-    <div class="container container-md pt-10" v-if="pool">
-        <div class="d-flex align-items-center">
-            <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
-            <base-badge-network :chainId="pool.chainId" />
+    <div v-if="pool" class="p-3">
+        <b-dropdown size="sm" variant="link">
+            <template #button-content>
+                <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
+            </template>
+            <b-dropdown-item-btn :to="`/pools/${pool._id}`" button-class="py-1" :key="key" v-for="(pool, key) of pools">
+                <code class="text-muted">#{{ pool._id }}</code>
+                <i class="fas fa-arrow-alt-circle-right text-muted ml-2"></i>
+            </b-dropdown-item-btn>
+        </b-dropdown>
+        <div class="container container-md pt-10" v-if="pool.token">
+            <div class="d-flex align-items-center">
+                <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
+                <base-badge-network :chainId="pool.chainId" />
+            </div>
+            <div class="lead">
+                {{ pool.token.name }}
+            </div>
+            <hr />
+            <router-view></router-view>
         </div>
-        <div class="lead">
-            {{ pool.token.name }}
-        </div>
-        <hr />
-        <router-view></router-view>
     </div>
 </template>
 
@@ -37,6 +48,7 @@ export default class AssetPoolView extends Vue {
 
     async mounted() {
         this.$store.dispatch('account/getProfile');
+        await this.$store.dispatch('pools/list');
         await this.$store.dispatch('pools/read', this.$route.params.id);
         this.chainId = this.pool.chainId;
     }

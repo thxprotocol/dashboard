@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-jumbotron
-            class="jumbotron-header text-left"
+            class="jumbotron-header"
             :style="{
                 'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
             }"
