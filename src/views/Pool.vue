@@ -4,8 +4,14 @@
             <template #button-content>
                 <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
             </template>
-            <b-dropdown-item-btn :to="`/pools/${pool._id}`" button-class="py-1" :key="key" v-for="(pool, key) of pools">
-                <code class="text-muted">#{{ pool._id }}</code>
+            <b-dropdown-item-btn
+                @click="goTo(`/pool/${p._id}`)"
+                button-class="py-1"
+                :class="{ 'd-none': pool._id === p._id }"
+                :key="key"
+                v-for="(p, key) of pools"
+            >
+                <code class="text-muted">#{{ p._id }}</code>
                 <i class="fas fa-arrow-alt-circle-right text-muted ml-2"></i>
             </b-dropdown-item-btn>
         </b-dropdown>
@@ -44,6 +50,11 @@ export default class AssetPoolView extends Vue {
 
     get pool() {
         return this.pools[this.$route.params.id];
+    }
+
+    async goTo(path: string) {
+        await this.$router.push(path);
+        this.$store.dispatch('pools/read', this.$route.params.id);
     }
 
     async mounted() {
