@@ -61,7 +61,9 @@
 
             <hr />
             <template v-if="pool.isDefaultPool">
-                <label>Supply Limit:</label>
+                <label>
+                    Supply Limit: <strong v-if="reward.withdrawLimit" class="">{{ reward.withdrawLimit }}</strong>
+                </label>
                 <b-progress>
                     <b-progress-bar
                         :label="
@@ -198,7 +200,7 @@ export default class BaseListItemReward extends Vue {
             this.imgData = data;
             // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
             const d = {
-                network: this.pool.network,
+                chainId: this.pool.chainId,
                 poolAddress: this.pool.address,
                 tokenSymbol: this.pool.token.symbol,
                 rewardId: this.reward.id,

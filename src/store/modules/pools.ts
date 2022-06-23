@@ -4,6 +4,7 @@ import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IMember } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
 import { TERC721 } from '@/types/erc721';
+import { ChainId } from '@/types/enums/ChainId';
 
 export interface PoolToken {
     _id: string;
@@ -21,19 +22,15 @@ export enum PoolTokenType {
     New = 1,
 }
 
-export enum NetworkProvider {
-    Test = 0,
-    Main = 1,
-}
-
 export interface IPool {
     _id: string;
+    variant: string;
     address: string;
     clientId: string;
     clientSecret: string;
-    token: TERC20 | TERC721;
+    token: (TERC20 | TERC721) & PoolToken;
     bypassPolls: boolean;
-    network: NetworkProvider;
+    chainId: ChainId;
     rewardPollDuration: number;
     proposeWithdrawPollDuration: number;
     metrics: { members: number; withdrawals: number };
@@ -70,7 +67,7 @@ function Pool(data: any) {
 }
 
 export interface IPools {
-    [address: string]: IPool;
+    [id: string]: IPool;
 }
 
 @Module({ namespaced: true })
@@ -110,17 +107,19 @@ class PoolModule extends VuexModule {
             url: '/pools/' + _id,
         });
         const pool = Pool(r.data);
+        // delete pool.address;
         this.context.commit('set', pool);
         return pool;
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: number; token: string; variant: string }) {
+    async create(payload: { network: number; token: string; tokens: string[]; variant: string }) {
         const { data } = await axios({
             method: 'POST',
             url: '/pools',
             data: payload,
         });
+
         const r = await axios({
             method: 'GET',
             url: '/pools/' + data._id,
@@ -128,6 +127,18 @@ class PoolModule extends VuexModule {
         });
 
         this.context.commit('set', Pool(r.data));
+    }
+
+    @Action({ rawError: true })
+    async addMember(payload: { pool: string; address: string }) {
+        const { data } = await axios({
+            method: 'POST',
+            url: '/members',
+            headers: { 'X-PoolAddress': payload.pool },
+            data: { address: payload.address },
+        });
+
+        return data;
     }
 
     @Action({ rawError: true })
@@ -139,62 +150,42 @@ class PoolModule extends VuexModule {
             withdrawPollDuration: number;
         };
     }) {
-        try {
-            const r = await axios({
-                method: 'PATCH',
-                url: '/asset_pools/' + payload.pool._id,
-                data: payload.data,
-                headers: { 'X-PoolAddress': payload.pool.address },
-            });
+        const r = await axios({
+            method: 'PATCH',
+            url: '/asset_pools/' + payload.pool._id,
+            data: payload.data,
+            headers: { 'X-PoolAddress': payload.pool.address },
+        });
 
-            if (r.status !== 200) {
-                throw new Error('PATCH /asset_pools failed');
-            }
-
-            return Pool(r.data);
-        } catch (e) {
-            console.log(e);
-        }
+        return Pool(r.data);
     }
 
     @Action({ rawError: true })
     async remove(pool: IPool) {
-        try {
-            await axios({
-                method: 'DELETE',
-                url: '/pools/' + pool._id,
-                headers: { 'X-PoolAddress': pool.address },
-            });
+        await axios({
+            method: 'DELETE',
+            url: '/pools/' + pool._id,
+            headers: { 'X-PoolAddress': pool.address },
+        });
 
-            this.context.commit('unset', pool._id);
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
+        this.context.commit('unset', pool._id);
     }
 
     @Action({ rawError: true })
     async getMembers({ pool, page, limit }: GetMembersProps): Promise<GetMembersResponse | undefined> {
-        try {
-            const params = new URLSearchParams();
-            params.set('page', String(page));
-            params.set('limit', String(limit));
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(limit));
 
-            const r = await axios({
-                method: 'GET',
-                url: '/pools/' + pool._id + '/members?' + params.toString(),
-                headers: {
-                    AssetPool: pool.address,
-                },
-            });
+        const r = await axios({
+            method: 'GET',
+            url: '/pools/' + pool._id + '/members?' + params.toString(),
+            headers: {
+                AssetPool: pool.address,
+            },
+        });
 
-            return r.data.results.length ? r.data : MEMBERS_RESPONSE;
-        } catch (e) {
-            console.log(e);
-            debugger;
-        }
-
-        return undefined;
+        return r.data.results.length ? r.data : MEMBERS_RESPONSE;
     }
 }
 

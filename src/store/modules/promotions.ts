@@ -64,25 +64,25 @@ class RewardModule extends VuexModule {
 
     @Action({ rawError: true })
     async create({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
-        await axios({
+        const { data } = await axios({
             method: 'POST',
             url: '/promotions',
             headers: { 'X-PoolAddress': pool.address },
             data: promotion,
         });
 
-        this.context.commit('set', { promotion, pool });
+        this.context.commit('set', { promotion: data, pool });
     }
 
     @Action({ rawError: true })
-    async delete(promotion: TPromotion) {
+    async delete({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
         await axios({
             method: 'DELETE',
             url: '/promotions/' + promotion.id,
-            headers: { 'X-PoolAddress': promotion.poolAddress },
+            headers: { 'X-PoolAddress': pool.address },
         });
 
-        this.context.commit('remove', promotion);
+        this.context.commit('remove', { pool, promotion });
     }
 }
 

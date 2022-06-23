@@ -1,4 +1,4 @@
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 
 export enum ERC20Type {
     Uknown = -1,
@@ -9,7 +9,7 @@ export enum ERC20Type {
 export type TERC20 = {
     _id: string;
     type: ERC20Type;
-    network: NetworkProvider;
+    chainId: ChainId;
     address: string;
     name: string;
     symbol: string;

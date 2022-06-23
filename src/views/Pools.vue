@@ -25,7 +25,9 @@
         <div class="container container-md">
             <base-nothing-here
                 v-if="!Object.values(pools).length"
-                item="a Pool"
+                text-submit="Add a pool"
+                title="You have not added a pool yet"
+                description="Pools have a balance and you use them to send or receive tokens."
                 @clicked="$bvModal.show('modalAssetPoolCreate')"
             />
             <div class="row" v-else>
@@ -41,7 +43,7 @@
 <script lang="ts">
 import BaseCardPool from '@/components/cards/BaseCardPool.vue';
 import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IAccount } from '@/types/account';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';

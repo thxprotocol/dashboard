@@ -5,7 +5,6 @@
         :title="title"
         :id="id"
         no-close-on-backdrop
-        no-close-on-esc
         centered
         :hide-footer="loading"
     >

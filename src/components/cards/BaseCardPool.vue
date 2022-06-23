@@ -1,41 +1,28 @@
 <template>
-    <base-card :loading="loading">
+    <base-card :loading="isLoading" :is-deploying="isDeploying">
         <template #card-body>
-            <b-alert class="m-0" show variant="warning" v-if="warning">
-                {{ warning }}
+            <b-alert class="m-0" show variant="warning" v-if="outOfDate && artifacts">
+                Version conflict ({{ pool.version }} -> {{ artifacts }})
                 <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank">
                     Please contact us in Discord
                 </b-link>
             </b-alert>
-            <b-alert v-if="outOfDate && artifacts" variant="danger" show>
-                Version conflict ({{ pool.version }} -> {{ artifacts }}), contact the team.
-            </b-alert>
             <template v-if="pool.token">
-                <b-button
-                    variant="link"
-                    class="btn-remove rounded-pill float-right"
-                    size="sm"
-                    @click.stop="$bvModal.show(`modalDelete-${pool.address}`)"
-                >
-                    <i class="far fa-trash-alt"></i>
-                </b-button>
-                <base-badge-network :network="pool.network" :version="pool.version" class="mr-1" />
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-users mr-1"></i>
-                    {{ pool.metrics.members }}
+                <base-dropdown-pool-menu @remove="$bvModal.show(`modalDelete-${pool.address}`)" />
+                <base-badge-network :chainId="pool.chainId" class="mr-1" />
+                <b-badge variant="primary">
+                    {{ variant }}
                 </b-badge>
-                <b-badge class="p-2 mr-1 text-muted" variant="light">
-                    <i class="fas fa-gift mr-1"></i>
-                    {{ pool.metrics.withdrawals }}
-                </b-badge>
-                <p class="font-weight-bold text-primary h3 mt-3 mb-0">
-                    {{ pool.token.poolBalance }} {{ pool.token.symbol }}
+                <p class="mt-3 mb-0">
+                    <span class="font-weight-bold text-primary h3">
+                        {{ pool.token.poolBalance }} {{ pool.token.symbol }}
+                    </span>
                 </p>
                 <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
-
                 <hr />
-                <b-button :disabled="outOfDate" class="rounded-pill" variant="light" @click="openPoolUrl()" block>
-                    View Pool
+                <b-button :disabled="outOfDate" class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
+                    <i class="fas fa-cogs mr-2"></i>
+                    Configuration
                 </b-button>
             </template>
         </template>
@@ -51,9 +38,11 @@ import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from './BaseCard.vue';
 import promisePoller from 'promise-poller';
+import BaseDropdownPoolMenu from '../dropdowns/BaseDropdownPoolMenu.vue';
 
 @Component({
     components: {
+        BaseDropdownPoolMenu,
         BaseModalDelete,
         BaseBadgeNetwork,
         BaseCard,
@@ -67,7 +56,8 @@ import promisePoller from 'promise-poller';
 })
 export default class BaseCardPool extends Vue {
     warning = '';
-    loading = true;
+    isLoading = true;
+    isDeploying = false;
 
     @Prop() pool!: IPool;
 
@@ -78,13 +68,26 @@ export default class BaseCardPool extends Vue {
         return this.pool.version !== this.artifacts;
     }
 
+    get variant() {
+        switch (this.pool.variant) {
+            default:
+                return 'Default';
+            case 'defaultPool':
+                return 'Default';
+            case 'nftPool':
+                return 'NFT';
+        }
+    }
+
     async mounted() {
         await this.$store.dispatch('pools/read', this.pool._id);
-        console.log(this.pool);
+
         if (!this.pool.address) {
+            this.isDeploying = true;
             this.waitForAddress();
         } else {
-            this.loading = false;
+            this.isDeploying = false;
+            this.isLoading = false;
         }
     }
 
@@ -92,9 +95,11 @@ export default class BaseCardPool extends Vue {
         const taskFn = async () => {
             const pool = await this.$store.dispatch('pools/read', this.pool._id);
             if (pool.address.length) {
-                this.loading = false;
+                this.isDeploying = false;
+                this.isLoading = false;
                 return Promise.resolve(pool);
             } else {
+                this.isLoading = false;
                 return Promise.reject(pool);
             }
         };
@@ -107,14 +112,9 @@ export default class BaseCardPool extends Vue {
     }
 
     async remove() {
-        this.loading = true;
-        try {
-            await this.$store.dispatch('pools/remove', this.pool);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            this.loading = false;
-        }
+        this.isLoading = true;
+        await this.$store.dispatch('pools/remove', this.pool);
+        this.isLoading = false;
     }
 
     openPoolUrl() {

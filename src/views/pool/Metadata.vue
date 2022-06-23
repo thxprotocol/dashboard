@@ -11,7 +11,13 @@
                 </b-button>
             </b-col>
         </b-row>
-        <base-nothing-here v-if="erc721 && !erc721.metadata" item="an NFT" @clicked="$bvModal.show('modalNFTCreate')" />
+        <base-nothing-here
+            v-if="erc721 && !erc721.metadata"
+            text-submit="Create NFT Metadata"
+            title="You have not created NFT Metadata yet"
+            description="NFT Metadata is the actual data that is attached to your token."
+            @clicked="$bvModal.show('modalNFTCreate')"
+        />
         <base-card-erc721-metadata
             v-if="erc721 && erc721.metadata"
             :erc721="erc721"
@@ -27,7 +33,7 @@ import { IPool, IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IERC721s, TERC721 } from '@/types/erc721';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vue';
 import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
 

@@ -13,7 +13,9 @@
         </b-row>
         <base-nothing-here
             v-if="!filteredRewards.length"
-            item="a Reward"
+            text-submit="Create a Reward"
+            title="You have not created a reward yet"
+            description="Use rewards to send your tokens to people and use reward configuration to limit claims."
             @clicked="$bvModal.show('modalRewardCreate')"
         />
         <b-row v-else>
@@ -32,7 +34,7 @@ import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/store/modules/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IERC721s, TERC721 } from '@/types/erc721';
 
 @Component({

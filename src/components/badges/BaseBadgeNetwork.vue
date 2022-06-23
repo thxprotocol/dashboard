@@ -1,26 +1,31 @@
 <template>
-    <b-badge v-b-tooltip :title="version" class="p-2" :class="classes" :variant="variant">
-        {{ label }}
+    <b-badge
+        v-if="chainInfo"
+        v-b-tooltip
+        :title="version"
+        class="p-2 text-white d-flex-inline align-items-center"
+        variant="dark"
+    >
+        <img :src="chainInfo.logo" class="mr-1" width="auto" height="12" />
+        {{ chainInfo.name }}
     </b-badge>
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainInfo } from '@/types/ChainInfo';
+import { ChainId } from '@/types/enums/ChainId';
+import { chainInfo } from '@/utils/chains';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
 export default class BaseBadgeNetwork extends Vue {
-    variant = '';
-    label = '';
-    classes = {};
+    chainInfo: ChainInfo | null = null;
 
-    @Prop() network!: NetworkProvider;
+    @Prop() chainId!: ChainId;
     @Prop() version!: string;
 
     mounted() {
-        this.variant = this.network === NetworkProvider.Main ? 'primary' : 'gray';
-        this.label = this.network === NetworkProvider.Main ? 'Polygon Main' : 'Polygon Mumbai';
-        this.classes = { 'text-white': this.network === NetworkProvider.Test };
+        this.chainInfo = chainInfo[this.chainId];
     }
 }
 </script>

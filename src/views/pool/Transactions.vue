@@ -34,7 +34,7 @@ import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { IPools } from '@/store/modules/pools';
 import { ITransactions } from '@/types/ITransactions';
-import BaseNothingHere from '@/components/BaseNothingHere.vue';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BarChart from '@/components/charts/BarChart.vue';
 import { GetTransactionsResponse } from '@/store/modules/transactions';
 
@@ -99,26 +99,41 @@ export default class TransactionsView extends Vue {
         startDate.setDate(startDate.getDate() - 30); // subtract 30 days
 
         const labels = [];
-        const data = [];
+        const promises = [];
 
         while (startDate.getTime() <= lastDate.getTime()) {
             labels.push(this.formatDateLabel(startDate));
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 1);
 
-            const response: GetTransactionsResponse | undefined = await this.$store.dispatch('transactions/list', {
-                poolAddress: this.pool.address,
-                startDate: startDate.getTime(),
-                endDate: endDate.getTime(),
+            const promise = new Promise((resolve, reject) => {
+                try {
+                    const response: Promise<GetTransactionsResponse | undefined> = this.$store.dispatch(
+                        'transactions/list',
+                        {
+                            poolAddress: this.pool.address,
+                            startDate: startDate.getTime(),
+                            endDate: endDate.getTime(),
+                        },
+                    );
+                    const result = response.then((x) => {
+                        return x ? x.total : 0;
+                    });
+                    resolve(result);
+                } catch (err) {
+                    reject(err);
+                }
             });
+            promises.push(promise);
 
-            data.push(response ? response.total : 0);
             startDate.setDate(startDate.getDate() + 1);
         }
-
         this.chartData.labels = labels;
-        this.chartData.datasets[0].data = data;
-        this.loading = false;
+
+        Promise.all(promises).then((data) => {
+            this.chartData.datasets[0].data = data;
+            this.loading = false;
+        });
     }
 }
 </script>

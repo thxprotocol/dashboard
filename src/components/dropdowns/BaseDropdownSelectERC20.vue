@@ -14,14 +14,10 @@
                     <strong class="mr-1">{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
                 </div>
             </div>
-            <div v-else>Provide ERC20 token contract address</div>
+            <div v-else>Select an ERC20 token</div>
         </template>
-        <b-dropdown-item-button key="custom-token-address" @click="onTokenListItemClick(null)">
-            Provide ERC20 token contract address
-        </b-dropdown-item-button>
-        <b-dropdown-divider v-if="hasERC20s" />
         <b-dropdown-item-button
-            :disabled="network !== erc20.network"
+            :disabled="chainId !== erc20.chainId"
             :key="erc20._id"
             v-for="erc20 of erc20s"
             @click="onTokenListItemClick(erc20)"
@@ -33,7 +29,7 @@
         </b-dropdown-item-button>
         <b-dropdown-divider />
         <b-dropdown-item-button
-            :disabled="network !== NetworkProvider.Main"
+            :disabled="chainId !== ChainId.Polygon"
             :key="erc20.address"
             v-for="erc20 of tokenList"
             @click="onTokenListItemClick(erc20)"
@@ -45,13 +41,13 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { IERC20s, TERC20 } from '@/types/erc20';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import { IERC721s } from '@/types/erc721';
+import { ChainId } from '@/types/enums/ChainId';
 
 const QUICKSWAP_TOKEN_LIST =
     'https://unpkg.com/quickswap-default-token-list@1.2.34/build/quickswap-default.tokenlist.json';
@@ -66,14 +62,14 @@ const QUICKSWAP_TOKEN_LIST =
     }),
 })
 export default class ModalAssetPoolCreate extends Vue {
-    NetworkProvider = NetworkProvider;
+    ChainId = ChainId;
     erc20Token: TERC20 | null = null;
     tokenList: TERC20[] = [];
 
     erc20s!: IERC20s;
     erc721s!: IERC721s;
 
-    @Prop() network!: NetworkProvider;
+    @Prop() chainId!: ChainId;
 
     get hasERC20s() {
         return !!Object.values(this.erc20s).length;

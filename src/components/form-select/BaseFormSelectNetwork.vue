@@ -5,35 +5,22 @@
             <b-dropdown variant="link" class="dropdown-select">
                 <template #button-content>
                     <div class="d-flex align-items-center">
-                        <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
-                        {{
-                            network === NetworkProvider.Test ? 'Polygon Test Network (Mumbai)' : 'Polygon Main Network'
-                        }}
+                        <img :src="chainInfo[chainId].logo" width="20" height="20" class="mr-3" />
+                        {{ chainInfo[chainId].name }}
                     </div>
                 </template>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_ethereum.svg" width="20" height="20" class="mr-3" />
-                    Ethereum
-                </b-dropdown-item-button>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_arbitrum.svg" width="20" height="20" class="mr-3" />
-                    Arbitrum
-                </b-dropdown-item-button>
-                <b-dropdown-item-button disabled>
-                    <img src="@/assets/thx_logo_bsc.svg" width="20" height="20" class="mr-3" />
-                    Binance Chain
-                </b-dropdown-item-button>
-                <b-dropdown-item-button @click="onSelectNetwork(NetworkProvider.Test)">
-                    <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
-                    Polygon Mumbai (Test Network)
-                </b-dropdown-item-button>
-                <b-dropdown-item-button @click="onSelectNetwork(NetworkProvider.Main)">
-                    <img src="@/assets/thx_logo_polygon.svg" width="20" height="20" class="mr-3" />
-                    Polygon
+                <b-dropdown-item-button
+                    :disabled="n.disabled"
+                    @click="onSelectNetwork(n.chainId)"
+                    :key="key"
+                    v-for="(n, key) of chainInfo"
+                >
+                    <img :src="n.logo" width="20" height="20" class="mr-3" />
+                    <span>{{ n.name }}</span>
                 </b-dropdown-item-button>
             </b-dropdown>
         </b-form-group>
-        <b-alert :show="profile.plan === AccountPlanType.Free && network == NetworkProvider.Main" variant="warning">
+        <b-alert :show="profile.plan === AccountPlanType.Free && chainId == ChainId.Polygon" variant="warning">
             <i class="fas fa-rocket mr-2"></i>
             Choosing <strong>Polygon Main Network</strong> will move you from Free to
             <b-link :href="publicUrl + '/pricing'">Basic</b-link> and start invoicing.
@@ -42,8 +29,9 @@
 </template>
 
 <script lang="ts">
-import { NetworkProvider } from '@/store/modules/pools';
+import { ChainId } from '@/types/enums/ChainId';
 import { AccountPlanType, IAccount } from '@/types/account';
+import { chainInfo } from '@/utils/chains';
 import { PUBLIC_URL } from '@/utils/secrets';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -54,21 +42,23 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseFormSelectNetwork extends Vue {
-    publicUrl = PUBLIC_URL;
-    NetworkProvider = NetworkProvider;
+    ChainId = ChainId;
     AccountPlanType = AccountPlanType;
-    network = NetworkProvider.Test;
-
+    publicUrl = PUBLIC_URL;
+    chainInfo = chainInfo;
+    chainId = ChainId.PolygonMumbai;
     profile!: IAccount;
 
     mounted() {
-        this.network = this.profile.plan !== AccountPlanType.Free ? NetworkProvider.Main : NetworkProvider.Test;
-        this.$emit('selected', this.network);
+        if (this.profile.plan !== AccountPlanType.Free) this.chainId = ChainId.Polygon;
+        if (process.env.NODE_ENV !== 'production') this.chainId = ChainId.Hardhat;
+
+        this.$emit('selected', this.chainId);
     }
 
-    onSelectNetwork(network: NetworkProvider) {
-        this.network = network;
-        this.$emit('selected', this.network);
+    onSelectNetwork(chainId: ChainId) {
+        this.chainId = chainId;
+        this.$emit('selected', this.chainId);
     }
 }
 </script>
