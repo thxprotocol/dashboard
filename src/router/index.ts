@@ -74,8 +74,8 @@ const routes: Array<RouteConfig> = [
                 component: () => import('../views/pool/Transactions.vue'),
             },
             {
-                path: 'swaps',
-                component: () => import('../views/pool/Swaps.vue'),
+                path: 'erc20swaps',
+                component: () => import('../views/pool/ERC20Swaps.vue'),
             },
         ],
     },

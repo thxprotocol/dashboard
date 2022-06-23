@@ -82,7 +82,7 @@ import { mapGetters } from 'vuex';
         pools: 'pools/all',
     }),
 })
-export default class Members extends Vue {
+export default class ERC20Swaps extends Vue {
     swapRulePerPage: IERC20SwapRuleByPage = {};
     loading = false;
     currentPage = 1;
@@ -99,10 +99,10 @@ export default class Members extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    async getMoreMembers({ pool, page, limit }: GetMembersProps) {
+    async getMoreResults({ pool, page, limit }: GetMembersProps) {
         this.loading = true;
-        const response: GetMembersResponse = await this.$store.dispatch('/erc20Swaps', {
-            pool,
+        const response: GetMembersResponse = await this.$store.dispatch('erc20swaps/list', {
+            poolAddress: pool.address,
             page,
             limit,
         });
@@ -113,7 +113,7 @@ export default class Members extends Vue {
     }
 
     async onChangePage(page: number) {
-        await this.getMoreMembers({
+        await this.getMoreResults({
             pool: this.pool,
             page: page,
             limit: this.perPage,
@@ -121,7 +121,7 @@ export default class Members extends Vue {
     }
 
     async mounted() {
-        await this.getMoreMembers({
+        await this.getMoreResults({
             pool: this.pool,
             page: this.currentPage,
             limit: this.perPage,
