@@ -6,7 +6,7 @@ import { ChainId } from '../enums/chainId';
 import { IERC20SwapRules } from '@/types/IERC20SwapRules';
 
 export type TERC20SwapRule = {
-    id: string;
+    _id: string;
     chainId: ChainId;
     poolAddress: string;
     tokenInAddress: string;
@@ -14,7 +14,7 @@ export type TERC20SwapRule = {
 };
 
 export interface GetERC20SwapRulesProps {
-    poolAddress: string;
+    pool: IPool;
     page?: number;
     limit?: number;
 }
@@ -47,11 +47,11 @@ class ERC20SwapRuleModule extends VuexModule {
         if (!this._all[pool._id]) {
             Vue.set(this._all, pool._id, {});
         }
-        Vue.set(this._all[pool._id], swapRule.id, swapRule);
+        Vue.set(this._all[pool._id], swapRule._id, swapRule);
     }
 
     @Action({ rawError: true })
-    async list({ poolAddress, page, limit }: GetERC20SwapRulesProps): Promise<GetERC20SwapRulesResponse | undefined> {
+    async list({ pool, page, limit }: GetERC20SwapRulesProps): Promise<GetERC20SwapRulesResponse | undefined> {
         try {
             const params = new URLSearchParams();
             if (page) {
@@ -64,7 +64,7 @@ class ERC20SwapRuleModule extends VuexModule {
             const r = await axios({
                 method: 'GET',
                 url: '/swaprules?' + params.toString(),
-                headers: { 'X-PoolAddress': poolAddress },
+                headers: { 'X-PoolAddress': pool.address },
             });
 
             return r.data.results.length ? r.data : TRANSACTIONS_RESPONSE;
@@ -76,18 +76,19 @@ class ERC20SwapRuleModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { address: string; tokenInAddress: string; toknMultiplier: number }) {
+    async create(payload: { pool: IPool; tokenInAddress: string; tokenMultiplier: number }) {
         const r = await axios({
             method: 'POST',
-            url: '/rewards',
-            headers: { 'X-PoolAddress': payload.address },
+            url: '/swaprules',
+            headers: { 'X-PoolAddress': payload.pool.address },
             data: {
                 tokenInAddress: payload.tokenInAddress,
-                toknMultiplier: payload.toknMultiplier,
+                tokenMultiplier: Number(payload.tokenMultiplier),
+                pool: payload.pool,
             },
         });
 
-        this.context.commit('set', r.data);
+        this.context.commit('set', { pool: payload.pool, swapRule: r.data });
     }
 }
 export default ERC20SwapRuleModule;

@@ -1,14 +1,26 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
+        <b-row class="mb-3">
+            <b-col class="d-flex justify-content-end">
+                <b-button
+                    :disabled="loading"
+                    class="btn rounded-pill"
+                    @click="$bvModal.show('modalERC20SwapRuleCreate')"
+                    variant="primary"
+                >
+                    Create Swap Rule
+                </b-button>
+            </b-col>
+        </b-row>
+
         <b-card class="shadow-sm">
             <div class="row pt-2 pb-2">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <strong>Token Address</strong>
                 </div>
-                <div class="col-md-2">
+                <div>
                     <strong>Token Multiplier</strong>
                 </div>
-                <div class="col-md-4"></div>
             </div>
             <b-skeleton-wrapper :loading="loading">
                 <template #loading>
@@ -30,13 +42,13 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="swapRule.id" v-for="swapRule of swapRules">
+                <b-form-group class="mb-0" :key="swapRule._id" v-for="swapRule of swapRules">
                     <hr />
-                    <div class="row pt-2 pb-2">
-                        <div class="col-md-4 d-flex align-items-center">
-                            {{ swapRule.tokeInAddress }}
+                    <div class="row">
+                        <div class="col-md-6 d-flex align-items-center">
+                            {{ swapRule.tokenInAddress }}
                         </div>
-                        <div class="col-md-2 d-flex align-items-center">
+                        <div class="align-items-right">
                             {{ swapRule.tokenMultiplier }}
                         </div>
                     </div>
@@ -53,9 +65,10 @@
         ></b-pagination>
         <div class="container container-md">
             <base-nothing-here
-                v-if="!Object.values(pools).length"
-                item="a Pool"
-                @clicked="$bvModal.show('modalSwapRuleCreate')"
+                v-if="total == 0"
+                text-submit="Create a Swap Rile"
+                title="You have not created a Swap Rule yet"
+                @clicked="$bvModal.show('modalERC20SwapRuleCreate')"
             />
             <div class="row" v-else>
                 <div class="col-md-6 col-lg-4" :key="pool._id" v-for="pool of pools">
@@ -63,20 +76,22 @@
                 </div>
             </div>
         </div>
-        <base-modal-erc20-swap-rule-create />
+        <ModalERC20SwapRuleCreate />
     </div>
 </template>
 
 <script lang="ts">
 import ModalERC20SwapRuleCreate from '@/components/modals/BaseModalERC20SwapRuleCreate.vue';
-import { IERC20SwapRuleByPage } from '@/store/modules/erc20Swaps';
-import { GetMembersProps, GetMembersResponse, IPools } from '@/store/modules/pools';
+import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import { GetERC20SwapRulesProps, GetERC20SwapRulesResponse, IERC20SwapRuleByPage } from '@/store/modules/erc20swaps';
+import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
     components: {
         ModalERC20SwapRuleCreate,
+        BaseNothingHere,
     },
     computed: mapGetters({
         pools: 'pools/all',
@@ -99,10 +114,10 @@ export default class ERC20Swaps extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    async getMoreResults({ pool, page, limit }: GetMembersProps) {
+    async getMoreResults({ pool, page, limit }: GetERC20SwapRulesProps) {
         this.loading = true;
-        const response: GetMembersResponse = await this.$store.dispatch('erc20swaps/list', {
-            poolAddress: pool.address,
+        const response: GetERC20SwapRulesResponse = await this.$store.dispatch('erc20swaps/list', {
+            pool: pool,
             page,
             limit,
         });

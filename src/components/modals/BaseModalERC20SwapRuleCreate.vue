@@ -2,6 +2,9 @@
     <base-modal :loading="loading" :error="error" title="Create Swap Rule" id="modalERC20SwapRuleCreate">
         <template #modal-body v-if="profile && !loading">
             <b-form-group>
+                <base-dropdown-select-erc20 :chainId="chainId" @selected="onSelectToken" />
+            </b-form-group>
+            <b-form-group>
                 <label>Token Contract Address</label>
                 <b-input-group>
                     <b-form-input :disabled="!!token" v-model="tokenAddress" />
@@ -33,6 +36,8 @@ import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
 import { IAccount } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
+import { ChainId } from '@/types/enums/ChainId';
+import { IPools } from '@/store/modules/pools';
 
 @Component({
     components: {
@@ -41,6 +46,7 @@ import { TERC20 } from '@/types/erc20';
     },
     computed: mapGetters({
         profile: 'account/profile',
+        pools: 'pools/all',
         erc20s: 'erc20/all',
     }),
 })
@@ -51,6 +57,12 @@ export default class ModalERC20SwapRuleCreate extends Vue {
     token: TERC20 | null = null;
     tokenAddress = '';
     profile!: IAccount;
+    chainId: ChainId = ChainId.Hardhat;
+    pools!: IPools;
+
+    get pool() {
+        return this.pools[this.$route.params.id];
+    }
 
     onSelectToken(token: TERC20) {
         this.token = token;
@@ -60,11 +72,12 @@ export default class ModalERC20SwapRuleCreate extends Vue {
     async submit() {
         this.loading = true;
         try {
-            await this.$store.dispatch('erc20Swaps/create', {
+            await this.$store.dispatch('erc20swaps/create', {
                 tokenInAddress: this.tokenAddress,
-                toknMultiplier: this.tokenMultiplier,
+                tokenMultiplier: this.tokenMultiplier,
+                pool: this.pool,
             });
-            this.$bvModal.hide(`modalSwapRuleCreate`);
+            this.$bvModal.hide(`modalERC20SwapRuleCreate`);
         } catch (error) {
             this.error = (error as AxiosError).response?.data.error.message || 'Could not create the Swap Rule';
         } finally {
