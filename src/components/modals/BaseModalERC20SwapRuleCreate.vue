@@ -57,7 +57,7 @@ export default class ModalERC20SwapRuleCreate extends Vue {
     token: TERC20 | null = null;
     tokenAddress = '';
     profile!: IAccount;
-    chainId: ChainId = ChainId.Hardhat;
+    chainId: ChainId = ChainId.PolygonMumbai;
     pools!: IPools;
 
     get pool() {
