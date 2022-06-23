@@ -57,17 +57,17 @@
                     <template #prepend>
                         <b-card
                             body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="skin.backgroundImgUrl"
+                            v-if="brand.backgroundImgUrl"
                             bg-variant="light"
                         >
-                            <img height="30" width="30" class="m-0" :src="skin.backgroundImgUrl" />
+                            <img height="30" width="30" class="m-0" :src="brand.backgroundImgUrl" />
                         </b-card>
                     </template>
                     <b-form-input
                         id="backgroundImgUrl"
                         @input.native="onBackgroundImgChange"
                         :aria-invalid="!backgroundImgUrlValid"
-                        v-model="skin.backgroundImgUrl"
+                        v-model="brand.backgroundImgUrl"
                     />
                     <div v-if="!backgroundImgUrlModified" class="input-group-append">
                         <button class="btn btn-primary" type="button">
@@ -78,7 +78,12 @@
                     <div v-if="backgroundImgUrlModified" class="input-group-append">
                         <button
                             :disabled="!backgroundImgUrlValid"
-                            @click="updateBackgroundUrl"
+                            @click="
+                                updateBrand({
+                                    backgroundImgUrl: brand.backgroundImgUrl,
+                                    logoImgUrl: remotebrand.logoImgUrl,
+                                })
+                            "
                             class="btn btn-dark"
                             type="button"
                         >
@@ -94,13 +99,13 @@
                     <template #prepend>
                         <b-card
                             body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="skin.logoImgUrl"
+                            v-if="brand.logoImgUrl"
                             bg-variant="light"
                         >
-                            <img height="30" width="30" class="m-0" :src="skin.logoImgUrl" />
+                            <img height="30" width="30" class="m-0" :src="brand.logoImgUrl" />
                         </b-card>
                     </template>
-                    <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="skin.logoImgUrl" />
+                    <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="brand.logoImgUrl" />
                     <div v-if="!logoImgUrlModified" class="input-group-append">
                         <button class="btn btn-primary" type="button">
                             <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
@@ -108,7 +113,17 @@
                     </div>
 
                     <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button class="btn btn-dark" :disabled="!logoImgUrlValid" @click="updateLogoUrl" type="button">
+                        <button
+                            class="btn btn-dark"
+                            :disabled="!logoImgUrlValid"
+                            @click="
+                                updateBrand({
+                                    backgroundImgUrl: remotebrand.backgroundImgUrl,
+                                    logoImgUrl: brand.logoImgUrl,
+                                })
+                            "
+                            type="button"
+                        >
                             <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
                         </button>
                     </div>
@@ -238,15 +253,16 @@ import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
+import { OidcMetadata } from 'oidc-client';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
-const DEFAULT_SKIN: ISkin = {
+const DEFAULT_BRANDING: IBrand = {
     logoImgUrl: '',
     backgroundImgUrl: '',
 };
 
-interface ISkin {
+interface IBrand {
     logoImgUrl: string;
     backgroundImgUrl: string;
 }
@@ -267,28 +283,28 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
-    accessToken = '';
+    accessToken: any = null;
     poolLoading = true;
     pools!: IPools;
-    skin: ISkin = { ...DEFAULT_SKIN };
-    remoteSkin: ISkin = { ...DEFAULT_SKIN };
+    brand: IBrand = DEFAULT_BRANDING;
+    remotebrand: IBrand = DEFAULT_BRANDING;
     adminScope = ADMIN_SCOPE;
     chainId: ChainId = ChainId.PolygonMumbai;
 
     get backgroundImgUrlModified() {
-        return this.skin.backgroundImgUrl !== this.remoteSkin.backgroundImgUrl;
+        return this.brand.backgroundImgUrl !== this.remotebrand.backgroundImgUrl;
     }
 
     get backgroundImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.skin.backgroundImgUrl);
+        return URL_CHECK_REGEX.test(this.brand.backgroundImgUrl);
     }
 
     get logoImgUrlModified() {
-        return this.skin.logoImgUrl !== this.remoteSkin.logoImgUrl;
+        return this.brand.logoImgUrl !== this.remotebrand.logoImgUrl;
     }
 
     get logoImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.skin.logoImgUrl);
+        return URL_CHECK_REGEX.test(this.brand.logoImgUrl);
     }
 
     get pool() {
@@ -296,67 +312,44 @@ export default class AssetPoolView extends Vue {
     }
 
     async onBackgroundImgChange(e: any) {
-        Vue.set(this.skin, 'backgroundImgUrl', e.target.value);
+        Vue.set(this.brand, 'backgroundImgUrl', e.target.value);
     }
 
     async onLogoImgChange(e: any) {
-        Vue.set(this.skin, 'logoImgUrl', e.target.value);
+        Vue.set(this.brand, 'logoImgUrl', e.target.value);
     }
 
-    async updateSkin(skin: Partial<ISkin>) {
-        try {
-            const r = await axios({
-                url: this.authUrl + '/skin' + `/${this.pool.address}`,
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + this.authHeader(),
-                },
-                data: skin,
-            });
+    async updateBrand(brand: Partial<IBrand>) {
+        const r = await axios({
+            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: brand,
+        });
 
-            this.skin = JSON.parse(JSON.stringify(r.data));
-            this.remoteSkin = JSON.parse(JSON.stringify(r.data));
-        } catch {
-            /* NO-OP */
-        }
+        this.brand = JSON.parse(JSON.stringify(r.data));
+        this.remotebrand = JSON.parse(JSON.stringify(r.data));
     }
 
-    async updateBackgroundUrl() {
-        await this.updateSkin({ backgroundImgUrl: this.skin.backgroundImgUrl, logoImgUrl: this.remoteSkin.logoImgUrl });
-    }
+    async getBrand() {
+        const r = await axios({
+            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        });
 
-    async updateLogoUrl() {
-        await this.updateSkin({ backgroundImgUrl: this.remoteSkin.backgroundImgUrl, logoImgUrl: this.skin.logoImgUrl });
-    }
-
-    async getSkin() {
-        try {
-            const r = await axios({
-                url: this.authUrl + '/skin' + `/${this.pool.address}`,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + this.authHeader(),
-                },
-            });
-
-            this.skin = JSON.parse(JSON.stringify(r.data));
-            this.remoteSkin = JSON.parse(JSON.stringify(r.data));
-        } catch {
-            /* NO-OP */
-        }
+        this.brand = JSON.parse(JSON.stringify(r.data));
+        this.remotebrand = JSON.parse(JSON.stringify(r.data));
     }
 
     async mounted() {
-        try {
-            this.chainId = this.pool.chainId;
-            await this.getSkin();
-        } catch (e) {
-            this.error = 'Could get pool information.';
-        } finally {
-            this.loading = false;
-        }
+        this.chainId = this.pool.chainId;
+        await this.getBrand();
+        this.loading = false;
     }
 
     authHeader() {
