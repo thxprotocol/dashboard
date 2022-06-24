@@ -4,16 +4,16 @@ export const plans = [
     {
         type: AccountPlanType.Free,
         name: 'Free',
-        text: 'No-cost. $0/month',
+        text: 'No-cost. &euro;0/month',
     },
     {
         type: AccountPlanType.Basic,
         name: 'Basic',
-        text: 'Individuals. $89/month',
+        text: 'Individuals. &euro;89/month',
     },
     {
         type: AccountPlanType.Premium,
         name: 'Premium',
-        text: 'Advanced commmunity engagement',
+        text: 'All features. &euro;*/month',
     },
 ];

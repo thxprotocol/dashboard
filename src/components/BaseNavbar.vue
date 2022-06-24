@@ -102,7 +102,7 @@
                             <div class="flex-grow-1">
                                 <b-badge variant="dark">{{ plans[profile.plan].name }}</b-badge
                                 ><br />
-                                <small class="text-muted">{{ plans[profile.plan].text }}</small>
+                                <small class="text-muted" v-html="plans[profile.plan].text" />
                             </div>
                             <div class="d-flex align-items-center">
                                 <b-button size="sm" variant="dark" disabled href="https://docs.thx.network/pricing">
