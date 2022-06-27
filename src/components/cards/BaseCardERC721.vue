@@ -40,6 +40,7 @@ import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import { ERC721Type, TERC721 } from '@/types/erc721';
 import { chainInfo } from '@/utils/chains';
+import promisePoller from 'promise-poller';
 
 @Component({
     components: {
@@ -53,14 +54,43 @@ import { chainInfo } from '@/utils/chains';
 })
 export default class BaseCardERC721 extends Vue {
     ERC721Type = ERC721Type;
+    isLoading = true;
+    isDeploying = false;
     error = '';
-
     profile!: IAccount;
 
     @Prop() erc721!: TERC721;
 
-    mounted() {
-        this.$store.dispatch('erc721/read', this.erc721._id);
+    waitForAddress() {
+        const taskFn = async () => {
+            const erc721 = await this.$store.dispatch('erc721/read', this.erc721._id);
+            if (erc721.address.length) {
+                this.isDeploying = false;
+                this.isLoading = false;
+                return Promise.resolve(erc721);
+            } else {
+                this.isLoading = false;
+                return Promise.reject(erc721);
+            }
+        };
+
+        promisePoller({
+            taskFn,
+            interval: 3000,
+            retries: 10,
+        });
+    }
+
+    async mounted() {
+        await this.$store.dispatch('erc721/read', this.erc721._id);
+
+        if (!this.erc721.address) {
+            this.isDeploying = true;
+            this.waitForAddress();
+        } else {
+            this.isDeploying = false;
+            this.isLoading = false;
+        }
     }
 
     openTokenUrl() {
