@@ -1,5 +1,6 @@
 <template>
-    <base-card :loading="erc721 && erc721.loading" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+        <template #card-header> NFT </template>
         <template #card-body v-if="erc721.name">
             <base-badge-network class="mr-2" :chainId="erc721.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc721.name">

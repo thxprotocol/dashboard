@@ -5,6 +5,7 @@
                 <base-identicon class="mr-3" :size="20" variant="darker" :uri="token.logoURI" />
                 <strong class="mr-1">{{ token.symbol }}</strong> {{ token.name }}
             </div>
+            <div class="d-flex align-items-center" v-if="!erc721s.length">No tokens available.</div>
         </template>
         <b-dropdown-item-button
             :disabled="chainId !== erc721.chainId"

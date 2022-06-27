@@ -1,11 +1,11 @@
 <template>
-    <div class="text-center text-gray py-5">
+    <div class="text-center text-gray py-5 mx-auto" style="max-width: 500px">
         <i class="far fa-sticky-note mr-1 h2"></i><br />
         <strong> {{ title }}</strong>
         <br />
         <p>
             {{ description }}
-            <br /><span>Do you want to add one now?</span>
+            <span>Let's add one now!</span>
         </p>
 
         <b-button

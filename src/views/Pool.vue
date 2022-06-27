@@ -12,7 +12,7 @@
                 <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
             </template>
             <b-dropdown-item-btn
-                @click="goTo(`/pool/${p._id}`)"
+                @click="goTo(`/pool/${p._id}/info`)"
                 button-class="py-1"
                 :class="{ 'd-none': pool._id === p._id }"
                 :key="key"

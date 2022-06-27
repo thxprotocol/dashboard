@@ -1,5 +1,8 @@
 <template>
     <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+        <template #card-header>
+            {{ ERC20Type[erc20.type] }}
+        </template>
         <template #card-body v-if="erc20.name">
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
