@@ -16,7 +16,7 @@
         <b-card class="shadow-sm">
             <div class="row pt-2 pb-2">
                 <div class="col-md-6">
-                    <strong>Token Address</strong>
+                    <strong>Token In</strong>
                 </div>
                 <div>
                     <strong>Token Multiplier</strong>
@@ -46,7 +46,20 @@
                     <hr />
                     <div class="row">
                         <div class="col-md-6 d-flex align-items-center">
-                            {{ swapRule.tokenInAddress }}
+                            <div
+                                class="mr-auto d-flex align-items-center"
+                                v-b-tooltip
+                                :title="`${swapRule.erc20.name}`"
+                            >
+                                <base-identicon
+                                    :rounded="true"
+                                    variant="dark"
+                                    :size="30"
+                                    :uri="swapRule.erc20.logoURI"
+                                    class="mr-2"
+                                />
+                                <strong>{{ swapRule.erc20.symbol }}</strong>
+                            </div>
                         </div>
                         <div class="align-items-right">
                             {{ swapRule.tokenMultiplier }}
@@ -70,11 +83,6 @@
                 title="You have not created a Swap Rule yet"
                 @clicked="$bvModal.show('modalERC20SwapRuleCreate')"
             />
-            <div class="row" v-else>
-                <div class="col-md-6 col-lg-4" :key="pool._id" v-for="pool of pools">
-                    <base-card-pool :pool="pool" />
-                </div>
-            </div>
         </div>
         <ModalERC20SwapRuleCreate />
     </div>
@@ -87,11 +95,13 @@ import { GetERC20SwapRulesProps, GetERC20SwapRulesResponse, IERC20SwapRuleByPage
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseIdenticon from '@/components/BaseIdenticon.vue';
 
 @Component({
     components: {
         ModalERC20SwapRuleCreate,
         BaseNothingHere,
+        BaseIdenticon,
     },
     computed: mapGetters({
         pools: 'pools/all',
