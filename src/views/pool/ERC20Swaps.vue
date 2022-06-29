@@ -84,7 +84,7 @@
                 @clicked="$bvModal.show('modalERC20SwapRuleCreate')"
             />
         </div>
-        <ModalERC20SwapRuleCreate />
+        <ModalERC20SwapRuleCreate :onSuccess="onSwapRuleCreated" />
     </div>
 </template>
 
@@ -135,6 +135,11 @@ export default class ERC20Swaps extends Vue {
         Vue.set(this.swapRulePerPage, this.currentPage, response.results);
         this.total = response.total;
         this.loading = false;
+    }
+
+    async onSwapRuleCreated() {
+        this.currentPage = 1;
+        this.onChangePage(1);
     }
 
     async onChangePage(page: number) {

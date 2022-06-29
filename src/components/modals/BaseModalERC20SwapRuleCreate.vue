@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
 import BaseModal from './BaseModal.vue';
@@ -80,6 +80,8 @@ export default class ModalERC20SwapRuleCreate extends Vue {
         this.tokenAddress = token ? token.address : '';
     }
 
+    @Prop() onSuccess!: () => void;
+
     async submit() {
         this.loading = true;
         try {
@@ -90,6 +92,7 @@ export default class ModalERC20SwapRuleCreate extends Vue {
                 pool: this.pool,
             });
             this.$bvModal.hide(`modalERC20SwapRuleCreate`);
+            this.onSuccess();
         } catch (error) {
             this.error = (error as AxiosError).response?.data.error.message || 'Could not create the Swap Rule';
         } finally {
