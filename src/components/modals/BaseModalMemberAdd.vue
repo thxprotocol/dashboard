@@ -57,7 +57,7 @@ export default class BaseModalMemberAdd extends Vue {
     async submit() {
         this.loading = true;
         await this.$store.dispatch('pools/addMember', {
-            pool: this.pool.address,
+            pool: this.pool,
             address: this.memberAddress,
         });
         this.onSuccess();

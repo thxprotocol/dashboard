@@ -140,7 +140,7 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules/rewards';
+import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
@@ -198,7 +198,6 @@ export default class BaseListItemReward extends Vue {
         }
         getBase64Image(BASE_URL + this.logoSrc).then((data) => {
             this.imgData = data;
-            // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
             const d = {
                 chainId: this.pool.chainId,
                 poolAddress: this.pool.address,

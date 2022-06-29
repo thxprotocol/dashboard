@@ -34,7 +34,7 @@ export type TTransaction = {
 };
 
 export interface GetTransactionsProps {
-    poolAddress: string;
+    pool: IPool;
     page?: number;
     limit?: number;
     startDate?: number;
@@ -72,7 +72,7 @@ class TransactionModule extends VuexModule {
 
     @Action({ rawError: true })
     async list({
-        poolAddress,
+        pool,
         page,
         limit,
         startDate,
@@ -96,7 +96,7 @@ class TransactionModule extends VuexModule {
             const r = await axios({
                 method: 'GET',
                 url: '/transactions?' + params.toString(),
-                headers: { 'X-PoolAddress': poolAddress },
+                headers: { 'X-PoolId': pool._id },
             });
 
             return r.data.results.length ? r.data : TRANSACTIONS_RESPONSE;

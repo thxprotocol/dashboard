@@ -96,19 +96,26 @@ class PoolModule extends VuexModule {
         });
 
         r.data.forEach((_id: string) => {
+            const poolInState = this.context.getters['all'][_id];
+            if (poolInState && poolInState.address) return;
+
             this.context.commit('set', { _id });
         });
     }
 
     @Action({ rawError: true })
     async read(_id: string) {
+        const poolInState = this.context.getters['all'][_id];
+        if (poolInState && poolInState.address) return;
+
         const r = await axios({
             method: 'get',
             url: '/pools/' + _id,
         });
         const pool = Pool(r.data);
-        // delete pool.address;
+
         this.context.commit('set', pool);
+
         return pool;
     }
 
@@ -123,18 +130,18 @@ class PoolModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/pools/' + data._id,
-            headers: { 'X-PoolAddress': data.address },
+            headers: { 'X-PoolId': data._id },
         });
 
         this.context.commit('set', Pool(r.data));
     }
 
     @Action({ rawError: true })
-    async addMember(payload: { pool: string; address: string }) {
+    async addMember(payload: { pool: IPool; address: string }) {
         const { data } = await axios({
             method: 'POST',
             url: '/members',
-            headers: { 'X-PoolAddress': payload.pool },
+            headers: { 'X-PoolId': payload.pool._id },
             data: { address: payload.address },
         });
 
@@ -152,9 +159,9 @@ class PoolModule extends VuexModule {
     }) {
         const r = await axios({
             method: 'PATCH',
-            url: '/asset_pools/' + payload.pool._id,
+            url: '/pools/' + payload.pool._id,
             data: payload.data,
-            headers: { 'X-PoolAddress': payload.pool.address },
+            headers: { 'X-PoolId': payload.pool._id },
         });
 
         return Pool(r.data);
@@ -165,7 +172,7 @@ class PoolModule extends VuexModule {
         await axios({
             method: 'DELETE',
             url: '/pools/' + pool._id,
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         this.context.commit('unset', pool._id);
@@ -179,10 +186,11 @@ class PoolModule extends VuexModule {
 
         const r = await axios({
             method: 'GET',
-            url: '/pools/' + pool._id + '/members?' + params.toString(),
+            url: '/members',
             headers: {
-                AssetPool: pool.address,
+                'X-PoolId': pool._id,
             },
+            params,
         });
 
         return r.data.results.length ? r.data : MEMBERS_RESPONSE;

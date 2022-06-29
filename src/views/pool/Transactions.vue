@@ -111,7 +111,7 @@ export default class TransactionsView extends Vue {
                     const response: Promise<GetTransactionsResponse | undefined> = this.$store.dispatch(
                         'transactions/list',
                         {
-                            poolAddress: this.pool.address,
+                            pool: this.pool,
                             startDate: startDate.getTime(),
                             endDate: endDate.getTime(),
                         },

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { IAccount, ITwitter } from '@/types/account';
-import { ChannelType } from '@/store/modules/rewards';
+import { ChannelType } from '@/types/rewards';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { User, UserManager } from 'oidc-client';
-import { ChannelType } from './rewards';
+import { ChannelType } from '@/types/rewards';
 import { IAccount, IAccountUpdates, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import { config } from '@/utils/oidc';
 import { BASE_URL } from '@/utils/secrets';
