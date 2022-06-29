@@ -46,7 +46,7 @@ import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 import { chainInfo } from '@/utils/chains';
-import promisePoller from 'promise-poller';
+import poll from 'promise-poller';
 
 @Component({
     components: {
@@ -83,7 +83,7 @@ export default class BaseCardERC20 extends Vue {
     waitForAddress() {
         const taskFn = async () => {
             const erc20 = await this.$store.dispatch('erc20/read', this.erc20._id);
-            if (erc20.address.length) {
+            if (erc20 && erc20.address.length) {
                 this.isDeploying = false;
                 this.isLoading = false;
                 return Promise.resolve(erc20);
@@ -93,11 +93,7 @@ export default class BaseCardERC20 extends Vue {
             }
         };
 
-        promisePoller({
-            taskFn,
-            interval: 3000,
-            retries: 10,
-        });
+        poll({ taskFn, interval: 3000, retries: 10 });
     }
 
     openTokenUrl() {

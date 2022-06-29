@@ -36,12 +36,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IAccount } from '@/types/account';
+import { chainInfo } from '@/utils/chains';
+import { ERC721Type, TERC721 } from '@/types/erc721';
+import poll from 'promise-poller';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
-import { ERC721Type, TERC721 } from '@/types/erc721';
-import { chainInfo } from '@/utils/chains';
-import promisePoller from 'promise-poller';
 
 @Component({
     components: {
@@ -65,7 +65,7 @@ export default class BaseCardERC721 extends Vue {
     waitForAddress() {
         const taskFn = async () => {
             const erc721 = await this.$store.dispatch('erc721/read', this.erc721._id);
-            if (erc721.address.length) {
+            if (erc721 && erc721.address.length) {
                 this.isDeploying = false;
                 this.isLoading = false;
                 return Promise.resolve(erc721);
@@ -75,11 +75,7 @@ export default class BaseCardERC721 extends Vue {
             }
         };
 
-        promisePoller({
-            taskFn,
-            interval: 3000,
-            retries: 10,
-        });
+        poll({ taskFn, interval: 3000, retries: 10 });
     }
 
     async mounted() {

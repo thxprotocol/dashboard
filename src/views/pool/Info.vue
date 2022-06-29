@@ -253,7 +253,6 @@ import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
-import { OidcMetadata } from 'oidc-client';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
