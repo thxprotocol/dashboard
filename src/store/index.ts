@@ -11,7 +11,7 @@ import ERC721Store from './modules/erc721';
 import DepositStore from './modules/deposits';
 import PaymentStore from './modules/payments';
 import TransactionStore from './modules/transactions';
-import ERC20SwapStore from './modules/erc20swaps';
+import ERC20SwapStore from './modules/erc20Swaps';
 
 Vue.use(Vuex);
 

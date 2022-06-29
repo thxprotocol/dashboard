@@ -29,9 +29,9 @@
         </b-dropdown-item-button>
         <b-dropdown-divider />
         <b-dropdown-item-button
-            :disabled="chainId !== ChainId.Polygon"
             :key="erc20.address"
             v-for="erc20 of tokenList"
+            :disabled="chainId !== ChainId.Polygon"
             @click="onTokenListItemClick(erc20)"
         >
             <img :src="erc20.logoURI" width="20" class="mr-3" :alt="erc20.name" />
@@ -70,6 +70,7 @@ export default class ModalAssetPoolCreate extends Vue {
     erc721s!: IERC721s;
 
     @Prop() chainId!: ChainId;
+    @Prop() disableTokens: string[] = [];
 
     get hasERC20s() {
         return !!Object.values(this.erc20s).length;

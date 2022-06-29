@@ -2,7 +2,7 @@
     <base-modal :loading="loading" :error="error" title="Create Swap Rule" id="modalERC20SwapRuleCreate">
         <template #modal-body v-if="profile && !loading">
             <b-form-group>
-                <base-dropdown-select-erc20 :chainId="chainId" @selected="onSelectToken" />
+                <base-dropdown-select-erc20 :chainId="pool.chainId" @selected="onSelectToken" />
             </b-form-group>
             <b-form-group>
                 <label>Token Contract Address</label>
@@ -21,7 +21,18 @@
             </b-form-group>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button
+                :disabled="
+                    loading ||
+                    (token && token.address == pool.token.address) ||
+                    !tokenMultiplier ||
+                    tokenMultiplier <= 0
+                "
+                class="rounded-pill"
+                @click="submit()"
+                variant="primary"
+                block
+            >
                 Create Swap Role
             </b-button>
         </template>
@@ -73,6 +84,7 @@ export default class ModalERC20SwapRuleCreate extends Vue {
         this.loading = true;
         try {
             await this.$store.dispatch('erc20swaps/create', {
+                chainId: this.chainId,
                 tokenInAddress: this.tokenAddress,
                 tokenMultiplier: this.tokenMultiplier,
                 pool: this.pool,
