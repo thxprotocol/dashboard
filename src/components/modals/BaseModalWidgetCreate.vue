@@ -78,7 +78,7 @@
 import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { Reward } from '@/store/modules/rewards';
+import { Reward } from '@/types/rewards';
 
 @Component({
     computed: mapGetters({

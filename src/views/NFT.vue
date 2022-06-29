@@ -51,6 +51,7 @@ import { mapGetters } from 'vuex';
 import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import { IERC721s } from '@/types/erc721';
 
 @Component({
     components: {
@@ -63,6 +64,8 @@ import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
     }),
 })
 export default class NFTView extends Vue {
+    erc721s!: IERC721s;
+
     mounted() {
         this.$store.dispatch('account/getProfile');
         this.$store.dispatch('erc721/list');

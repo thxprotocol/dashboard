@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Vue } from 'vue-property-decorator';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { Reward } from './rewards';
+import { Reward } from '@/types/rewards';
 
 export class Widget {
     clientId: string;
@@ -73,7 +73,7 @@ class WidgetModule extends VuexModule {
 
     @Action({ rawError: true })
     async create(data: {
-        metadata: { rewardId: number; poolAddress: string };
+        metadata: { rewardId: number; poolId: string };
         requestUris: string[];
         redirectUris: string[];
         postLogoutRedirectUris: string[];
@@ -82,18 +82,18 @@ class WidgetModule extends VuexModule {
             method: 'POST',
             url: '/widgets',
             data,
-            headers: { 'X-PoolAddress': data.metadata.poolAddress },
+            headers: { 'X-PoolId': data.metadata.poolId },
         });
     }
 
     @Action({ rawError: true })
-    async remove(data: { clientId: string; poolAddress: string }) {
+    async remove(data: { clientId: string; poolId: string }) {
         await axios({
             method: 'DELETE',
             url: '/widgets/' + data.clientId,
         });
 
-        this.context.commit('unset', { clientId: data.clientId, poolAddress: data.poolAddress });
+        this.context.commit('unset', { clientId: data.clientId, poolId: data.poolId });
     }
 }
 

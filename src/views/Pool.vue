@@ -12,7 +12,7 @@
                 <small>Pool #{{ pool._id.substring(0, 5) }}...</small>
             </template>
             <b-dropdown-item-btn
-                @click="goTo(`/pool/${p._id}`)"
+                @click="goTo(`/pool/${p._id}/info`)"
                 button-class="py-1"
                 :class="{ 'd-none': pool._id === p._id }"
                 :key="key"
@@ -57,9 +57,10 @@ export default class AssetPoolView extends Vue {
 
     async mounted() {
         this.$store.dispatch('account/getProfile');
-        await this.$store.dispatch('pools/list');
-        await this.$store.dispatch('pools/read', this.$route.params.id);
-        this.chainId = this.pool.chainId;
+        this.$store.dispatch('pools/read', this.$route.params.id).then(() => {
+            this.chainId = this.pool.chainId;
+        });
+        this.$store.dispatch('pools/list');
     }
 }
 </script>

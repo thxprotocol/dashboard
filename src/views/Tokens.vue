@@ -50,6 +50,7 @@ import { mapGetters } from 'vuex';
 import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import { IERC20s } from '@/types/erc20';
 
 @Component({
     components: {
@@ -63,6 +64,8 @@ import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
     }),
 })
 export default class Tokens extends Vue {
+    erc20s!: IERC20s;
+
     mounted() {
         this.$store.dispatch('account/getProfile');
         this.$store.dispatch('erc20/list');

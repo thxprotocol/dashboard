@@ -1,5 +1,6 @@
 <template>
-    <base-card :loading="erc721 && erc721.loading" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+        <template #card-header> NFT </template>
         <template #card-body v-if="erc721.name">
             <base-badge-network class="mr-2" :chainId="erc721.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc721.name">
@@ -35,11 +36,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IAccount } from '@/types/account';
+import { chainInfo } from '@/utils/chains';
+import { ERC721Type, TERC721 } from '@/types/erc721';
+import poll from 'promise-poller';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
-import { ERC721Type, TERC721 } from '@/types/erc721';
-import { chainInfo } from '@/utils/chains';
 
 @Component({
     components: {
@@ -53,14 +55,39 @@ import { chainInfo } from '@/utils/chains';
 })
 export default class BaseCardERC721 extends Vue {
     ERC721Type = ERC721Type;
+    isLoading = true;
+    isDeploying = false;
     error = '';
-
     profile!: IAccount;
 
     @Prop() erc721!: TERC721;
 
-    mounted() {
-        this.$store.dispatch('erc721/read', this.erc721._id);
+    waitForAddress() {
+        const taskFn = async () => {
+            const erc721 = await this.$store.dispatch('erc721/read', this.erc721._id);
+            if (erc721 && erc721.address.length) {
+                this.isDeploying = false;
+                this.isLoading = false;
+                return Promise.resolve(erc721);
+            } else {
+                this.isLoading = false;
+                return Promise.reject(erc721);
+            }
+        };
+
+        poll({ taskFn, interval: 3000, retries: 10 });
+    }
+
+    async mounted() {
+        await this.$store.dispatch('erc721/read', this.erc721._id);
+
+        if (!this.erc721.address) {
+            this.isDeploying = true;
+            this.waitForAddress();
+        } else {
+            this.isDeploying = false;
+            this.isLoading = false;
+        }
     }
 
     openTokenUrl() {

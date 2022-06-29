@@ -23,8 +23,9 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
-            <base-nothing-here
+            <base-list-state-empty
                 v-if="!Object.values(pools).length"
+                icon-class="fas fa-puzzle-piece"
                 text-submit="Add a pool"
                 title="You have not added a pool yet"
                 description="Pools have a balance and you use them to send or receive tokens."
@@ -43,7 +44,7 @@
 <script lang="ts">
 import BaseCardPool from '@/components/cards/BaseCardPool.vue';
 import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
-import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import BaseListStateEmpty from '@/components/BaseListStateEmpty.vue';
 import { IAccount } from '@/types/account';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
@@ -51,7 +52,7 @@ import { mapGetters } from 'vuex';
 
 @Component({
     components: {
-        BaseNothingHere,
+        BaseListStateEmpty,
         BaseCardPool,
         BaseModalPoolCreate,
     },

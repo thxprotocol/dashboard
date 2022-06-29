@@ -4,12 +4,17 @@
             <base-form-select-network @selected="chainId = $event" />
             <label>Variant</label>
             <b-form-group>
-                <b-form-radio v-model="poolVariant" name="poolVariant" value="defaultPool">
+                <b-form-radio
+                    @change="onSelectPoolVariant"
+                    v-model="poolVariant"
+                    name="poolVariant"
+                    value="defaultPool"
+                >
                     <strong> Token Pool</strong>
                     <p>Reward your users with ERC-20 tokens via claim URLS, QR codes, widgets and more.</p>
                     <small class="text-muted">2.5% protocol fee on pool deposits and withdrawals</small>
                 </b-form-radio>
-                <b-form-radio v-model="poolVariant" name="poolVariant" value="nftPool">
+                <b-form-radio @change="onSelectPoolVariant" v-model="poolVariant" name="poolVariant" value="nftPool">
                     <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
                     <p>Mint NFT's from your collection for your users.</p>
                 </b-form-radio>
@@ -42,7 +47,7 @@
             </b-form-group>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button :disabled="disabled" class="rounded-pill" @click="submit()" variant="primary" block>
                 Create Token Pool
             </b-button>
         </template>
@@ -82,6 +87,15 @@ export default class ModalAssetPoolCreate extends Vue {
     poolVariant = 'defaultPool';
     tokens: TERC20[] = [];
     profile!: IAccount;
+
+    get disabled() {
+        return this.loading || !this.tokens.length;
+    }
+
+    onSelectPoolVariant(variant: string) {
+        this.poolVariant = variant;
+        this.tokens = [];
+    }
 
     onSelectToken(token: TERC20) {
         this.tokens = [token];

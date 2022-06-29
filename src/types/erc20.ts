@@ -1,7 +1,7 @@
 import { ChainId } from '@/types/enums/ChainId';
 
 export enum ERC20Type {
-    Uknown = -1,
+    Unknown = -1,
     Limited = 0,
     Unlimited = 1,
 }

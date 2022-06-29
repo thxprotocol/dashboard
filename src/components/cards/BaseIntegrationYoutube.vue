@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { IAccount, IYoutube } from '@/types/account';
-import { ChannelType } from '@/store/modules/rewards';
+import { ChannelType } from '@/types/rewards';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 

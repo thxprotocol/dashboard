@@ -43,7 +43,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/promotions',
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         for (const promotion of r.data.results) {
@@ -56,7 +56,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/promotions/' + id,
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         this.context.commit('set', { pool, promotion: r.data });
@@ -67,7 +67,7 @@ class RewardModule extends VuexModule {
         const { data } = await axios({
             method: 'POST',
             url: '/promotions',
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
             data: promotion,
         });
 
@@ -79,7 +79,7 @@ class RewardModule extends VuexModule {
         await axios({
             method: 'DELETE',
             url: '/promotions/' + promotion.id,
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         this.context.commit('remove', { pool, promotion });

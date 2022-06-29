@@ -1,5 +1,6 @@
 <template>
     <base-card :loading="isLoading" :is-deploying="isDeploying">
+        <template #card-header>{{ variant }}</template>
         <template #card-body>
             <b-alert class="m-0" show variant="warning" v-if="outOfDate && artifacts">
                 Version conflict ({{ pool.version }} -> {{ artifacts }})
@@ -10,10 +11,8 @@
             <template v-if="pool.token">
                 <base-dropdown-pool-menu @remove="$bvModal.show(`modalDelete-${pool.address}`)" />
                 <base-badge-network :chainId="pool.chainId" class="mr-1" />
-                <b-badge variant="primary">
-                    {{ variant }}
-                </b-badge>
                 <p class="mt-3 mb-0">
+                    <span class="text-muted">Balance:</span><br />
                     <span class="font-weight-bold text-primary h3">
                         {{ pool.token.poolBalance }} {{ pool.token.symbol }}
                     </span>

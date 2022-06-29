@@ -1,163 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-
-export enum RewardState {
-    Disabled = 0,
-    Enabled = 1,
-}
-
-interface Poll {
-    id: number;
-    startTime: number;
-    endTime: number;
-    totalVoted: number;
-    withdrawAmount: number;
-    withdrawDuration: number;
-    withdrawUnlockDate: Date;
-    yesCounter: number;
-    noCounter: number;
-}
-
-export interface Reward {
-    _id: string;
-    id: number;
-    expiryDate: Date;
-    withdrawLimit: number;
-    withdrawAmount: number;
-    withdrawDuration: number;
-    withdrawUnlockDate: Date;
-    state: RewardState;
-    poolAddress: string;
-    poll: Poll;
-    withdrawCondition: IRewardCondition;
-    progress: number;
-    isClaimOnce: boolean;
-    isMembershipRequired: boolean;
-    title: string;
-}
-
-export interface IRewards {
-    [address: string]: { [id: string]: Reward };
-}
-
-export enum ChannelType {
-    None = 0,
-    YouTube = 1,
-    Twitter = 2,
-    Spotify = 3,
-}
-
-export enum ChannelAction {
-    YouTubeLike = 0,
-    YouTubeSubscribe = 1,
-    TwitterLike = 2,
-    TwitterRetweet = 3,
-    TwitterFollow = 4,
-    SpotifyUserFollow = 5,
-    SpotifyPlaylistFollow = 6,
-    SpotifyTrackPlaying = 7,
-    SpotifyTrackSaved = 8,
-    SpotifyTrackRecent = 9,
-}
-
-export const channelList = [
-    {
-        type: ChannelType.None,
-        name: ChannelType[0],
-        logoURI: '',
-        actions: [],
-    },
-    {
-        type: ChannelType.YouTube,
-        name: ChannelType[1],
-        logoURI: require('@/assets/logo-youtube.png'),
-        actions: [ChannelAction.YouTubeLike, ChannelAction.YouTubeSubscribe],
-    },
-    {
-        type: ChannelType.Twitter,
-        name: ChannelType[2],
-        logoURI: require('@/assets/logo-twitter.png'),
-        actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet, ChannelAction.TwitterFollow],
-    },
-    {
-        type: ChannelType.Spotify,
-        name: ChannelType[3],
-        logoURI: require('@/assets/logo-spotify.png'),
-        actions: [
-            ChannelAction.SpotifyUserFollow,
-            ChannelAction.SpotifyPlaylistFollow,
-            ChannelAction.SpotifyTrackPlaying,
-            ChannelAction.SpotifyTrackSaved,
-        ],
-    },
-];
-export const channelActionList = [
-    {
-        type: ChannelAction.YouTubeLike,
-        name: 'Like',
-        items: [],
-    },
-    {
-        type: ChannelAction.YouTubeSubscribe,
-        name: 'Subscribe',
-        items: [],
-    },
-    {
-        type: ChannelAction.TwitterLike,
-        name: 'Like',
-        items: [],
-    },
-    {
-        type: ChannelAction.TwitterRetweet,
-        name: 'Retweet',
-        items: [],
-    },
-    {
-        type: ChannelAction.TwitterFollow,
-        name: 'Follow',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyUserFollow,
-        name: 'Follow me',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyPlaylistFollow,
-        name: 'Follow Playlist',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyTrackPlaying,
-        name: 'Play a Track',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyTrackSaved,
-        name: 'Save a Track',
-        items: [],
-    },
-];
-
-export interface IRewardCondition {
-    channelType: ChannelType;
-    channelAction: ChannelAction;
-    channelItem: any;
-}
-
-export interface IChannel {
-    type: ChannelType;
-    name: string;
-    logoURI: string;
-    actions: ChannelAction[];
-}
-
-export interface IChannelAction {
-    type: ChannelAction;
-    name: string;
-    items: any[];
-}
+import { IRewardCondition, IRewards, Reward } from '@/types/rewards';
 
 @Module({ namespaced: true })
 class RewardModule extends VuexModule {
@@ -169,18 +13,18 @@ class RewardModule extends VuexModule {
 
     @Mutation
     set(reward: Reward) {
-        if (!this._all[reward.poolAddress]) {
-            Vue.set(this._all, reward.poolAddress, {});
+        if (!this._all[reward.poolId]) {
+            Vue.set(this._all, reward.poolId, {});
         }
-        Vue.set(this._all[reward.poolAddress], reward.id, reward);
+        Vue.set(this._all[reward.poolId], reward.id, reward);
     }
 
     @Action({ rawError: true })
-    async read(address: string) {
+    async list(poolId: string) {
         const r = await axios({
             method: 'GET',
             url: '/rewards',
-            headers: { 'X-PoolAddress': address },
+            headers: { 'X-PoolId': poolId },
         });
 
         for (const reward of r.data) {
@@ -192,7 +36,7 @@ class RewardModule extends VuexModule {
     async create(payload: {
         slug: string;
         title: string;
-        address: string;
+        poolId: string;
         erc721metadataId: string;
         withdrawLimit: number;
         withdrawAmount: number;
@@ -206,7 +50,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'POST',
             url: '/rewards',
-            headers: { 'X-PoolAddress': payload.address },
+            headers: { 'X-PoolId': payload.poolId },
             data: {
                 slug: payload.slug,
                 title: payload.title,
@@ -230,7 +74,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'PATCH',
             url: `/rewards/${reward.id}`,
-            headers: { 'X-PoolAddress': reward.poolAddress },
+            headers: { 'X-PoolId': reward.poolId },
             data,
         });
 
