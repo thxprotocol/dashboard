@@ -8,12 +8,14 @@
         centered
         :body-bg-variant="loading ? 'light' : 'white'"
         :hide-footer="loading"
+        :hide-header="loading"
     >
-        <template v-slot:modal-header v-if="loading">
-            <div class="w-100 center-center bg-light">
-                <b-spinner variant="primary"></b-spinner>
+        <div class="w-100 center-center bg-light py-3" v-if="loading">
+            <div class="text-center">
+                <b-spinner variant="gray" /><br />
+                <strong class="text-gray">Working on it...</strong>
             </div>
-        </template>
+        </div>
         <b-alert variant="danger" show v-if="error">
             {{ error }}
         </b-alert>
