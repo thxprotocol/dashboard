@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { Module, VuexModule, Action } from 'vuex-module-decorators';
+import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IDeposits } from '@/types/IDeposits';
+import { IPool } from './pools';
+import { Vue } from 'vue-property-decorator';
 
 export enum DepositState {
     Pending = 0,
@@ -29,21 +31,21 @@ class DepositModule extends VuexModule {
         return this._all;
     }
 
-    // @Mutation
-    // set(deposit: TDeposit) {
-    //     if (!this._all[deposit.poolAddress]) {
-    //         Vue.set(this._all, deposit.poolAddress, {});
-    //     }
-    //     Vue.set(this._all[deposit.poolAddress], deposit.id, deposit);
-    // }
+    @Mutation
+    set(deposit: TDeposit) {
+        if (!this._all[deposit.receiver]) {
+            Vue.set(this._all, deposit.receiver, {});
+        }
+        Vue.set(this._all[deposit.receiver], deposit.id, deposit);
+    }
 
     @Action({ rawError: true })
-    async list({ poolAddress }: { poolAddress: string }) {
+    async list({ pool }: { pool: IPool }) {
         try {
             const r = await axios({
                 method: 'GET',
                 url: '/deposits',
-                headers: { 'X-PoolId': poolAddress },
+                headers: { 'X-PoolId': pool._id },
             });
 
             if (r.status !== 200) {
@@ -51,7 +53,7 @@ class DepositModule extends VuexModule {
             }
 
             for (const data of r.data.results) {
-                this.context.commit('set', { ...data, ...{ poolAddress } });
+                this.context.commit('set', { ...data, ...{ pool } });
             }
         } catch (error) {
             return { error };
@@ -59,37 +61,37 @@ class DepositModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async read({ poolAddress, id }: { poolAddress: string; id: string }) {
+    async read({ pool, id }: { pool: IPool; id: string }) {
         try {
             const r = await axios({
                 method: 'GET',
                 url: '/deposits/' + id,
-                headers: { 'X-PoolId': poolAddress },
+                headers: { 'X-PoolId': pool },
             });
 
             if (r.status !== 200) {
                 throw new Error('GET deposit failed');
             }
 
-            this.context.commit('set', { ...r.data, ...{ poolAddress } });
+            this.context.commit('set', { ...r.data, ...{ pool } });
         } catch (error) {
             return { error };
         }
     }
 
     @Action({ rawError: true })
-    async create({ amount, id, poolAddress }: { amount: number; poolAddress: string; id: string }) {
+    async create({ amount, id, pool }: { amount: number; pool: IPool; id: string }) {
         const r = await axios({
             method: 'POST',
             url: '/pools/' + id + '/topup',
-            headers: { 'X-PoolId': poolAddress },
+            headers: { 'X-PoolId': pool._id },
             data: { amount },
         });
 
         if (r.status !== 200) {
             throw new Error('Could not create deposit');
         }
-        const deposit = { ...r.data, ...{ poolAddress } };
+        const deposit = { ...r.data, ...{ pool } };
 
         this.context.commit('set', deposit);
 

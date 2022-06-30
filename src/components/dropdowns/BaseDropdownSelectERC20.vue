@@ -70,7 +70,6 @@ export default class ModalAssetPoolCreate extends Vue {
     erc721s!: IERC721s;
 
     @Prop() chainId!: ChainId;
-    @Prop() disableTokens: string[] = [];
 
     get hasERC20s() {
         return !!Object.values(this.erc20s).length;

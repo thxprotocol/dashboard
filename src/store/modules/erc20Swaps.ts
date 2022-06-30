@@ -86,7 +86,7 @@ class ERC20SwapRuleModule extends VuexModule {
             const r = await axios({
                 method: 'GET',
                 url: '/swaprules?' + params.toString(),
-                headers: { 'X-PoolAddress': pool.address },
+                headers: { 'X-PoolId': pool._id },
             });
             if (!r.data.results.length) {
                 return TRANSACTIONS_RESPONSE;
@@ -139,7 +139,7 @@ class ERC20SwapRuleModule extends VuexModule {
         const r = await axios({
             method: 'POST',
             url: '/swaprules',
-            headers: { 'X-PoolAddress': payload.pool.address },
+            headers: { 'X-PoolId': payload.pool._id },
             data: {
                 tokenInAddress: payload.tokenInAddress,
                 tokenMultiplier: Number(payload.tokenMultiplier),
