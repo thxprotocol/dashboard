@@ -16,6 +16,7 @@
             </div>
             <div v-else>Select an ERC20 token</div>
         </template>
+        <b-dropdown-item v-if="!hasERC20s"> No tokens available. </b-dropdown-item>
         <b-dropdown-item-button
             :disabled="chainId !== erc20.chainId"
             :key="erc20._id"
@@ -79,8 +80,9 @@ export default class ModalAssetPoolCreate extends Vue {
         this.$store.dispatch('erc20/list').then(() => {
             for (const id in this.erc20s) {
                 this.$store.dispatch('erc20/read', id).then(() => {
-                    if (!this.erc20Token) {
-                        this.erc20Token = this.erc20s[id] as TERC20;
+                    const erc20 = this.erc20s[id] as TERC20;
+                    if (!this.erc20Token && erc20.chainId == this.chainId) {
+                        this.erc20Token = erc20;
                         this.$emit('selected', this.erc20Token);
                     }
                 });
