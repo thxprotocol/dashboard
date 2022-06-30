@@ -74,62 +74,59 @@ class ERC20SwapRuleModule extends VuexModule {
 
     @Action({ rawError: true })
     async list({ pool, page, limit }: GetERC20SwapRulesProps): Promise<GetERC20SwapRulesResponse | undefined> {
-        try {
-            const params = new URLSearchParams();
-            if (page) {
-                params.set('page', String(page));
-            }
-            if (limit) {
-                params.set('limit', String(limit));
-            }
+        const params = new URLSearchParams();
+        if (page) {
+            params.set('page', String(page));
+        }
+        if (limit) {
+            params.set('limit', String(limit));
+        }
 
-            const r = await axios({
-                method: 'GET',
-                url: '/swaprules?' + params.toString(),
-                headers: { 'X-PoolId': pool._id },
-            });
-            if (!r.data.results.length) {
-                return TRANSACTIONS_RESPONSE;
-            }
-            const promises = [];
+        const r = await axios({
+            method: 'GET',
+            url: '/swaprules?' + params.toString(),
+            headers: { 'X-PoolId': pool._id },
+        });
 
-            for (const swaprule of r.data.results) {
-                const promise = new Promise((resolve, reject) => {
-                    try {
+        if (!r.data.results.length) {
+            return TRANSACTIONS_RESPONSE;
+        }
+        const promises = [];
+
+        for (const swaprule of r.data.results) {
+            const promise = new Promise((resolve, reject) => {
+                try {
+                    axios({
+                        method: 'GET',
+                        url: '/erc20/token/' + swaprule.tokenInId,
+                    }).then((res) => {
                         axios({
                             method: 'GET',
-                            url: '/erc20/token/' + swaprule.tokenInId,
-                        }).then((res) => {
-                            axios({
-                                method: 'GET',
-                                url: '/erc20/' + res.data.erc20Id,
-                            }).then(({ data }) => {
-                                const erc20 = {
-                                    ...res.data,
-                                    balance: 0,
-                                    blockExplorerURL: `https://${
-                                        data.chainId === 80001 ? 'mumbai.' : ''
-                                    }polygonscan.com/address/${data.address}`,
-                                    logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
-                                };
-                                const swaprulePaginated = new ERC20SwapRuleExtended(swaprule, erc20);
-                                resolve(swaprulePaginated);
-                            });
+                            url: '/erc20/' + res.data.erc20Id,
+                        }).then(({ data }) => {
+                            const erc20 = {
+                                ...res.data,
+                                balance: 0,
+                                blockExplorerURL: `https://${
+                                    data.chainId === 80001 ? 'mumbai.' : ''
+                                }polygonscan.com/address/${data.address}`,
+                                logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+                            };
+                            const swaprulePaginated = new ERC20SwapRuleExtended(swaprule, erc20);
+                            resolve(swaprulePaginated);
                         });
-                    } catch (err) {
-                        reject(err);
-                    }
-                });
-                promises.push(promise);
-            }
-
-            return {
-                results: (await Promise.all(promises)) as ERC20SwapRuleExtended[],
-                total: r.data.results.length,
-            };
-        } catch (e) {
-            console.log(e);
+                    });
+                } catch (err) {
+                    reject(err);
+                }
+            });
+            promises.push(promise);
         }
+
+        return {
+            results: (await Promise.all(promises)) as ERC20SwapRuleExtended[],
+            total: r.data.total,
+        };
 
         return undefined;
     }
