@@ -144,23 +144,7 @@ import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
-import { BASE_URL, WALLET_URL } from '@/utils/secrets';
-
-const getBase64Image = (url: string): Promise<string> => {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.setAttribute('crossOrigin', 'anonymous');
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx?.drawImage(img, 0, 0);
-            resolve(canvas.toDataURL('image/png'));
-        };
-        img.src = url;
-    });
-};
+import { WALLET_URL } from '@/utils/secrets';
 
 @Component({
     components: {
@@ -196,20 +180,7 @@ export default class BaseListItemReward extends Vue {
                 this.reward.withdrawCondition.channelItem,
             );
         }
-        getBase64Image(BASE_URL + this.logoSrc).then((data) => {
-            this.imgData = data;
-            // this.claimURL = `${WALLET_URL}/v1/claim/${this.reward._id}`;
-            const d = {
-                chainId: this.pool.chainId,
-                poolAddress: this.pool.address,
-                tokenSymbol: this.pool.token.symbol,
-                rewardId: this.reward.id,
-                rewardAmount: this.reward.withdrawAmount,
-                rewardCondition: this.reward.withdrawCondition,
-                clientId: this.pool.clientId,
-            };
-            this.claimURL = `${WALLET_URL}/claim?hash=${btoa(JSON.stringify(d))}`;
-        });
+        this.claimURL = `${WALLET_URL}/claim/${this.reward._id}`;
     }
 
     onQRLoaded(dataUrl: string) {
