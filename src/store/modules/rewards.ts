@@ -35,6 +35,7 @@ export interface Reward {
     isClaimOnce: boolean;
     isMembershipRequired: boolean;
     title: string;
+    claimId?: string;
 }
 
 export interface IRewards {
