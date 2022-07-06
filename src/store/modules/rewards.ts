@@ -28,7 +28,7 @@ export interface Reward {
     withdrawDuration: number;
     withdrawUnlockDate: Date;
     state: RewardState;
-    poolAddress: string;
+    poolId: string;
     poll: Poll;
     withdrawCondition: IRewardCondition;
     progress: number;
@@ -170,18 +170,18 @@ class RewardModule extends VuexModule {
 
     @Mutation
     set(reward: Reward) {
-        if (!this._all[reward.poolAddress]) {
-            Vue.set(this._all, reward.poolAddress, {});
+        if (!this._all[reward.poolId]) {
+            Vue.set(this._all, reward.poolId, {});
         }
-        Vue.set(this._all[reward.poolAddress], reward.id, reward);
+        Vue.set(this._all[reward.poolId], reward.id, reward);
     }
 
     @Action({ rawError: true })
-    async read(address: string) {
+    async read(poolId: string) {
         const r = await axios({
             method: 'GET',
             url: '/rewards',
-            headers: { 'X-PoolAddress': address },
+            headers: { 'X-PoolId': poolId },
         });
 
         for (const reward of r.data) {
@@ -193,7 +193,7 @@ class RewardModule extends VuexModule {
     async create(payload: {
         slug: string;
         title: string;
-        address: string;
+        poolId: string;
         erc721metadataId: string;
         withdrawLimit: number;
         withdrawAmount: number;
@@ -207,7 +207,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'POST',
             url: '/rewards',
-            headers: { 'X-PoolAddress': payload.address },
+            headers: { 'X-PoolId': payload.poolId },
             data: {
                 slug: payload.slug,
                 title: payload.title,
@@ -231,7 +231,7 @@ class RewardModule extends VuexModule {
         const r = await axios({
             method: 'PATCH',
             url: `/rewards/${reward.id}`,
-            headers: { 'X-PoolAddress': reward.poolAddress },
+            headers: { 'X-PoolId': reward.poolId },
             data,
         });
 

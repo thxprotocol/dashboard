@@ -198,7 +198,7 @@ export default class BaseListItemReward extends Vue {
         }
         getBase64Image(BASE_URL + this.logoSrc).then((data) => {
             this.imgData = data;
-            this.claimURL = `${WALLET_URL}/claims/${this.reward.claimId}`;
+            this.claimURL = `${WALLET_URL}/claim/${this.reward.claimId}`;
         });
     }
 

@@ -73,14 +73,14 @@ export default class AssetPoolView extends Vue {
     }
 
     get filteredRewards(): Reward[] {
-        if (this.rewards[this.pool.address]) {
-            return Object.values(this.rewards[this.pool.address]);
+        if (this.rewards[this.pool._id]) {
+            return Object.values(this.rewards[this.pool._id]);
         }
         return [];
     }
 
     mounted() {
-        this.$store.dispatch('rewards/read', this.pool.address);
+        this.$store.dispatch('rewards/read', this.pool._id);
 
         if (this.pool.isNFTPool) {
             this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {

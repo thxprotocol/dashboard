@@ -419,7 +419,7 @@ export default class ModalRewardCreate extends Vue {
         await this.$store.dispatch('rewards/create', {
             slug,
             title: this.rewardTitle,
-            address: this.pool.address,
+            poolId: this.pool._id,
             expiryDate: expiryDate?.toISOString(),
             erc721metadataId: this.erc721metadata?._id,
             withdrawLimit: this.rewardWithdrawLimit,
