@@ -11,7 +11,7 @@
                         :alt="erc20Token.name"
                     />
                     <base-identicon v-else class="mr-3" :size="20" variant="darker" :uri="erc20Token.logoURI" />
-                    <strong class="mr-1">{{ erc20Token.symbol }}</strong> {{ erc20Token.name }}
+                    <strong class="mr-1">{{ erc20Token.symbol }}</strong> {{ erc20Token.name }} |
                 </div>
             </div>
             <div v-else>Select an ERC20 token</div>

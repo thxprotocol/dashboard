@@ -27,14 +27,13 @@ axios.defaults.baseURL = `${process.env.VUE_APP_API_ROOT}/v1`;
 axios.defaults.maxRedirects = 0;
 
 // Add a request interceptor
-axios.interceptors.request.use((req: AxiosRequestConfig) => {
+axios.interceptors.request.use((config: AxiosRequestConfig) => {
     const user = store.getters['account/user'];
-
-    if (user) {
-        req.headers.common['Authorization'] = `Bearer ${user.access_token}`;
+    if (user && !user.expired) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${user.access_token}`;
     }
-
-    return req;
+    return config;
 });
 
 // Add a response interceptor

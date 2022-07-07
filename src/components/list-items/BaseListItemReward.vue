@@ -140,7 +140,7 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { Reward, ChannelType, ChannelAction, RewardState } from '@/store/modules/rewards';
+import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';

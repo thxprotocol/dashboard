@@ -206,14 +206,7 @@
 import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import {
-    channelActionList,
-    ChannelType,
-    ChannelAction,
-    IChannel,
-    IChannelAction,
-    Reward,
-} from '@/store/modules/rewards';
+import { channelActionList, ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/types/rewards';
 import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import BaseDropdownYoutubeVideo from '../dropdowns/BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from '../dropdowns/BaseDropdownYoutubeUploads.vue';
@@ -417,9 +410,9 @@ export default class ModalRewardCreate extends Vue {
         const slug = slugify(this.rewardTitle);
 
         await this.$store.dispatch('rewards/create', {
+            poolId: this.pool._id,
             slug,
             title: this.rewardTitle,
-            poolId: this.pool._id,
             expiryDate: expiryDate?.toISOString(),
             erc721metadataId: this.erc721metadata?._id,
             withdrawLimit: this.rewardWithdrawLimit,

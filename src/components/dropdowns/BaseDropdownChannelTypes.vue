@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { channelList, IChannel } from '@/store/modules/rewards';
+import { channelList, IChannel } from '@/types/rewards';
 import { BDropdown, BDropdownItemButton, BBadge, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';

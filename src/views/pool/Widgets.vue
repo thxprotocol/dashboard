@@ -110,7 +110,7 @@
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { IRewards, Reward } from '@/store/modules/rewards';
+import { IRewards, Reward } from '@/types/rewards';
 import { IWidgets, Widget } from '@/store/modules/widgets';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseModalWidgetCreate from '@/components/modals/BaseModalWidgetCreate.vue';
@@ -151,27 +151,25 @@ export default class WidgetsView extends Vue {
     }
 
     get filteredRewards(): Reward[] {
-        if (this.rewards[this.pool.address]) {
-            return Object.values(this.rewards[this.pool.address]);
-        }
-        return [];
+        if (!this.rewards[this.pool._id]) return [];
+        return Object.values(this.rewards[this.pool._id]);
     }
 
     async getWidgets() {
         await this.$store.dispatch('widgets/list', this.pool.address);
 
-        for (const clientId in this.widgets[this.pool.address]) {
-            const widget = this.widgets[this.pool.address][clientId];
-            const reward = this.rewards[this.pool.address][widget.metadata.rewardId];
+        for (const clientId in this.widgets[this.pool._id]) {
+            const widget = this.widgets[this.pool._id][clientId];
+            const reward = this.rewards[this.pool._id][widget.metadata.rewardId];
 
-            this.widgets[this.pool.address][clientId].setReward(reward);
+            this.widgets[this.pool._id][clientId].setReward(reward);
         }
     }
 
     async mounted() {
         try {
             await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('rewards/read', this.pool.address);
+            await this.$store.dispatch('rewards/list', this.pool._id);
             await this.getWidgets();
             this.skeletonLoading = false;
         } catch (e) {
@@ -184,7 +182,7 @@ export default class WidgetsView extends Vue {
     async remove(clientId: string) {
         this.loading = true;
         try {
-            await this.$store.dispatch('widgets/remove', { clientId, poolAddress: this.pool.address });
+            await this.$store.dispatch('widgets/remove', { clientId, poolId: this.pool._id });
         } catch (e) {
             console.error(e);
         } finally {

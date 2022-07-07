@@ -31,7 +31,7 @@
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { IRewards, Reward } from '@/store/modules/rewards';
+import { IRewards, Reward } from '@/types/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
@@ -73,14 +73,12 @@ export default class AssetPoolView extends Vue {
     }
 
     get filteredRewards(): Reward[] {
-        if (this.rewards[this.pool._id]) {
-            return Object.values(this.rewards[this.pool._id]);
-        }
-        return [];
+        if (!this.rewards[this.$route.params.id]) return [];
+        return Object.values(this.rewards[this.$route.params.id]);
     }
 
     mounted() {
-        this.$store.dispatch('rewards/read', this.pool._id);
+        this.$store.dispatch('rewards/list', this.pool._id);
 
         if (this.pool.isNFTPool) {
             this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {

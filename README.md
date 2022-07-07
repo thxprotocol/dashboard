@@ -2,33 +2,35 @@
 
 ## Project setup
 ```
-yarn install
+npm i
+mkdir ./certs # Place localhost.crt and localhost.key in this folder
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+npm start
 ```
 
 ### Compiles and minifies for production
 ```
-yarn build
+npm build
 ```
 
 ### Run your unit tests
 ```
-yarn test:unit
+npm test:unit
 ```
 
 ### Run your end-to-end tests
 ```
-yarn test:e2e
+npm test:e2e
 ```
 
 ### Lints and fixes files
 ```
-yarn lint
+npm lint
 ```
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

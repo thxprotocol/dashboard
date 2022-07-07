@@ -44,7 +44,7 @@ class PaymentModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/payments',
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         for (const payment of r.data) {
@@ -57,7 +57,7 @@ class PaymentModule extends VuexModule {
         const r = await axios({
             method: 'GET',
             url: '/payments/' + id,
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
         });
 
         this.context.commit('set', { pool, payments: r.data });
@@ -68,7 +68,7 @@ class PaymentModule extends VuexModule {
         const { data } = await axios({
             method: 'POST',
             url: '/payments',
-            headers: { 'X-PoolAddress': pool.address },
+            headers: { 'X-PoolId': pool._id },
             data: payment,
         });
 
