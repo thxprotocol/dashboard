@@ -2,7 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { ChainId } from '@/types/enums/ChainId';
-import { IRewardCondition } from './rewards';
+import { IRewardCondition } from '@/types/rewards';
 
 export type TClaim = {
     _id: string;
