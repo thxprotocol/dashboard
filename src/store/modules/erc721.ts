@@ -105,7 +105,7 @@ class ERC721Module extends VuexModule {
         const { data } = await axios({
             method: 'POST',
             url: `/erc721/${payload.erc721._id}/metadata`,
-            headers: { 'X-PoolId': payload.pool.address },
+            headers: { 'X-PoolId': payload.pool._id },
             data: {
                 title: payload.title,
                 description: payload.description,
@@ -131,7 +131,7 @@ class ERC721Module extends VuexModule {
         const { data } = await axios({
             method: 'POST',
             url: `/erc721/${erc721._id}/metadata/${erc721Metadata._id}/mint`,
-            headers: { 'X-PoolId': pool.address },
+            headers: { 'X-PoolId': pool._id },
             data: {
                 recipient,
             },

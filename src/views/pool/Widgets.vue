@@ -67,7 +67,7 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[pool.address]">
+                <b-form-group class="mb-0" :key="widget.clientId" v-for="widget of widgets[pool._id]">
                     <hr />
                     <div class="row pt-2 pb-2">
                         <div class="col-md-4 d-flex align-items-center">
@@ -156,7 +156,7 @@ export default class WidgetsView extends Vue {
     }
 
     async getWidgets() {
-        await this.$store.dispatch('widgets/list', this.pool.address);
+        await this.$store.dispatch('widgets/list', this.pool._id);
 
         for (const clientId in this.widgets[this.pool._id]) {
             const widget = this.widgets[this.pool._id][clientId];
