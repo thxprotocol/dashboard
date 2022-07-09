@@ -98,10 +98,9 @@ export default class BaseModalDepositCreate extends Vue {
 
         this.loading = true;
 
-        await this.$store.dispatch('deposits/create', {
+        await this.$store.dispatch('pools/topup', {
             amount: this.amount,
-            id: this.pool._id,
-            poolAddress: this.pool.address,
+            poolId: this.pool._id,
         });
 
         await this.$store.dispatch('pools/read', this.pool._id);

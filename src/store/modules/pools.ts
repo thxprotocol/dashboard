@@ -195,6 +195,16 @@ class PoolModule extends VuexModule {
 
         return r.data.results.length ? r.data : MEMBERS_RESPONSE;
     }
+
+    @Action({ rawError: true })
+    async topup({ amount, poolId }: { amount: number; poolId: string }) {
+        await axios({
+            method: 'POST',
+            url: '/pools/' + poolId + '/topup',
+            headers: { 'X-PoolId': poolId },
+            data: { amount },
+        });
+    }
 }
 
 export default PoolModule;

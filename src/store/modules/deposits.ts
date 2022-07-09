@@ -36,65 +36,6 @@ class DepositModule extends VuexModule {
     //     }
     //     Vue.set(this._all[deposit.poolAddress], deposit.id, deposit);
     // }
-
-    @Action({ rawError: true })
-    async list({ poolAddress }: { poolAddress: string }) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/deposits',
-                headers: { 'X-PoolId': poolAddress },
-            });
-
-            if (r.status !== 200) {
-                throw new Error('Could not list deposits.');
-            }
-
-            for (const data of r.data.results) {
-                this.context.commit('set', { ...data, ...{ poolAddress } });
-            }
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    @Action({ rawError: true })
-    async read({ poolAddress, id }: { poolAddress: string; id: string }) {
-        try {
-            const r = await axios({
-                method: 'GET',
-                url: '/deposits/' + id,
-                headers: { 'X-PoolId': poolAddress },
-            });
-
-            if (r.status !== 200) {
-                throw new Error('GET deposit failed');
-            }
-
-            this.context.commit('set', { ...r.data, ...{ poolAddress } });
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    @Action({ rawError: true })
-    async create({ amount, id, poolAddress }: { amount: number; poolAddress: string; id: string }) {
-        const r = await axios({
-            method: 'POST',
-            url: '/pools/' + id + '/topup',
-            headers: { 'X-PoolId': poolAddress },
-            data: { amount },
-        });
-
-        if (r.status !== 200) {
-            throw new Error('Could not create deposit');
-        }
-        const deposit = { ...r.data, ...{ poolAddress } };
-
-        this.context.commit('set', deposit);
-
-        return { deposit };
-    }
 }
 
 export default DepositModule;
