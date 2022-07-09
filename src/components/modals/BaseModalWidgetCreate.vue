@@ -111,6 +111,7 @@ export default class ModalWidgetCreate extends Vue {
                 postLogoutRedirectUris: [this.widgetRequestUri],
                 metadata: {
                     rewardId: this.widgetReward?.id,
+                    poolId: this.pool._id,
                     poolAddress: this.pool.address,
                 },
             });

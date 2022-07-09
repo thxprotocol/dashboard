@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { User, UserManager } from 'oidc-client';
+import { User, UserManager } from 'oidc-client-ts';
 import { ChannelType } from '@/types/rewards';
 import { IAccount, IAccountUpdates, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import { config } from '@/utils/oidc';
@@ -148,123 +148,89 @@ class AccountModule extends VuexModule {
 
     @Action({ rawError: true })
     async connectRedirect(channel: ChannelType) {
-        try {
-            await this.userManager.signinRedirect({
-                extraQueryParams: { channel, prompt: 'connect', return_url: BASE_URL + '/integrations' },
-            });
-        } catch (error) {
-            return { error };
-        }
+        await this.userManager.signinRedirect({
+            extraQueryParams: { channel, prompt: 'connect', return_url: BASE_URL + '/integrations' },
+        });
     }
 
     @Action({ rawError: true })
     async signinRedirect(payload: { signupToken: string; signupEmail: string; passwordResetToken: string }) {
-        try {
-            const extraQueryParams: any = {
-                return_url: BASE_URL,
-            };
+        const extraQueryParams: any = {
+            return_url: BASE_URL,
+        };
 
-            if (payload.signupToken) {
-                extraQueryParams['prompt'] = 'confirm';
-                extraQueryParams['signup_token'] = payload.signupToken;
-            }
-
-            if (payload.passwordResetToken) {
-                extraQueryParams['prompt'] = 'reset';
-                extraQueryParams['password_reset_token'] = payload.passwordResetToken;
-            }
-
-            await this.userManager.clearStaleState();
-
-            return await this.userManager.signinRedirect({
-                extraQueryParams,
-            });
-        } catch (e) {
-            return e;
+        if (payload.signupToken) {
+            extraQueryParams['prompt'] = 'confirm';
+            extraQueryParams['signup_token'] = payload.signupToken;
         }
+
+        if (payload.passwordResetToken) {
+            extraQueryParams['prompt'] = 'reset';
+            extraQueryParams['password_reset_token'] = payload.passwordResetToken;
+        }
+
+        await this.userManager.clearStaleState();
+
+        return await this.userManager.signinRedirect({
+            extraQueryParams,
+        });
     }
 
     @Action({ rawError: true })
     async accountRedirect(returnPath: string) {
-        try {
-            await this.userManager.signinRedirect({
-                extraQueryParams: { prompt: 'account-settings', return_url: BASE_URL + returnPath },
-            });
-        } catch (e) {
-            return e;
-        }
+        await this.userManager.signinRedirect({
+            extraQueryParams: { prompt: 'account-settings', return_url: BASE_URL + returnPath },
+        });
     }
 
     @Action({ rawError: true })
     async signupRedirect() {
-        try {
-            await this.userManager.clearStaleState();
-            const url = new URL(window.location.href);
-            const signupEmail = url.searchParams.get('signup_email');
+        await this.userManager.clearStaleState();
+        const url = new URL(window.location.href);
+        const signupEmail = url.searchParams.get('signup_email');
 
-            const extraQueryParams: any = {
-                prompt: 'create',
-                return_url: BASE_URL,
-            };
+        const extraQueryParams: any = {
+            prompt: 'create',
+            return_url: BASE_URL,
+        };
 
-            if (signupEmail) {
-                extraQueryParams['signup_email'] = signupEmail;
-            }
-
-            return await this.userManager.signinRedirect({
-                extraQueryParams,
-            });
-        } catch (e) {
-            return e;
+        if (signupEmail) {
+            extraQueryParams['signup_email'] = signupEmail;
         }
+
+        return await this.userManager.signinRedirect({
+            extraQueryParams,
+        });
     }
 
     @Action({ rawError: true })
     async signinRedirectCallback() {
-        try {
-            const user = await this.userManager.signinRedirectCallback();
-
-            this.context.commit('setUser', user);
-
-            return user;
-        } catch (e) {
-            return e;
-        }
+        const user = await this.userManager.signinRedirectCallback();
+        this.context.commit('setUser', user);
+        return user;
     }
 
     @Action({ rawError: true })
     async signoutRedirect() {
-        try {
-            await this.userManager.signoutRedirect({});
+        await this.userManager.signoutRedirect({});
 
-            this.context.commit('setUser', null);
-        } catch (e) {
-            return e;
-        }
+        this.context.commit('setUser', null);
     }
 
     @Action({ rawError: true })
     async signout() {
-        try {
-            await this.userManager.removeUser();
-            await this.userManager.clearStaleState();
+        await this.userManager.removeUser();
+        await this.userManager.clearStaleState();
 
-            await axios({
-                method: 'GET',
-                url: config.authority + '/session/end',
-            });
-        } catch (e) {
-            return e;
-        }
+        await axios({
+            method: 'GET',
+            url: config.authority + '/session/end',
+        });
     }
 
     @Action({ rawError: true })
     async signinSilent() {
-        try {
-            return await this.userManager.signinSilent();
-        } catch (e) {
-            return e;
-        }
+        return await this.userManager.signinSilent();
     }
 
     @Action({ rawError: true })

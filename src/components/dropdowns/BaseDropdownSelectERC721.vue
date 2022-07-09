@@ -1,12 +1,13 @@
 <template>
     <b-dropdown variant="link" class="dropdown-select">
         <template #button-content>
-            <div class="d-flex align-items-center" v-if="token">
+            <div class="d-flex align-items-center" v-if="token && token.chainId === chainId">
                 <base-identicon class="mr-3" :size="20" variant="darker" :uri="token.logoURI" />
                 <strong class="mr-1">{{ token.symbol }}</strong> {{ token.name }}
             </div>
-            <div class="d-flex align-items-center" v-if="!Object.values(erc721s).length">No tokens available.</div>
+            <div v-else>Select an ERC721 token</div>
         </template>
+        <b-dropdown-item v-if="!hasERC721s"> No NFT contracts available. </b-dropdown-item>
         <b-dropdown-item-button
             :disabled="chainId !== erc721.chainId"
             :key="erc721._id"
@@ -53,8 +54,9 @@ export default class BaseDropdownSelectERC721 extends Vue {
         this.$store.dispatch('erc721/list').then(() => {
             for (const id in this.erc721s) {
                 this.$store.dispatch('erc721/read', id).then(() => {
-                    if (!this.token) {
-                        this.token = (this.erc721s[id] as unknown) as TERC721;
+                    const erc721 = (this.erc721s[id] as unknown) as TERC721;
+                    if (!this.token && erc721.chainId === this.chainId) {
+                        this.token = erc721;
                         this.$emit('selected', this.token);
                     }
                 });

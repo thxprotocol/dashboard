@@ -1,7 +1,7 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
         <template #modal-body v-if="profile && !loading">
-            <base-form-select-network @selected="chainId = $event" />
+            <base-form-select-network @selected="onSelectChain" />
             <label>Variant</label>
             <b-form-group>
                 <b-form-radio
@@ -90,6 +90,11 @@ export default class ModalAssetPoolCreate extends Vue {
 
     get disabled() {
         return this.loading || !this.tokens.length;
+    }
+
+    onSelectChain(chainId: ChainId) {
+        this.chainId = chainId;
+        this.tokens = [];
     }
 
     onSelectPoolVariant(variant: string) {

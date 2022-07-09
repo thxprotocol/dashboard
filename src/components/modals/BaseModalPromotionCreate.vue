@@ -86,7 +86,7 @@ export default class ModalPromotionCreate extends Vue {
             description: this.description,
             price: this.price,
             value: this.value,
-            poolAddress: this.pool.address,
+            poolId: this.pool._id,
         };
 
         await this.$store.dispatch('promotions/create', { promotion, pool: this.pool });
