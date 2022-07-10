@@ -10,7 +10,7 @@ export const config: any = {
     redirect_uri: `${BASE_URL}/signin-oidc`,
     response_type: 'code',
     post_logout_redirect_uri: BASE_URL,
-    silent_redirect_uri: `${BASE_URL}/silent-renew`,
+    silent_redirect_uri: `${BASE_URL}/silent-renew.html`,
     automaticSilentRenew: true,
     loadUserInfo: false,
     resource: API_URL,
