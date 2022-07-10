@@ -10,6 +10,7 @@ import ERC20Store from './modules/erc20';
 import ERC721Store from './modules/erc721';
 import PaymentStore from './modules/payments';
 import TransactionStore from './modules/transactions';
+import ERC20SwapStore from './modules/erc20Swaps';
 
 Vue.use(Vuex);
 
@@ -26,6 +27,7 @@ const modules = {
     erc721: ERC721Store,
     payments: PaymentStore,
     transactions: TransactionStore,
+    erc20swaps: ERC20SwapStore,
 };
 
 export default new Vuex.Store({

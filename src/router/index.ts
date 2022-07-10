@@ -73,6 +73,10 @@ const routes: Array<RouteConfig> = [
                 path: 'transactions',
                 component: () => import('../views/pool/Transactions.vue'),
             },
+            {
+                path: 'erc20swaps',
+                component: () => import('../views/pool/ERC20Swaps.vue'),
+            },
         ],
     },
     {
