@@ -18,9 +18,9 @@
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { TERC20SwapRule } from '@/store/modules/erc20swaps';
 import { mapGetters } from 'vuex';
 import { IERC20s } from '@/types/erc20';
+import { TERC20SwapRule } from '@/types/IERC20SwapRules';
 
 @Component({
     computed: mapGetters({

@@ -68,7 +68,7 @@
 <script lang="ts">
 import ModalERC20SwapRuleCreate from '@/components/modals/BaseModalERC20SwapRuleCreate.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
-import { GetERC20SwapRulesProps, GetERC20SwapRulesResponse, IERC20SwapRuleByPage } from '@/store/modules/erc20swaps';
+import { GetERC20SwapRulesProps, GetERC20SwapRulesResponse, IERC20SwapRuleByPage } from '@/types/IERC20SwapRules';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -105,7 +105,7 @@ export default class ERC20Swaps extends Vue {
 
     async getMoreResults({ pool, page, limit }: GetERC20SwapRulesProps) {
         this.loading = true;
-        const response: GetERC20SwapRulesResponse = await this.$store.dispatch('erc20swaps/list', {
+        const response: GetERC20SwapRulesResponse = await this.$store.dispatch('swaprules/list', {
             pool: pool,
             page,
             limit,

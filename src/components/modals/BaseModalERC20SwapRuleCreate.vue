@@ -85,7 +85,7 @@ export default class ModalERC20SwapRuleCreate extends Vue {
     async submit() {
         this.loading = true;
         try {
-            await this.$store.dispatch('erc20swaps/create', {
+            await this.$store.dispatch('swaprules/create', {
                 chainId: this.chainId,
                 tokenInAddress: this.tokenAddress,
                 tokenMultiplier: this.tokenMultiplier,
