@@ -42,30 +42,7 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="swapRule._id" v-for="swapRule of swapRules">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-6 d-flex align-items-center">
-                            <div
-                                class="mr-auto d-flex align-items-center"
-                                v-b-tooltip
-                                :title="`${swapRule.erc20.name}`"
-                            >
-                                <base-identicon
-                                    :rounded="true"
-                                    variant="dark"
-                                    :size="30"
-                                    :uri="swapRule.erc20.logoURI"
-                                    class="mr-2"
-                                />
-                                <strong>{{ swapRule.erc20.symbol }}</strong>
-                            </div>
-                        </div>
-                        <div class="align-items-right">
-                            {{ swapRule.tokenMultiplier }}
-                        </div>
-                    </div>
-                </b-form-group>
+                <base-form-group-swap-rule :swap-rule="swapRule" :key="swapRule._id" v-for="swapRule of swapRules" />
             </b-skeleton-wrapper>
         </b-card>
         <b-pagination
@@ -96,9 +73,11 @@ import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIdenticon from '@/components/BaseIdenticon.vue';
+import BaseFormGroupSwapRule from '@/components/form-group/BaseFormGroupSwapRule.vue';
 
 @Component({
     components: {
+        BaseFormGroupSwapRule,
         ModalERC20SwapRuleCreate,
         BaseNothingHere,
         BaseIdenticon,
