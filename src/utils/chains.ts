@@ -1,5 +1,5 @@
 import { ChainInfo } from '@/types/ChainInfo';
-import { ChainId } from '@/types/enums/chainId';
+import { ChainId } from '@/types/enums/ChainId';
 
 const chainInfo: { [chainId: number]: ChainInfo } = {
     1: {

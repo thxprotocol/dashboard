@@ -1,4 +1,4 @@
-import { ChainId } from '@/types/enums/chainId';
+import { ChainId } from '@/types/enums/ChainId';
 import { IPool } from '@/store/modules/pools';
 
 export type TERC20SwapRule = {
