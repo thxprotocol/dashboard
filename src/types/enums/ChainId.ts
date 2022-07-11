@@ -1,8 +1,8 @@
 export enum ChainId {
     Ethereum = 1,
-    Arbitrum = 56,
-    BinanceSmartChain = 42161,
-    Hardhat = 31337,
-    PolygonMumbai = 80001,
+    BinanceSmartChain = 56,
     Polygon = 137,
+    Hardhat = 31337,
+    Arbitrum = 42161,
+    PolygonMumbai = 80001,
 }

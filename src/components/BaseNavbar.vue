@@ -210,6 +210,12 @@ export default class BaseNavbar extends Vue {
                 visible: this.pool.isDefaultPool,
             },
             {
+                path: 'erc20swaps',
+                label: 'Swaps',
+                iconClasses: 'fas fa-sync',
+                visible: this.pool.isDefaultPool,
+            },
+            {
                 path: 'info',
                 label: 'Details',
                 iconClasses: 'fas fa-info-circle',
