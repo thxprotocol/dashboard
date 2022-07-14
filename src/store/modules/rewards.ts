@@ -82,6 +82,27 @@ class RewardModule extends VuexModule {
 
         this.context.commit('set', r.data);
     }
+
+    @Action({ rawError: true })
+    async getQRCodes({ reward }: { reward: Reward }) {
+        const r = await axios({
+            method: 'GET',
+            url: `/rewards/${reward.id}/claims/qrcode`,
+            headers: { 'X-PoolId': reward.poolId },
+            responseType: 'blob',
+        });
+        if (r.data.type == 'application/zip') {
+            const FILE = window.URL.createObjectURL(new Blob([r.data]));
+            const docUrl = document.createElement('a');
+            docUrl.href = FILE;
+            docUrl.setAttribute('download', `qrcodes_reward_${reward.title}.zip`);
+            document.body.appendChild(docUrl);
+            docUrl.click();
+            return true;
+        }
+
+        return false;
+    }
 }
 
 export default RewardModule;

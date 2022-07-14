@@ -2,7 +2,7 @@
     <base-card>
         <template #card-body>
             <b-row>
-                <b-col md="4" class="d-flex">
+                <b-col md="4" class="d-flex" v-if="reward.amount == 1">
                     <b-button
                         v-b-tooltip
                         title="Click to download the QR code as a jpg file"
@@ -24,6 +24,20 @@
                             :size="480"
                         />
                     </b-button>
+                </b-col>
+                <b-col md="4" class="d-flex" v-else-if="downloadButtonClicked && !canDownloadQRCodes">
+                    <b-button title="Download QR codes" variant="primary" class="p-3 m-auto m-md-0" disabled="true"
+                        >Your file is being generated ...<i class="fas fa-download m-0" style="font-size: 1rem"></i
+                    ></b-button>
+                </b-col>
+                <b-col md="4" class="d-flex" v-else>
+                    <b-button
+                        title="Download QR codes"
+                        variant="primary"
+                        class="p-3 m-auto m-md-0"
+                        @click="getQRCodes()"
+                        >Download QR codes <i class="fas fa-download m-0" style="font-size: 1rem"></i
+                    ></b-button>
                 </b-col>
                 <b-col class="d-flex flex-column">
                     <div class="d-flex align-items-center">
@@ -48,7 +62,7 @@
                         </b-dropdown>
                     </div>
                     <p>{{ reward.title }}</p>
-                    <b-input-group class="mt-auto">
+                    <b-input-group class="mt-auto" v-if="reward.amount == 1">
                         <b-form-input readonly :value="claimURL" />
                         <b-input-group-append>
                             <b-button variant="primary" v-clipboard:copy="claimURL">
@@ -144,7 +158,7 @@ import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
-import { BASE_URL, WALLET_URL } from '@/utils/secrets';
+import { API_URL, BASE_URL, WALLET_URL } from '@/utils/secrets';
 
 const getBase64Image = (url: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -176,6 +190,8 @@ export default class BaseListItemReward extends Vue {
     imgData = '';
     claimURL = '';
     qrURL = '';
+    canDownloadQRCodes = false;
+    downloadButtonClicked = false;
 
     @Prop() pool!: IPool;
     @Prop() reward!: Reward;
@@ -196,10 +212,12 @@ export default class BaseListItemReward extends Vue {
                 this.reward.withdrawCondition.channelItem,
             );
         }
-        getBase64Image(BASE_URL + this.logoSrc).then((data) => {
-            this.imgData = data;
-            this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
-        });
+        if (this.reward.amount == 1) {
+            getBase64Image(BASE_URL + this.logoSrc).then((data) => {
+                this.imgData = data;
+                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+            });
+        }
     }
 
     onQRLoaded(dataUrl: string) {
@@ -238,6 +256,14 @@ export default class BaseListItemReward extends Vue {
                 state: this.reward.state ? RewardState.Disabled : RewardState.Enabled,
             },
         });
+    }
+
+    async getQRCodes() {
+        this.downloadButtonClicked = true;
+        const result = await this.$store.dispatch('rewards/getQRCodes', {
+            reward: this.reward,
+        });
+        this.canDownloadQRCodes = result;
     }
 }
 </script>
