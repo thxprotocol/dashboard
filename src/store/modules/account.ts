@@ -241,6 +241,7 @@ class AccountModule extends VuexModule {
         });
 
         this.context.commit('setHealth', r.data);
+        console.log('TEST!!');
     }
 }
 
