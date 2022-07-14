@@ -46,6 +46,7 @@ class RewardModule extends VuexModule {
         isMembershipRequired: boolean;
         withdrawCondition?: IRewardCondition;
         expiryDate?: string;
+        amount: number;
     }) {
         const r = await axios({
             method: 'POST',
@@ -63,6 +64,7 @@ class RewardModule extends VuexModule {
                 withdrawUnlockDate: payload.withdrawUnlockDate,
                 isClaimOnce: payload.isClaimOnce,
                 isMembershipRequired: payload.isMembershipRequired,
+                amount: payload.amount,
             },
         });
 

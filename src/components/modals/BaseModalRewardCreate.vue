@@ -96,6 +96,26 @@
                             </b-row>
                         </b-card>
                     </template>
+                    <template v-if="pool.isDefaultPool">
+                        <label>QR Codes</label>
+                        <b-card bg-variant="white" class="mb-3">
+                            <b-row>
+                                <b-col md="6">
+                                    <b-form-group>
+                                        <label>
+                                            Num of QR Codes to generate
+                                            <a v-b-tooltip :title="`Min value: 1`" target="_blank">
+                                                <i class="fas fa-question-circle"></i>
+                                            </a>
+                                        </label>
+                                        <b-input-group>
+                                            <b-form-input type="number" v-model="amount" placeholder="1" min="1" />
+                                        </b-input-group>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+                        </b-card>
+                    </template>
                     <b-form-group>
                         <label> Expiration Date </label>
                         <b-row>
@@ -258,6 +278,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawLimit = 0;
     rewardWithdrawUnlockDate = null;
     rewardTitle = '';
+    amount = 1;
 
     rewardExpireDate: Date | null = null;
     rewardExpireTime = '00:00:00';
@@ -422,6 +443,7 @@ export default class ModalRewardCreate extends Vue {
             withdrawCondition,
             isClaimOnce: this.isClaimOnce,
             isMembershipRequired: this.isMembershipRequired,
+            amount: this.amount,
         });
 
         this.rewardWithdrawLimit = 0;
@@ -431,6 +453,7 @@ export default class ModalRewardCreate extends Vue {
         this.rewardTitle = '';
         this.rewardExpireDate = null;
         this.rewardExpireTime = '00:00:00';
+        this.amount = 1;
 
         if (close) {
             this.$bvModal.hide(`modalRewardCreate`);
