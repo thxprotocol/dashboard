@@ -37,7 +37,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IAccount } from '@/types/account';
 import { chainInfo } from '@/utils/chains';
-import { ERC721Type, TERC721 } from '@/types/erc721';
+import { ERC721Variant, TERC721 } from '@/types/erc721';
 import poll from 'promise-poller';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
@@ -54,7 +54,7 @@ import BaseIdenticon from '../BaseIdenticon.vue';
     }),
 })
 export default class BaseCardERC721 extends Vue {
-    ERC721Type = ERC721Type;
+    ERC721Variant = ERC721Variant;
     isLoading = true;
     isDeploying = false;
     error = '';

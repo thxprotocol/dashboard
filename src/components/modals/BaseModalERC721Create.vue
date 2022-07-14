@@ -4,9 +4,13 @@
             <base-form-select-network @selected="chainId = $event" />
             <label>Variant</label>
             <b-form-group>
-                <b-form-radio v-model="tokenType" name="tokenType" :value="ERC721Type.Default">
-                    <strong> NFT (ERC-721) </strong>
-                    <p>Non Fungible Tokens contract where unique tokens are minted on the go, widely known as NFT's.</p>
+                <b-form-radio v-model="tokenType" name="tokenType" :value="ERC721Variant.Default">
+                    <strong> NFT (Default) </strong>
+                    <p>ERC-721 standard adhering to the default JSON metadata specification.</p>
+                </b-form-radio>
+                <b-form-radio v-model="tokenType" name="tokenType" :value="ERC721Variant.OpenSea">
+                    <strong> NFT (Open Sea) </strong>
+                    <p>ERC-721 standard adhering to the OpenSea metadata specification.</p>
                 </b-form-radio>
             </b-form-group>
             <b-row>
@@ -85,7 +89,7 @@
 
 <script lang="ts">
 import { ChainId } from '@/types/enums/ChainId';
-import { ERC721Type, TERC721 } from '@/types/erc721';
+import { ERC721Variant, TERC721 } from '@/types/erc721';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
@@ -99,11 +103,11 @@ import BaseModal from './BaseModal.vue';
     computed: mapGetters({}),
 })
 export default class ModalERC721Create extends Vue {
-    ERC721Type = ERC721Type;
+    ERC721Variant = ERC721Variant;
     loading = false;
     error = '';
 
-    tokenType = ERC721Type.Default;
+    tokenType = ERC721Variant.Default;
     tokenList: TERC721[] = [];
     chainId: ChainId = ChainId.PolygonMumbai;
 

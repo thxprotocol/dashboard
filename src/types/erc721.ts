@@ -1,10 +1,10 @@
 import { TProp } from '@/store/modules/erc721';
 import { ChainId } from '@/types/enums/ChainId';
 
-export enum ERC721Type {
+export enum ERC721Variant {
     Uknown = -1,
     Default = 0,
-    NonTransferable = 0,
+    OpenSea = 1,
 }
 
 export interface TERC721Metadata {
@@ -20,7 +20,7 @@ export interface TERC721Metadata {
 
 export type TERC721 = {
     _id: string;
-    type: ERC721Type;
+    type: ERC721Variant;
     chainId: ChainId;
     poolAddress: string;
     address: string;
