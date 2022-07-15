@@ -48,10 +48,6 @@ export default class ModalERC20Import extends Vue {
         this.erc20TokenAddress = token.address;
     }
 
-    mounted() {
-        console.log('erc20TokenAddress', this.erc20TokenAddress);
-    }
-
     async submit() {
         this.loading = true;
 
