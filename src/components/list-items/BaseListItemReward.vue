@@ -27,10 +27,11 @@
                 </b-col>
                 <b-col md="4" class="d-flex" v-else-if="downloadButtonClicked && !canDownloadQRCodes">
                     <b-button title="Download QR codes" variant="primary" class="p-3 m-auto m-md-0" disabled="true"
-                        >Your file is being generated ...<i class="fas fa-download m-0" style="font-size: 1rem"></i
-                    ></b-button>
+                        ><p>Your file is being generated.</p>
+                        <p>A confirmation email will be sent.</p>
+                    </b-button>
                 </b-col>
-                <b-col md="4" class="d-flex" v-else>
+                <b-col md="4" class="d-flex" v-else id="reward._id">
                     <b-button
                         title="Download QR codes"
                         variant="primary"
@@ -72,8 +73,15 @@
                     </b-input-group>
                 </b-col>
             </b-row>
+            <template v-if="reward.amount > 1">
+                <label style="font-size: 0.8rem">
+                    Num QR Codes: <strong>{{ reward.amount }}</strong>
+                </label>
+                <b-row></b-row>
+            </template>
 
             <hr />
+
             <template v-if="pool.isDefaultPool">
                 <label>
                     Supply Limit: <strong v-if="reward.withdrawLimit" class="">{{ reward.withdrawLimit }}</strong>
@@ -158,7 +166,7 @@ import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
-import { API_URL, BASE_URL, WALLET_URL } from '@/utils/secrets';
+import { BASE_URL, WALLET_URL } from '@/utils/secrets';
 
 const getBase64Image = (url: string): Promise<string> => {
     return new Promise((resolve) => {
