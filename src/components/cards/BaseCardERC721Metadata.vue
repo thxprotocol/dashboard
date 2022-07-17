@@ -74,7 +74,7 @@ import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
 import BaseAnchorAddress from '../BaseAnchorAddress.vue';
-import { ERC721Type, TERC721, TERC721Metadata } from '@/types/erc721';
+import { TERC721, TERC721Metadata } from '@/types/erc721';
 import { format } from 'date-fns';
 import { API_URL } from '@/utils/secrets';
 import BaseModalErc721MetadataMint from '@/components/modals/BaseModalERC721MetadataMint.vue';
@@ -91,7 +91,6 @@ import { IPool } from '@/store/modules/pools';
 })
 export default class BaseListItemERC721Metadata extends Vue {
     apiUrl = API_URL;
-    ERC721Type = ERC721Type;
     format = format;
     error = '';
 
