@@ -3,14 +3,7 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IPool } from './pools';
 import { ChainId } from '@/types/enums/ChainId';
-import { TERC721, IERC721s, TERC721Metadata } from '@/types/erc721';
-
-export type TProp = {
-    name: string;
-    description: string;
-    propType: string;
-    value?: string;
-};
+import { TERC721, IERC721s, TERC721Metadata, TERC721DefaultProp } from '@/types/erc721';
 
 @Module({ namespaced: true })
 class ERC721Module extends VuexModule {
@@ -70,7 +63,7 @@ class ERC721Module extends VuexModule {
             url: '/erc721/' + id,
         });
 
-        data.properties.map((prop: TProp) => {
+        data.properties.map((prop: TERC721DefaultProp) => {
             prop.value = '';
             return prop;
         });
