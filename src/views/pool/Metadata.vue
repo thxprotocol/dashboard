@@ -7,7 +7,7 @@
             <b-col class="d-flex justify-content-end">
                 <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span class="d-none d-md-inline">Create an NFT</span>
+                    <span class="d-none d-md-inline">Create Metadata</span>
                 </b-button>
             </b-col>
         </b-row>
