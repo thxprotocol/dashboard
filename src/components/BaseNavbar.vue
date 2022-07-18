@@ -182,8 +182,7 @@ export default class BaseNavbar extends Vue {
                 path: 'payments',
                 label: 'Payments',
                 iconClasses: 'fas fa-money-check-alt',
-                visible:
-                    this.pool.isDefaultPool && [ChainId.Hardhat, ChainId.PolygonMumbai].includes(this.pool.chainId),
+                visible: this.pool.isDefaultPool,
             },
             {
                 path: 'promotions',
