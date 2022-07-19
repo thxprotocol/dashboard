@@ -1,13 +1,16 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Import Token Contract" id="modalERC20Import">
+    <base-modal :loading="loading" title="Import Token Contract" id="modalERC20Import">
         <template #modal-body v-if="!loading">
-            <b-form-group>
-                <BaseDropDownSelectPolygonERC20 @selected="onSelectToken" />
+            <b-form-group label="Select an existing ERC20 contract">
+                <BaseDropDownSelectPolygonERC20 :erc20="erc20" @selected="onERC20Selected" />
+            </b-form-group>
+            <b-form-group label="Contract Address">
+                <b-form-input v-model="erc20Address" />
             </b-form-group>
         </template>
         <template #btn-primary>
             <b-button
-                :disabled="loading || erc20TokenAddress == ''"
+                :disabled="loading || erc20Address == ''"
                 class="rounded-pill"
                 @click="submit()"
                 variant="primary"
@@ -36,28 +39,28 @@ import BaseModal from './BaseModal.vue';
 })
 export default class ModalERC20Import extends Vue {
     loading = false;
-    error = '';
     chainId: ChainId = ChainId.Polygon;
-    erc20Token: TERC20 | null = null;
-    erc20TokenAddress = '';
-
-    onSelectToken(token: TERC20) {
-        this.erc20TokenAddress = token.address;
-    }
+    erc20: TERC20 | null = null;
+    erc20Address = '';
 
     async submit() {
         this.loading = true;
 
         const data = {
             chainId: this.chainId,
-            address: this.erc20TokenAddress,
+            address: this.erc20Address,
         };
 
         await this.$store.dispatch('erc20/import', data);
 
         this.$bvModal.hide(`modalERC20Import`);
         this.loading = false;
-        this.erc20TokenAddress = '';
+        this.erc20 = null;
+    }
+
+    onERC20Selected(erc20: TERC20) {
+        this.erc20 = erc20;
+        this.erc20Address = erc20.address;
     }
 }
 </script>
