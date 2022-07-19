@@ -140,7 +140,6 @@
 <script lang="ts">
 import { IPools } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
-import { ChainId } from '@/types/enums/ChainId';
 import { ERC20Type } from '@/types/erc20';
 import { plans } from '@/utils/plans';
 import { Component, Vue } from 'vue-property-decorator';

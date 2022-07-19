@@ -62,6 +62,17 @@ class ERC20Module extends VuexModule {
     }
 
     @Action({ rawError: true })
+    async import(payload: any) {
+        const { data } = await axios({
+            method: 'POST',
+            url: '/erc20/token',
+            data: payload,
+        });
+
+        this.context.commit('set', { _id: data._id, loading: true });
+    }
+
+    @Action({ rawError: true })
     async remove(id: string) {
         await axios({
             method: 'DELETE',
