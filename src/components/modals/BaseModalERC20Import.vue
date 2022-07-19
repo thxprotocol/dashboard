@@ -2,7 +2,7 @@
     <base-modal :loading="loading" :error="error" title="Import Token Contract" id="modalERC20Import">
         <template #modal-body v-if="!loading">
             <b-form-group>
-                <base-drop-down-select-quick-swap-toke-list @selected="onSelectToken" />
+                <BaseDropDownSelectPolygonERC20 @selected="onSelectToken" />
             </b-form-group>
         </template>
         <template #btn-primary>
@@ -24,13 +24,13 @@ import { ChainId } from '@/types/enums/ChainId';
 import { TERC20 } from '@/types/erc20';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import BaseDropDownSelectQuickSwapTokeList from '../dropdowns/BaseDropdownSelectQuickSwapTokeList.vue';
+import BaseDropDownSelectPolygonERC20 from '../dropdowns/BaseDropDownSelectPolygonERC20.vue';
 import BaseModal from './BaseModal.vue';
 
 @Component({
     components: {
         BaseModal,
-        BaseDropDownSelectQuickSwapTokeList,
+        BaseDropDownSelectPolygonERC20,
     },
     computed: mapGetters({}),
 })

@@ -40,7 +40,7 @@ const QUICKSWAP_TOKEN_LIST =
         BaseIdenticon,
     },
 })
-export default class DropDownSelectQuickSwapTokeList extends Vue {
+export default class DropDownSelectPolygonERC20 extends Vue {
     tokenList: TERC20[] = [];
     erc20Token: TERC20 | null = null;
 
