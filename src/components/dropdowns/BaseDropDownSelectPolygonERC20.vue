@@ -11,6 +11,7 @@
         <b-dropdown-item-button @click="$emit('selected', null)">
             Provide your own ERC20 contract address
         </b-dropdown-item-button>
+        <b-dropdown-divider />
         <b-dropdown-item-button :key="erc20.address" v-for="erc20 of tokenList" @click="$emit('selected', erc20)">
             <img :src="erc20.logoURI" width="20" class="mr-3" :alt="erc20.name" />
             <strong>{{ erc20.symbol }}</strong> {{ erc20.name }}

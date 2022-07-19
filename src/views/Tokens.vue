@@ -24,10 +24,9 @@
                     class="rounded-pill mr-2"
                     variant="secondary"
                     v-b-tooltip
-                    title="The fungible token standard ERC-20 could be used for making payments, exchanging value, point systems
-                and reputation metrics."
+                    title="Import an existing ERC20 token contract, top up your pool and manage the distribution."
                 >
-                    <i class="fas fa-file-import mr-2"></i>
+                    <i class="far fa-arrow-alt-circle-down mr-2"></i>
                     <span>Import Token</span>
                 </b-button>
                 <b-button to="/pools" variant="link" class="text-light">

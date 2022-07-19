@@ -60,7 +60,7 @@ export default class ModalERC20Import extends Vue {
 
     onERC20Selected(erc20: TERC20) {
         this.erc20 = erc20;
-        this.erc20Address = erc20.address;
+        this.erc20Address = erc20 ? erc20.address : '';
     }
 }
 </script>
