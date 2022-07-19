@@ -37,7 +37,7 @@ import BaseModal from './BaseModal.vue';
 export default class ModalERC20Import extends Vue {
     loading = false;
     error = '';
-    chainId: ChainId = ChainId.PolygonMumbai;
+    chainId: ChainId = ChainId.Polygon;
     erc20Token: TERC20 | null = null;
     erc20TokenAddress = '';
 
