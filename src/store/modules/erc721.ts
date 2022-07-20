@@ -19,6 +19,11 @@ class ERC721Module extends VuexModule {
     }
 
     @Mutation
+    unset(id: string) {
+        Vue.delete(this._all, id);
+    }
+
+    @Mutation
     setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata }) {
         if (!this._all[payload.erc721._id].metadata) {
             return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
@@ -134,6 +139,17 @@ class ERC721Module extends VuexModule {
             },
         });
         this.context.commit('setMetadata', { erc721, metadata: data });
+    }
+
+    @Action({ rawError: true })
+    async archive(payload: any) {
+        await axios({
+            method: 'PATCH',
+            url: `/erc721/${payload.id}`,
+            data: payload,
+        });
+
+        this.context.commit('unset', payload.id);
     }
 }
 

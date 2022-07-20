@@ -2,6 +2,7 @@
     <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-header> NFT </template>
         <template #card-body v-if="erc721.name">
+            <base-dropdown-token-menu @archive="archive()" />
             <base-badge-network class="mr-2" :chainId="erc721.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc721.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc721.logoURI" />
@@ -40,12 +41,14 @@ import poll from 'promise-poller';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
+import BaseDropdownTokenMenu from '../dropdowns/BaseDropdownTokenMenu.vue';
 
 @Component({
     components: {
         BaseCard,
         BaseBadgeNetwork,
         BaseIdenticon,
+        BaseDropdownTokenMenu,
     },
 })
 export default class BaseCardERC721 extends Vue {
@@ -87,6 +90,12 @@ export default class BaseCardERC721 extends Vue {
     openTokenUrl() {
         const url = `${chainInfo[this.erc721.chainId].blockExplorer}/token/${this.erc721.address}`;
         return (window as any).open(url, '_blank').focus();
+    }
+
+    async archive() {
+        this.isLoading = true;
+        await this.$store.dispatch('erc721/archive', { id: this.erc721._id, archived: true });
+        this.isLoading = false;
     }
 }
 </script>

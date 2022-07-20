@@ -81,6 +81,17 @@ class ERC20Module extends VuexModule {
 
         this.context.commit('unset', id);
     }
+
+    @Action({ rawError: true })
+    async archive(payload: any) {
+        await axios({
+            method: 'PATCH',
+            url: `/erc20/${payload.id}`,
+            data: payload,
+        });
+
+        this.context.commit('unset', payload.id);
+    }
 }
 
 export default ERC20Module;

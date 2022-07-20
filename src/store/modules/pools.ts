@@ -205,6 +205,17 @@ class PoolModule extends VuexModule {
             data: { amount },
         });
     }
+
+    @Action({ rawError: true })
+    async archive(payload: any) {
+        await axios({
+            method: 'PATCH',
+            url: `/pools/${payload.id}`,
+            data: payload,
+        });
+
+        this.context.commit('unset', payload.id);
+    }
 }
 
 export default PoolModule;
