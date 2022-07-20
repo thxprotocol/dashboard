@@ -138,30 +138,7 @@
             </a>
             and request an access token to authorize your application with THX API.
         </p>
-        <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label for="clientId"> Client ID: </label>
-                <b-input-group>
-                    <b-form-input readonly id="clientId" v-model="pool.clientId" />
-                    <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="pool.clientId">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group>
-            <b-form-group>
-                <label for="clientSecret"> Client Secret: </label>
-                <b-input-group>
-                    <b-form-input readonly id="clientSecret" v-model="pool.clientSecret" />
-                    <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="pool.clientSecret">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group>
-        </b-card>
+        <base-pool-clients :poolId="pool._id" />
         <h2 class="font-weight-normal">Example code</h2>
         <p>These examples should demonstrate how to authorize with the THX API.</p>
         <b-card class="shadow-sm mb-5">
@@ -254,6 +231,8 @@ import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
 
+import BasePoolClients from '@/components/cards/BasePoolClients.vue';
+
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
 const DEFAULT_BRANDING: IBrand = {
@@ -267,6 +246,9 @@ interface IBrand {
 }
 
 @Component({
+    components: {
+        BasePoolClients,
+    },
     computed: mapGetters({
         pools: 'pools/all',
         clients: 'clients/all',
