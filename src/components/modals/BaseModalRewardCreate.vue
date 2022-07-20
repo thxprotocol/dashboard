@@ -36,7 +36,7 @@
                             >
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        {{ erc721metadata.title }}
+                                        {{ metadata.title }}
                                     </div>
                                     <small class="text-muted">
                                         {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
