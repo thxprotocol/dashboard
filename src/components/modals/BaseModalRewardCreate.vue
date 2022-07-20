@@ -96,26 +96,24 @@
                             </b-row>
                         </b-card>
                     </template>
-                    <template v-if="pool.isDefaultPool">
-                        <label>QR Codes</label>
-                        <b-card bg-variant="white" class="mb-3">
-                            <b-row>
-                                <b-col md="6">
-                                    <b-form-group>
-                                        <label>
-                                            Num of QR Codes to generate
-                                            <a v-b-tooltip :title="`Min value: 1`" target="_blank">
-                                                <i class="fas fa-question-circle"></i>
-                                            </a>
-                                        </label>
-                                        <b-input-group>
-                                            <b-form-input type="number" v-model="amount" placeholder="1" min="1" />
-                                        </b-input-group>
-                                    </b-form-group>
-                                </b-col>
-                            </b-row>
-                        </b-card>
-                    </template>
+                    <label>QR Codes</label>
+                    <b-card bg-variant="white" class="mb-3">
+                        <b-row>
+                            <b-col md="6">
+                                <b-form-group>
+                                    <label>
+                                        Num of QR Codes to generate
+                                        <a v-b-tooltip :title="`Min value: 1`" target="_blank">
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                    <b-input-group>
+                                        <b-form-input type="number" v-model="amount" placeholder="1" min="1" />
+                                    </b-input-group>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-card>
                     <b-form-group>
                         <label> Expiration Date </label>
                         <b-row>
