@@ -26,7 +26,7 @@
                     v-b-tooltip
                     title="Import an existing ERC20 token contract, top up your pool and manage the distribution."
                 >
-                    <i class="far fa-arrow-alt-circle-down mr-2"></i>
+                    <i class="fas fa-arrow-down mr-2"></i>
                     <span>Import Token</span>
                 </b-button>
                 <b-button to="/pools" variant="link" class="text-light">

@@ -8,7 +8,7 @@
                         <i
                             v-b-tooltip
                             class="fas fa-question-circle text-gray"
-                            title="This field will be auto formatted into snake_case format."
+                            title="This field will be auto formatted into a computer readable format."
                         ></i>
                     </template>
                     <b-form-input
