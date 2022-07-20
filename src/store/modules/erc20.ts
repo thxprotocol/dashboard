@@ -21,11 +21,19 @@ class ERC20Module extends VuexModule {
         Vue.delete(this._all, id);
     }
 
+    @Mutation
+    clear() {
+        this._all = {};
+    }
+
     @Action({ rawError: true })
-    async list() {
+    async list(params?: any) {
+        this.context.commit('clear');
+
         const { data } = await axios({
             method: 'GET',
             url: '/erc20',
+            params,
         });
 
         for (const _id of data) {

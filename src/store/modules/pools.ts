@@ -88,11 +88,19 @@ class PoolModule extends VuexModule {
         Vue.delete(this._all, id);
     }
 
+    @Mutation
+    clear() {
+        this._all = {};
+    }
+
     @Action({ rawError: true })
-    async list() {
+    async list(params: any) {
+        this.context.commit('clear');
+
         const r = await axios({
             method: 'GET',
             url: '/pools',
+            params,
         });
 
         r.data.forEach((_id: string) => {

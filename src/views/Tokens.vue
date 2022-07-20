@@ -33,6 +33,16 @@
                     <i class="fas fa-chart-pie mr-2"></i>
                     <span>Deploy a token pool</span>
                 </b-button>
+
+                <b-button v-if="!showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye mr-2"></i>
+                    <span>Show Archived Tokens</span>
+                </b-button>
+
+                <b-button v-if="showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye-slash mr-2"></i>
+                    <span>Hide Archived Tokens</span>
+                </b-button>
             </div>
         </b-jumbotron>
         <div class="container container-md">
@@ -78,10 +88,20 @@ import { IERC20s } from '@/types/erc20';
 })
 export default class Tokens extends Vue {
     erc20s!: IERC20s;
+    showAll = false;
+
+    getErc2s() {
+        this.$store.dispatch('erc20/list', { archived: this.showAll });
+    }
 
     mounted() {
         this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc20/list');
+        this.getErc2s();
+    }
+
+    toggleArchived() {
+        this.showAll === true ? (this.showAll = false) : (this.showAll = true);
+        this.getErc2s();
     }
 }
 </script>

@@ -24,6 +24,11 @@ class ERC721Module extends VuexModule {
     }
 
     @Mutation
+    clear() {
+        this._all = {};
+    }
+
+    @Mutation
     setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata }) {
         if (!this._all[payload.erc721._id].metadata) {
             return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
@@ -38,10 +43,13 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async list() {
+    async list(params: any) {
+        this.context.commit('clear');
+
         const { data } = await axios({
             method: 'GET',
             url: '/erc721',
+            params,
         });
 
         for (const _id of data) {
