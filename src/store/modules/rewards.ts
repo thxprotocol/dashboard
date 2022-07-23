@@ -91,17 +91,17 @@ class RewardModule extends VuexModule {
             headers: { 'X-PoolId': reward.poolId },
             responseType: 'blob',
         });
+        // Check if job has been queued, meaning file is not available yet
+        if (r.status === 201) return true;
+        // Check if response is zip file, meaning job has completed
         if (r.data.type == 'application/zip') {
-            const FILE = window.URL.createObjectURL(new Blob([r.data]));
-            const docUrl = document.createElement('a');
-            docUrl.href = FILE;
-            docUrl.setAttribute('download', `qrcodes_reward_${reward.title}.zip`);
-            document.body.appendChild(docUrl);
-            docUrl.click();
-            return true;
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(new Blob([r.data]));
+            anchor.setAttribute('download', `${reward._id}_qrcodes.zip`);
+            document.body.appendChild(anchor);
+            anchor.click();
+            return false;
         }
-
-        return false;
     }
 }
 

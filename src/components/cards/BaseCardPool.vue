@@ -64,6 +64,8 @@ export default class BaseCardPool extends Vue {
     artifacts!: string;
 
     get outOfDate() {
+        console.log(this.pool.version);
+        console.log(this.artifacts);
         return this.pool.version !== this.artifacts;
     }
 

@@ -68,7 +68,7 @@
                                 </b-col>
                                 <b-col md="6">
                                     <label>
-                                        Limit
+                                        Supply Limit
                                         <a
                                             v-b-tooltip
                                             title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
@@ -102,13 +102,13 @@
                             <b-col md="6">
                                 <b-form-group>
                                     <label>
-                                        Num of QR Codes to generate
-                                        <a v-b-tooltip :title="`Min value: 1`" target="_blank">
+                                        Amount of unique QR Codes
+                                        <a v-b-tooltip title="Minimal value: 1">
                                             <i class="fas fa-question-circle"></i>
                                         </a>
                                     </label>
                                     <b-input-group>
-                                        <b-form-input type="number" v-model="amount" placeholder="1" min="1" />
+                                        <b-form-input type="number" v-model="amount" min="1" max="10000" />
                                     </b-input-group>
                                 </b-form-group>
                             </b-col>
