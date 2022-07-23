@@ -1,7 +1,9 @@
 <template>
     <base-card>
         <template #card-body>
-            <b-alert variant="info" show v-if="isDownloadScheduled"> Download has been scheduled </b-alert>
+            <b-alert variant="info" show v-if="isDownloadScheduled">
+                You will receive an e-mail when you can download your file.
+            </b-alert>
             <b-row>
                 <b-col md="3" class="d-flex mb-3 mb-sm-0">
                     <b-button
