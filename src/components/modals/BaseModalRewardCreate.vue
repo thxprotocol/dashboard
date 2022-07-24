@@ -68,7 +68,7 @@
                                 </b-col>
                                 <b-col md="6">
                                     <label>
-                                        Limit
+                                        Supply Limit
                                         <a
                                             v-b-tooltip
                                             title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times."
@@ -96,6 +96,24 @@
                             </b-row>
                         </b-card>
                     </template>
+                    <label>QR Codes</label>
+                    <b-card bg-variant="white" class="mb-3">
+                        <b-row>
+                            <b-col md="6">
+                                <b-form-group>
+                                    <label>
+                                        Amount of unique QR Codes
+                                        <a v-b-tooltip title="Minimal value: 1">
+                                            <i class="fas fa-question-circle"></i>
+                                        </a>
+                                    </label>
+                                    <b-input-group>
+                                        <b-form-input type="number" v-model="amount" min="1" max="10000" />
+                                    </b-input-group>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-card>
                     <b-form-group>
                         <label> Expiration Date </label>
                         <b-row>
@@ -258,6 +276,7 @@ export default class ModalRewardCreate extends Vue {
     rewardWithdrawLimit = 0;
     rewardWithdrawUnlockDate = null;
     rewardTitle = '';
+    amount = 1;
 
     rewardExpireDate: Date | null = null;
     rewardExpireTime = '00:00:00';
@@ -422,6 +441,7 @@ export default class ModalRewardCreate extends Vue {
             withdrawCondition,
             isClaimOnce: this.isClaimOnce,
             isMembershipRequired: this.isMembershipRequired,
+            amount: this.amount,
         });
 
         this.rewardWithdrawLimit = 0;
@@ -431,6 +451,7 @@ export default class ModalRewardCreate extends Vue {
         this.rewardTitle = '';
         this.rewardExpireDate = null;
         this.rewardExpireTime = '00:00:00';
+        this.amount = 1;
 
         if (close) {
             this.$bvModal.hide(`modalRewardCreate`);

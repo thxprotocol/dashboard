@@ -32,6 +32,7 @@ export interface Reward {
     isMembershipRequired: boolean;
     title: string;
     claims: { _id: string }[];
+    amount: number;
 }
 
 export interface IRewards {
