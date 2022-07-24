@@ -7,7 +7,7 @@
             <b-form-group label="Description">
                 <b-form-input v-model="description" />
             </b-form-group>
-            <b-form-group>
+            <!-- <b-form-group>
                 <template #label>
                     Recipient
                     <a
@@ -20,8 +20,8 @@
                 </template>
                 <b-form-input v-model="recipient" />
                 <small class="text-muted"> Leave this field blank if you do not want to mint the NFT now. </small>
-            </b-form-group>
-            <label>Attributes</label>
+            </b-form-group> -->
+            <label>Properties</label>
             <b-card bg-variant="light">
                 <b-form-group :key="key" v-for="(prop, key) of erc721.properties">
                     <template #label>
@@ -58,9 +58,8 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { TProp } from '@/store/modules/erc721';
 import { IPool } from '@/store/modules/pools';
-import { TERC721 } from '@/types/erc721';
+import { TERC721, TERC721DefaultProp } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
@@ -150,7 +149,7 @@ export default class ModalRewardCreate extends Vue {
 
         const attributes: { key: string; value: string | number | undefined }[] = [];
 
-        this.erc721.properties.forEach((prop: TProp) => {
+        this.erc721.properties.forEach((prop: TERC721DefaultProp) => {
             attributes.push({
                 key: prop.name,
                 value: prop.value,

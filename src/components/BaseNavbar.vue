@@ -140,7 +140,6 @@
 <script lang="ts">
 import { IPools } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
-import { ChainId } from '@/types/enums/ChainId';
 import { ERC20Type } from '@/types/erc20';
 import { plans } from '@/utils/plans';
 import { Component, Vue } from 'vue-property-decorator';
@@ -182,8 +181,7 @@ export default class BaseNavbar extends Vue {
                 path: 'payments',
                 label: 'Payments',
                 iconClasses: 'fas fa-money-check-alt',
-                visible:
-                    this.pool.isDefaultPool && [ChainId.Hardhat, ChainId.PolygonMumbai].includes(this.pool.chainId),
+                visible: this.pool.isDefaultPool,
             },
             {
                 path: 'promotions',

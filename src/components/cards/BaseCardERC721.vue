@@ -34,8 +34,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
-import { IAccount } from '@/types/account';
 import { chainInfo } from '@/utils/chains';
 import { ERC721Variant, TERC721 } from '@/types/erc721';
 import poll from 'promise-poller';
@@ -49,18 +47,26 @@ import BaseIdenticon from '../BaseIdenticon.vue';
         BaseBadgeNetwork,
         BaseIdenticon,
     },
-    computed: mapGetters({
-        profile: 'account/profile',
-    }),
 })
 export default class BaseCardERC721 extends Vue {
     ERC721Variant = ERC721Variant;
     isLoading = true;
     isDeploying = false;
     error = '';
-    profile!: IAccount;
 
     @Prop() erc721!: TERC721;
+
+    async mounted() {
+        await this.$store.dispatch('erc721/read', this.erc721._id);
+
+        if (!this.erc721.address) {
+            this.isDeploying = true;
+            this.waitForAddress();
+        } else {
+            this.isDeploying = false;
+            this.isLoading = false;
+        }
+    }
 
     waitForAddress() {
         const taskFn = async () => {
@@ -76,18 +82,6 @@ export default class BaseCardERC721 extends Vue {
         };
 
         poll({ taskFn, interval: 3000, retries: 10 });
-    }
-
-    async mounted() {
-        await this.$store.dispatch('erc721/read', this.erc721._id);
-
-        if (!this.erc721.address) {
-            this.isDeploying = true;
-            this.waitForAddress();
-        } else {
-            this.isDeploying = false;
-            this.isLoading = false;
-        }
     }
 
     openTokenUrl() {

@@ -19,6 +19,16 @@
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create Token</span>
                 </b-button>
+                <b-button
+                    v-b-modal="'modalERC20Import'"
+                    class="rounded-pill mr-2"
+                    variant="secondary"
+                    v-b-tooltip
+                    title="Import an existing ERC20 token contract, top up your pool and manage the distribution."
+                >
+                    <i class="fas fa-arrow-down mr-2"></i>
+                    <span>Import Token</span>
+                </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
                     <span>Deploy a token pool</span>
@@ -41,6 +51,7 @@
             </b-row>
         </div>
         <modal-erc20-create />
+        <modal-erc20-import />
     </div>
 </template>
 
@@ -48,6 +59,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
+import ModalErc20Import from '@/components/modals/BaseModalERC20Import.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IERC20s } from '@/types/erc20';
@@ -56,6 +68,7 @@ import { IERC20s } from '@/types/erc20';
     components: {
         BaseCardErc20,
         ModalErc20Create,
+        ModalErc20Import,
         BaseNothingHere,
     },
     computed: mapGetters({

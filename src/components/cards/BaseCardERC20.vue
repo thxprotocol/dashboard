@@ -38,9 +38,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
 import { ERC20Type, TERC20 } from '@/types/erc20';
-import { IAccount } from '@/types/account';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
@@ -55,16 +53,12 @@ import poll from 'promise-poller';
         BaseBadgeNetwork,
         BaseIdenticon,
     },
-    computed: mapGetters({
-        profile: 'account/profile',
-    }),
 })
 export default class BaseCardERC20 extends Vue {
     ERC20Type = ERC20Type;
-    error = '';
     isLoading = true;
     isDeploying = false;
-    profile!: IAccount;
+    error = '';
 
     @Prop() erc20!: TERC20;
 

@@ -16,8 +16,9 @@
                             v-b-tooltip
                             title="View your pool transactions on the Polygon block explorer"
                             :href="
-                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                                `/address/${pool.address}/transactions`
+                                (chainId === ChainId.PolygonMumbai
+                                    ? `https://mumbai.polygonscan.com`
+                                    : `https://polygonscan.com`) + `/address/${pool.address}/transactions`
                             "
                         >
                             <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
@@ -38,8 +39,9 @@
                             v-b-tooltip
                             title="View your token transactions on the Polygon block explorer"
                             :href="
-                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                                `/token/${pool.token.address}`
+                                (chainId === ChainId.PolygonMumbai
+                                    ? `https://mumbai.polygonscan.com`
+                                    : `https://polygonscan.com`) + `/token/${pool.token.address}`
                             "
                         >
                             <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
@@ -57,39 +59,13 @@
                     <template #prepend>
                         <b-card
                             body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="brand.backgroundImgUrl"
+                            v-if="backgroundImgUrl"
                             bg-variant="light"
                         >
-                            <img height="30" width="30" class="m-0" :src="brand.backgroundImgUrl" />
+                            <img height="30" width="30" class="m-0" :src="backgroundImgUrl" />
                         </b-card>
                     </template>
-                    <b-form-input
-                        id="backgroundImgUrl"
-                        @input.native="onBackgroundImgChange"
-                        :aria-invalid="!backgroundImgUrlValid"
-                        v-model="brand.backgroundImgUrl"
-                    />
-                    <div v-if="!backgroundImgUrlModified" class="input-group-append">
-                        <button class="btn btn-primary" type="button">
-                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-
-                    <div v-if="backgroundImgUrlModified" class="input-group-append">
-                        <button
-                            :disabled="!backgroundImgUrlValid"
-                            @click="
-                                updateBrand({
-                                    backgroundImgUrl: brand.backgroundImgUrl,
-                                    logoImgUrl: remotebrand.logoImgUrl,
-                                })
-                            "
-                            class="btn btn-dark"
-                            type="button"
-                        >
-                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
+                    <b-form-input v-model="backgroundImgUrl" />
                 </b-input-group>
             </b-form-group>
 
@@ -97,38 +73,17 @@
                 <label for="logoImgUrl">Token Icon URL</label>
                 <b-input-group>
                     <template #prepend>
-                        <b-card
-                            body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="brand.logoImgUrl"
-                            bg-variant="light"
-                        >
-                            <img height="30" width="30" class="m-0" :src="brand.logoImgUrl" />
+                        <b-card body-class="py-1 px-2 d-flex align-items-center" v-if="logoImgUrl" bg-variant="light">
+                            <img height="30" width="30" class="m-0" :src="logoImgUrl" />
                         </b-card>
                     </template>
-                    <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="brand.logoImgUrl" />
-                    <div v-if="!logoImgUrlModified" class="input-group-append">
-                        <button class="btn btn-primary" type="button">
-                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-
-                    <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button
-                            class="btn btn-dark"
-                            :disabled="!logoImgUrlValid"
-                            @click="
-                                updateBrand({
-                                    backgroundImgUrl: remotebrand.backgroundImgUrl,
-                                    logoImgUrl: brand.logoImgUrl,
-                                })
-                            "
-                            type="button"
-                        >
-                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
+                    <b-form-input v-model="logoImgUrl" />
                 </b-input-group>
             </b-form-group>
+            <b-button variant="dark" :disabled="!isBrandUpdateInvalid" @click="updateBrand()" type="button">
+                Update
+                <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
+            </b-button>
         </b-card>
         <h2 class="font-weight-normal">Authorization</h2>
         <p>
@@ -192,7 +147,7 @@
                         >.
                     </p>
                     <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                        Authorization: Basic {{ authHeader() }}
+                        Authorization: Basic {{ authHeader }}
                     </b-card>
                 </b-tab>
                 <b-tab title="CURL">
@@ -201,7 +156,7 @@
 curl "https://api.thx.network/token" \
     -X "POST" \
     -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Authorization: Basic {{ authHeader() }}' \
+    -H 'Authorization: Basic {{ authHeader }}' \
     -d 'grant_type=client_credentials&scope={{ adminScope }}'
                             </pre
                         >
@@ -215,7 +170,7 @@ axios({
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic {{ authHeader() }}',
+        'Authorization': 'Basic {{ authHeader }}',
     },
     data: {
         grant_type: 'client_credentials',
@@ -235,7 +190,7 @@ params.append('scope', '{{ adminScope }}');
 var xhr = new XMLHttpRequest();
 xhr.open("POST", "https://api.thx.network/token", true);
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.setRequestHeader('Authorization', 'Basic {{ authHeader() }}');
+xhr.setRequestHeader('Authorization', 'Basic {{ authHeader }}');
 xhr.send(params);
                                         </pre
                         >
@@ -247,34 +202,22 @@ xhr.send(params);
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
-import axios from 'axios';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
+import { mapGetters } from 'vuex';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
-
-const DEFAULT_BRANDING: IBrand = {
-    logoImgUrl: '',
-    backgroundImgUrl: '',
-};
-
-interface IBrand {
-    logoImgUrl: string;
-    backgroundImgUrl: string;
-}
 
 @Component({
     computed: mapGetters({
         pools: 'pools/all',
-        clients: 'clients/all',
-        rewards: 'rewards/all',
-        widgets: 'widgets/all',
     }),
 })
 export default class AssetPoolView extends Vue {
+    ChainId = ChainId;
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
     authUrl = process.env.VUE_APP_AUTH_URL;
@@ -282,100 +225,79 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
-    accessToken: any = null;
-    poolLoading = true;
-    pools!: IPools;
-    brand: IBrand = DEFAULT_BRANDING;
-    remotebrand: IBrand = DEFAULT_BRANDING;
-    adminScope = ADMIN_SCOPE;
     chainId: ChainId = ChainId.PolygonMumbai;
 
-    get backgroundImgUrlModified() {
-        return this.brand.backgroundImgUrl !== this.remotebrand.backgroundImgUrl;
+    pools!: IPools;
+
+    authHeader = '';
+    logoImgUrl = '';
+    backgroundImgUrl = '';
+    poolLoading = true;
+    accessToken: any = null;
+    adminScope = ADMIN_SCOPE;
+
+    mounted() {
+        this.authHeader = btoa(`${this.pool.clientId}:${this.pool.clientSecret}`);
+        this.chainId = this.pool.chainId;
+        this.getBrand().then(() => {
+            this.loading = false;
+        });
     }
 
-    get backgroundImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.brand.backgroundImgUrl);
-    }
-
-    get logoImgUrlModified() {
-        return this.brand.logoImgUrl !== this.remotebrand.logoImgUrl;
-    }
-
-    get logoImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.brand.logoImgUrl);
+    get isBrandUpdateInvalid() {
+        const backgroundUrlIsValid = this.backgroundImgUrl.match(URL_CHECK_REGEX) || this.backgroundImgUrl === '';
+        const logoUrlIsValid = this.logoImgUrl.match(URL_CHECK_REGEX) || this.logoImgUrl === '';
+        return logoUrlIsValid && backgroundUrlIsValid;
     }
 
     get pool() {
         return this.pools[this.$route.params.id];
     }
 
-    async onBackgroundImgChange(e: any) {
-        Vue.set(this.brand, 'backgroundImgUrl', e.target.value);
-    }
-
-    async onLogoImgChange(e: any) {
-        Vue.set(this.brand, 'logoImgUrl', e.target.value);
-    }
-
-    async updateBrand(brand: Partial<IBrand>) {
-        const r = await axios({
-            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: brand,
-        });
-
-        this.brand = JSON.parse(JSON.stringify(r.data));
-        this.remotebrand = JSON.parse(JSON.stringify(r.data));
-    }
-
+    // TODO Introduce store for this
     async getBrand() {
-        const r = await axios({
-            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
+        const { data } = await axios({
+            url: '/brands',
             method: 'GET',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-PoolId': this.pool._id,
             },
         });
-
-        this.brand = JSON.parse(JSON.stringify(r.data));
-        this.remotebrand = JSON.parse(JSON.stringify(r.data));
+        this.backgroundImgUrl = data.backgroundImgUrl;
+        this.logoImgUrl = data.logoImgUrl;
     }
 
-    async mounted() {
-        this.chainId = this.pool.chainId;
-        await this.getBrand();
-        this.loading = false;
-    }
-
-    authHeader() {
-        return btoa(`${this.pool.clientId}:${this.pool.clientSecret}`);
+    // TODO Introduce store for this
+    updateBrand() {
+        return axios({
+            url: '/brands',
+            method: 'PUT',
+            headers: {
+                'X-PoolId': this.pool._id,
+            },
+            data: {
+                backgroundImgUrl: this.backgroundImgUrl,
+                logoImgUrl: this.logoImgUrl,
+            },
+        });
     }
 
     async getAccessToken() {
-        try {
-            const data = new URLSearchParams();
-            data.append('grant_type', 'client_credentials');
-            data.append('scope', this.adminScope);
+        const data = new URLSearchParams();
+        data.append('grant_type', 'client_credentials');
+        data.append('scope', this.adminScope);
 
-            const r = await axios({
-                url: this.authUrl + '/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + this.authHeader(),
-                },
-                data,
-            });
+        const r = await axios({
+            url: this.authUrl + '/token',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic ' + this.authHeader,
+            },
+            data,
+        });
 
-            this.accessToken = r.data;
-        } catch (e) {
-            console.error(e);
-            this.error = 'Could not request an access token.';
-        }
+        this.accessToken = r.data;
     }
 }
 </script>

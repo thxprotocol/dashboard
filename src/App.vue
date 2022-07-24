@@ -2,8 +2,7 @@
     <div id="app">
         <base-navbar />
         <div class="sidebar-sibling">
-            <div v-if="profile" class="d-flex position-fixed justify-content-end p-3" style="right: 0">
-                <base-dropdown-account class="mr-2" />
+            <div v-if="profile" class="d-flex position-fixed justify-content-end p-3" style="right: 0; z-index: 1">
                 <base-dropdown-menu />
             </div>
             <router-view />
