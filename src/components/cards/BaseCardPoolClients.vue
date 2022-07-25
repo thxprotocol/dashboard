@@ -1,17 +1,10 @@
 <template>
     <b-card class="shadow-sm mb-5">
         <b-row class="justify-content-end mb-3">
-            <b-button variant="primary" @click="$bvModal.show('modalClientCreate')" class="rounded-pill">
-                Create Client
-            </b-button>
+            <b-button variant="primary" @click="$bvModal.show('modalClientCreate')"> Generate new Client </b-button>
         </b-row>
-        <base-list-item-client
-            :client="client"
-            :page="page"
-            :pool="pool"
-            :key="client.clientId"
-            v-for="client of clients"
-        />
+
+        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of clients" />
         <b-pagination
             class="mt-3"
             @change="onChangePage"
@@ -40,7 +33,7 @@ import { IPool } from '@/store/modules/pools';
         clients: 'clients/all',
     }),
 })
-export default class BasePoolClient extends Vue {
+export default class BaseCardPoolClients extends Vue {
     @Prop() pool!: IPool;
 
     page = 1;
@@ -49,6 +42,10 @@ export default class BasePoolClient extends Vue {
     isLoading = true;
 
     clients!: { [id: string]: TClient };
+
+    get filteredClients() {
+        return Object.values(this.clients).filter((client: TClient) => client.page === this.page);
+    }
 
     async onChangePage(page: number) {
         this.page = page;

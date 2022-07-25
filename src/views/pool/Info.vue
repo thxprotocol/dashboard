@@ -93,7 +93,7 @@
             </a>
             and request an access token to authorize your application with THX API.
         </p>
-        <base-pool-clients :pool="pool" />
+        <base-card-pool-clients :pool="pool" />
         <h2 class="font-weight-normal">Example code</h2>
         <p>These examples should demonstrate how to authorize with the THX API.</p>
         <b-card class="shadow-sm mb-5">
@@ -186,13 +186,13 @@ import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
 import { mapGetters } from 'vuex';
 
-import BasePoolClients from '@/components/cards/BasePoolClients.vue';
+import BaseCardPoolClients from '@/components/cards/BaseCardPoolClients.vue';
 
 const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 
 @Component({
     components: {
-        BasePoolClients,
+        BaseCardPoolClients,
     },
     computed: mapGetters({
         pools: 'pools/all',
@@ -236,31 +236,17 @@ export default class AssetPoolView extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    // TODO Introduce store for this
     async getBrand() {
-        const { data } = await axios({
-            url: '/brands',
-            method: 'GET',
-            headers: {
-                'X-PoolId': this.pool._id,
-            },
-        });
+        const data = await this.$store.dispatch('brands/pool', this.pool._id);
         this.backgroundImgUrl = data.backgroundImgUrl;
         this.logoImgUrl = data.logoImgUrl;
     }
 
-    // TODO Introduce store for this
-    updateBrand() {
-        return axios({
-            url: '/brands',
-            method: 'PUT',
-            headers: {
-                'X-PoolId': this.pool._id,
-            },
-            data: {
-                backgroundImgUrl: this.backgroundImgUrl,
-                logoImgUrl: this.logoImgUrl,
-            },
+    async updateBrand() {
+        await this.$store.dispatch('brands/update', {
+            poolId: this.pool._id,
+            backgroundImgUrl: this.backgroundImgUrl,
+            logoImgUrl: this.logoImgUrl,
         });
     }
 
