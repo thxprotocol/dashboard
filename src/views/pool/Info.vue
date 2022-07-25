@@ -236,31 +236,17 @@ export default class AssetPoolView extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    // TODO Introduce store for this
     async getBrand() {
-        const { data } = await axios({
-            url: '/brands',
-            method: 'GET',
-            headers: {
-                'X-PoolId': this.pool._id,
-            },
-        });
+        const data = await this.$store.dispatch('brands/pool', this.pool._id);
         this.backgroundImgUrl = data.backgroundImgUrl;
         this.logoImgUrl = data.logoImgUrl;
     }
 
-    // TODO Introduce store for this
-    updateBrand() {
-        return axios({
-            url: '/brands',
-            method: 'PUT',
-            headers: {
-                'X-PoolId': this.pool._id,
-            },
-            data: {
-                backgroundImgUrl: this.backgroundImgUrl,
-                logoImgUrl: this.logoImgUrl,
-            },
+    async updateBrand() {
+        await this.$store.dispatch('brands/update', {
+            poolId: this.pool._id,
+            backgroundImgUrl: this.backgroundImgUrl,
+            logoImgUrl: this.logoImgUrl,
         });
     }
 
