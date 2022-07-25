@@ -1,7 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { Action, Module, VuexModule } from 'vuex-module-decorators';
+import { IPool } from './pools';
 
 export type TClient = {
+    _id: string;
     sub: string;
     poolId: string;
     clientId: string;
@@ -22,9 +24,8 @@ export type ClientListProps = PaginationParams & {
 };
 
 export type ClientInfoProps = {
-    clientId: string;
-    poolId: string;
-    registrationAccessToken: string;
+    client: TClient;
+    pool: IPool;
 };
 
 export type TClientResponse = AxiosResponse<
@@ -71,18 +72,19 @@ class ClientModule extends VuexModule {
             if (limit) params.set('limit', String(limit));
 
             // /* Fetch if not yet */
-            const response: TClientResponse = await axios({
+            const { data }: TClientResponse = await axios({
                 method: 'GET',
-                url: '/clients?' + params.toString(),
+                url: '/clients?' + String(params),
                 headers: { 'X-PoolId': poolId },
             });
 
+            // TODO Use this store for storing the data instead of returning it.
             return {
-                clients: response.data.results,
-                total: response.data.total,
-                limit: response.data.limit,
-                previous: response.data.previous,
-                next: response.data.next,
+                clients: data.results,
+                total: data.total,
+                limit: data.limit,
+                previous: data.previous,
+                next: data.next,
             };
         } catch (e) {
             console.error(e);
@@ -97,19 +99,20 @@ class ClientModule extends VuexModule {
             headers: { 'X-PoolId': poolId },
             data: { name, grantType, redirectUri, requestUri },
         });
+        // TODO insert data into store instead of returning
         return response.data;
     }
 
     @Action({ rawError: true })
-    async info({ clientId, poolId, registrationAccessToken }: ClientInfoProps) {
-        const response = await axios({
-            method: 'POST',
-            url: '/clients/info',
-            headers: { 'X-PoolId': poolId },
-            data: { clientId, registrationAccessToken },
+    async get({ client, pool }: ClientInfoProps) {
+        const { data } = await axios({
+            method: 'GET',
+            url: '/clients/' + client._id,
+            headers: { 'X-PoolId': pool._id },
+            data: { clientId: client.clientId, registrationAccessToken: client.registrationAccessToken },
         });
 
-        return response.data;
+        // TODO Update store value for this client (missing clientSecret)
     }
 }
 

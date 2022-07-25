@@ -6,14 +6,14 @@
                     <b-row class="mb-2">
                         <b-col>
                             <b-form-group>
-                                <label for="erc20Address">Name:*</label>
-                                <b-form-input id="erc20Name" v-model="name" placeholder="XYZ Network Token" />
+                                <label>Name</label>
+                                <b-form-input v-model="name" />
                             </b-form-group>
                         </b-col>
                     </b-row>
                     <b-row class="mb-2">
                         <b-col>
-                            <label> Grant Type:*</label>
+                            <label> Grant Type</label>
                             <b-dropdown variant="link" class="dropdown-select bg-white">
                                 <template #button-content>
                                     <div>
@@ -55,7 +55,14 @@
             </form>
         </template>
         <template #btn-primary>
-            <b-button :disabled="!isValid" type="submit" form="formClientCreate" variant="primary" block>
+            <b-button
+                :disabled="!isValid"
+                type="submit"
+                form="formClientCreate"
+                variant="primary"
+                block
+                class="rounded-pill"
+            >
                 Submit
             </b-button>
         </template>
@@ -63,6 +70,7 @@
 </template>
 
 <script lang="ts">
+import { IPool } from '@/store/modules/pools';
 import { AxiosError } from 'axios';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseModal from './BaseModal.vue';
@@ -75,7 +83,7 @@ type GrantType = 'authorization_code' | 'client_credentials';
     },
 })
 export default class BaseModalClientCreate extends Vue {
-    @Prop() poolId!: string;
+    @Prop() pool!: IPool;
     @Prop() onSubmit!: () => void;
 
     name = '';
@@ -99,7 +107,7 @@ export default class BaseModalClientCreate extends Vue {
         try {
             await this.$store.dispatch('clients/create', {
                 name: this.name,
-                poolId: this.poolId,
+                poolId: this.pool._id,
                 grantType: this.grantType,
                 redirectUri: this.redirectUri,
                 requestUri: this.requestUri,

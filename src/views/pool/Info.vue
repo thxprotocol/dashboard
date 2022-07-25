@@ -93,7 +93,7 @@
             </a>
             and request an access token to authorize your application with THX API.
         </p>
-        <base-pool-clients :poolId="pool._id" />
+        <base-pool-clients :pool="pool" />
         <h2 class="font-weight-normal">Example code</h2>
         <p>These examples should demonstrate how to authorize with the THX API.</p>
         <b-card class="shadow-sm mb-5">

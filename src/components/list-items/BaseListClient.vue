@@ -1,43 +1,45 @@
 <template>
-    <b-row class="mb-3 py-2 bg-light">
+    <b-row class="">
         <b-col cols="6" class="d-flex align-items-center">
             <b-form-group class="w-100">
                 <label for="clientId"> Client ID </label>
-                <div class="input-group">
-                    <b-form-input readonly id="clientId" :value="clientId" />
-                    <div class="input-group-append">
+                <b-input-group size="sm">
+                    <b-form-input readonly size="sm" id="clientId" :value="clientId" />
+                    <template #append>
                         <b-button
+                            size="sm"
                             class="btn btn-primary"
                             type="button"
                             variant="primary"
                             v-b-tooltip
-                            v-clipboard:copy="info.clientId"
+                            v-clipboard:copy="client.clientId"
                             title="Click to copy"
                         >
                             <i class="fas fa-clipboard m-0" style="font-size: 1.2rem"></i>
                         </b-button>
-                    </div>
-                </div>
+                    </template>
+                </b-input-group>
             </b-form-group>
         </b-col>
         <b-col cols="6" class="d-flex align-items-center">
             <b-form-group class="w-100">
                 <label for="clientSecret"> Client Secret </label>
-                <div class="input-group">
-                    <b-form-input readonly id="clientSecret" :value="clientSecret" />
-                    <div class="input-group-append">
+                <b-input-group size="sm">
+                    <b-form-input readonly size="sm" id="clientSecret" :value="clientSecret" />
+                    <template #append>
                         <b-button
+                            size="sm"
                             class="btn btn-primary"
                             type="button"
                             variant="primary"
                             v-b-tooltip
-                            v-clipboard:copy="info.clientSecret"
+                            v-clipboard:copy="client.clientSecret"
                             title="Click to copy"
                         >
-                            <i class="fas fa-clipboard m-0" style="font-size: 1.2rem"></i>
+                            <i class="fas fa-clipboard m-0"></i>
                         </b-button>
-                    </div>
-                </div>
+                    </template>
+                </b-input-group>
             </b-form-group>
         </b-col>
     </b-row>
@@ -46,6 +48,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { TClient } from '@/store/modules/clients';
+import { IPool } from '@/store/modules/pools';
 
 export interface TClientInfo {
     clientId: string;
@@ -56,34 +59,18 @@ export interface TClientInfo {
 @Component({})
 export default class BaseListClient extends Vue {
     @Prop() client!: TClient;
-
-    info: TClientInfo = { clientId: '', clientSecret: '', requestUris: [] };
+    @Prop() pool!: IPool;
 
     get clientId() {
-        return `${this.info.clientId.substring(0, 6)}*************`;
+        return `${this.client.clientId.substring(0, 6)}*************`;
     }
 
     get clientSecret() {
-        return `${this.info.clientSecret.substring(0, 6)}********************`;
-    }
-
-    async copyId() {
-        await navigator.clipboard.writeText(this.info.clientId);
-    }
-
-    async copySecret() {
-        await navigator.clipboard.writeText(this.info.clientSecret);
+        return `${this.client.clientSecret.substring(0, 6)}********************`;
     }
 
     mounted() {
-        const params = {
-            clientId: this.client.clientId,
-            poolId: this.client.poolId,
-            registrationAccessToken: this.client.registrationAccessToken,
-        };
-        this.$store.dispatch('clients/info', params).then((res) => {
-            Vue.set(this, 'info', res);
-        });
+        this.$store.dispatch('clients/get', { client: this.client, pool: this.pool });
     }
 }
 </script>
