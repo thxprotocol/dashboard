@@ -156,6 +156,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
 import { BASE_URL, WALLET_URL } from '@/utils/secrets';
+import { mapGetters } from 'vuex';
+import { TBrandState } from '@/store/modules/brands';
 
 const getBase64Image = (url: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -174,6 +176,9 @@ const getBase64Image = (url: string): Promise<string> => {
 };
 
 @Component({
+    computed: mapGetters({
+        brands: 'brands/all',
+    }),
     components: {
         BaseCard,
         VueQr,
@@ -183,7 +188,6 @@ export default class BaseListItemReward extends Vue {
     channelType = '';
     channelAction = '';
     channelItemURL = '';
-    logoSrc = require('@/assets/qr-logo.jpg');
     imgData = '';
     claimURL = '';
     qrURL = '';
@@ -192,6 +196,8 @@ export default class BaseListItemReward extends Vue {
 
     @Prop() pool!: IPool;
     @Prop() reward!: Reward;
+
+    brands!: TBrandState;
 
     get expired() {
         if (!this.reward.expiryDate) return false;
@@ -210,9 +216,11 @@ export default class BaseListItemReward extends Vue {
             );
         }
         if (this.reward.amount == 1) {
-            getBase64Image(BASE_URL + this.logoSrc).then((data) => {
-                this.imgData = data;
-                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+            this.$store.dispatch('brands/pool', this.pool._id).then((res) => {
+                getBase64Image(res.logoImgUrl || BASE_URL + require('@/assets/qr-logo.jpg')).then((data) => {
+                    this.imgData = data;
+                    this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+                });
             });
         }
     }
