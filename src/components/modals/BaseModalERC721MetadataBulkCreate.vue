@@ -49,7 +49,7 @@
                             @change="onFolderSelected"
                             :data-key="selectedKey"
                             accept="image/*"
-                            directory="true"
+                            :directory="true"
                             :multiple="true"
                         />
                     </b-form-group>
@@ -65,13 +65,11 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { IPool } from '@/store/modules/pools';
 import { TERC721, TERC721DefaultProp } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
-import { zip, zipFolder } from '@/utils/zip';
 
 @Component({
     components: {
@@ -102,36 +100,18 @@ export default class ModalERC721MetadataBulkCreate extends Vue {
         this.files = event.target.files;
     }
 
-    async generateZip(files: FileList) {
-        await Promise.all(
-            [...files].map((x: File) => {
-                return zipFolder?.file(x.name, x);
-            }),
-        );
-        return await zip.generateAsync({ type: 'blob' });
-    }
-
     async submit() {
         try {
             this.loading = true;
             if (!this.selectedProp || !this.files) {
                 return;
             }
-            const zipFile = await this.generateZip(this.files);
 
-            var files = new File([zipFile], 'images.zip');
-            const formData = new FormData();
-            formData.set('propName', this.selectedProp.name);
-            formData.append('compressedFile', files);
-
-            await axios({
-                url: '/erc721/' + this.erc721._id + '/metadata/multiple',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/zip',
-                    'X-PoolId': this.pool._id,
-                },
-                data: formData,
+            await this.$store.dispatch('erc721/uploadMultipleMetadataImages', {
+                pool: this.pool,
+                erc721: this.erc721,
+                propName: this.selectedProp.name,
+                files: this.files,
             });
 
             this.$emit('success');
