@@ -1,10 +1,9 @@
 <template>
     <b-card class="shadow-sm mb-5">
         <b-row class="justify-content-end mb-3">
-            <b-button variant="primary" @click="$bvModal.show('modalClientCreate')"> Generate new Client </b-button>
+            <b-button variant="primary" v-b-modal="'modalClientCreate'" class="rounded-pill"> Create Client </b-button>
         </b-row>
-
-        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of clients" />
+        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of filteredClients" />
         <b-pagination
             class="mt-3"
             @change="onChangePage"
@@ -17,7 +16,7 @@
     </b-card>
 </template>
 <script lang="ts">
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { TClient } from '@/store/modules/clients';
 import BaseListItemClient from '../list-items/BaseListItemClient.vue';
@@ -29,18 +28,21 @@ import { IPool } from '@/store/modules/pools';
         BaseListItemClient,
         BaseModalClientCreate,
     },
-    computed: mapGetters({
-        clients: 'clients/all',
-    }),
+    computed: {
+        ...mapState('clients', ['total']),
+        ...mapGetters({
+            clients: 'clients/all',
+        }),
+    },
 })
 export default class BaseCardPoolClients extends Vue {
     @Prop() pool!: IPool;
 
     page = 1;
     limit = 5;
-    total = 0;
     isLoading = true;
 
+    total!: number;
     clients!: { [id: string]: TClient };
 
     get filteredClients() {

@@ -61,6 +61,7 @@ export type TClientState = {
 @Module({ namespaced: true })
 class ClientModule extends VuexModule {
     _all: TClientState = {};
+    total = 0;
 
     get all() {
         return this._all;
@@ -69,6 +70,11 @@ class ClientModule extends VuexModule {
     @Mutation
     set(client: TClient) {
         Vue.set(this._all, client._id, client);
+    }
+
+    @Mutation
+    setTotal(total: number) {
+        Vue.set(this, 'total', total);
     }
 
     @Action({ rawError: true })
@@ -83,8 +89,9 @@ class ClientModule extends VuexModule {
             headers: { 'X-PoolId': pool._id },
         });
 
+        this.context.commit('setTotal', data.total);
         // Prepare an array for all available items
-        Array.from({ length: data.total }).forEach((value: unknown, index: number) => {
+        data.results.forEach((value: unknown, index: number) => {
             // Set the page the item is on
             data.results[index].page = page;
             // Array should have one dimension for easy updating
