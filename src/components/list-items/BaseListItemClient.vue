@@ -1,10 +1,19 @@
 <template>
-    <b-row class="">
-        <b-col cols="6" class="d-flex align-items-center">
-            <b-form-group class="w-100">
-                <label for="clientId"> Client ID </label>
+    <b-row class="bg-light pt-1 mb-1">
+        <b-col md="6" class="d-flex align-items-center">
+            <b-form-group class="w-100" label="Client Name" label-class="text-gray">
+                {{ client.name }}
+            </b-form-group>
+        </b-col>
+        <b-col md="6" class="d-flex align-items-center">
+            <b-form-group class="w-100" label="Grant Type" label-class="text-gray">
+                {{ client.grantType }}
+            </b-form-group>
+        </b-col>
+        <b-col md="6" class="d-flex align-items-center">
+            <b-form-group class="w-100" label="Client ID" label-class="text-gray">
                 <b-input-group size="sm">
-                    <b-form-input readonly size="sm" id="clientId" :value="clientId" />
+                    <b-form-input readonly size="sm" :value="client.clientId" />
                     <template #append>
                         <b-button
                             size="sm"
@@ -21,11 +30,10 @@
                 </b-input-group>
             </b-form-group>
         </b-col>
-        <b-col cols="6" class="d-flex align-items-center">
-            <b-form-group class="w-100">
-                <label for="clientSecret"> Client Secret </label>
+        <b-col md="6" class="d-flex align-items-center">
+            <b-form-group class="w-100" label="Client Secret" label-class="text-gray">
                 <b-input-group size="sm">
-                    <b-form-input readonly size="sm" id="clientSecret" :value="clientSecret" />
+                    <b-form-input readonly size="sm" :value="clientSecret" />
                     <template #append>
                         <b-button
                             size="sm"
@@ -57,16 +65,17 @@ export interface TClientInfo {
 }
 
 @Component({})
-export default class BaseListClient extends Vue {
+export default class BaseListItemClient extends Vue {
     @Prop() client!: TClient;
     @Prop() pool!: IPool;
 
-    get clientId() {
-        return `${this.client.clientId.substring(0, 6)}*************`;
-    }
-
     get clientSecret() {
-        return `${this.client.clientSecret.substring(0, 6)}********************`;
+        return (
+            this.client.clientSecret &&
+            Array.from({ length: this.client.clientSecret.length })
+                .map(() => '•')
+                .join('')
+        );
     }
 
     mounted() {

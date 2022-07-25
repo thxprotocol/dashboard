@@ -1,13 +1,15 @@
 import axios, { AxiosResponse } from 'axios';
-import { Action, Module, VuexModule } from 'vuex-module-decorators';
+import { Vue } from 'vue-property-decorator';
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import { IPool } from './pools';
 
 export type TClient = {
     _id: string;
+    page: number;
     sub: string;
     poolId: string;
     clientId: string;
-    registrationAccessToken: string;
+    clientSecret: string;
 };
 
 export type ClientByPage = {
@@ -20,10 +22,10 @@ export type PaginationParams = Partial<{
 }>;
 
 export type ClientListProps = PaginationParams & {
-    poolId: string;
+    pool: IPool;
 };
 
-export type ClientInfoProps = {
+export type GetClientProps = {
     client: TClient;
     pool: IPool;
 };
@@ -43,7 +45,8 @@ export type TClientMeta = {
 
 export type TClientCreate = {
     name: string;
-    poolId: string;
+    page: number;
+    pool: IPool;
     grantType: string;
     redirectUri: string;
     requestUri: string;
@@ -63,56 +66,56 @@ class ClientModule extends VuexModule {
         return this._all;
     }
 
-    @Action({ rawError: true })
-    async list({ page = 1, limit, poolId }: ClientListProps) {
-        try {
-            /** Return if there cached */
-            const params = new URLSearchParams();
-            if (page) params.set('page', String(page));
-            if (limit) params.set('limit', String(limit));
-
-            // /* Fetch if not yet */
-            const { data }: TClientResponse = await axios({
-                method: 'GET',
-                url: '/clients?' + String(params),
-                headers: { 'X-PoolId': poolId },
-            });
-
-            // TODO Use this store for storing the data instead of returning it.
-            return {
-                clients: data.results,
-                total: data.total,
-                limit: data.limit,
-                previous: data.previous,
-                next: data.next,
-            };
-        } catch (e) {
-            console.error(e);
-        }
+    @Mutation
+    set(client: TClient) {
+        Vue.set(this._all, client._id, client);
     }
 
     @Action({ rawError: true })
-    async create({ name, poolId, grantType, redirectUri, requestUri }: TClientCreate) {
-        const response = await axios({
+    async list({ page = 1, limit, pool }: ClientListProps) {
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(limit));
+
+        const { data }: TClientResponse = await axios({
+            method: 'GET',
+            url: '/clients?' + String(params),
+            headers: { 'X-PoolId': pool._id },
+        });
+
+        // Prepare an array for all available items
+        Array.from({ length: data.total }).forEach((value: unknown, index: number) => {
+            // Set the page the item is on
+            data.results[index].page = page;
+            // Array should have one dimension for easy updating
+            this.context.commit('set', data.results[index]);
+        });
+    }
+
+    @Action({ rawError: true })
+    async create({ name, page, pool, grantType, redirectUri, requestUri }: TClientCreate) {
+        const { data } = await axios({
             method: 'POST',
             url: '/clients',
-            headers: { 'X-PoolId': poolId },
+            headers: { 'X-PoolId': pool._id },
             data: { name, grantType, redirectUri, requestUri },
         });
-        // TODO insert data into store instead of returning
-        return response.data;
+        data.page = page;
+        this.context.commit('set', data);
     }
 
     @Action({ rawError: true })
-    async get({ client, pool }: ClientInfoProps) {
+    async get({ client, pool }: GetClientProps) {
         const { data } = await axios({
             method: 'GET',
             url: '/clients/' + client._id,
             headers: { 'X-PoolId': pool._id },
-            data: { clientId: client.clientId, registrationAccessToken: client.registrationAccessToken },
+            data: { clientId: client.clientId },
         });
 
-        // TODO Update store value for this client (missing clientSecret)
+        const existingClient = this.context.rootGetters['clients/all'][client._id];
+        // Override existing props but keep props (like page) undefined in the new data.
+        this.context.commit('set', { ...existingClient, ...data });
     }
 }
 

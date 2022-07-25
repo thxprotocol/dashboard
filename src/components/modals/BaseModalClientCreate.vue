@@ -14,40 +14,26 @@
                     <b-row class="mb-2">
                         <b-col>
                             <label> Grant Type</label>
-                            <b-dropdown variant="link" class="dropdown-select bg-white">
-                                <template #button-content>
-                                    <div>
-                                        {{ grantType }}
-                                    </div>
-                                </template>
-                                <b-dropdown-item-button @click="onGrantClick('authorization_code')">
-                                    authorization_code
-                                </b-dropdown-item-button>
-                                <b-dropdown-item-button @click="onGrantClick('client_credentials')">
-                                    client_credentials
-                                </b-dropdown-item-button>
-                            </b-dropdown>
+                            <b-select v-model="grantType">
+                                <b-select-option value="authorization_code">Authorization Code</b-select-option>
+                                <b-select-option value="client_credentials">Client Credentials</b-select-option>
+                            </b-select>
                         </b-col>
                     </b-row>
                     <b-row v-if="grantType === 'authorization_code'">
                         <b-col>
                             <b-form-group>
-                                <label for="clientRedirectUrl">Redirect URI</label>
+                                <label>Redirect URI</label>
                                 <b-form-input
-                                    id="clientRedirectUrl"
                                     v-model="redirectUri"
-                                    placeholder="https://thx.network/redirect"
+                                    placeholder="https://example.com/redirect-callback"
                                 />
                             </b-form-group>
                         </b-col>
                         <b-col>
                             <b-form-group>
-                                <label for="requestURI">Request URI</label>
-                                <b-form-input
-                                    id="requestURI"
-                                    v-model="requestUri"
-                                    placeholder="https://thx.network/auth"
-                                />
+                                <label>Request URI</label>
+                                <b-form-input v-model="requestUri" placeholder="https://example.com" />
                             </b-form-group>
                         </b-col>
                     </b-row>
@@ -71,7 +57,6 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { AxiosError } from 'axios';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseModal from './BaseModal.vue';
 
@@ -84,46 +69,32 @@ type GrantType = 'authorization_code' | 'client_credentials';
 })
 export default class BaseModalClientCreate extends Vue {
     @Prop() pool!: IPool;
-    @Prop() onSubmit!: () => void;
+    @Prop() page!: number;
 
+    error = '';
     name = '';
     grantType: GrantType = 'client_credentials';
     redirectUri = '';
     requestUri = '';
 
-    error = '';
-
     get isValid() {
-        return this.name !== '';
-    }
-
-    async onGrantClick(grant: GrantType) {
-        this.grantType = grant;
-        this.redirectUri = '';
-        this.requestUri = '';
+        return this.grantType === 'authorization_code' ? this.redirectUri !== '' && this.requestUri !== '' : true;
     }
 
     async submit() {
-        try {
-            await this.$store.dispatch('clients/create', {
-                name: this.name,
-                poolId: this.pool._id,
-                grantType: this.grantType,
-                redirectUri: this.redirectUri,
-                requestUri: this.requestUri,
-            });
+        await this.$store.dispatch('clients/create', {
+            name: this.name,
+            pool: this.pool,
+            grantType: this.grantType,
+            redirectUri: this.redirectUri,
+            requestUri: this.requestUri,
+        });
 
-            this.onSubmit();
-
-            this.name = '';
-            this.grantType = 'client_credentials';
-            this.redirectUri = '';
-            this.requestUri = '';
-
-            this.$bvModal.hide(`modalClientCreate`);
-        } catch (error) {
-            this.error = (error as AxiosError).response?.data.error.message || 'Could not create your token.';
-        }
+        this.name = '';
+        this.grantType = 'client_credentials';
+        this.redirectUri = '';
+        this.requestUri = '';
+        this.$bvModal.hide(`modalClientCreate`);
     }
 }
 </script>
