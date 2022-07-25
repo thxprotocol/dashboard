@@ -75,7 +75,6 @@ export default class BasePoolClient extends Vue {
 
     async updateByPage(page: number, clienst: TClient[]) {
         Vue.set(this.byPage, page, clienst);
-        console.log(clienst);
     }
 
     mounted() {
