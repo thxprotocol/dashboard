@@ -214,6 +214,12 @@ export default class BaseNavbar extends Vue {
                 visible: this.pool.isDefaultPool,
             },
             {
+                path: 'theme',
+                label: 'Theme',
+                iconClasses: 'fas fa-palette',
+                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
+            },
+            {
                 path: 'clients',
                 label: 'Authorization',
                 iconClasses: 'fas fa-key',

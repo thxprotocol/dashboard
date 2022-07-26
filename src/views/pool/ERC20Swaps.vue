@@ -1,6 +1,9 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
         <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Swaps</h2>
+            </b-col>
             <b-col class="d-flex justify-content-end">
                 <b-button
                     :disabled="loading"
@@ -42,25 +45,29 @@
                         </div>
                     </b-form-group>
                 </template>
-                <base-form-group-swap-rule :swap-rule="swapRule" :key="swapRule._id" v-for="swapRule of swapRules" />
+                <base-form-group-swap-rule
+                    :swap-rule="swapRule"
+                    :key="swapRule._id"
+                    v-for="swapRule of swapRulesByPage"
+                />
+                <div class="container container-md">
+                    <base-nothing-here
+                        v-if="total == 0"
+                        text-submit="Create a Swap Rule"
+                        title="You have not created a Swap Rule yet"
+                        @clicked="$bvModal.show('modalERC20SwapRuleCreate')"
+                    />
+                </div>
             </b-skeleton-wrapper>
         </b-card>
         <b-pagination
             class="mt-3"
             @change="onChangePage"
-            v-model="currentPage"
-            :per-page="perPage"
+            v-model="page"
+            :per-page="limit"
             :total-rows="total"
             align="center"
         ></b-pagination>
-        <div class="container container-md">
-            <base-nothing-here
-                v-if="total == 0"
-                text-submit="Create a Swap Rile"
-                title="You have not created a Swap Rule yet"
-                @clicked="$bvModal.show('modalERC20SwapRuleCreate')"
-            />
-        </div>
         <ModalERC20SwapRuleCreate :onSuccess="onSwapRuleCreated" />
     </div>
 </template>
@@ -68,7 +75,7 @@
 <script lang="ts">
 import ModalERC20SwapRuleCreate from '@/components/modals/BaseModalERC20SwapRuleCreate.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
-import { GetERC20SwapRulesProps, GetERC20SwapRulesResponse, IERC20SwapRuleByPage } from '@/types/IERC20SwapRules';
+import { GetERC20SwapRulesProps, IERC20SwapRules, TERC20SwapRule } from '@/types/IERC20SwapRules';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
@@ -83,20 +90,30 @@ import BaseFormGroupSwapRule from '@/components/form-group/BaseFormGroupSwapRule
         BaseIdenticon,
     },
     computed: mapGetters({
+        totals: 'swaprules/totals',
+        swaprules: 'swaprules/all',
         pools: 'pools/all',
     }),
 })
 export default class ERC20Swaps extends Vue {
-    swapRulePerPage: IERC20SwapRuleByPage = {};
     loading = false;
-    currentPage = 1;
-    perPage = 10;
-    total = 0;
+    page = 1;
+    limit = 10;
 
+    swaprules!: IERC20SwapRules;
+    totals!: { [poolId: string]: number };
     pools!: IPools;
 
-    get swapRules() {
-        return this.swapRulePerPage[this.currentPage] || [];
+    get swapRulesByPage() {
+        if (!this.swaprules[this.$route.params.id]) return [];
+        return Object.values(this.swaprules[this.$route.params.id])
+            .filter((client: TERC20SwapRule) => client.page === this.page)
+            .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+            .slice(0, 5);
+    }
+
+    get total() {
+        return this.totals[this.$route.params.id];
     }
 
     get pool() {
@@ -105,35 +122,32 @@ export default class ERC20Swaps extends Vue {
 
     async getMoreResults({ pool, page, limit }: GetERC20SwapRulesProps) {
         this.loading = true;
-        const response: GetERC20SwapRulesResponse = await this.$store.dispatch('swaprules/list', {
+        await this.$store.dispatch('swaprules/list', {
             pool: pool,
             page,
             limit,
         });
-
-        Vue.set(this.swapRulePerPage, this.currentPage, response.results);
-        this.total = response.total;
         this.loading = false;
     }
 
-    async onSwapRuleCreated() {
-        this.currentPage = 1;
+    onSwapRuleCreated() {
+        this.page = 1;
         this.onChangePage(1);
     }
 
-    async onChangePage(page: number) {
-        await this.getMoreResults({
+    onChangePage(page: number) {
+        this.getMoreResults({
             pool: this.pool,
             page: page,
-            limit: this.perPage,
+            limit: this.limit,
         });
     }
 
-    async mounted() {
-        await this.getMoreResults({
+    mounted() {
+        this.getMoreResults({
             pool: this.pool,
-            page: this.currentPage,
-            limit: this.perPage,
+            page: this.page,
+            limit: this.limit,
         });
     }
 }

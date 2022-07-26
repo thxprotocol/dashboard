@@ -81,6 +81,10 @@ const routes: Array<RouteConfig> = [
                 path: 'clients',
                 component: () => import('../views/pool/Clients.vue'),
             },
+            {
+                path: 'theme',
+                component: () => import('../views/pool/Theme.vue'),
+            },
         ],
     },
     {

@@ -21,8 +21,12 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IERC20s } from '@/types/erc20';
 import { TERC20SwapRule } from '@/types/IERC20SwapRules';
+import BaseIdenticon from '@/components/BaseIdenticon.vue';
 
 @Component({
+    components: {
+        BaseIdenticon,
+    },
     computed: mapGetters({
         pools: 'pools/all',
         erc20s: 'erc20/all',
