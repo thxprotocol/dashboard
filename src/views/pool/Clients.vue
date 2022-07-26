@@ -25,7 +25,7 @@
     </div>
 </template>
 <script lang="ts">
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { TClient } from '@/store/modules/clients';
 import BaseListItemClient from '@/components/list-items/BaseListItemClient.vue';
