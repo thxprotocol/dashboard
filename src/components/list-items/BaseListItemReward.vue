@@ -1,18 +1,23 @@
 <template>
     <base-card>
         <template #card-body>
+            <b-alert variant="info" show v-if="isDownloadScheduled">
+                You will receive an e-mail when you can download your file.
+            </b-alert>
             <b-row>
-                <b-col md="4" class="d-flex" v-if="reward.amount == 1">
+                <b-col md="3" class="d-flex mb-3 mb-sm-0">
                     <b-button
+                        v-if="reward.amount === 1"
                         v-b-tooltip
+                        block
                         title="Click to download the QR code as a jpg file"
                         :download="`${reward._id}.jpg`"
                         variant="light"
-                        class="p-3 m-auto m-md-0"
+                        class="p-3 m-auto m-0"
                         :href="qrURL"
                     >
                         <vue-qr
-                            style="width: 100px; height: 100px"
+                            style="width: 50px; height: 50px"
                             :callback="onQRLoaded"
                             :logoSrc="imgData"
                             :text="claimURL"
@@ -24,21 +29,13 @@
                             :size="480"
                         />
                     </b-button>
-                </b-col>
-                <b-col md="4" class="d-flex" v-else-if="downloadButtonClicked && !canDownloadQRCodes">
-                    <b-button title="Download QR codes" variant="primary" class="p-3 m-auto m-md-0" disabled="true"
-                        ><p>Your file is being generated.</p>
-                        <p>A confirmation email will be sent.</p>
+                    <b-button v-else block title="Download QR codes" variant="primary" @click="getQRCodes()">
+                        <b-spinner small variant="white" v-if="isDownloading" />
+                        <template v-else>
+                            <i class="fas fa-download mr-3"></i>
+                            <strong>{{ reward.amount }}</strong> QR Codes
+                        </template>
                     </b-button>
-                </b-col>
-                <b-col md="4" class="d-flex" v-else id="reward._id">
-                    <b-button
-                        title="Download QR codes"
-                        variant="primary"
-                        class="p-3 m-auto m-md-0"
-                        @click="getQRCodes()"
-                        >Download QR codes <i class="fas fa-download m-0" style="font-size: 1rem"></i
-                    ></b-button>
                 </b-col>
                 <b-col class="d-flex flex-column">
                     <div class="d-flex align-items-center">
@@ -63,8 +60,8 @@
                         </b-dropdown>
                     </div>
                     <p>{{ reward.title }}</p>
-                    <b-input-group class="mt-auto" v-if="reward.amount == 1">
-                        <b-form-input readonly :value="claimURL" />
+                    <b-input-group size="sm" class="mt-auto" v-if="reward.amount === 1">
+                        <b-form-input size="sm" readonly :value="claimURL" />
                         <b-input-group-append>
                             <b-button variant="primary" v-clipboard:copy="claimURL">
                                 <i class="far fa-copy m-0" style="font-size: 1rem"></i>
@@ -73,15 +70,7 @@
                     </b-input-group>
                 </b-col>
             </b-row>
-            <template v-if="reward.amount > 1">
-                <label style="font-size: 0.8rem">
-                    Num QR Codes: <strong>{{ reward.amount }}</strong>
-                </label>
-                <b-row></b-row>
-            </template>
-
             <hr />
-
             <template v-if="pool.isDefaultPool">
                 <label>
                     Supply Limit: <strong v-if="reward.withdrawLimit" class="">{{ reward.withdrawLimit }}</strong>
@@ -99,7 +88,7 @@
                     />
                 </b-progress>
             </template>
-            <label class="mt-3">Rules:</label>
+            <label class="mt-3">Reward Conditions:</label>
             <div>
                 <b-badge
                     v-b-tooltip
@@ -167,6 +156,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
 import VueQr from 'vue-qr';
 import { BASE_URL, WALLET_URL } from '@/utils/secrets';
+import { mapGetters } from 'vuex';
+import { TBrandState } from '@/store/modules/brands';
 
 const getBase64Image = (url: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -185,6 +176,9 @@ const getBase64Image = (url: string): Promise<string> => {
 };
 
 @Component({
+    computed: mapGetters({
+        brands: 'brands/all',
+    }),
     components: {
         BaseCard,
         VueQr,
@@ -194,15 +188,16 @@ export default class BaseListItemReward extends Vue {
     channelType = '';
     channelAction = '';
     channelItemURL = '';
-    logoSrc = require('@/assets/qr-logo.jpg');
     imgData = '';
     claimURL = '';
     qrURL = '';
-    canDownloadQRCodes = false;
-    downloadButtonClicked = false;
+    isDownloading = false;
+    isDownloadScheduled = false;
 
     @Prop() pool!: IPool;
     @Prop() reward!: Reward;
+
+    brands!: TBrandState;
 
     get expired() {
         if (!this.reward.expiryDate) return false;
@@ -221,9 +216,11 @@ export default class BaseListItemReward extends Vue {
             );
         }
         if (this.reward.amount == 1) {
-            getBase64Image(BASE_URL + this.logoSrc).then((data) => {
-                this.imgData = data;
-                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+            this.$store.dispatch('brands/pool', this.pool._id).then((res) => {
+                getBase64Image(res.logoImgUrl || BASE_URL + require('@/assets/qr-logo.jpg')).then((data) => {
+                    this.imgData = data;
+                    this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+                });
             });
         }
     }
@@ -267,11 +264,11 @@ export default class BaseListItemReward extends Vue {
     }
 
     async getQRCodes() {
-        this.downloadButtonClicked = true;
-        const result = await this.$store.dispatch('rewards/getQRCodes', {
+        this.isDownloading = true;
+        this.isDownloadScheduled = await this.$store.dispatch('rewards/getQRCodes', {
             reward: this.reward,
         });
-        this.canDownloadQRCodes = result;
+        this.isDownloading = false;
     }
 }
 </script>

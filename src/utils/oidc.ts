@@ -15,5 +15,5 @@ export const config: any = {
     loadUserInfo: false,
     resource: API_URL,
     scope:
-        'openid account:read pools:read pools:write erc20:read erc20:write erc721:read erc721:write rewards:read rewards:write withdrawals:read deposits:read deposits:write promotions:read promotions:write widgets:write widgets:read transactions:read members:read members:write payments:read payments:write swaprule:read swaprule:write claims:read',
+        'openid account:read pools:read pools:write erc20:read erc20:write erc721:read erc721:write rewards:read rewards:write withdrawals:read deposits:read deposits:write promotions:read promotions:write widgets:write widgets:read transactions:read members:read members:write payments:read payments:write swaprule:read swaprule:write claims:read brands:read brands:write clients:read clients:write',
 };
