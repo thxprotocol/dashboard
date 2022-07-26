@@ -4,12 +4,20 @@
             <b-col class="d-flex align-items-center">
                 <h2 class="mb-0">Metadata</h2>
             </b-col>
-            <b-col class="d-flex justify-content-end">
-                <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
-                    <i class="fas fa-plus mr-2"></i>
-                    <span class="d-none d-md-inline">Create Metadata</span>
-                </b-button>
-            </b-col>
+            <div class="d-flex ustify-content-end">
+                <b-col>
+                    <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
+                        <i class="fas fa-plus mr-2"></i>
+                        <span class="d-none d-md-inline">Create Metadata</span>
+                    </b-button>
+                </b-col>
+                <b-col>
+                    <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill" variant="primary">
+                        <i class="fas fa-upload mr-2"></i>
+                        <span class="d-none d-md-inline">Upload images</span>
+                    </b-button>
+                </b-col>
+            </div>
         </b-row>
         <base-nothing-here
             v-if="erc721 && !erc721.metadata"
@@ -25,6 +33,7 @@
             :pool="pool"
         />
         <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
+        <base-modal-erc721-metadata-bulk-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
     </div>
 </template>
 
@@ -36,11 +45,13 @@ import { IERC721s, TERC721 } from '@/types/erc721';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vue';
 import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
+import BaseModalErc721MetadataBulkCreate from '@/components/modals/BaseModalERC721MetadataBulkCreate.vue';
 
 @Component({
     components: {
         BaseNothingHere,
         BaseModalErc721MetadataCreate,
+        BaseModalErc721MetadataBulkCreate,
         BaseCardErc721Metadata,
     },
     computed: mapGetters({
@@ -67,10 +78,13 @@ export default class MetadataView extends Vue {
         return this.erc721s[this.pool.token._id];
     }
 
-    mounted() {
+    listMetadata() {
         this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
             await this.$store.dispatch('erc721/listMetadata', this.erc721);
         });
+    }
+    mounted() {
+        this.listMetadata();
     }
 }
 </script>
