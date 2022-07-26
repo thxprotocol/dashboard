@@ -1,10 +1,16 @@
 <template>
-    <b-card class="shadow-sm mb-5">
-        <b-row class="justify-content-end mb-3">
-            <b-button variant="primary" v-b-modal="'modalClientCreate'" class="rounded-pill">
-                <i class="fas fa-plus mr-2"></i>
-                Create Client
-            </b-button>
+    <div>
+        <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Clients</h2>
+            </b-col>
+            <b-col class="d-flex justify-content-end">
+                <b-button variant="primary" v-b-modal="'modalClientCreate'" class="rounded-pill">
+                    <i class="fas fa-plus mr-2"></i>
+                    Create Client
+                </b-button>
+                <base-modal-client-create :pool="pool" :page="page" @submit="onSubmit" />
+            </b-col>
         </b-row>
         <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of filteredClients" />
         <b-pagination
@@ -16,16 +22,15 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
-        <base-modal-client-create :pool="pool" :page="page" @submit="onSubmit" />
-    </b-card>
+    </div>
 </template>
 <script lang="ts">
 import { mapGetters, mapState } from 'vuex';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { TClient } from '@/store/modules/clients';
 import BaseListItemClient from '@/components/list-items/BaseListItemClient.vue';
 import BaseModalClientCreate from '@/components/modals/BaseModalClientCreate.vue';
-import { IPool } from '@/store/modules/pools';
+import { IPools } from '@/store/modules/pools';
 
 @Component({
     components: {
@@ -36,18 +41,22 @@ import { IPool } from '@/store/modules/pools';
         ...mapState('clients', ['total']),
         ...mapGetters({
             clients: 'clients/all',
+            pools: 'pools/all',
         }),
     },
 })
-export default class BaseCardPoolClients extends Vue {
-    @Prop() pool!: IPool;
-
+export default class Clients extends Vue {
     page = 1;
     limit = 5;
     isLoading = true;
 
     total!: number;
     clients!: { [id: string]: TClient };
+    pools!: IPools;
+
+    get pool() {
+        return this.pools[this.$route.params.id];
+    }
 
     get filteredClients() {
         return Object.values(this.clients)

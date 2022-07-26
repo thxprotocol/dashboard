@@ -80,10 +80,17 @@
                     <b-form-input v-model="logoImgUrl" />
                 </b-input-group>
             </b-form-group>
-            <b-button variant="dark" :disabled="!isBrandUpdateInvalid" @click="updateBrand()" type="button">
-                Update
-                <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
-            </b-button>
+            <div class="d-flex justify-content-end">
+                <b-button
+                    variant="primary"
+                    :disabled="!isBrandUpdateInvalid"
+                    @click="updateBrand()"
+                    class="rounded-pill"
+                >
+                    Update
+                    <i class="fas fa-save ml-2" style="font-size: 1.2rem"></i>
+                </b-button>
+            </div>
         </b-card>
         <h2 class="font-weight-normal">Authorization</h2>
         <p>
@@ -185,15 +192,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
 import { mapGetters } from 'vuex';
-
-import BaseCardPoolClients from '@/components/cards/BaseCardPoolClients.vue';
-
-const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+import { isValidUrl } from '@/utils/url';
 
 @Component({
-    components: {
-        BaseCardPoolClients,
-    },
     computed: mapGetters({
         pools: 'pools/all',
     }),
@@ -227,8 +228,10 @@ export default class AssetPoolView extends Vue {
     }
 
     get isBrandUpdateInvalid() {
-        const backgroundUrlIsValid = this.backgroundImgUrl.match(URL_CHECK_REGEX) || this.backgroundImgUrl === '';
-        const logoUrlIsValid = this.logoImgUrl.match(URL_CHECK_REGEX) || this.logoImgUrl === '';
+        const backgroundUrlIsValid = this.backgroundImgUrl
+            ? isValidUrl(this.backgroundImgUrl)
+            : this.backgroundImgUrl === '';
+        const logoUrlIsValid = this.logoImgUrl ? isValidUrl(this.logoImgUrl) : this.logoImgUrl === '';
         return logoUrlIsValid && backgroundUrlIsValid;
     }
 
@@ -238,8 +241,10 @@ export default class AssetPoolView extends Vue {
 
     async getBrand() {
         const data = await this.$store.dispatch('brands/pool', this.pool._id);
-        this.backgroundImgUrl = data.backgroundImgUrl;
-        this.logoImgUrl = data.logoImgUrl;
+        if (data) {
+            this.backgroundImgUrl = data.backgroundImgUrl;
+            this.logoImgUrl = data.logoImgUrl;
+        }
     }
 
     async updateBrand() {

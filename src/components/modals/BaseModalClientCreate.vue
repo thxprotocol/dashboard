@@ -90,6 +90,7 @@ export default class BaseModalClientCreate extends Vue {
             requestUri: this.requestUri,
         });
 
+        this.$emit('submit');
         this.name = '';
         this.grantType = 'client_credentials';
         this.redirectUri = '';

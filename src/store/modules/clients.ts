@@ -6,10 +6,13 @@ import { IPool } from './pools';
 export type TClient = {
     _id: string;
     page: number;
+    name: string;
     sub: string;
     poolId: string;
+    grantType: string;
     clientId: string;
     clientSecret: string;
+    createdAt: Date;
 };
 
 export type ClientByPage = {
@@ -90,11 +93,8 @@ class ClientModule extends VuexModule {
         });
 
         this.context.commit('setTotal', data.total);
-        // Prepare an array for all available items
         data.results.forEach((value: unknown, index: number) => {
-            // Set the page the item is on
             data.results[index].page = page;
-            // Array should have one dimension for easy updating
             this.context.commit('set', data.results[index]);
         });
     }
