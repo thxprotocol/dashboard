@@ -1,46 +1,50 @@
 <template>
     <div>
-        <b-row class="mb-3">
-            <h2 class="mb-0">Theme</h2>
-        </b-row>
+        <h2 class="">Theme</h2>
         <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label for="backgroundImgUrl">Background URL</label>
-                <b-input-group>
-                    <template #prepend>
-                        <b-card
-                            body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="backgroundImgUrl"
-                            bg-variant="light"
-                        >
-                            <img height="30" width="30" class="m-0" :src="backgroundImgUrl" />
-                        </b-card>
-                    </template>
-                    <b-form-input v-model="backgroundImgUrl" />
-                </b-input-group>
-            </b-form-group>
-
-            <b-form-group>
-                <label for="logoImgUrl">Token Icon URL</label>
-                <b-input-group>
-                    <template #prepend>
-                        <b-card body-class="py-1 px-2 d-flex align-items-center" v-if="logoImgUrl" bg-variant="light">
-                            <img height="30" width="30" class="m-0" :src="logoImgUrl" />
-                        </b-card>
-                    </template>
-                    <b-form-input v-model="logoImgUrl" />
-                </b-input-group>
-            </b-form-group>
+            <b-form-row>
+                <b-col md="6">
+                    <label> Background URL </label>
+                    <p class="text-muted small">
+                        This background image is shown on the login page users see when claiming your crypto or NFT's.
+                    </p>
+                    <b-form-input
+                        v-model="backgroundImgUrl"
+                        class="mb-3"
+                        placeholder="E.g. https://picsum.photos/1200/800"
+                    />
+                </b-col>
+                <b-col>
+                    <label>Preview</label>
+                    <b-card body-class="py-3 text-center" class="mb-3" bg-variant="light">
+                        <img width="100%" class="m-0" :src="backgroundImgUrl" v-if="backgroundImgUrl" />
+                        <span v-else class="text-gray">Please provide and image URL.</span>
+                    </b-card>
+                </b-col>
+            </b-form-row>
+            <hr />
+            <b-form-row>
+                <b-col md="6">
+                    <label> Logo URL </label>
+                    <p class="text-muted small">
+                        This logo image is shown above the login panel users see when claiming your crypto or NFT's.
+                    </p>
+                    <b-form-input v-model="logoImgUrl" class="mb-3" placeholder="E.g. https://picsum.photos/65/65" />
+                </b-col>
+                <b-col>
+                    <label>Preview</label>
+                    <b-card body-class="py-3 text-center" class="mb-3" bg-variant="light">
+                        <img height="65" width="65" class="m-0" :src="logoImgUrl" v-if="logoImgUrl" />
+                        <span v-else class="text-gray">Please provide and image URL.</span>
+                    </b-card>
+                </b-col>
+            </b-form-row>
+            <hr />
             <div class="d-flex justify-content-end">
-                <b-button
-                    variant="primary"
-                    :disabled="!isBrandUpdateInvalid"
-                    @click="updateBrand()"
-                    class="rounded-pill"
-                >
+                <b-button variant="primary" :disabled="!isBrandUpdateInvalid" @click="update()" class="rounded-pill">
                     Update
                     <i v-if="!loading" class="fas fa-save ml-2" style="font-size: 1.2rem"></i>
-                    <b-spinner v-else class="ml - 2" small variant="white" />
+                    <b-spinner v-else class="ml-2" small variant="white" />
                 </b-button>
             </div>
         </b-card>
@@ -53,9 +57,11 @@ import { Component, Vue } from 'vue-property-decorator';
 import { ChainId } from '@/types/enums/ChainId';
 import { mapGetters } from 'vuex';
 import { isValidUrl } from '@/utils/url';
+import { TBrand } from '@/store/modules/brands';
 
 @Component({
     computed: mapGetters({
+        brands: 'brands/all',
         pools: 'pools/all',
     }),
 })
@@ -63,6 +69,7 @@ export default class AssetPoolView extends Vue {
     ChainId = ChainId;
     loading = true;
     pools!: IPools;
+    brands!: { [poolId: string]: TBrand };
     chainId: ChainId = ChainId.PolygonMumbai;
     logoImgUrl = '';
     backgroundImgUrl = '';
@@ -81,25 +88,31 @@ export default class AssetPoolView extends Vue {
 
     mounted() {
         this.chainId = this.pool.chainId;
-        this.getBrand().then(() => {
+        this.get().then(() => {
             this.loading = false;
         });
     }
 
-    async getBrand() {
-        const data = await this.$store.dispatch('brands/pool', this.pool._id);
-        if (data) {
-            this.backgroundImgUrl = data.backgroundImgUrl;
-            this.logoImgUrl = data.logoImgUrl;
+    get brand() {
+        return this.brands[this.$route.params.id];
+    }
+
+    async get() {
+        await this.$store.dispatch('brands/getForPool', this.pool);
+        if (this.brand) {
+            this.backgroundImgUrl = this.brand.backgroundImgUrl;
+            this.logoImgUrl = this.brand.logoImgUrl;
         }
     }
 
-    async updateBrand() {
+    async update() {
         this.loading = true;
         await this.$store.dispatch('brands/update', {
-            poolId: this.pool._id,
-            backgroundImgUrl: this.backgroundImgUrl,
-            logoImgUrl: this.logoImgUrl,
+            pool: this.pool,
+            brand: {
+                backgroundImgUrl: this.backgroundImgUrl,
+                logoImgUrl: this.logoImgUrl,
+            },
         });
         this.loading = false;
     }

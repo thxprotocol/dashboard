@@ -1,8 +1,19 @@
 <template>
-    <div class="container container-md pt-5" v-if="pool && pool.token">
-        <div class="d-flex align-items-center">
-            <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
-            <base-badge-network :chainId="pool.chainId" />
+    <div class="container container-md pt-10" v-if="pool && pool.token">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
+                <base-badge-network :chainId="pool.chainId" />
+            </div>
+            <b-dropdown size="sm" no-caret variant="link" dropleft class="d-flex d-md-none">
+                <template #button-content>
+                    <i class="fas fa-ellipsis-v text-muted ml-0" style="font-size: 1.2rem"></i>
+                </template>
+                <b-dropdown-item-btn :key="key" v-for="(route, key) of visibleRoutes" class="nav-link-wrapper">
+                    <i :class="route.iconClasses" class="ml-0 text-gray" style="width: 30px"></i>
+                    {{ route.label }}
+                </b-dropdown-item-btn>
+            </b-dropdown>
         </div>
         <span class="lead">
             {{ pool.token.name }}
@@ -33,6 +44,7 @@ import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
+import { getRoutes } from '@/utils/routes';
 
 @Component({
     components: {
@@ -61,6 +73,10 @@ export default class AssetPoolView extends Vue {
             this.chainId = this.pool.chainId;
         });
         this.$store.dispatch('pools/list');
+    }
+
+    get visibleRoutes() {
+        return getRoutes(this.pool);
     }
 }
 </script>
