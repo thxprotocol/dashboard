@@ -163,6 +163,27 @@ class ERC721Module extends VuexModule {
         });
         this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
     }
+
+    @Action({ rawError: true })
+    async createMetadataCSV(payload: { pool: IPool; erc721: TERC721 }) {
+        const { status, data } = await axios({
+            method: 'GET',
+            url: `/erc721/${payload.erc721._id}/metadata/csv`,
+            headers: {
+                'X-PoolId': payload.pool._id,
+            },
+            responseType: 'blob',
+        });
+
+        if (status === 200) {
+            // Fake an anchor click to trigger a download in the browser
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(new Blob([data]));
+            anchor.setAttribute('download', `metadata_${payload.erc721._id}.csv`);
+            document.body.appendChild(anchor);
+            anchor.click();
+        }
+    }
 }
 
 export default ERC721Module;
