@@ -63,9 +63,7 @@ import { TERC721, TERC721DefaultProp } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
-
-// eslint-disable-next-line no-useless-escape
-const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
+import { isValidUrl } from '@/utils/url';
 
 const PROPTYPE_MAP: { [key: string]: string } = {
     string: 'text',
@@ -98,25 +96,19 @@ export default class ModalRewardCreate extends Vue {
     }
 
     get schemaHaveErrors() {
-        return this.erc721.properties.reduce((pre, cur) => {
+        return this.erc721.properties.reduce((pre: any, cur: any) => {
             if (pre) return pre;
-            const currentFieldValid = this.getPropValidation(cur.propType, cur.value || '');
-            if (currentFieldValid === false) return true;
-            return false;
+            return this.getPropValidation(cur.propType, cur.value || '');
         }, false);
     }
     getPropValidation = (name: string, value: string) => {
         switch (name) {
             case 'link':
-                return this.validateLink(value);
+                return isValidUrl(value);
             default:
                 return undefined;
         }
     };
-
-    validateLink(str: string) {
-        return URL_REGEX.test(str);
-    }
 
     parsePropType(propType: string) {
         return PROPTYPE_MAP[propType];

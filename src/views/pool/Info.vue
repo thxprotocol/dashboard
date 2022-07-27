@@ -15,10 +15,7 @@
                             target="_blank"
                             v-b-tooltip
                             title="View your pool transactions on the Polygon block explorer"
-                            :href="
-                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                                `/address/${pool.address}/transactions`
-                            "
+                            :href="`${chainInfo[pool.chainId].blockExplorer}/address/${pool.address}/transactions`"
                         >
                             <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
                         </b-button>
@@ -37,10 +34,7 @@
                             target="_blank"
                             v-b-tooltip
                             title="View your token transactions on the Polygon block explorer"
-                            :href="
-                                (chainId === 0 ? `https://mumbai.polygonscan.com` : `https://polygonscan.com`) +
-                                `/token/${pool.token.address}`
-                            "
+                            :href="`${chainInfo[pool.chainId].blockExplorer}/token/${pool.token.address}`"
                         >
                             <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
                         </b-button>
@@ -48,334 +42,30 @@
                 </div>
             </b-form-group>
         </b-card>
-        <h2 class="font-weight-normal">Appearance</h2>
-        <p>Change the appearance of the claim page people will see when claiming your rewards.</p>
-        <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label for="backgroundImgUrl">Background URL</label>
-                <b-input-group>
-                    <template #prepend>
-                        <b-card
-                            body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="brand.backgroundImgUrl"
-                            bg-variant="light"
-                        >
-                            <img height="30" width="30" class="m-0" :src="brand.backgroundImgUrl" />
-                        </b-card>
-                    </template>
-                    <b-form-input
-                        id="backgroundImgUrl"
-                        @input.native="onBackgroundImgChange"
-                        :aria-invalid="!backgroundImgUrlValid"
-                        v-model="brand.backgroundImgUrl"
-                    />
-                    <div v-if="!backgroundImgUrlModified" class="input-group-append">
-                        <button class="btn btn-primary" type="button">
-                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-
-                    <div v-if="backgroundImgUrlModified" class="input-group-append">
-                        <button
-                            :disabled="!backgroundImgUrlValid"
-                            @click="
-                                updateBrand({
-                                    backgroundImgUrl: brand.backgroundImgUrl,
-                                    logoImgUrl: remotebrand.logoImgUrl,
-                                })
-                            "
-                            class="btn btn-dark"
-                            type="button"
-                        >
-                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-                </b-input-group>
-            </b-form-group>
-
-            <b-form-group>
-                <label for="logoImgUrl">Token Icon URL</label>
-                <b-input-group>
-                    <template #prepend>
-                        <b-card
-                            body-class="py-1 px-2 d-flex align-items-center"
-                            v-if="brand.logoImgUrl"
-                            bg-variant="light"
-                        >
-                            <img height="30" width="30" class="m-0" :src="brand.logoImgUrl" />
-                        </b-card>
-                    </template>
-                    <b-form-input id="logoImgUrl" @input.native="onLogoImgChange" v-model="brand.logoImgUrl" />
-                    <div v-if="!logoImgUrlModified" class="input-group-append">
-                        <button class="btn btn-primary" type="button">
-                            <i class="fa fa-check m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-
-                    <div v-if="logoImgUrlModified" class="input-group-append">
-                        <button
-                            class="btn btn-dark"
-                            :disabled="!logoImgUrlValid"
-                            @click="
-                                updateBrand({
-                                    backgroundImgUrl: remotebrand.backgroundImgUrl,
-                                    logoImgUrl: brand.logoImgUrl,
-                                })
-                            "
-                            type="button"
-                        >
-                            <i class="fas fa-save m-0" style="font-size: 1.2rem"></i>
-                        </button>
-                    </div>
-                </b-input-group>
-            </b-form-group>
-        </b-card>
-        <h2 class="font-weight-normal">Authorization</h2>
-        <p>
-            Use you client credentials to create a
-            <a :href="docsUrl + '/authorization#2-create-a-basic-authentication-header'" target="_blank">
-                Basic Authentication header
-            </a>
-            and request an access token to authorize your application with THX API.
-        </p>
-        <b-card class="shadow-sm mb-5">
-            <b-form-group>
-                <label for="clientId"> Client ID: </label>
-                <b-input-group>
-                    <b-form-input readonly id="clientId" v-model="pool.clientId" />
-                    <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="pool.clientId">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group>
-            <b-form-group>
-                <label for="clientSecret"> Client Secret: </label>
-                <b-input-group>
-                    <b-form-input readonly id="clientSecret" v-model="pool.clientSecret" />
-                    <b-input-group-append>
-                        <b-button variant="primary" v-clipboard:copy="pool.clientSecret">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-append>
-                </b-input-group>
-            </b-form-group>
-        </b-card>
-        <h2 class="font-weight-normal">Example code</h2>
-        <p>These examples should demonstrate how to authorize with the THX API.</p>
-        <b-card class="shadow-sm mb-5">
-            <b-tabs card class="m-n3">
-                <b-tab title="Simulator" active>
-                    <b-card-text>
-                        <template v-if="accessToken">
-                            <b-alert variant="warning" show>
-                                This access token is only valid for a limited amount of time ({{
-                                    accessToken.expires_in
-                                }}
-                                seconds).
-                            </b-alert>
-                            <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                                {{ accessToken.access_token }}
-                            </b-card>
-                        </template>
-                        <b-button variant="primary" class="rounded-pill" @click="getAccessToken()">
-                            Request Access Token
-                        </b-button>
-                    </b-card-text>
-                </b-tab>
-                <b-tab title="Basic Authorization header">
-                    <p>
-                        This example demonstrates the authorization header you should use to request your access token.
-                        <a :href="docsUrl + '/authorization#2-create-a-basic-authentication-header'" target="_blank">
-                            Read more about constructing it yourself</a
-                        >.
-                    </p>
-                    <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                        Authorization: Basic {{ authHeader() }}
-                    </b-card>
-                </b-tab>
-                <b-tab title="CURL">
-                    <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                        <pre>
-curl "https://api.thx.network/token" \
-    -X "POST" \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Authorization: Basic {{ authHeader() }}' \
-    -d 'grant_type=client_credentials&scope={{ adminScope }}'
-                            </pre
-                        >
-                    </b-card>
-                </b-tab>
-                <b-tab title="Axios">
-                    <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                        <pre>
-axios({
-    url: 'https://api.thx.network/token', 
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic {{ authHeader() }}',
-    },
-    data: {
-        grant_type: 'client_credentials',
-        scope: '{{ adminScope }}',
-    }
-});
-                            </pre
-                        >
-                    </b-card>
-                </b-tab>
-                <b-tab title="Vanilla JS">
-                    <b-card bg-variant="light" class="border-0" body-class="p-5 small code">
-                        <pre>
-var params = new URLSearchParams();
-params.append('grant_type', 'client_credentials');
-params.append('scope', '{{ adminScope }}');
-var xhr = new XMLHttpRequest();
-xhr.open("POST", "https://api.thx.network/token", true);
-xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.setRequestHeader('Authorization', 'Basic {{ authHeader() }}');
-xhr.send(params);
-                                        </pre
-                        >
-                    </b-card>
-                </b-tab>
-            </b-tabs>
-        </b-card>
     </div>
 </template>
 
 <script lang="ts">
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
-import axios from 'axios';
-import { ADMIN_SCOPE } from '@/utils/oidc';
 import { ChainId } from '@/types/enums/ChainId';
-
-const URL_CHECK_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
-
-const DEFAULT_BRANDING: IBrand = {
-    logoImgUrl: '',
-    backgroundImgUrl: '',
-};
-
-interface IBrand {
-    logoImgUrl: string;
-    backgroundImgUrl: string;
-}
+import { mapGetters } from 'vuex';
+import { chainInfo } from '@/utils/chains';
 
 @Component({
     computed: mapGetters({
         pools: 'pools/all',
-        clients: 'clients/all',
-        rewards: 'rewards/all',
-        widgets: 'widgets/all',
     }),
 })
 export default class AssetPoolView extends Vue {
-    docsUrl = process.env.VUE_APP_DOCS_URL;
-    apiUrl = process.env.VUE_APP_API_ROOT;
-    authUrl = process.env.VUE_APP_AUTH_URL;
-    widgetUrl = process.env.VUE_APP_WIDGET_URL;
-
-    error = '';
-    loading = true;
-    accessToken: any = null;
-    poolLoading = true;
-    pools!: IPools;
-    brand: IBrand = DEFAULT_BRANDING;
-    remotebrand: IBrand = DEFAULT_BRANDING;
-    adminScope = ADMIN_SCOPE;
+    ChainId = ChainId;
+    chainInfo = chainInfo;
     chainId: ChainId = ChainId.PolygonMumbai;
-
-    get backgroundImgUrlModified() {
-        return this.brand.backgroundImgUrl !== this.remotebrand.backgroundImgUrl;
-    }
-
-    get backgroundImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.brand.backgroundImgUrl);
-    }
-
-    get logoImgUrlModified() {
-        return this.brand.logoImgUrl !== this.remotebrand.logoImgUrl;
-    }
-
-    get logoImgUrlValid() {
-        return URL_CHECK_REGEX.test(this.brand.logoImgUrl);
-    }
+    loading = true;
+    pools!: IPools;
 
     get pool() {
         return this.pools[this.$route.params.id];
-    }
-
-    async onBackgroundImgChange(e: any) {
-        Vue.set(this.brand, 'backgroundImgUrl', e.target.value);
-    }
-
-    async onLogoImgChange(e: any) {
-        Vue.set(this.brand, 'logoImgUrl', e.target.value);
-    }
-
-    async updateBrand(brand: Partial<IBrand>) {
-        const r = await axios({
-            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: brand,
-        });
-
-        this.brand = JSON.parse(JSON.stringify(r.data));
-        this.remotebrand = JSON.parse(JSON.stringify(r.data));
-    }
-
-    async getBrand() {
-        const r = await axios({
-            url: this.apiUrl + '/v1/brand' + `/${this.pool.address}`,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        });
-
-        this.brand = JSON.parse(JSON.stringify(r.data));
-        this.remotebrand = JSON.parse(JSON.stringify(r.data));
-    }
-
-    async mounted() {
-        this.chainId = this.pool.chainId;
-        await this.getBrand();
-        this.loading = false;
-    }
-
-    authHeader() {
-        return btoa(`${this.pool.clientId}:${this.pool.clientSecret}`);
-    }
-
-    async getAccessToken() {
-        try {
-            const data = new URLSearchParams();
-            data.append('grant_type', 'client_credentials');
-            data.append('scope', this.adminScope);
-
-            const r = await axios({
-                url: this.authUrl + '/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + this.authHeader(),
-                },
-                data,
-            });
-
-            this.accessToken = r.data;
-        } catch (e) {
-            console.error(e);
-            this.error = 'Could not request an access token.';
-        }
     }
 }
 </script>

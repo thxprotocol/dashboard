@@ -18,11 +18,7 @@
             description="Use rewards to send your tokens to people and use reward configuration to limit claims."
             @clicked="$bvModal.show('modalRewardCreate')"
         />
-        <b-row v-else>
-            <b-col md="6" :key="reward.id" v-for="reward of filteredRewards">
-                <base-card-reward :pool="pool" :reward="reward" />
-            </b-col>
-        </b-row>
+        <base-card-reward :pool="pool" :reward="reward" :key="reward.id" v-for="reward of filteredRewards" />
         <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="filteredRewards" />
     </div>
 </template>

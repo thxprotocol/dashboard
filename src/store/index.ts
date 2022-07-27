@@ -11,6 +11,8 @@ import ERC721Store from './modules/erc721';
 import PaymentStore from './modules/payments';
 import TransactionStore from './modules/transactions';
 import SwapRuleStore from './modules/swaprules';
+import ClientStore from './modules/clients';
+import BrandStore from './modules/brands';
 
 Vue.use(Vuex);
 
@@ -28,6 +30,8 @@ const modules = {
     payments: PaymentStore,
     transactions: TransactionStore,
     swaprules: SwapRuleStore,
+    clients: ClientStore,
+    brands: BrandStore,
 };
 
 export default new Vuex.Store({

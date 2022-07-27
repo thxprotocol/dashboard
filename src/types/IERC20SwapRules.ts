@@ -8,6 +8,8 @@ export type TERC20SwapRule = {
     tokenInAddress: string;
     tokenMultiplier: number;
     tokenInId: string;
+    page: number;
+    createdAt: Date;
 };
 
 export interface GetERC20SwapRulesProps {
@@ -24,8 +26,8 @@ export interface GetERC20SwapRulesResponse {
     total: number;
 }
 
-export type IERC20SwapRuleByPage = { [page: number]: IERC20SwapRules[] };
+export type IERC20SwapRuleByPage = { [id: string]: TERC20SwapRule };
 
 export interface IERC20SwapRules {
-    [poolAddress: string]: { [id: string]: TERC20SwapRule };
+    [poolId: string]: { [id: string]: TERC20SwapRule };
 }

@@ -1,16 +1,29 @@
 <template>
     <base-modal :loading="loading" title="Import Token Contract" id="modalERC20Import">
         <template #modal-body v-if="!loading">
-            <b-form-group label="Select an existing ERC20 contract">
-                <BaseDropDownSelectPolygonERC20 :erc20="erc20" @selected="onERC20Selected" />
+            <BaseFormSelectNetwork @selected="chainId = $event" />
+            <b-form-group label="Existing ERC20 contract">
+                <BaseDropDownSelectPolygonERC20 :erc20="erc20" :chainId="chainId" @selected="onERC20Selected" />
             </b-form-group>
             <b-form-group label="Contract Address">
-                <b-form-input v-model="erc20Address" />
+                <b-input-group>
+                    <b-form-input v-model="erc20Address" :disabled="!!erc20" />
+                    <template #append>
+                        <b-button
+                            v-if="erc20"
+                            variant="dark"
+                            target="_blank"
+                            :href="chainInfo[erc20.chainId].blockExplorer"
+                        >
+                            <i class="fas fa-external-link-alt ml-0"></i>
+                        </b-button>
+                    </template>
+                </b-input-group>
             </b-form-group>
         </template>
         <template #btn-primary>
             <b-button
-                :disabled="loading || erc20Address == ''"
+                :disabled="loading || !isValidAddress"
                 class="rounded-pill"
                 @click="submit()"
                 variant="primary"
@@ -29,19 +42,28 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseDropDownSelectPolygonERC20 from '../dropdowns/BaseDropDownSelectPolygonERC20.vue';
 import BaseModal from './BaseModal.vue';
+import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
+import { chainInfo } from '@/utils/chains';
+import { isAddress } from 'web3-utils';
 
 @Component({
     components: {
         BaseModal,
+        BaseFormSelectNetwork,
         BaseDropDownSelectPolygonERC20,
     },
     computed: mapGetters({}),
 })
 export default class ModalERC20Import extends Vue {
     loading = false;
+    chainInfo = chainInfo;
     chainId: ChainId = ChainId.Polygon;
     erc20: TERC20 | null = null;
     erc20Address = '';
+
+    get isValidAddress() {
+        return isAddress(this.erc20Address);
+    }
 
     async submit() {
         this.loading = true;

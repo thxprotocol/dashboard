@@ -1,6 +1,6 @@
 <template>
     <b-modal
-        size="lg"
+        :size="size || 'lg'"
         @show="$emit('show')"
         :title="title"
         :id="id"
@@ -32,8 +32,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component({})
 export default class BaseModal extends Vue {
     @Prop() id!: string;
+    @Prop() size!: string;
     @Prop() title!: string;
     @Prop() loading!: boolean;
     @Prop() error!: string;
+    @Prop() hideFooter!: boolean;
 }
 </script>

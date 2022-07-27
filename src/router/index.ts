@@ -77,6 +77,14 @@ const routes: Array<RouteConfig> = [
                 path: 'erc20swaps',
                 component: () => import('../views/pool/ERC20Swaps.vue'),
             },
+            {
+                path: 'clients',
+                component: () => import('../views/pool/Clients.vue'),
+            },
+            {
+                path: 'theme',
+                component: () => import('../views/pool/Theme.vue'),
+            },
         ],
     },
     {
@@ -122,6 +130,15 @@ const routes: Array<RouteConfig> = [
 
 const router = new VueRouter({
     mode: 'history',
+    scrollBehavior: function (to) {
+        if (to.hash) {
+            return { selector: to.hash };
+            //Or for Vue 3:
+            //return {el: to.hash}
+        } else {
+            return { x: 0, y: 0 };
+        }
+    },
     routes,
 });
 

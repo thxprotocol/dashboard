@@ -142,6 +142,7 @@ import { IPools } from '@/store/modules/pools';
 import { IAccount } from '@/types/account';
 import { ERC20Type } from '@/types/erc20';
 import { plans } from '@/utils/plans';
+import { getRoutes } from '@/utils/routes';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -164,64 +165,7 @@ export default class BaseNavbar extends Vue {
     }
 
     get visibleRoutes() {
-        const routes = [
-            {
-                path: 'metadata',
-                label: 'Metadata',
-                iconClasses: 'fas fa-palette',
-                visible: this.pool.isNFTPool,
-            },
-            {
-                path: 'rewards',
-                label: 'Rewards',
-                iconClasses: 'fas fa-award',
-                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
-            },
-            {
-                path: 'payments',
-                label: 'Payments',
-                iconClasses: 'fas fa-money-check-alt',
-                visible: this.pool.isDefaultPool,
-            },
-            {
-                path: 'promotions',
-                label: 'Promotions',
-                iconClasses: 'fas fa-tags',
-                visible: this.pool.isDefaultPool,
-            },
-            {
-                path: 'widgets',
-                label: 'Widgets',
-                iconClasses: 'fas fa-code',
-                visible: this.pool.isDefaultPool,
-            },
-            {
-                path: 'members',
-                label: 'Members',
-                iconClasses: 'fas fa-user',
-                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
-            },
-            {
-                path: 'transactions',
-                label: 'Analytics',
-                iconClasses: 'fas fa-chart-line',
-                visible: this.pool.isDefaultPool,
-            },
-            {
-                path: 'erc20swaps',
-                label: 'Swaps',
-                iconClasses: 'fas fa-sync',
-                visible: this.pool.isDefaultPool,
-            },
-            {
-                path: 'info',
-                label: 'Details',
-                iconClasses: 'fas fa-info-circle',
-                visible: this.pool.isDefaultPool || this.pool.isNFTPool,
-            },
-        ];
-
-        return routes.filter((r: { visible: boolean }) => r.visible);
+        return getRoutes(this.pool);
     }
 }
 </script>

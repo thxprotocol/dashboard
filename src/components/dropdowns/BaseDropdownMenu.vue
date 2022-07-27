@@ -1,7 +1,7 @@
 <template>
-    <b-dropdown size="sm" variant="darker" no-caret toggle-class="d-flex align-items-center">
+    <b-dropdown size="sm" variant="primary" no-caret toggle-class="d-flex align-items-center">
         <template #button-content>
-            <i class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted" aria-hidden="true" style="font-size: 1.5rem"></i>
+            <i class="fas fa-bars m-0 p-1 px-2" aria-hidden="true" style="font-size: 1.5rem"></i>
         </template>
         <b-dropdown-item to="/tokens"> Tokens </b-dropdown-item>
         <b-dropdown-item to="/nft"> NFT <b-badge variant="primary">Beta</b-badge></b-dropdown-item>
@@ -28,5 +28,9 @@ import { Component, Vue } from 'vue-property-decorator';
 export default class BaseDropdownMenu extends Vue {
     walletUrl = process.env.VUE_APP_WALLET_URL;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+
+    mounted() {
+        this.$store.dispatch('account/getHealth');
+    }
 }
 </script>

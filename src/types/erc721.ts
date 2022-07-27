@@ -23,6 +23,7 @@ export interface TERC721Metadata {
     tokenId: number;
     createdAt: Date;
     attributes: [{ key: string; value: string }];
+    tokens: any[];
 }
 
 export type TERC721 = {

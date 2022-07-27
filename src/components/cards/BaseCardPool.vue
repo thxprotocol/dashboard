@@ -19,7 +19,7 @@
                 </p>
                 <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
                 <hr />
-                <b-button :disabled="outOfDate" class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
+                <b-button class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
                     <i class="fas fa-cogs mr-2"></i>
                     Configuration
                 </b-button>
