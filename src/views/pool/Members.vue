@@ -7,12 +7,12 @@
             <b-col class="d-flex justify-content-end">
                 <b-button v-b-modal="'modalPoolMemberAdd'" class="rounded-pill" variant="primary">
                     <i class="fas fa-plus mr-2"></i>
-                    <span class="d-none d-md-inline">Add Members</span>
+                    <span class="d-none d-md-inline">Add Member</span>
                 </b-button>
             </b-col>
         </b-row>
         <b-card class="shadow-sm">
-            <b-alert v-if="members.length === 0" variant="info" show> There no member on this pool yet. </b-alert>
+            <b-alert v-if="!members.length" variant="info" show> There are no members for this pool yet. </b-alert>
             <div class="row pt-2 pb-2">
                 <div class="col-md-4">
                     <strong>Member ID</strong>
@@ -42,7 +42,7 @@
                         </div>
                     </b-form-group>
                 </template>
-                <b-form-group class="mb-0" :key="member.memberId" v-for="member of members">
+                <b-form-group class="mb-0" :key="key" v-for="(member, key) of members">
                     <hr />
                     <div class="row pt-2 pb-2">
                         <div class="col-md-4 d-flex align-items-center">
