@@ -21,23 +21,6 @@
                 <span class="text-muted">Treasury</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
-            <b-button
-                block
-                @click.stop="$bvModal.show(`modalDepositCreate-${erc20._id}`)"
-                class="rounded-pill mt-3"
-                variant="primary"
-                v-b-tooltip
-                :title="
-                    erc20.type === ERC20Type.Unknown
-                        ? `Please transfer ${erc20.symbol} to the pool address using THX Web Wallet or any other wallet. `
-                        : null
-                "
-                :disabled="erc20.type !== ERC20Type.Limited"
-            >
-                <i class="fas fa-plus mr-2" aria-hidden="true"></i>
-                Top up pool
-            </b-button>
-            <base-modal-deposit-create @submit="$store.dispatch('erc20/read', erc20._id)" :erc20="erc20" />
         </template>
     </base-card>
 </template>
@@ -48,13 +31,11 @@ import { ERC20Type, TERC20 } from '@/types/erc20';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
-import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 import { chainInfo } from '@/utils/chains';
 import poll from 'promise-poller';
 
 @Component({
     components: {
-        BaseModalDepositCreate,
         BaseCard,
         BaseBadgeNetwork,
         BaseIdenticon,

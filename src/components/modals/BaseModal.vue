@@ -35,5 +35,6 @@ export default class BaseModal extends Vue {
     @Prop() title!: string;
     @Prop() loading!: boolean;
     @Prop() error!: string;
+    @Prop() hideFooter!: boolean;
 }
 </script>

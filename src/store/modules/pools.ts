@@ -105,9 +105,6 @@ class PoolModule extends VuexModule {
 
     @Action({ rawError: true })
     async read(_id: string) {
-        const poolInState = this.context.getters['all'][_id];
-        if (poolInState && poolInState.address) return;
-
         const r = await axios({
             method: 'get',
             url: '/pools/' + _id,
