@@ -64,20 +64,25 @@ export type TClientState = {
 @Module({ namespaced: true })
 class ClientModule extends VuexModule {
     _all: TClientState = {};
-    total = 0;
+    _totals: { [poolId: string]: number } = {};
 
     get all() {
         return this._all;
     }
 
-    @Mutation
-    set(client: TClient) {
-        Vue.set(this._all, client._id, client);
+    get totals() {
+        return this._totals;
     }
 
     @Mutation
-    setTotal(total: number) {
-        Vue.set(this, 'total', total);
+    set({ pool, client }: { pool: IPool; client: TClient }) {
+        if (!this._all[pool._id]) Vue.set(this._all, pool._id, {});
+        Vue.set(this._all[pool._id], client._id, client);
+    }
+
+    @Mutation
+    setTotal({ pool, total }: { pool: IPool; total: number }) {
+        Vue.set(this._totals, pool._id, total);
     }
 
     @Action({ rawError: true })
@@ -92,10 +97,10 @@ class ClientModule extends VuexModule {
             headers: { 'X-PoolId': pool._id },
         });
 
-        this.context.commit('setTotal', data.total);
-        data.results.forEach((value: unknown, index: number) => {
-            data.results[index].page = page;
-            this.context.commit('set', data.results[index]);
+        this.context.commit('setTotal', { pool, total: data.total });
+        data.results.forEach((client: TClient) => {
+            client.page = page;
+            this.context.commit('set', { pool, client });
         });
     }
 
@@ -108,7 +113,7 @@ class ClientModule extends VuexModule {
             data: { name, grantType, redirectUri, requestUri },
         });
         data.page = page;
-        this.context.commit('set', data);
+        this.context.commit('set', { pool, client: data });
     }
 
     @Action({ rawError: true })
@@ -120,9 +125,10 @@ class ClientModule extends VuexModule {
             data: { clientId: client.clientId },
         });
 
-        const existingClient = this.context.rootGetters['clients/all'][client._id];
+        const existingClient = this.context.rootGetters['clients/all'][pool._id][client._id];
         // Override existing props but keep props (like page) undefined in the new data.
-        this.context.commit('set', { ...existingClient, ...data });
+        const updatedClient = { ...existingClient, ...data };
+        this.context.commit('set', { pool, client: updatedClient });
     }
 }
 

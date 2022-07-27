@@ -24,6 +24,16 @@
                     <i class="fas fa-chart-pie mr-2"></i>
                     <span>Deploy an NFT pool</span>
                 </b-button>
+
+                <b-button v-if="!showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye mr-2"></i>
+                    <span>Show Archived NFTs</span>
+                </b-button>
+
+                <b-button v-if="showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye-slash mr-2"></i>
+                    <span>Hide Archived NFTs</span>
+                </b-button>
             </div>
         </b-jumbotron>
         <div class="container container-md">
@@ -65,10 +75,20 @@ import { IERC721s } from '@/types/erc721';
 })
 export default class NFTView extends Vue {
     erc721s!: IERC721s;
+    showAll = false;
+
+    getErc721() {
+        this.$store.dispatch('erc721/list', { archived: this.showAll });
+    }
 
     mounted() {
         this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc721/list');
+        this.getErc721();
+    }
+
+    toggleArchived() {
+        this.showAll === true ? (this.showAll = false) : (this.showAll = true);
+        this.getErc721();
     }
 }
 </script>

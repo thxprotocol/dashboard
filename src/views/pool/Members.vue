@@ -1,9 +1,16 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
-        <b-button block @click.stop="$bvModal.show('modalPoolMemberAdd')" class="my-3" variant="primary">
-            <i class="fas fa-plus mr-1"></i>
-            Add Members
-        </b-button>
+        <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Members</h2>
+            </b-col>
+            <b-col class="d-flex justify-content-end">
+                <b-button v-b-modal="'modalPoolMemberAdd'" class="rounded-pill" variant="primary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="d-none d-md-inline">Add Members</span>
+                </b-button>
+            </b-col>
+        </b-row>
         <b-card class="shadow-sm">
             <b-alert v-if="members.length === 0" variant="info" show> There no member on this pool yet. </b-alert>
             <div class="row pt-2 pb-2">

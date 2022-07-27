@@ -9,7 +9,7 @@
                 </b-link>
             </b-alert>
             <template v-if="pool.token">
-                <base-dropdown-pool-menu @remove="$bvModal.show(`modalDelete-${pool.address}`)" />
+                <base-dropdown-pool-menu @archive="archive()" @remove="$bvModal.show(`modalDelete-${pool.address}`)" />
                 <base-badge-network :chainId="pool.chainId" class="mr-1" />
                 <p class="mt-3 mb-0">
                     <span class="text-muted">Balance:</span><br />
@@ -118,6 +118,12 @@ export default class BaseCardPool extends Vue {
 
     openPoolUrl() {
         this.$router.push({ path: `pool/${this.pool._id}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
+    }
+
+    async archive() {
+        this.isLoading = true;
+        await this.$store.dispatch('pools/archive', { id: this.pool._id, archived: true });
+        this.isLoading = false;
     }
 }
 </script>

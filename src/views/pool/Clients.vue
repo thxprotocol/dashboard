@@ -12,7 +12,7 @@
                 <base-modal-client-create :pool="pool" :page="page" @submit="onSubmit" />
             </b-col>
         </b-row>
-        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of filteredClients" />
+        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of clientsByPage" />
         <b-pagination
             v-if="total > limit"
             class="mt-3"
@@ -25,7 +25,7 @@
     </div>
 </template>
 <script lang="ts">
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { Component, Vue } from 'vue-property-decorator';
 import { TClient } from '@/store/modules/clients';
 import BaseListItemClient from '@/components/list-items/BaseListItemClient.vue';
@@ -37,32 +37,35 @@ import { IPools } from '@/store/modules/pools';
         BaseListItemClient,
         BaseModalClientCreate,
     },
-    computed: {
-        ...mapState('clients', ['total']),
-        ...mapGetters({
-            clients: 'clients/all',
-            pools: 'pools/all',
-        }),
-    },
+    computed: mapGetters({
+        totals: 'clients/totals',
+        clients: 'clients/all',
+        pools: 'pools/all',
+    }),
 })
 export default class Clients extends Vue {
     page = 1;
     limit = 5;
     isLoading = true;
 
-    total!: number;
-    clients!: { [id: string]: TClient };
+    totals!: { [poolId: string]: number };
+    clients!: { [poolId: string]: { [id: string]: TClient } };
     pools!: IPools;
+
+    get total() {
+        return this.totals[this.$route.params.id];
+    }
 
     get pool() {
         return this.pools[this.$route.params.id];
     }
 
-    get filteredClients() {
-        return Object.values(this.clients)
+    get clientsByPage() {
+        if (!this.clients[this.$route.params.id]) return [];
+        return Object.values(this.clients[this.$route.params.id])
             .filter((client: TClient) => client.page === this.page)
             .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-            .slice(0, 5);
+            .slice(0, this.limit);
     }
 
     mounted() {

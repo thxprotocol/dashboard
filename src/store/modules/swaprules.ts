@@ -7,41 +7,49 @@ import { GetERC20SwapRulesProps, IERC20SwapRules, TERC20SwapRule } from '@/types
 @Module({ namespaced: true })
 class ERC20SwapRuleModule extends VuexModule {
     _all: IERC20SwapRules = {};
+    _totals: { [poolId: string]: number } = {};
 
     get all() {
         return this._all;
     }
 
+    get totals() {
+        return this._totals;
+    }
+
     @Mutation
     set({ pool, swapRule }: { pool: IPool; swapRule: TERC20SwapRule }) {
-        if (!this._all[pool._id]) {
-            Vue.set(this._all, pool._id, {});
-        }
+        if (!this._all[pool._id]) Vue.set(this._all, pool._id, {});
         Vue.set(this._all[pool._id], swapRule._id, swapRule);
     }
 
-    @Action({ rawError: true })
-    async list({ pool, page, limit }: GetERC20SwapRulesProps) {
-        const params = new URLSearchParams();
-        if (page) {
-            params.set('page', String(page));
-        }
-        if (limit) {
-            params.set('limit', String(limit));
-        }
+    @Mutation
+    setTotal({ pool, total }: { pool: IPool; total: number }) {
+        Vue.set(this._totals, pool._id, total);
+    }
 
-        const r = await axios({
+    @Action({ rawError: true })
+    async list({ page = 1, limit, pool }: GetERC20SwapRulesProps) {
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(limit));
+
+        const { data } = await axios({
             method: 'GET',
             url: '/swaprules?' + params.toString(),
             headers: { 'X-PoolId': pool._id },
         });
 
-        return r.data;
+        this.context.commit('setTotal', { pool, total: data.total });
+        data.results.forEach((swapRule: TERC20SwapRule) => {
+            swapRule.page = page;
+            this.context.commit('set', { pool: pool, swapRule });
+        });
     }
 
     @Action({ rawError: true })
-    async create(payload: { pool: IPool; tokenInAddress: string; tokenMultiplier: number }) {
-        const r = await axios({
+    async create(payload: { page: number; pool: IPool; tokenInAddress: string; tokenMultiplier: number }) {
+        const { data } = await axios({
             method: 'POST',
             url: '/swaprules',
             headers: { 'X-PoolId': payload.pool._id },
@@ -51,8 +59,8 @@ class ERC20SwapRuleModule extends VuexModule {
                 pool: payload.pool,
             },
         });
-
-        this.context.commit('set', { pool: payload.pool, swapRule: r.data });
+        data.page = payload.page;
+        this.context.commit('set', { pool: payload.pool, swapRule: data });
     }
 }
 export default ERC20SwapRuleModule;

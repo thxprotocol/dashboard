@@ -199,6 +199,10 @@ export default class BaseListItemReward extends Vue {
 
     brands!: TBrandState;
 
+    get brand() {
+        return this.brands[this.pool._id];
+    }
+
     get expired() {
         if (!this.reward.expiryDate) return false;
         const currentTime = new Date().getTime();
@@ -216,8 +220,9 @@ export default class BaseListItemReward extends Vue {
             );
         }
         if (this.reward.amount == 1) {
-            this.$store.dispatch('brands/pool', this.pool._id).then((res) => {
-                getBase64Image(res.logoImgUrl || BASE_URL + require('@/assets/qr-logo.jpg')).then((data) => {
+            this.$store.dispatch('brands/getForPool', this.pool).then(() => {
+                const logoImgUrl = this.brand ? this.brand.logoImgUrl : BASE_URL + require('@/assets/qr-logo.jpg');
+                getBase64Image(logoImgUrl).then((data) => {
                     this.imgData = data;
                     this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
                 });
