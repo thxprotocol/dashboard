@@ -73,6 +73,7 @@
                                 </b-dropdown-item>
                             </b-dropdown>
                         </b-form-group>
+                        <hr />
                         <b-form-group class="mb-0">
                             <b-form-checkbox v-model="isMembershipRequired">
                                 <strong> Membership required </strong>
