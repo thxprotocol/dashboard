@@ -93,6 +93,11 @@ export default class AssetPoolView extends Vue {
         });
     }
 
+    async upload(file: File) {
+        const publicUrl = await this.$store.dispatch('images/upload', file);
+        return publicUrl;
+    }
+
     get brand() {
         return this.brands[this.$route.params.id];
     }
