@@ -9,33 +9,34 @@
     >
         <template #modal-body v-if="!loading && erc20">
             <b-alert variant="info" show v-if="pool.token.type === ERC20Type.Unlimited">
-                No need to top up your pool! Tokens will be minted when they are needed.
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>No need to top up your pool!</strong> Tokens will be minted when they are needed.
             </b-alert>
             <template v-else-if="pool.token.type === ERC20Type.Unknown">
-                <b-alert variant="warning" show> This ERC20 has not been created with THX tooling. </b-alert>
+                <b-alert variant="warning" show>
+                    <i class="fas fa-info-circle mr-2"></i>
+                    This ERC20 has not been created with THX tooling.
+                </b-alert>
                 <p>
                     Transfer <strong>{{ pool.token.symbol }}</strong> to <strong>{{ pool.address }}</strong> to top up
                     your pool.
                 </p>
             </template>
-            <template v-else>
-                <form v-on:submit.prevent="submit" id="formDepositCreate">
-                    <b-card bg-variant="light" class="border-0" body-class="p-5">
-                        <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
-                            <b-form-input type="number" v-model="amount" />
-                        </b-input-group>
-                        <small class="text-muted">
-                            Your treasury holds <strong>{{ erc20.adminBalance }} {{ erc20.symbol }} </strong>.
-                            <b-link @click="amount = erc20.adminBalance">Set max amount</b-link>
-                        </small>
-                    </b-card>
-                </form>
-            </template>
+            <form v-on:submit.prevent="submit" id="formDepositCreate">
+                <b-card bg-variant="light" class="border-0" body-class="p-5">
+                    <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
+                        <b-form-input type="number" v-model="amount" />
+                    </b-input-group>
+                    <small class="text-muted">
+                        Your treasury holds <strong>{{ erc20.adminBalance }} {{ erc20.symbol }} </strong>.
+                        <b-link @click="amount = erc20.adminBalance">Set max amount</b-link>
+                    </small>
+                </b-card>
+            </form>
         </template>
         <template #btn-primary>
             <b-button
-                v-if="pool.token.type === ERC20Type.Limited"
-                :disabled="loading"
+                :disabled="loading || pool.token.type !== ERC20Type.Limited"
                 class="rounded-pill"
                 type="submit"
                 form="formDepositCreate"
