@@ -4,6 +4,7 @@
             {{ ERC20Type[erc20.type] }}
         </template>
         <template #card-body v-if="erc20.name">
+            <base-dropdown-token-menu @archive="archive()" />
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
@@ -31,6 +32,8 @@ import { ERC20Type, TERC20 } from '@/types/erc20';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
+import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
+import BaseDropdownTokenMenu from '../dropdowns/BaseDropdownTokenMenu.vue';
 import { chainInfo } from '@/utils/chains';
 import poll from 'promise-poller';
 
@@ -39,6 +42,7 @@ import poll from 'promise-poller';
         BaseCard,
         BaseBadgeNetwork,
         BaseIdenticon,
+        BaseDropdownTokenMenu,
     },
 })
 export default class BaseCardERC20 extends Vue {
@@ -80,6 +84,12 @@ export default class BaseCardERC20 extends Vue {
     openTokenUrl() {
         const url = `${chainInfo[this.erc20.chainId].blockExplorer}/token/${this.erc20.address}`;
         return (window as any).open(url, '_blank').focus();
+    }
+
+    async archive() {
+        this.isLoading = true;
+        await this.$store.dispatch('erc20/archive', { id: this.erc20._id, archived: true });
+        this.isLoading = false;
     }
 }
 </script>

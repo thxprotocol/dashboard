@@ -20,6 +20,14 @@
                     <i class="fas fa-palette mr-2"></i>
                     <span>Create an NFT</span>
                 </b-button>
+                <b-button v-if="!showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye mr-2"></i>
+                    <span>Show Archived Pools</span>
+                </b-button>
+                <b-button v-if="showAll" variant="secondary" class="float-right" @click="toggleArchived()">
+                    <i class="fas fa-eye-slash mr-2"></i>
+                    <span>Hide Archived Pools</span>
+                </b-button>
             </div>
         </b-jumbotron>
         <div class="container container-md">
@@ -65,10 +73,20 @@ export default class Home extends Vue {
     profile!: IAccount;
     pools!: IPools;
     docsUrl = process.env.VUE_APP_DOCS_URL;
+    showAll = false;
+
+    getPools() {
+        this.$store.dispatch('pools/list', { archived: this.showAll });
+    }
 
     mounted() {
         this.$store.dispatch('account/getProfile');
         this.$store.dispatch('pools/list');
+    }
+
+    toggleArchived() {
+        this.showAll === true ? (this.showAll = false) : (this.showAll = true);
+        this.getPools();
     }
 }
 </script>
