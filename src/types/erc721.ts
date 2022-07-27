@@ -38,6 +38,7 @@ export type TERC721 = {
     logoURI: string;
     properties: TERC721DefaultProp[];
     metadata: TERC721Metadata[];
+    archived: boolean;
 };
 
 export interface IERC721s {

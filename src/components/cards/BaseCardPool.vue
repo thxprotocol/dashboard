@@ -1,6 +1,9 @@
 <template>
     <base-card :loading="isLoading" :is-deploying="isDeploying">
-        <template #card-header>{{ variant }}</template>
+        <template #card-header>
+            {{ variant }}
+            <i class="ml-1 fas fa-file-archive text-white small" v-if="pool.archived"></i>
+        </template>
         <template #card-body>
             <b-alert class="m-0" show variant="warning" v-if="outOfDate && artifacts">
                 Version conflict ({{ pool.version }} -> {{ artifacts }})
@@ -9,7 +12,11 @@
                 </b-link>
             </b-alert>
             <template v-if="pool.token">
-                <base-dropdown-pool-menu @archive="archive()" @remove="$bvModal.show(`modalDelete-${pool.address}`)" />
+                <base-dropdown-menu-pool
+                    :pool="pool"
+                    @archive="archive"
+                    @remove="$bvModal.show(`modalDelete-${pool.address}`)"
+                />
                 <base-badge-network :chainId="pool.chainId" class="mr-1" />
                 <p class="mt-3 mb-0">
                     <span class="text-muted">Balance:</span><br />
@@ -35,13 +42,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters, mapState } from 'vuex';
 import BaseModalDelete from '@/components/modals/BaseModalDelete.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
-import BaseCard from './BaseCard.vue';
+import BaseCard from '@/components/cards/BaseCard.vue';
 import promisePoller from 'promise-poller';
-import BaseDropdownPoolMenu from '../dropdowns/BaseDropdownPoolMenu.vue';
+import BaseDropdownMenuPool from '@/components/dropdowns/BaseDropdownMenuPool.vue';
 
 @Component({
     components: {
-        BaseDropdownPoolMenu,
+        BaseDropdownMenuPool,
         BaseModalDelete,
         BaseBadgeNetwork,
         BaseCard,
@@ -110,19 +117,19 @@ export default class BaseCardPool extends Vue {
         });
     }
 
+    openPoolUrl() {
+        this.$router.push({ path: `pool/${this.pool._id}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
+    }
+
     async remove() {
         this.isLoading = true;
         await this.$store.dispatch('pools/remove', this.pool);
         this.isLoading = false;
     }
 
-    openPoolUrl() {
-        this.$router.push({ path: `pool/${this.pool._id}/${this.pool.isNFTPool ? 'metadata' : 'rewards'}` });
-    }
-
     async archive() {
         this.isLoading = true;
-        await this.$store.dispatch('pools/archive', { id: this.pool._id, archived: true });
+        await this.$store.dispatch('pools/update', { pool: this.pool, data: { archived: !this.pool.archived } });
         this.isLoading = false;
     }
 }

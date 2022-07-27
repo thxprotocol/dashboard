@@ -2,9 +2,10 @@
     <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-header>
             {{ ERC20Type[erc20.type] }}
+            <i class="ml-1 fas fa-file-archive text-white small" v-if="erc20.archived"></i>
         </template>
         <template #card-body v-if="erc20.name">
-            <base-dropdown-token-menu @archive="archive()" />
+            <base-dropdown-token-menu :erc20="erc20" @archive="archive" />
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
                 <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
@@ -29,11 +30,10 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { ERC20Type, TERC20 } from '@/types/erc20';
-import BaseCard from './BaseCard.vue';
-import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
-import BaseIdenticon from '../BaseIdenticon.vue';
-import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
-import BaseDropdownTokenMenu from '../dropdowns/BaseDropdownTokenMenu.vue';
+import BaseCard from '@/components/cards/BaseCard.vue';
+import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
+import BaseIdenticon from '@/components/BaseIdenticon.vue';
+import BaseDropdownTokenMenu from '@/components/dropdowns/BaseDropdownMenuToken.vue';
 import { chainInfo } from '@/utils/chains';
 import poll from 'promise-poller';
 
@@ -88,7 +88,7 @@ export default class BaseCardERC20 extends Vue {
 
     async archive() {
         this.isLoading = true;
-        await this.$store.dispatch('erc20/archive', { id: this.erc20._id, archived: true });
+        this.$store.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
         this.isLoading = false;
     }
 }
