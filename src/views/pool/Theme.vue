@@ -8,11 +8,7 @@
                     <p class="text-muted small">
                         This background image is shown on the login page users see when claiming your crypto or NFT's.
                     </p>
-                    <b-form-input
-                        v-model="backgroundImgUrl"
-                        class="mb-3"
-                        placeholder="E.g. https://picsum.photos/1200/800"
-                    />
+                    <b-form-file @change="onUpload" :data-key="backgroundImgUrl" accept="image/*" />
                 </b-col>
                 <b-col>
                     <label>Preview</label>
@@ -29,7 +25,7 @@
                     <p class="text-muted small">
                         This logo image is shown above the login panel users see when claiming your crypto or NFT's.
                     </p>
-                    <b-form-input v-model="logoImgUrl" class="mb-3" placeholder="E.g. https://picsum.photos/65/65" />
+                    <b-form-file @change="onUpload" :data-key="logoImgUrl" accept="image/*" />
                 </b-col>
                 <b-col>
                     <label>Preview</label>
@@ -108,6 +104,11 @@ export default class AssetPoolView extends Vue {
             this.backgroundImgUrl = this.brand.backgroundImgUrl;
             this.logoImgUrl = this.brand.logoImgUrl;
         }
+    }
+
+    async onUpload(event: any) {
+        const publicUrl = await this.upload(event.target.files[0]);
+        Vue.set(this, event.target.dataset['key'], publicUrl);
     }
 
     async update() {
