@@ -8,21 +8,11 @@
         :error="error"
     >
         <template #modal-body v-if="!loading && erc20">
-            <b-alert variant="info" show v-if="pool.token.type === ERC20Type.Unlimited">
+            <b-alert v-if="pool.token.type === ERC20Type.Unlimited" variant="info" show>
                 <i class="fas fa-info-circle mr-2"></i>
                 <strong>No need to top up your pool!</strong> Tokens will be minted when they are needed.
             </b-alert>
-            <template v-else-if="pool.token.type === ERC20Type.Unknown">
-                <b-alert variant="warning" show>
-                    <i class="fas fa-info-circle mr-2"></i>
-                    This ERC20 has not been created with THX tooling.
-                </b-alert>
-                <p>
-                    Transfer <strong>{{ pool.token.symbol }}</strong> to <strong>{{ pool.address }}</strong> to top up
-                    your pool.
-                </p>
-            </template>
-            <form v-on:submit.prevent="submit" id="formDepositCreate">
+            <form v-if="erc20.adminBalance > 0" v-on:submit.prevent="submit" id="formDepositCreate">
                 <b-card bg-variant="light" class="border-0" body-class="p-5">
                     <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
                         <b-form-input type="number" v-model="amount" />
@@ -33,6 +23,12 @@
                     </small>
                 </b-card>
             </form>
+            <b-alert variant="warning" show v-else>
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>It seems we have not deployed this contract.</strong>
+                Transfer {{ pool.token.symbol }} to <strong>{{ pool.address }}</strong>
+                <a v-clipboard:copy="pool.address"><i class="fas fa-clipboard"></i></a> to top up your pool.
+            </b-alert>
         </template>
         <template #btn-primary>
             <b-button
