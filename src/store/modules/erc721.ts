@@ -4,6 +4,7 @@ import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IPool } from './pools';
 import { ChainId } from '@/types/enums/ChainId';
 import { TERC721, IERC721s, TERC721Metadata, TERC721DefaultProp } from '@/types/erc721';
+import { zip, zipFolder } from '@/utils/zip';
 
 @Module({ namespaced: true })
 class ERC721Module extends VuexModule {
@@ -147,6 +148,54 @@ class ERC721Module extends VuexModule {
             },
         });
         this.context.commit('setMetadata', { erc721, metadata: data });
+    }
+
+    @Action({ rawError: true })
+    async uploadMultipleMetadataImages(payload: { pool: IPool; erc721: TERC721; files: FileList; propName: string }) {
+        await Promise.all(
+            [...payload.files].map((x: File) => {
+                return zipFolder?.file(x.name, x);
+            }),
+        );
+
+        const zipFile = await zip.generateAsync({ type: 'blob' });
+
+        const files = new File([zipFile], 'images.zip');
+        const formData = new FormData();
+        formData.set('propName', payload.propName);
+        formData.append('compressedFile', files);
+
+        const { data } = await axios({
+            method: 'POST',
+            url: `/erc721/${payload.erc721._id}/metadata/multiple`,
+            headers: {
+                'Content-Type': 'application/zip',
+                'X-PoolId': payload.pool._id,
+            },
+            data: formData,
+        });
+        this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
+    }
+
+    @Action({ rawError: true })
+    async createMetadataCSV(payload: { pool: IPool; erc721: TERC721 }) {
+        const { status, data } = await axios({
+            method: 'GET',
+            url: `/erc721/${payload.erc721._id}/metadata/csv`,
+            headers: {
+                'X-PoolId': payload.pool._id,
+            },
+            responseType: 'blob',
+        });
+
+        if (status === 200) {
+            // Fake an anchor click to trigger a download in the browser
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(new Blob([data]));
+            anchor.setAttribute('download', `metadata_${payload.erc721._id}.csv`);
+            document.body.appendChild(anchor);
+            anchor.click();
+        }
     }
 
     @Action({ rawError: true })
