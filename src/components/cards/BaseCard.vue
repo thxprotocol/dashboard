@@ -18,7 +18,7 @@
             class="mb-3"
             :class="classes"
             @click="$emit('click')"
-            header-bg-variant="primary"
+            header-bg-variant="dark"
             header-class="text-white p-0 small text-center"
         >
             <template #header>

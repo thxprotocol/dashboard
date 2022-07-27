@@ -42,7 +42,6 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="mr-2">NFT</span>
-                                <b-badge variant="primary">Beta</b-badge>
                             </div>
                         </div>
                     </b-nav-item>
