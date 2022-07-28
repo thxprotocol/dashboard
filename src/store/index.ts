@@ -13,6 +13,7 @@ import TransactionStore from './modules/transactions';
 import SwapRuleStore from './modules/swaprules';
 import ClientStore from './modules/clients';
 import BrandStore from './modules/brands';
+import ImageStore from './modules/images';
 
 Vue.use(Vuex);
 
@@ -32,6 +33,7 @@ const modules = {
     swaprules: SwapRuleStore,
     clients: ClientStore,
     brands: BrandStore,
+    images: ImageStore,
 };
 
 export default new Vuex.Store({
