@@ -163,11 +163,11 @@ class ERC721Module extends VuexModule {
         const files = new File([zipFile], 'images.zip');
         const formData = new FormData();
         formData.set('propName', payload.propName);
-        formData.append('compressedFile', files);
+        formData.append('file', files);
 
         const { data } = await axios({
             method: 'POST',
-            url: `/erc721/${payload.erc721._id}/metadata/multiple`,
+            url: `/erc721/${payload.erc721._id}/metadata/zip`,
             headers: {
                 'Content-Type': 'application/zip',
                 'X-PoolId': payload.pool._id,
@@ -183,6 +183,7 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${payload.erc721._id}/metadata/csv`,
             headers: {
+                'Content-Type': 'text/csv',
                 'X-PoolId': payload.pool._id,
             },
             responseType: 'blob',
@@ -196,6 +197,22 @@ class ERC721Module extends VuexModule {
             document.body.appendChild(anchor);
             anchor.click();
         }
+    }
+
+    @Action({ rawError: true })
+    async uploadMetadataCSV(payload: { pool: IPool; erc721: TERC721; file: File }) {
+        const formData = new FormData();
+        formData.append('file', payload.file);
+
+        await axios({
+            method: 'POST',
+            url: `/erc721/${payload.erc721._id}/metadata/csv`,
+            headers: {
+                'Content-Type': 'application/zip',
+                'X-PoolId': payload.pool._id,
+            },
+            data: formData,
+        });
     }
 
     @Action({ rawError: true })

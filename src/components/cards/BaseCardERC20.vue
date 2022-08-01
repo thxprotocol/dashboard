@@ -32,7 +32,6 @@ import { ERC20Type, TERC20 } from '@/types/erc20';
 import BaseCard from './BaseCard.vue';
 import BaseBadgeNetwork from '../badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '../BaseIdenticon.vue';
-import BaseModalDepositCreate from '../modals/BaseModalDepositCreate.vue';
 import BaseDropdownTokenMenu from '../dropdowns/BaseDropdownTokenMenu.vue';
 import { chainInfo } from '@/utils/chains';
 import poll from 'promise-poller';

@@ -18,7 +18,7 @@
                     </b-button>
                 </b-col>
                 <b-col>
-                    <b-button v-b-modal="'modalNFTCreateMetadataCsv'" class="rounded-pill" variant="primary">
+                    <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill" variant="primary">
                         <i class="fas fa-upload mr-2"></i>
                         <span class="d-none d-md-inline">Upload spreadsheet</span>
                     </b-button>
@@ -40,7 +40,7 @@
         />
         <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
         <base-modal-erc721-metadata-bulk-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
-        <BaseModalErc721MetadataCreateCSV v-if="erc721" :pool="pool" :erc721="erc721" />
+        <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
     </div>
 </template>
 
@@ -53,7 +53,7 @@ import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vue';
 import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
 import BaseModalErc721MetadataBulkCreate from '@/components/modals/BaseModalERC721MetadataBulkCreate.vue';
-import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC721MetadataCreateCSV.vue';
+import BaseModalErc721MetadataUploadCSV from '@/components/modals/BaseModalERC721MetadataUploadCSV.vue';
 
 @Component({
     components: {
@@ -61,7 +61,7 @@ import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC72
         BaseModalErc721MetadataCreate,
         BaseModalErc721MetadataBulkCreate,
         BaseCardErc721Metadata,
-        BaseModalErc721MetadataCreateCSV,
+        BaseModalErc721MetadataUploadCSV,
     },
     computed: mapGetters({
         pools: 'pools/all',
