@@ -37,6 +37,7 @@ export interface IPool {
     isNFTPool: boolean;
     isDefaultPool: boolean;
     version: string;
+    archived: boolean;
 }
 
 export interface GetMembersProps {
@@ -84,17 +85,17 @@ class PoolModule extends VuexModule {
     }
 
     @Mutation
-    unset(id: string) {
-        Vue.delete(this._all, id);
+    unset(pool: IPool) {
+        Vue.delete(this._all, pool._id);
     }
 
     @Mutation
     clear() {
-        this._all = {};
+        Vue.set(this, '_all', {});
     }
 
     @Action({ rawError: true })
-    async list(params: any) {
+    async list(params: { archived?: boolean } = { archived: false }) {
         this.context.commit('clear');
 
         const r = await axios({
@@ -104,9 +105,6 @@ class PoolModule extends VuexModule {
         });
 
         r.data.forEach((_id: string) => {
-            const poolInState = this.context.getters['all'][_id];
-            if (poolInState && poolInState.address) return;
-
             this.context.commit('set', { _id });
         });
     }
@@ -154,22 +152,18 @@ class PoolModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async update(payload: {
-        pool: IPool;
-        data: {
-            bypassPolls: boolean;
-            rewardPollDuration: number;
-            withdrawPollDuration: number;
-        };
-    }) {
-        const r = await axios({
+    async update({ pool, data }: { pool: IPool; data: { archived: boolean } }) {
+        await axios({
             method: 'PATCH',
-            url: '/pools/' + payload.pool._id,
-            data: payload.data,
-            headers: { 'X-PoolId': payload.pool._id },
+            url: '/pools/' + pool._id,
+            data,
+            headers: { 'X-PoolId': pool._id },
         });
+        this.context.commit('set', { ...pool, ...data });
 
-        return Pool(r.data);
+        if (data.archived) {
+            this.context.commit('unset', pool);
+        }
     }
 
     @Action({ rawError: true })
@@ -180,7 +174,7 @@ class PoolModule extends VuexModule {
             headers: { 'X-PoolId': pool._id },
         });
 
-        this.context.commit('unset', pool._id);
+        this.context.commit('unset', pool);
     }
 
     @Action({ rawError: true })
@@ -209,17 +203,6 @@ class PoolModule extends VuexModule {
             headers: { 'X-PoolId': poolId },
             data: { amount },
         });
-    }
-
-    @Action({ rawError: true })
-    async archive(payload: any) {
-        await axios({
-            method: 'PATCH',
-            url: `/pools/${payload.id}`,
-            data: payload,
-        });
-
-        this.context.commit('unset', payload.id);
     }
 }
 

@@ -10,10 +10,15 @@
                     <template #button-content>
                         <i class="fas fa-ellipsis-v text-muted ml-0" style="font-size: 1.2rem"></i>
                     </template>
-                    <b-dropdown-item-btn :key="key" v-for="(route, key) of visibleRoutes" class="nav-link-wrapper">
+                    <b-dropdown-item
+                        :key="key"
+                        v-for="(route, key) of visibleRoutes"
+                        :to="`/pool/${pool._id}/${route.path}`"
+                        class="nav-link-wrapper"
+                    >
                         <i :class="route.iconClasses" class="ml-0 text-gray" style="width: 30px"></i>
                         {{ route.label }}
-                    </b-dropdown-item-btn>
+                    </b-dropdown-item>
                 </b-dropdown>
             </div>
         </div>

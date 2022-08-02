@@ -20,17 +20,14 @@
                     <i class="fas fa-palette mr-2"></i>
                     <span>Create an NFT</span>
                 </b-button>
-                <b-button v-if="!showAll" variant="secondary" class="float-right" @click="toggleArchived()">
-                    <i class="fas fa-eye mr-2"></i>
-                    <span>Show Archived Pools</span>
-                </b-button>
-                <b-button v-if="showAll" variant="secondary" class="float-right" @click="toggleArchived()">
-                    <i class="fas fa-eye-slash mr-2"></i>
-                    <span>Hide Archived Pools</span>
-                </b-button>
             </div>
         </b-jumbotron>
         <div class="container container-md">
+            <b-row>
+                <b-col class="text-right pb-3">
+                    <base-btn-toggle-archive @archived="$store.dispatch('pools/list', { archived: $event })" />
+                </b-col>
+            </b-row>
             <base-list-state-empty
                 v-if="!Object.values(pools).length"
                 icon-class="fas fa-puzzle-piece"
@@ -57,9 +54,11 @@ import { IAccount } from '@/types/account';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
 
 @Component({
     components: {
+        BaseBtnToggleArchive,
         BaseListStateEmpty,
         BaseCardPool,
         BaseModalPoolCreate,
@@ -75,18 +74,9 @@ export default class Home extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     showAll = false;
 
-    getPools() {
-        this.$store.dispatch('pools/list', { archived: this.showAll });
-    }
-
     mounted() {
         this.$store.dispatch('account/getProfile');
         this.$store.dispatch('pools/list');
-    }
-
-    toggleArchived() {
-        this.showAll === true ? (this.showAll = false) : (this.showAll = true);
-        this.getPools();
     }
 }
 </script>

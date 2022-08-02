@@ -4,7 +4,7 @@
             <i class="fas fa-bars m-0 p-1 px-2" aria-hidden="true" style="font-size: 1.5rem"></i>
         </template>
         <b-dropdown-item to="/tokens"> Tokens </b-dropdown-item>
-        <b-dropdown-item to="/nft"> NFT <b-badge variant="primary">Beta</b-badge></b-dropdown-item>
+        <b-dropdown-item to="/nft"> NFT </b-dropdown-item>
         <b-dropdown-item to="/pools"> Pools </b-dropdown-item>
         <b-dropdown-item to="/integrations"> Integrations </b-dropdown-item>
         <b-dropdown-item :href="docsUrl"> Developer Docs </b-dropdown-item>
