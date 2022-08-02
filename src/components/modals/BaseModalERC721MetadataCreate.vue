@@ -49,7 +49,13 @@
             </b-card>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button
+                :disabled="loading || schemaHaveErrors"
+                class="rounded-pill"
+                @click="submit()"
+                variant="primary"
+                block
+            >
                 Create NFT
             </b-button>
         </template>
@@ -69,7 +75,7 @@ const PROPTYPE_MAP: { [key: string]: string } = {
     string: 'text',
     number: 'number',
     image: 'image',
-    link: 'link',
+    link: 'url',
 };
 
 @Component({
@@ -96,15 +102,20 @@ export default class ModalRewardCreate extends Vue {
     }
 
     get schemaHaveErrors() {
-        return this.erc721.properties.reduce((pre: any, cur: any) => {
-            if (pre) return pre;
+        const result = this.erc721.properties.reduce((pre: any, cur: any) => {
+            if (pre) {
+                return pre;
+            }
             return this.getPropValidation(cur.propType, cur.value || '');
         }, false);
+
+        return !result;
     }
     getPropValidation = (name: string, value: string) => {
         switch (name) {
             case 'link':
-                return isValidUrl(value);
+                if (value.length > 0) return isValidUrl(value);
+                return null;
             default:
                 return undefined;
         }
@@ -137,7 +148,9 @@ export default class ModalRewardCreate extends Vue {
     }
 
     submit() {
-        if (this.schemaHaveErrors) return;
+        if (this.schemaHaveErrors) {
+            return;
+        }
 
         const attributes: { key: string; value: string | number | undefined }[] = [];
 
@@ -156,7 +169,7 @@ export default class ModalRewardCreate extends Vue {
             description: this.description,
             recipient: this.recipient.length ? this.recipient : undefined,
         });
-
+        this.$emit('success');
         this.$bvModal.hide('modalNFTCreate');
     }
 }

@@ -49,7 +49,7 @@
                 :pool="pool"
             />
             <b-pagination
-                v-if="erc721 && erc721.metadata && total > limit"
+                v-if="erc721s && erc721 && erc721.metadata && total > limit"
                 class="mt-3"
                 @change="onChangePage"
                 v-model="page"
@@ -57,7 +57,7 @@
                 :total-rows="total"
                 align="center"
             ></b-pagination>
-            <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
+            <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
             <base-modal-erc721-metadata-bulk-create
                 v-if="erc721"
                 :pool="pool"
