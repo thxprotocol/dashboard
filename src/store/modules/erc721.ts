@@ -3,15 +3,27 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IPool } from './pools';
 import { ChainId } from '@/types/enums/ChainId';
-import { TERC721, IERC721s, TERC721Metadata, TERC721DefaultProp } from '@/types/erc721';
+import {
+    TERC721,
+    IERC721s,
+    TERC721Metadata,
+    TERC721DefaultProp,
+    MetadataListProps,
+    TMetadataResponse,
+} from '@/types/erc721';
 import { zip, zipFolder } from '@/utils/zip';
 
 @Module({ namespaced: true })
 class ERC721Module extends VuexModule {
     _all: IERC721s = {};
+    _totalsMetadata: { [erc721Id: string]: number } = {};
 
     get all() {
         return this._all;
+    }
+
+    get totalsMetadata() {
+        return this._totalsMetadata;
     }
 
     @Mutation
@@ -43,6 +55,11 @@ class ERC721Module extends VuexModule {
         );
     }
 
+    @Mutation
+    setTotal({ erc721, total }: { erc721: TERC721; total: number }) {
+        Vue.set(this._totalsMetadata, erc721._id, total);
+    }
+
     @Action({ rawError: true })
     async list(params: { archived?: boolean } = { archived: false }) {
         this.context.commit('clear');
@@ -59,13 +76,20 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async listMetadata(erc721: TERC721) {
-        const { data } = await axios({
+    async listMetadata({ page = 1, limit, erc721 }: MetadataListProps) {
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(limit));
+
+        const { data }: TMetadataResponse = await axios({
             method: 'GET',
-            url: `/erc721/${erc721._id}/metadata`,
+            url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
 
-        for (const metadata of data) {
+        this.context.commit('setTotal', { erc721, total: data.total });
+
+        for (const metadata of data.results) {
+            metadata.page = page;
             this.context.commit('setMetadata', { erc721, metadata });
         }
     }

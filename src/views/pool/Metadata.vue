@@ -45,9 +45,18 @@
             <base-card-erc721-metadata
                 v-if="erc721 && erc721.metadata"
                 :erc721="erc721"
-                :metadata="erc721.metadata"
+                :metadata="metadataByPage"
                 :pool="pool"
             />
+            <b-pagination
+                v-if="erc721 && erc721.metadata && total > limit"
+                class="mt-3"
+                @change="onChangePage"
+                v-model="page"
+                :per-page="limit"
+                :total-rows="total"
+                align="center"
+            ></b-pagination>
             <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
             <base-modal-erc721-metadata-bulk-create
                 v-if="erc721"
@@ -64,7 +73,7 @@
 import { IPool, IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { IERC721s, TERC721 } from '@/types/erc721';
+import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vue';
 import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
@@ -82,19 +91,22 @@ import BaseModalErc721MetadataUploadCSV from '@/components/modals/BaseModalERC72
     computed: mapGetters({
         pools: 'pools/all',
         erc721s: 'erc721/all',
+        totals: 'erc721/totalsMetadata',
     }),
 })
 export default class MetadataView extends Vue {
+    page = 1;
+    limit = 100;
+    isLoading = true;
+
+    totals!: { [erc721Id: string]: number };
+
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
 
-    error = '';
-    loading = true;
-
     pools!: IPools;
     erc721s!: IERC721s;
-    isLoading = false;
 
     get pool(): IPool {
         return this.pools[this.$route.params.id];
@@ -104,10 +116,31 @@ export default class MetadataView extends Vue {
         return this.erc721s[this.pool.token._id];
     }
 
+    get total() {
+        return this.totals[this.erc721._id];
+    }
+
+    get metadataByPage() {
+        if (!this.erc721s[this.erc721._id].metadata) return [];
+        return Object.values(this.erc721s[this.erc721._id].metadata)
+            .filter((metadata: TERC721Metadata) => metadata.page === this.page)
+            .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+            .slice(0, this.limit);
+    }
+
+    onChangePage(page: number) {
+        this.page = page;
+        this.listMetadata();
+    }
+
     async listMetadata() {
         this.isLoading = true;
         await this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
-            await this.$store.dispatch('erc721/listMetadata', this.erc721);
+            await this.$store.dispatch('erc721/listMetadata', {
+                erc721: this.erc721,
+                page: this.page,
+                limit: this.limit,
+            });
         });
         this.isLoading = false;
     }
