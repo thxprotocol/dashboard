@@ -1,35 +1,72 @@
 import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
-import { IRewardCondition, IRewards, Reward } from '@/types/rewards';
+import { IRewardCondition, Reward } from '@/types/rewards';
+
+export type TReward = { page: number } & Reward;
+
+export type RewardByPage = {
+    [page: number]: TReward[];
+};
+
+export type TRewardState = {
+    [poolId: string]: {
+        [id: string]: TReward;
+    };
+};
+
+export type RewardListProps = {
+    poolId: string;
+    page: number;
+    limit: number;
+};
 
 @Module({ namespaced: true })
 class RewardModule extends VuexModule {
-    _all: IRewards = {};
+    _all: TRewardState = {};
+    _totals: { [poolId: string]: number } = {};
 
     get all() {
         return this._all;
     }
 
+    get totals() {
+        return this._totals;
+    }
+
     @Mutation
-    set(reward: Reward) {
-        if (!this._all[reward.poolId]) {
-            Vue.set(this._all, reward.poolId, {});
+    set({ pool, reward }: { reward: Reward; pool: string }) {
+        if (!this._all[pool]) {
+            Vue.set(this._all, pool, {});
         }
-        Vue.set(this._all[reward.poolId], reward.id, reward);
+
+        Vue.set(this._all[pool], reward.id, reward);
+    }
+
+    @Mutation
+    setTotal({ poolId, total }: { poolId: string; total: number }) {
+        Vue.set(this._totals, poolId, total);
     }
 
     @Action({ rawError: true })
-    async list(poolId: string) {
-        const r = await axios({
+    async list({ poolId, page, limit }: RewardListProps) {
+        const params = new URLSearchParams();
+        params.set('page', String(page));
+        params.set('limit', String(limit));
+
+        const { data } = await axios({
             method: 'GET',
             url: '/rewards',
             headers: { 'X-PoolId': poolId },
+            params,
         });
 
-        for (const reward of r.data) {
-            this.context.commit('set', reward);
-        }
+        this.context.commit('setTotal', { poolId, total: data.total });
+
+        data.results.forEach((reward: TReward) => {
+            reward.page = page;
+            this.context.commit('set', { pool: poolId, reward });
+        });
     }
 
     @Action({ rawError: true })
@@ -68,7 +105,7 @@ class RewardModule extends VuexModule {
             },
         });
 
-        this.context.commit('set', r.data);
+        this.context.commit('set', { pool: payload.poolId, reward: r.data });
     }
 
     @Action({ rawError: true })
