@@ -30,7 +30,7 @@
             align="center"
         ></b-pagination>
 
-        <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="rewardsByPage" />
+        <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="rewardsByPage" @submit="onSubmit" />
     </div>
 </template>
 
