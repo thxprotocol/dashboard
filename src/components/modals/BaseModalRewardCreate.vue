@@ -456,6 +456,7 @@ export default class ModalRewardCreate extends Vue {
         }
 
         this.loading = false;
+        this.$emit('submit');
     }
 }
 </script>

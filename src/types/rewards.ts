@@ -33,6 +33,8 @@ export interface Reward {
     title: string;
     claims: { _id: string }[];
     amount: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface IRewards {

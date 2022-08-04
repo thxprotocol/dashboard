@@ -91,12 +91,10 @@ export default class AssetPoolView extends Vue {
     get rewardsByPage() {
         if (!this.rewards[this.$route.params.id]) return [];
 
-        return (
-            Object.values(this.rewards[this.$route.params.id])
-                .filter((reward: TReward) => reward.page === this.page)
-                // .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-                .slice(0, this.limit)
-        );
+        return Object.values(this.rewards[this.$route.params.id])
+            .filter((reward: TReward) => reward.page === this.page)
+            .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+            .slice(0, this.limit);
     }
 
     async listRewards() {
