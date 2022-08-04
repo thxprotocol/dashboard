@@ -29,21 +29,11 @@
             </b-form-group>
             <b-form-group>
                 <label> Token Contract </label>
-                <base-dropdown-select-erc20
-                    :chainId="chainId"
-                    @selected="onSelectToken"
-                    v-if="poolVariant === 'defaultPool'"
-                />
-                <base-dropdown-select-erc-721
-                    :chainId="chainId"
-                    @selected="onSelectToken"
-                    v-if="poolVariant === 'nftPool'"
-                />
-                <base-dropdown-select-multiple-erc20
-                    v-if="poolVariant === 'paymentPool'"
-                    :chainId="chainId"
-                    @selected="onSelectTokens"
-                />
+                <base-dropdown-select-erc20 :chainId="chainId" @selected="onSelectERC20Token" />
+            </b-form-group>
+            <b-form-group>
+                <label> Nft Contract </label>
+                <base-dropdown-select-erc-721 :chainId="chainId" @selected="onSelectERC721Token" />
             </b-form-group>
         </template>
         <template #btn-primary>
@@ -66,6 +56,7 @@ import BaseModal from './BaseModal.vue';
 import { AxiosError } from 'axios';
 import { IAccount } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
+import { TERC721 } from '@/types/erc721';
 
 @Component({
     components: {
@@ -85,29 +76,30 @@ export default class ModalAssetPoolCreate extends Vue {
     error = '';
     chainId: ChainId = ChainId.PolygonMumbai;
     poolVariant = 'defaultPool';
-    tokens: TERC20[] = [];
+    erc20Selectedtokens: TERC20[] = [];
+    erc721Selectedtokens: TERC721[] = [];
     profile!: IAccount;
 
     get disabled() {
-        return this.loading || !this.tokens.length;
+        return this.loading || !this.erc20Selectedtokens.length;
     }
 
     onSelectChain(chainId: ChainId) {
         this.chainId = chainId;
-        this.tokens = [];
+        this.erc20Selectedtokens = [];
     }
 
     onSelectPoolVariant(variant: string) {
         this.poolVariant = variant;
-        this.tokens = [];
+        this.erc20Selectedtokens = [];
     }
 
-    onSelectToken(token: TERC20) {
-        this.tokens = [token];
+    onSelectERC20Token(token: TERC20) {
+        this.erc20Selectedtokens = [token];
     }
 
-    onSelectTokens(tokens: TERC20[]) {
-        this.tokens = tokens;
+    onSelectERC721Token(token: TERC721) {
+        this.erc721Selectedtokens = [token];
     }
 
     async submit() {
@@ -115,12 +107,14 @@ export default class ModalAssetPoolCreate extends Vue {
         try {
             await this.$store.dispatch('pools/create', {
                 chainId: this.chainId,
-                tokens: this.tokens.map((erc20) => erc20.address),
+                erc20tokens: this.erc20Selectedtokens.map((erc20) => erc20.address),
+                erc721tokens: this.erc721Selectedtokens.map((erc721) => erc721.address),
                 variant: this.poolVariant,
             });
             this.$bvModal.hide(`modalAssetPoolCreate`);
         } catch (error) {
-            this.error = (error as AxiosError).response?.data.error.message || 'Could not deploy your token pool.';
+            const axiosErr = (error as AxiosError).response;
+            this.error = axiosErr && axiosErr.statusText ? axiosErr.statusText : 'Could not deploy your token pool.';
         } finally {
             this.loading = false;
         }
