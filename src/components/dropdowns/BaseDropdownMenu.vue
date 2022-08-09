@@ -7,7 +7,7 @@
         <b-dropdown-item to="/nft"> NFT </b-dropdown-item>
         <b-dropdown-item to="/pools"> Pools </b-dropdown-item>
         <b-dropdown-item to="/integrations"> Integrations </b-dropdown-item>
-        <b-dropdown-item :href="docsUrl"> Developer Docs </b-dropdown-item>
+        <b-dropdown-item :href="docsUrl"> Documentation </b-dropdown-item>
         <b-dropdown-divider />
         <b-dropdown-item :href="walletUrl">
             <span class="text-muted"><i class="fas fa-chart-line mr-3"></i>Go to Web Wallet</span>
