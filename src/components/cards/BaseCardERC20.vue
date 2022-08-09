@@ -88,7 +88,7 @@ export default class BaseCardERC20 extends Vue {
 
     async archive() {
         this.isLoading = true;
-        this.$store.cache.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
+        this.$store.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
         this.isLoading = false;
     }
 }
