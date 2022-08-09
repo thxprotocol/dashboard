@@ -54,7 +54,7 @@ export default class BaseCardERC20 extends Vue {
     @Prop() erc20!: TERC20;
 
     async mounted() {
-        await this.$store.dispatch('erc20/read', this.erc20._id);
+        await this.$store.cache.dispatch('erc20/read', this.erc20._id);
 
         if (!this.erc20.address) {
             this.isDeploying = true;
@@ -67,7 +67,7 @@ export default class BaseCardERC20 extends Vue {
 
     waitForAddress() {
         const taskFn = async () => {
-            const erc20 = await this.$store.dispatch('erc20/read', this.erc20._id);
+            const erc20 = await this.$store.cache.dispatch('erc20/read', this.erc20._id);
             if (erc20 && erc20.address.length) {
                 this.isDeploying = false;
                 this.isLoading = false;
@@ -88,7 +88,7 @@ export default class BaseCardERC20 extends Vue {
 
     async archive() {
         this.isLoading = true;
-        this.$store.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
+        this.$store.cache.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
         this.isLoading = false;
     }
 }

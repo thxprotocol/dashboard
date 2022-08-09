@@ -102,7 +102,7 @@ export default class Members extends Vue {
 
     async getMoreMembers({ pool, page, limit }: GetMembersProps) {
         this.loading = true;
-        const response: GetMembersResponse = await this.$store.dispatch('pools/getMembers', {
+        const response: GetMembersResponse = await this.$store.cache.dispatch('pools/getMembers', {
             pool,
             page,
             limit,

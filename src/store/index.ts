@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import createCache from 'vuex-cache';
+
 import AccountStore from './modules/account';
 import PoolStore from './modules/pools';
 import PromotionStore from './modules/promotions';
@@ -35,6 +37,7 @@ const modules = {
 };
 
 export default new Vuex.Store({
+    plugins: [createCache()],
     state: {},
     getters,
     mutations,

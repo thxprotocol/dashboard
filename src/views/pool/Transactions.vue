@@ -108,7 +108,7 @@ export default class TransactionsView extends Vue {
 
             const promise = new Promise((resolve, reject) => {
                 try {
-                    const response: Promise<GetTransactionsResponse | undefined> = this.$store.dispatch(
+                    const response: Promise<GetTransactionsResponse | undefined> = this.$store.cache.dispatch(
                         'transactions/list',
                         {
                             pool: this.pool,

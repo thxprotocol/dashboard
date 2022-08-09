@@ -44,7 +44,7 @@ export default class Home extends Vue {
     profile!: IAccount;
 
     mounted() {
-        this.$store.dispatch('account/getYoutube').then(() => (this.isLoading = false));
+        this.$store.cache.dispatch('account/getYoutube').then(() => (this.isLoading = false));
     }
 
     connect() {
@@ -52,9 +52,9 @@ export default class Home extends Vue {
     }
 
     disconnect() {
-        this.$store
+        this.$store.cache
             .dispatch('account/update', { youtubeAccess: false })
-            .then(() => this.$store.dispatch('account/getYoutube'));
+            .then(() => this.$store.cache.dispatch('account/getYoutube'));
     }
 }
 </script>

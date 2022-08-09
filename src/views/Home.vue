@@ -128,7 +128,7 @@ export default class Home extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('account/getProfile');
+        await this.$store.cache.dispatch('account/getProfile');
     }
 }
 </script>

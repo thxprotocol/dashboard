@@ -72,7 +72,7 @@ export default class BaseCardPoolClients extends Vue {
 
     async listClients() {
         this.isLoading = true;
-        await this.$store.dispatch('clients/list', { page: this.page, limit: this.limit, pool: this.pool });
+        await this.$store.cache.dispatch('clients/list', { page: this.page, limit: this.limit, pool: this.pool });
         this.isLoading = false;
     }
 }

@@ -44,7 +44,7 @@ export default class BaseIntegrationTwitter extends Vue {
     profile!: IAccount;
 
     mounted() {
-        this.$store.dispatch('account/getTwitter').then(() => (this.isLoading = false));
+        this.$store.cache.dispatch('account/getTwitter').then(() => (this.isLoading = false));
     }
 
     connect() {
@@ -52,9 +52,9 @@ export default class BaseIntegrationTwitter extends Vue {
     }
 
     disconnect() {
-        this.$store
+        this.$store.cache
             .dispatch('account/update', { twitterAccess: false })
-            .then(() => this.$store.dispatch('account/getTwitter'));
+            .then(() => this.$store.cache.dispatch('account/getTwitter'));
     }
 }
 </script>

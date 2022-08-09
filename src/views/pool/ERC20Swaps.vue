@@ -122,7 +122,7 @@ export default class ERC20Swaps extends Vue {
 
     async getMoreResults({ pool, page, limit }: GetERC20SwapRulesProps) {
         this.loading = true;
-        await this.$store.dispatch('swaprules/list', {
+        await this.$store.cache.dispatch('swaprules/list', {
             pool: pool,
             page,
             limit,

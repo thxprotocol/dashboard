@@ -220,7 +220,7 @@ export default class BaseListItemReward extends Vue {
             );
         }
         if (this.reward.amount == 1) {
-            this.$store.dispatch('brands/getForPool', this.pool).then(() => {
+            this.$store.cache.dispatch('brands/getForPool', this.pool).then(() => {
                 const logoImgUrl = this.brand ? this.brand.logoImgUrl : BASE_URL + require('@/assets/qr-logo.jpg');
                 getBase64Image(logoImgUrl).then((data) => {
                     this.imgData = data;

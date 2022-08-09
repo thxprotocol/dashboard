@@ -63,7 +63,7 @@ export default class BaseCardERC721 extends Vue {
     @Prop() erc721!: TERC721;
 
     async mounted() {
-        await this.$store.dispatch('erc721/read', this.erc721._id);
+        await this.$store.cache.dispatch('erc721/read', this.erc721._id);
 
         if (!this.erc721.address) {
             this.isDeploying = true;
@@ -76,7 +76,7 @@ export default class BaseCardERC721 extends Vue {
 
     waitForAddress() {
         const taskFn = async () => {
-            const erc721 = await this.$store.dispatch('erc721/read', this.erc721._id);
+            const erc721 = await this.$store.cache.dispatch('erc721/read', this.erc721._id);
             if (erc721 && erc721.address.length) {
                 this.isDeploying = false;
                 this.isLoading = false;
@@ -99,6 +99,8 @@ export default class BaseCardERC721 extends Vue {
         this.isLoading = true;
         await this.$store.dispatch('erc721/update', { erc721: this.erc721, data: { archived: !this.erc721.archived } });
         this.isLoading = false;
+
+        this.$store.cache.delete('erc721/read');
     }
 }
 </script>

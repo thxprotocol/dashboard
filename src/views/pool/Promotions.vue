@@ -56,7 +56,7 @@ export default class PromotionsView extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('promotions/list', this.pool);
+        await this.$store.cache.dispatch('promotions/list', this.pool);
     }
 }
 </script>

@@ -86,7 +86,7 @@ export default class BaseCardPool extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('pools/read', this.pool._id);
+        await this.$store.cache.dispatch('pools/read', this.pool._id);
 
         if (!this.pool.address) {
             this.isDeploying = true;
@@ -99,7 +99,7 @@ export default class BaseCardPool extends Vue {
 
     waitForAddress() {
         const taskFn = async () => {
-            const pool = await this.$store.dispatch('pools/read', this.pool._id);
+            const pool = await this.$store.cache.dispatch('pools/read', this.pool._id);
             if (pool.address.length) {
                 this.isDeploying = false;
                 this.isLoading = false;
@@ -125,12 +125,16 @@ export default class BaseCardPool extends Vue {
         this.isLoading = true;
         await this.$store.dispatch('pools/remove', this.pool);
         this.isLoading = false;
+
+        this.$store.cache.delete('pools/read');
     }
 
     async archive() {
         this.isLoading = true;
         await this.$store.dispatch('pools/update', { pool: this.pool, data: { archived: !this.pool.archived } });
         this.isLoading = false;
+
+        this.$store.cache.delete('pools/read');
     }
 }
 </script>

@@ -156,7 +156,7 @@ export default class WidgetsView extends Vue {
     }
 
     async getWidgets() {
-        await this.$store.dispatch('widgets/list', this.pool._id);
+        await this.$store.cache.dispatch('widgets/list', this.pool._id);
 
         for (const clientId in this.widgets[this.pool._id]) {
             const widget = this.widgets[this.pool._id][clientId];
@@ -168,8 +168,8 @@ export default class WidgetsView extends Vue {
 
     async mounted() {
         try {
-            await this.$store.dispatch('account/getProfile');
-            await this.$store.dispatch('rewards/list', this.pool._id);
+            await this.$store.cache.dispatch('account/getProfile');
+            await this.$store.cache.dispatch('rewards/list', this.pool._id);
             await this.getWidgets();
             this.skeletonLoading = false;
         } catch (e) {

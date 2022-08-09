@@ -96,6 +96,10 @@ export default class BaseModalClientCreate extends Vue {
         this.redirectUri = '';
         this.requestUri = '';
         this.$bvModal.hide(`modalClientCreate`);
+
+        this.$store.cache.delete('clients/all');
+        this.$store.cache.delete('clients/totals');
+        this.$store.cache.delete('clients/get');
     }
 }
 </script>

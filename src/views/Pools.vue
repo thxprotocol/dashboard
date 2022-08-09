@@ -75,8 +75,8 @@ export default class Home extends Vue {
     showAll = false;
 
     mounted() {
-        this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('pools/list');
+        this.$store.cache.dispatch('account/getProfile');
+        this.$store.cache.dispatch('pools/list');
     }
 }
 </script>

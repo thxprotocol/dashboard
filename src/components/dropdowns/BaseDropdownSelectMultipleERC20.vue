@@ -90,9 +90,9 @@ export default class ModalAssetPoolCreate extends Vue {
     }
 
     async mounted() {
-        this.$store.dispatch('erc20/list').then(() => {
+        this.$store.cache.dispatch('erc20/list').then(() => {
             for (const id in this.erc20s) {
-                this.$store.dispatch('erc20/read', id).then(() => {
+                this.$store.cache.dispatch('erc20/read', id).then(() => {
                     if (!this.erc20Tokens.length) {
                         this.erc20Tokens = [this.erc20s[id]] as TERC20[];
                         this.$emit('selected', this.erc20Tokens);

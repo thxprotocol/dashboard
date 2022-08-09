@@ -73,7 +73,7 @@ export default class BaseListItemClient extends Vue {
     }
 
     mounted() {
-        this.$store.dispatch('clients/get', { client: this.client, pool: this.pool });
+        this.$store.cache.dispatch('clients/get', { client: this.client, pool: this.pool });
     }
 }
 </script>

@@ -41,7 +41,7 @@ axios.interceptors.response.use(
     (res: AxiosResponse) => res,
     async (error: AxiosError) => {
         if (error.response?.status === 401) {
-            const user = await store.dispatch('account/getUser');
+            const user = await store.cache.dispatch('account/getUser');
             if (user) {
                 // Token expired or invalid, signout id_token_hint
                 await store.dispatch('account/signoutRedirect');

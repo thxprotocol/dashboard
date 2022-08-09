@@ -132,7 +132,7 @@ export default class Payments extends Vue {
     }
 
     async mounted() {
-        await this.$store.dispatch('payments/list', this.pool);
+        await this.$store.cache.dispatch('payments/list', this.pool);
     }
 }
 </script>

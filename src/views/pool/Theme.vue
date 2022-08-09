@@ -98,7 +98,7 @@ export default class AssetPoolView extends Vue {
     }
 
     async get() {
-        await this.$store.dispatch('brands/getForPool', this.pool);
+        await this.$store.cache.dispatch('brands/getForPool', this.pool);
         if (this.brand) {
             this.backgroundImgUrl = this.brand.backgroundImgUrl;
             this.logoImgUrl = this.brand.logoImgUrl;
@@ -115,6 +115,7 @@ export default class AssetPoolView extends Vue {
             },
         });
         this.loading = false;
+        this.$store.cache.delete('brands/read');
     }
 }
 </script>

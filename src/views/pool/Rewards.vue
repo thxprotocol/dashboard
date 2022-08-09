@@ -74,11 +74,11 @@ export default class AssetPoolView extends Vue {
     }
 
     mounted() {
-        this.$store.dispatch('rewards/list', this.pool._id);
+        this.$store.cache.dispatch('rewards/list', this.pool._id);
 
         if (this.pool.isNFTPool) {
-            this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
-                await this.$store.dispatch('erc721/listMetadata', this.erc721);
+            this.$store.cache.dispatch('erc721/read', this.pool.token._id).then(async () => {
+                await this.$store.cache.dispatch('erc721/listMetadata', this.erc721);
             });
         }
     }

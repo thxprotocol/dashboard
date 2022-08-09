@@ -51,9 +51,9 @@ export default class BaseDropdownSelectERC721 extends Vue {
     }
 
     async mounted() {
-        this.$store.dispatch('erc721/list').then(() => {
+        this.$store.cache.dispatch('erc721/list').then(() => {
             for (const id in this.erc721s) {
-                this.$store.dispatch('erc721/read', id).then(() => {
+                this.$store.cache.dispatch('erc721/read', id).then(() => {
                     const erc721 = (this.erc721s[id] as unknown) as TERC721;
                     if (!this.token && erc721.chainId === this.chainId) {
                         this.token = erc721;

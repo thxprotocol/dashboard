@@ -47,7 +47,7 @@ import BaseIntegrationSpotify from '@/components/cards/BaseIntegrationSpotify.vu
 })
 export default class Home extends Vue {
     mounted() {
-        this.$store.dispatch('account/getProfile');
+        this.$store.cache.dispatch('account/getProfile');
     }
 }
 </script>

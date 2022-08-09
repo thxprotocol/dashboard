@@ -73,8 +73,8 @@ export default class NFTView extends Vue {
     erc721s!: IERC721s;
 
     mounted() {
-        this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc721/list');
+        this.$store.cache.dispatch('account/getProfile');
+        this.$store.cache.dispatch('erc721/list');
     }
 }
 </script>

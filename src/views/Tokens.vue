@@ -86,8 +86,8 @@ export default class Tokens extends Vue {
     erc20s!: IERC20s;
 
     mounted() {
-        this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc20/list');
+        this.$store.cache.dispatch('account/getProfile');
+        this.$store.cache.dispatch('erc20/list');
     }
 }
 </script>

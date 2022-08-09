@@ -30,7 +30,7 @@ export default class BaseDropdownMenu extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
 
     mounted() {
-        this.$store.dispatch('account/getHealth');
+        this.$store.cache.dispatch('account/getHealth');
     }
 }
 </script>

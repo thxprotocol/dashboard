@@ -43,7 +43,7 @@ export default class BaseFormGroupSwapRule extends Vue {
     }
 
     mounted() {
-        this.$store.dispatch('erc20/read', this.swapRule.tokenInId);
+        this.$store.cache.dispatch('erc20/read', this.swapRule.tokenInId);
     }
 }
 </script>

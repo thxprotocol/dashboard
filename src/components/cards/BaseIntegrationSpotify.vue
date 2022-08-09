@@ -44,7 +44,7 @@ export default class BaseIntegrationSpotify extends Vue {
     profile!: IAccount;
 
     mounted() {
-        this.$store.dispatch('account/getSpotify').then(() => (this.isLoading = false));
+        this.$store.cache.dispatch('account/getSpotify').then(() => (this.isLoading = false));
     }
 
     connect() {
@@ -54,7 +54,7 @@ export default class BaseIntegrationSpotify extends Vue {
     disconnect() {
         this.$store
             .dispatch('account/update', { spotifyAccess: false })
-            .then(() => this.$store.dispatch('account/getSpotify'));
+            .then(() => this.$store.cache.dispatch('account/getSpotify'));
     }
 }
 </script>

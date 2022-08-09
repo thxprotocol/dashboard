@@ -78,7 +78,7 @@ export default class BaseModalDepositCreate extends Vue {
         this.loading = true;
         this.amount = 0;
         this.error = '';
-        this.$store.dispatch('erc20/read', this.pool.token._id).then(async () => {
+        this.$store.cache.dispatch('erc20/read', this.pool.token._id).then(async () => {
             this.loading = false;
         });
     }
@@ -93,7 +93,8 @@ export default class BaseModalDepositCreate extends Vue {
             poolId: this.pool._id,
         });
 
-        await this.$store.dispatch('pools/read', this.pool._id);
+        this.$store.cache.delete('pools/read');
+        await this.$store.cache.dispatch('pools/read', this.pool._id);
         this.$emit('submit');
         this.$bvModal.hide(`modalDepositCreate-${this.erc20._id}`);
         this.loading = false;

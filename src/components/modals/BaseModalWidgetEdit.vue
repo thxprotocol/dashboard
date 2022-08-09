@@ -10,7 +10,17 @@
     >
         <template v-slot:modal-header v-if="loading">
             <div
-                class="w-auto center-center bg-secondary mx-n5 mt-n5 pt-5 pb-5 flex-grow-1 flex-column position-relative"
+                class="
+                    w-auto
+                    center-center
+                    bg-secondary
+                    mx-n5
+                    mt-n5
+                    pt-5
+                    pb-5
+                    flex-grow-1 flex-column
+                    position-relative
+                "
                 :style="`
                     border-top-left-radius: 0.5rem;
                     border-top-right-radius: 0.5rem;
@@ -239,6 +249,7 @@ export default class ModalWidgetEdit extends Vue {
                     // buttonColor
                 },
             });
+            this.$store.cache.delete('widgets/read');
             this.$bvModal.hide(`modalWidgetEdit-${this.widget.clientId}`);
         } catch (e) {
             this.error = 'Could not add the reward.';

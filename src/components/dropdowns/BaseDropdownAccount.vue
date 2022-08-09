@@ -34,7 +34,7 @@ export default class BaseDropdownAccount extends Vue {
     profile!: IAccount;
 
     mounted() {
-        this.$store.dispatch('account/getHealth');
+        this.$store.cache.dispatch('account/getHealth');
     }
 }
 </script>

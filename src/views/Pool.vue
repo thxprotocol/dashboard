@@ -71,11 +71,11 @@ export default class AssetPoolView extends Vue {
     }
 
     async mounted() {
-        this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('pools/read', this.$route.params.id).then(() => {
+        this.$store.cache.dispatch('account/getProfile');
+        this.$store.cache.dispatch('pools/read', this.$route.params.id).then(() => {
             this.chainId = this.pool.chainId;
         });
-        this.$store.dispatch('pools/list');
+        this.$store.cache.dispatch('pools/list');
     }
 
     get visibleRoutes() {
