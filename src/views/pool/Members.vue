@@ -14,46 +14,19 @@
         <b-card class="shadow-sm">
             <b-alert v-if="!members.length" variant="info" show> There are no members for this pool yet. </b-alert>
             <div class="row pt-2 pb-2">
-                <div class="col-md-4">
-                    <strong>Member ID</strong>
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-8">
                     <strong>Address</strong>
                 </div>
                 <div class="col-md-4"></div>
             </div>
-            <b-skeleton-wrapper :loading="loading">
-                <template #loading>
-                    <b-form-group class="mb-0">
-                        <hr />
-                        <div class="row pt-2 pb-2">
-                            <div class="col-md-4">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-2">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-4 text-right d-flex justify-content-end">
-                                <b-skeleton type="avatar" class="inline"></b-skeleton>
-                                <b-skeleton type="avatar" class="inline ml-1"></b-skeleton>
-                            </div>
-                        </div>
-                    </b-form-group>
-                </template>
-                <b-form-group class="mb-0" :key="key" v-for="(member, key) of members">
-                    <hr />
-                    <div class="row pt-2 pb-2">
-                        <div class="col-md-4 d-flex align-items-center">
-                            {{ member.memberId }}
-                        </div>
-                        <div class="col-md-2 d-flex align-items-center">
-                            {{ member.address }}
-                        </div>
+            <b-form-group class="mb-0" :key="key" v-for="(member, key) of members">
+                <hr />
+                <div class="row pt-2 pb-2">
+                    <div class="col-md-8 d-flex align-items-center">
+                        {{ member.address }}
                     </div>
-                </b-form-group>
-            </b-skeleton-wrapper>
+                </div>
+            </b-form-group>
         </b-card>
         <b-pagination
             class="mt-3"

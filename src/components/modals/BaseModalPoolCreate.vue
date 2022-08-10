@@ -2,37 +2,12 @@
     <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
         <template #modal-body v-if="profile && !loading">
             <base-form-select-network @selected="onSelectChain" />
-            <label>Variant</label>
-            <b-form-group>
-                <b-form-radio
-                    @change="onSelectPoolVariant"
-                    v-model="poolVariant"
-                    name="poolVariant"
-                    value="defaultPool"
-                >
-                    <strong> Token Pool</strong>
-                    <p>Reward your users with ERC-20 tokens via claim URLS, QR codes, widgets and more.</p>
-                    <small class="text-muted">2.5% protocol fee on pool deposits and withdrawals</small>
-                </b-form-radio>
-                <b-form-radio @change="onSelectPoolVariant" v-model="poolVariant" name="poolVariant" value="nftPool">
-                    <strong> NFT Pool <b-badge variant="primary">Beta</b-badge> </strong>
-                    <p>Mint NFT's from your collection for your users.</p>
-                </b-form-radio>
-                <b-form-radio :disabled="true" v-model="poolVariant" name="poolVariant" value="paymentPool">
-                    <strong> Payment Pool <b-badge variant="primary">New</b-badge> </strong>
-                    <p>
-                        Integrate our payment gateway or send payment URL's to ask your customers for a crypto payment
-                        in any token.
-                    </p>
-                    <small class="text-muted">2.5% protocol fee on pool withdrawals</small>
-                </b-form-radio>
-            </b-form-group>
             <b-form-group>
                 <label> Token Contract </label>
                 <base-dropdown-select-erc20 :chainId="chainId" @selected="onSelectERC20Token" />
             </b-form-group>
             <b-form-group>
-                <label> Nft Contract </label>
+                <label> NFT Contract </label>
                 <base-dropdown-select-erc-721 :chainId="chainId" @selected="onSelectERC721Token" />
             </b-form-group>
         </template>
@@ -89,17 +64,12 @@ export default class ModalAssetPoolCreate extends Vue {
         this.erc20Selectedtokens = [];
     }
 
-    onSelectPoolVariant(variant: string) {
-        this.poolVariant = variant;
-        this.erc20Selectedtokens = [];
-    }
-
     onSelectERC20Token(token: TERC20) {
-        this.erc20Selectedtokens = [token];
+        this.erc20Selectedtokens = token ? [token] : [];
     }
 
     onSelectERC721Token(token: TERC721) {
-        this.erc721Selectedtokens = [token];
+        this.erc721Selectedtokens = token ? [token] : [];
     }
 
     async submit() {
@@ -107,8 +77,8 @@ export default class ModalAssetPoolCreate extends Vue {
         try {
             await this.$store.dispatch('pools/create', {
                 chainId: this.chainId,
-                erc20tokens: this.erc20Selectedtokens.map((erc20) => erc20.address),
-                erc721tokens: this.erc721Selectedtokens.map((erc721) => erc721.address),
+                erc20tokens: this.erc20Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
+                erc721tokens: this.erc721Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
                 variant: this.poolVariant,
             });
             this.$bvModal.hide(`modalAssetPoolCreate`);

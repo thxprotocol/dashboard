@@ -64,11 +64,11 @@ export default class MetadataView extends Vue {
     }
 
     get erc721(): TERC721 {
-        return this.erc721s[this.pool.token._id];
+        return this.erc721s[this.pool.erc721._id];
     }
 
     mounted() {
-        this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
+        this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
             await this.$store.dispatch('erc721/listMetadata', this.erc721);
         });
     }

@@ -28,7 +28,8 @@ export interface IPool {
     address: string;
     clientId: string;
     clientSecret: string;
-    token: (TERC20 | TERC721) & PoolToken;
+    erc20: TERC20 & PoolToken;
+    erc721: TERC721 & PoolToken;
     bypassPolls: boolean;
     chainId: ChainId;
     rewardPollDuration: number;
@@ -59,12 +60,6 @@ export interface GetMembersResponse {
     previous?: { page: number };
     limit: number;
     total: number;
-}
-
-function Pool(data: any) {
-    data.isDefaultPool = data.variant === 'defaultPool';
-    data.isNFTPool = data.variant === 'nftPool';
-    return data;
 }
 
 export interface IPools {
@@ -115,11 +110,10 @@ class PoolModule extends VuexModule {
             method: 'get',
             url: '/pools/' + _id,
         });
-        const pool = Pool(r.data);
 
-        this.context.commit('set', pool);
+        this.context.commit('set', r.data);
 
-        return pool;
+        return r.data;
     }
 
     @Action({ rawError: true })
@@ -142,7 +136,7 @@ class PoolModule extends VuexModule {
             headers: { 'X-PoolId': data._id },
         });
 
-        this.context.commit('set', Pool(r.data));
+        this.context.commit('set', r.data);
     }
 
     @Action({ rawError: true })
