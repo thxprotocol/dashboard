@@ -30,6 +30,8 @@ export interface IPool {
     clientSecret: string;
     erc20: TERC20 & PoolToken;
     erc721: TERC721 & PoolToken;
+    erc20Id: string;
+    erc721Id: string;
     bypassPolls: boolean;
     chainId: ChainId;
     rewardPollDuration: number;

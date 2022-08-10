@@ -34,7 +34,7 @@ export type TERC721 = {
     address: string;
     name: string;
     symbol: string;
-    totalSupply: number;
+    totalSupply: string;
     logoURI: string;
     properties: TERC721DefaultProp[];
     metadata: TERC721Metadata[];

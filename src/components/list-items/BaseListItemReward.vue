@@ -39,7 +39,11 @@
                 </b-col>
                 <b-col class="d-flex flex-column">
                     <div class="d-flex align-items-center">
-                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ pool.erc20.symbol }}</h3>
+                        <h3 v-if="pool.erc20" class="text-primary">
+                            {{ reward.withdrawAmount }} {{ pool.erc20.symbol }}
+                        </h3>
+                        <h3 v-if="pool.erc721" class="text-primary">1 {{ pool.erc721.symbol }}</h3>
+                        <b-badge v-if="pool.erc721" variant="dark" class="mb-2 mx-2">NFT</b-badge>
                         <sup
                             class="fas fa-circle ml-1 mr-auto"
                             :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
