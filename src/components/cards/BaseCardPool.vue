@@ -1,9 +1,9 @@
 <template>
     <base-card :loading="isLoading" :is-deploying="isDeploying">
         <template #card-header>
-            <span v-if="pool.erc20 && pool.erc721">Token + NFT</span>
-            <span v-if="pool.erc20">Token Pool</span>
-            <span v-if="pool.erc721">Collectible Pool</span>
+            <span v-if="pool.erc20 && pool.erc721">Token &amp; NFT Pool</span>
+            <span v-if="pool.erc20 && !pool.erc721">Token Pool</span>
+            <span v-if="!pool.erc20 && pool.erc721">Collectible Pool</span>
             <i class="ml-1 fas fa-file-archive text-white small" v-if="pool.archived"></i>
         </template>
         <template #card-body>
@@ -25,7 +25,7 @@
                 </span>
             </p>
             <p class="mt-3 mb-0" v-if="pool.erc721">
-                <span class="text-muted">Total Supply:</span><br />
+                <span class="text-muted">Minted NFTs:</span><br />
                 <span class="font-weight-bold text-primary h3">
                     {{ pool.erc721.totalSupply }} {{ pool.erc721.symbol }}
                 </span>

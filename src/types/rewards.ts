@@ -33,6 +33,7 @@ export interface Reward {
     title: string;
     claims: { _id: string }[];
     amount: number;
+    erc721metadataId: string;
 }
 
 export interface IRewards {

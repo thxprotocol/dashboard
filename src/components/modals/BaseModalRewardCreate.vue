@@ -1,5 +1,5 @@
 <template>
-    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" @show="onShow" :error="error" :loading="loading">
+    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" :error="error" :loading="loading">
         <template #modal-body v-if="profile && !loading">
             <form v-on:submit.prevent="submit" id="formRewardCreate">
                 <hr />
@@ -334,10 +334,6 @@ export default class ModalRewardCreate extends Vue {
             (this.rewardVariant === RewardVariant.Token && this.rewardWithdrawAmount <= 0) ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
-    }
-
-    onShow() {
-        this.erc721metadata = this.filteredMetadata ? this.filteredMetadata[0] : null;
     }
 
     onRewardVariantChanged(variant: RewardVariant) {
