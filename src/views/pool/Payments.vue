@@ -27,7 +27,7 @@
                     </small>
                     <div class="d-flex align-items-start">
                         <strong class="h3 text-primary mr-2">
-                            {{ fromWei(payment.amount, 'ether') }} {{ pool.token.symbol }}
+                            {{ fromWei(payment.amount, 'ether') }} {{ pool.erc20.symbol }}
                         </strong>
                         <b-badge class="rounded-pill bg-light" :class="{ 'text-success': payment.state }">{{
                             PaymentState[payment.state]

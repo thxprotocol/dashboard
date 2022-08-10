@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-2 d-flex align-items-center">
                             <template v-if="widget.reward">
-                                {{ widget.reward.withdrawAmount }} {{ pool.token.symbol }}
+                                {{ widget.reward.withdrawAmount }} {{ pool.erc20.symbol }}
                             </template>
                         </div>
                         <div class="col-md-2 d-flex align-items-center">Claim Button</div>

@@ -11,7 +11,7 @@
                     Please contact us in Discord
                 </b-link>
             </b-alert>
-            <template v-if="pool.token">
+            <template v-if="pool.erc20">
                 <base-dropdown-menu-pool
                     :pool="pool"
                     @archive="archive"
@@ -21,7 +21,7 @@
                 <p class="mt-3 mb-0">
                     <span class="text-muted">Balance:</span><br />
                     <span class="font-weight-bold text-primary h3">
-                        {{ pool.token.poolBalance }} {{ pool.token.symbol }}
+                        {{ fromWei(pool.erc20.poolBalance) }} {{ pool.erc20.symbol }}
                     </span>
                 </p>
                 <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
@@ -45,6 +45,7 @@ import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from '@/components/cards/BaseCard.vue';
 import promisePoller from 'promise-poller';
 import BaseDropdownMenuPool from '@/components/dropdowns/BaseDropdownMenuPool.vue';
+import { fromWei } from 'web3-utils';
 
 @Component({
     components: {
@@ -64,6 +65,7 @@ export default class BaseCardPool extends Vue {
     warning = '';
     isLoading = true;
     isDeploying = false;
+    fromWei = fromWei;
 
     @Prop() pool!: IPool;
 

@@ -18,8 +18,13 @@
             description="Use rewards to send your tokens to people and use reward configuration to limit claims."
             @clicked="$bvModal.show('modalRewardCreate')"
         />
-        <base-card-reward :pool="pool" :reward="reward" :key="reward.id" v-for="reward of filteredRewards" />
-        <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="filteredRewards" />
+        <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of filteredRewards" />
+        <base-modal-reward-create
+            :pool="pool"
+            :erc721="erc721"
+            :filteredRewards="filteredRewards"
+            :filteredMetadata="filteredMetadata"
+        />
     </div>
 </template>
 
@@ -29,15 +34,15 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { IRewards, Reward } from '@/types/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
-import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
+import BaseCardReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
-import { IERC721s, TERC721 } from '@/types/erc721';
+import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
 
 @Component({
     components: {
         BaseNothingHere,
         BaseModalRewardCreate,
-        'base-card-reward': BaseListItemReward,
+        BaseCardReward,
     },
     computed: mapGetters({
         pools: 'pools/all',
@@ -64,8 +69,9 @@ export default class AssetPoolView extends Vue {
         return this.pools[this.$route.params.id];
     }
 
-    get erc721(): TERC721 {
-        return this.erc721s[this.pool.token._id];
+    get erc721(): TERC721 | null {
+        if (!this.pool.erc721) return null;
+        return this.erc721s[this.pool.erc721._id];
     }
 
     get filteredRewards(): Reward[] {
@@ -73,12 +79,17 @@ export default class AssetPoolView extends Vue {
         return Object.values(this.rewards[this.$route.params.id]);
     }
 
+    get filteredMetadata() {
+        return this.erc721 && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
+    }
+
     mounted() {
         this.$store.dispatch('rewards/list', this.pool._id);
 
-        if (this.pool.isNFTPool) {
-            this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
-                await this.$store.dispatch('erc721/listMetadata', this.erc721);
+        if (this.pool.erc721) {
+            debugger;
+            this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
+                await this.$store.dispatch('erc721/listMetadata', this.pool.erc721);
             });
         }
     }

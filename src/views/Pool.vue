@@ -1,8 +1,8 @@
 <template>
-    <div class="container container-md pt-10" v-if="pool && pool.token">
+    <div class="container container-md pt-10" v-if="pool && pool.erc20">
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center justify-content-between">
-                <h1 class="mr-3">{{ pool.token.poolBalance }} {{ pool.token.symbol }}</h1>
+                <h1 class="mr-3">{{ fromWei(pool.erc20.poolBalance) }} {{ pool.erc20.symbol }}</h1>
                 <base-badge-network :chainId="pool.chainId" />
             </div>
             <div class="d-flex">
@@ -24,13 +24,13 @@
         </div>
         <div class="d-flex">
             <span class="lead">
-                {{ pool.token.name }}
+                {{ pool.erc20.name }}
             </span>
             <b-button
                 size="sm"
                 variant="link"
                 class="rounded-pill pl-3 ml-2"
-                v-b-modal="`modalDepositCreate-${pool.token._id}`"
+                v-b-modal="`modalDepositCreate-${pool.erc20._id}`"
             >
                 Top up
                 <i class="fas fa-arrow-down ml-1 mr-1"></i>
@@ -38,7 +38,7 @@
         </div>
         <hr />
         <router-view></router-view>
-        <base-modal-deposit-create @submit="$store.dispatch('erc20/read', pool.token._id)" :pool="pool" />
+        <base-modal-deposit-create @submit="$store.dispatch('erc20/read', pool.erc20._id)" :pool="pool" />
     </div>
 </template>
 
@@ -51,6 +51,7 @@ import { getRoutes } from '@/utils/routes';
 import { ERC20Type } from '@/types/erc20';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseModalDepositCreate from '@/components/modals/BaseModalDepositCreate.vue';
+import { fromWei } from 'web3-utils';
 
 @Component({
     components: {
@@ -65,6 +66,7 @@ export default class AssetPoolView extends Vue {
     chainId: ChainId = ChainId.PolygonMumbai;
     pools!: IPools;
     ERC20Type = ERC20Type;
+    fromWei = fromWei;
 
     get pool() {
         return this.pools[this.$route.params.id];

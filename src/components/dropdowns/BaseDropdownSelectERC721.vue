@@ -8,6 +8,9 @@
             <div v-else>Select an ERC721 token</div>
         </template>
         <b-dropdown-item v-if="!hasERC721s"> No NFT contracts available. </b-dropdown-item>
+        <b-dropdown-item-button @click="onTokenListItemClick(null)">
+            Do not select an NFT contract
+        </b-dropdown-item-button>
         <b-dropdown-item-button
             :disabled="chainId !== erc721.chainId"
             :key="erc721._id"
@@ -64,7 +67,7 @@ export default class BaseDropdownSelectERC721 extends Vue {
         });
     }
 
-    onTokenListItemClick(token: TERC721) {
+    onTokenListItemClick(token: TERC721 | null) {
         this.token = token;
         this.$emit('selected', this.token);
     }
