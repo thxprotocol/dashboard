@@ -84,7 +84,7 @@ class ERC721Module extends VuexModule {
         const erc721 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc721);
