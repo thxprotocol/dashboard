@@ -113,7 +113,7 @@ export default class MetadataView extends Vue {
     }
 
     get erc721(): TERC721 {
-        return this.erc721s[this.pool.token._id];
+        return this.erc721s[this.pool.erc721._id];
     }
 
     get total() {
@@ -135,7 +135,7 @@ export default class MetadataView extends Vue {
 
     async listMetadata() {
         this.isLoading = true;
-        await this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
+        await this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
             await this.$store.dispatch('erc721/listMetadata', {
                 erc721: this.erc721,
                 page: this.page,
@@ -144,6 +144,7 @@ export default class MetadataView extends Vue {
         });
         this.isLoading = false;
     }
+
     mounted() {
         this.listMetadata();
     }

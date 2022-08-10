@@ -5,7 +5,7 @@ import { IPromotions } from '@/types/IPromotions';
 import { IPool } from './pools';
 
 export type TPromotion = {
-    id: string;
+    _id: string;
     poolAddress: string;
     title: string;
     description: string;
@@ -26,12 +26,12 @@ class RewardModule extends VuexModule {
         if (!this._all[pool._id]) {
             Vue.set(this._all, pool._id, {});
         }
-        Vue.set(this._all[pool._id], promotion.id, promotion);
+        Vue.set(this._all[pool._id], promotion._id, promotion);
     }
 
     @Mutation
     remove({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
-        Vue.delete(this._all[pool._id], promotion.id);
+        Vue.delete(this._all[pool._id], promotion._id);
 
         if (!Object.values(this._all[pool._id]).length) {
             Vue.delete(this._all, pool._id);
@@ -78,7 +78,7 @@ class RewardModule extends VuexModule {
     async delete({ pool, promotion }: { pool: IPool; promotion: TPromotion }) {
         await axios({
             method: 'DELETE',
-            url: '/promotions/' + promotion.id,
+            url: '/promotions/' + promotion._id,
             headers: { 'X-PoolId': pool._id },
         });
 

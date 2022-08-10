@@ -7,20 +7,6 @@
             <b-form-group label="Description">
                 <b-form-input v-model="description" />
             </b-form-group>
-            <!-- <b-form-group>
-                <template #label>
-                    Recipient
-                    <a
-                        href="#"
-                        v-b-tooltip
-                        title="Fill in the address of the recipient of your NFT. You can also do this after creating the metadata."
-                    >
-                        <i class="fas fa-question-circle"></i>
-                    </a>
-                </template>
-                <b-form-input v-model="recipient" />
-                <small class="text-muted"> Leave this field blank if you do not want to mint the NFT now. </small>
-            </b-form-group> -->
             <label>Properties</label>
             <b-card bg-variant="light">
                 <b-form-group :key="key" v-for="(prop, key) of erc721.properties">
@@ -40,7 +26,6 @@
                     <b-form-input
                         v-else
                         :type="parsePropType(prop.propType)"
-                        :state="getPropValidation(prop.propType, prop.value || '')"
                         v-model="prop.value"
                         required
                         :placeholder="`Provide a ${prop.propType} value in this field.`"

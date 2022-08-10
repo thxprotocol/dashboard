@@ -25,7 +25,7 @@
             <b-form-group>
                 <label for="erc20Address">Token Contract</label>
                 <div class="input-group">
-                    <b-form-input readonly id="address" v-model="pool.token.address" />
+                    <b-form-input readonly id="address" v-model="pool.erc20.address" />
                     <div class="input-group-append">
                         <b-button
                             class="btn btn-primary"
@@ -34,7 +34,7 @@
                             target="_blank"
                             v-b-tooltip
                             title="View your token transactions on the Polygon block explorer"
-                            :href="`${chainInfo[pool.chainId].blockExplorer}/token/${pool.token.address}`"
+                            :href="`${chainInfo[pool.chainId].blockExplorer}/token/${pool.erc20.address}`"
                         >
                             <i class="fas fa-external-link-alt m-0" style="font-size: 1.2rem"></i>
                         </b-button>

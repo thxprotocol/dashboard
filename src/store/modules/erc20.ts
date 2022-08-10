@@ -50,7 +50,7 @@ class ERC20Module extends VuexModule {
         const erc20 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc20);
