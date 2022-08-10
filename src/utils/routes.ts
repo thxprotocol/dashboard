@@ -18,7 +18,7 @@ export const getRoutes = (pool: IPool) => {
             path: 'payments',
             label: 'Payments',
             iconClasses: 'fas fa-money-check-alt',
-            visible: pool.isDefaultPool,
+            visible: pool.isDefaultPool || pool.isNFTPool,
         },
         {
             path: 'promotions',

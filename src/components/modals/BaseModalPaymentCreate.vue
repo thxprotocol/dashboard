@@ -2,6 +2,10 @@
     <base-modal :loading="loading" :error="error" title="Create a payment request" id="modalPaymentCreate">
         <template #modal-body v-if="!loading">
             <b-form-group>
+                <label> Token Contract </label>
+                <base-dropdown-select-erc20 :pool="pool" @selected="onSelectMetadata" />
+            </b-form-group>
+            <b-form-group>
                 <template #label>
                     Amount
                     <i
@@ -47,6 +51,7 @@ import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
 import BaseModal from './BaseModal.vue';
 import { unitMap, Unit } from 'web3-utils';
+import { TERC721Metadata } from '@/types/erc721';
 
 @Component({
     components: {
@@ -65,6 +70,7 @@ export default class BaseModalPaymentCreate extends Vue {
     successUrl = '';
     failUrl = '';
     cancelUrl = '';
+    selectedMetadataId: string | null = null;
 
     get amountInWei() {
         return this.amount * this.units[this.unit];
@@ -81,12 +87,17 @@ export default class BaseModalPaymentCreate extends Vue {
             successUrl: this.successUrl,
             failUrl: this.failUrl,
             cancelUrl: this.cancelUrl,
+            metadataId: this.selectedMetadataId,
         };
 
         await this.$store.dispatch('payments/create', { pool: this.pool, payment });
 
         this.$bvModal.hide(`modalPaymentCreate`);
         this.loading = false;
+    }
+
+    onSelectMetadata(metadata: TERC721Metadata) {
+        this.selectedMetadataId = metadata._id;
     }
 }
 </script>
