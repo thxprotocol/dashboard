@@ -16,9 +16,7 @@
             </div>
             <div v-else>Select an ERC20 token</div>
         </template>
-        <b-dropdown-item-button @click="onTokenListItemClick(null)">
-            No ERC20 contract selected
-        </b-dropdown-item-button>
+        <b-dropdown-item-button @click="onTokenListItemClick(null)"> None </b-dropdown-item-button>
         <b-dropdown-divider />
         <b-dropdown-item v-if="!hasERC20s"> No tokens available. </b-dropdown-item>
         <b-dropdown-item-button
