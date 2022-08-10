@@ -27,7 +27,7 @@
                 </b-button>
                 <b-button
                     v-b-tooltip
-                    title="Visit developer docs"
+                    title="Visit documentation"
                     :href="docsUrl"
                     target="_blank"
                     variant="link"

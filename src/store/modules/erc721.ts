@@ -20,13 +20,13 @@ class ERC721Module extends VuexModule {
     }
 
     @Mutation
-    unset(id: string) {
-        Vue.delete(this._all, id);
+    unset(erc721: TERC721) {
+        Vue.delete(this._all, erc721._id);
     }
 
     @Mutation
     clear() {
-        this._all = {};
+        Vue.set(this, '_all', {});
     }
 
     @Mutation
@@ -44,7 +44,7 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async list(params: any) {
+    async list(params: { archived?: boolean } = { archived: false }) {
         this.context.commit('clear');
 
         const { data } = await axios({
@@ -85,7 +85,7 @@ class ERC721Module extends VuexModule {
         const erc721 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc721);
@@ -199,14 +199,16 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async archive(payload: any) {
+    async update({ erc721, data }: { erc721: TERC721; data: { archived: boolean } }) {
         await axios({
             method: 'PATCH',
-            url: `/erc721/${payload.id}`,
-            data: payload,
+            url: `/erc721/${erc721._id}`,
+            data,
         });
-
-        this.context.commit('unset', payload.id);
+        this.context.commit('set', { ...erc721, ...data });
+        if (data.archived) {
+            this.context.commit('unset', erc721);
+        }
     }
 }
 
