@@ -18,7 +18,6 @@
                 >
                     <i class="fas fa-plus mr-2"></i>
                     <span class="mr-2">Create NFT</span>
-                    <b-badge variant="primary">Beta</b-badge>
                 </b-button>
                 <b-button to="/pools" variant="link" class="text-light">
                     <i class="fas fa-chart-pie mr-2"></i>
@@ -27,6 +26,11 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
+            <b-row>
+                <b-col class="text-right pb-3">
+                    <base-btn-toggle-archive @archived="$store.dispatch('erc721/list', { archived: $event })" />
+                </b-col>
+            </b-row>
             <base-nothing-here
                 v-if="!Object.values(erc721s).length"
                 text-submit="Create an NFT"
@@ -52,9 +56,11 @@ import ModalErc721Create from '@/components/modals/BaseModalERC721Create.vue';
 import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IERC721s } from '@/types/erc721';
+import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
 
 @Component({
     components: {
+        BaseBtnToggleArchive,
         BaseCardErc721,
         ModalErc721Create,
         BaseNothingHere,

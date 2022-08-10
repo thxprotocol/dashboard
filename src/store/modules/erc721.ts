@@ -20,6 +20,16 @@ class ERC721Module extends VuexModule {
     }
 
     @Mutation
+    unset(erc721: TERC721) {
+        Vue.delete(this._all, erc721._id);
+    }
+
+    @Mutation
+    clear() {
+        Vue.set(this, '_all', {});
+    }
+
+    @Mutation
     setMetadata(payload: { erc721: TERC721; metadata: TERC721Metadata }) {
         if (!this._all[payload.erc721._id].metadata) {
             return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
@@ -34,10 +44,13 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async list() {
+    async list(params: { archived?: boolean } = { archived: false }) {
+        this.context.commit('clear');
+
         const { data } = await axios({
             method: 'GET',
             url: '/erc721',
+            params,
         });
 
         for (const _id of data) {
@@ -72,7 +85,7 @@ class ERC721Module extends VuexModule {
         const erc721 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc721);
@@ -162,6 +175,18 @@ class ERC721Module extends VuexModule {
             data: formData,
         });
         this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
+    }
+
+    async update({ erc721, data }: { erc721: TERC721; data: { archived: boolean } }) {
+        await axios({
+            method: 'PATCH',
+            url: `/erc721/${erc721._id}`,
+            data,
+        });
+        this.context.commit('set', { ...erc721, ...data });
+        if (data.archived) {
+            this.context.commit('unset', erc721);
+        }
     }
 }
 

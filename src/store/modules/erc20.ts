@@ -21,11 +21,19 @@ class ERC20Module extends VuexModule {
         Vue.delete(this._all, id);
     }
 
+    @Mutation
+    clear() {
+        Vue.set(this, '_all', {});
+    }
+
     @Action({ rawError: true })
-    async list() {
+    async list(params: { archived?: boolean } = { archived: false }) {
+        this.context.commit('clear');
+
         const { data } = await axios({
             method: 'GET',
             url: '/erc20',
+            params,
         });
 
         for (const _id of data) {
@@ -42,7 +50,7 @@ class ERC20Module extends VuexModule {
         const erc20 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data._id}.svg`,
+            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc20);
@@ -80,6 +88,19 @@ class ERC20Module extends VuexModule {
         });
 
         this.context.commit('unset', id);
+    }
+
+    @Action({ rawError: true })
+    async update({ erc20, data }: { erc20: TERC20; data: { archived: boolean } }) {
+        await axios({
+            method: 'PATCH',
+            url: `/erc20/${erc20._id}`,
+            data,
+        });
+        this.context.commit('set', { ...erc20, ...data });
+        if (data.archived) {
+            this.context.commit('unset', erc20);
+        }
     }
 }
 

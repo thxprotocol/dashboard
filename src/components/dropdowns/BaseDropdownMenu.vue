@@ -1,13 +1,13 @@
 <template>
-    <b-dropdown size="sm" variant="darker" no-caret toggle-class="d-flex align-items-center">
+    <b-dropdown size="sm" variant="primary" no-caret toggle-class="d-flex align-items-center">
         <template #button-content>
-            <i class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted" aria-hidden="true" style="font-size: 1.5rem"></i>
+            <i class="fas fa-bars m-0 p-1 px-2" aria-hidden="true" style="font-size: 1.5rem"></i>
         </template>
         <b-dropdown-item to="/tokens"> Tokens </b-dropdown-item>
-        <b-dropdown-item to="/nft"> NFT <b-badge variant="primary">Beta</b-badge></b-dropdown-item>
+        <b-dropdown-item to="/nft"> NFT </b-dropdown-item>
         <b-dropdown-item to="/pools"> Pools </b-dropdown-item>
         <b-dropdown-item to="/integrations"> Integrations </b-dropdown-item>
-        <b-dropdown-item :href="docsUrl"> Developer Docs </b-dropdown-item>
+        <b-dropdown-item :href="docsUrl"> Documentation </b-dropdown-item>
         <b-dropdown-divider />
         <b-dropdown-item :href="walletUrl">
             <span class="text-muted"><i class="fas fa-chart-line mr-3"></i>Go to Web Wallet</span>

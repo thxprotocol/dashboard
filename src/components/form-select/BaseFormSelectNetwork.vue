@@ -22,8 +22,8 @@
         </b-form-group>
         <b-alert :show="profile.plan === AccountPlanType.Free && chainId == ChainId.Polygon" variant="warning">
             <i class="fas fa-rocket mr-2"></i>
-            Choosing <strong>Polygon Main Network</strong> will move you from Free to
-            <b-link :href="publicUrl + '/pricing'">Basic</b-link> and start invoicing.
+            Choosing <strong>Polygon</strong> will move you from a Free to
+            <b-link :href="publicUrl + '/pricing'">Basic</b-link> plan and start invoicing.
         </b-alert>
     </div>
 </template>

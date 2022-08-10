@@ -1,52 +1,32 @@
 <template>
     <div class="container pt-3 h-100 d-flex flex-column">
-        <b-button block @click.stop="$bvModal.show('modalPoolMemberAdd')" class="my-3" variant="primary">
-            <i class="fas fa-plus mr-1"></i>
-            Add Members
-        </b-button>
+        <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Members</h2>
+            </b-col>
+            <b-col class="d-flex justify-content-end">
+                <b-button v-b-modal="'modalPoolMemberAdd'" class="rounded-pill" variant="primary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="d-none d-md-inline">Add Member</span>
+                </b-button>
+            </b-col>
+        </b-row>
         <b-card class="shadow-sm">
-            <b-alert v-if="members.length === 0" variant="info" show> There no member on this pool yet. </b-alert>
+            <b-alert v-if="!members.length" variant="info" show> There are no members for this pool yet. </b-alert>
             <div class="row pt-2 pb-2">
-                <div class="col-md-4">
-                    <strong>Member ID</strong>
-                </div>
-                <div class="col-md-2">
+                <div class="col-md-8">
                     <strong>Address</strong>
                 </div>
                 <div class="col-md-4"></div>
             </div>
-            <b-skeleton-wrapper :loading="loading">
-                <template #loading>
-                    <b-form-group class="mb-0">
-                        <hr />
-                        <div class="row pt-2 pb-2">
-                            <div class="col-md-4">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-2">
-                                <b-skeleton animation="fade" width="85%"></b-skeleton>
-                                <b-skeleton animation="fade" width="80%"></b-skeleton>
-                            </div>
-                            <div class="col-md-4 text-right d-flex justify-content-end">
-                                <b-skeleton type="avatar" class="inline"></b-skeleton>
-                                <b-skeleton type="avatar" class="inline ml-1"></b-skeleton>
-                            </div>
-                        </div>
-                    </b-form-group>
-                </template>
-                <b-form-group class="mb-0" :key="member.memberId" v-for="member of members">
-                    <hr />
-                    <div class="row pt-2 pb-2">
-                        <div class="col-md-4 d-flex align-items-center">
-                            {{ member.memberId }}
-                        </div>
-                        <div class="col-md-2 d-flex align-items-center">
-                            {{ member.address }}
-                        </div>
+            <b-form-group class="mb-0" :key="key" v-for="(member, key) of members">
+                <hr />
+                <div class="row pt-2 pb-2">
+                    <div class="col-md-8 d-flex align-items-center">
+                        {{ member.address }}
                     </div>
-                </b-form-group>
-            </b-skeleton-wrapper>
+                </div>
+            </b-form-group>
         </b-card>
         <b-pagination
             class="mt-3"

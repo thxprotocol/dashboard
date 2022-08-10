@@ -28,7 +28,8 @@ export interface IPool {
     address: string;
     clientId: string;
     clientSecret: string;
-    token: (TERC20 | TERC721) & PoolToken;
+    erc20: TERC20 & PoolToken;
+    erc721: TERC721 & PoolToken;
     bypassPolls: boolean;
     chainId: ChainId;
     rewardPollDuration: number;
@@ -37,6 +38,7 @@ export interface IPool {
     isNFTPool: boolean;
     isDefaultPool: boolean;
     version: string;
+    archived: boolean;
 }
 
 export interface GetMembersProps {
@@ -60,12 +62,6 @@ export interface GetMembersResponse {
     total: number;
 }
 
-function Pool(data: any) {
-    data.isDefaultPool = data.variant === 'defaultPool';
-    data.isNFTPool = data.variant === 'nftPool';
-    return data;
-}
-
 export interface IPools {
     [id: string]: IPool;
 }
@@ -84,43 +80,50 @@ class PoolModule extends VuexModule {
     }
 
     @Mutation
-    unset(id: string) {
-        Vue.delete(this._all, id);
+    unset(pool: IPool) {
+        Vue.delete(this._all, pool._id);
+    }
+
+    @Mutation
+    clear() {
+        Vue.set(this, '_all', {});
     }
 
     @Action({ rawError: true })
-    async list() {
+    async list(params: { archived?: boolean } = { archived: false }) {
+        this.context.commit('clear');
+
         const r = await axios({
             method: 'GET',
             url: '/pools',
+            params,
         });
 
         r.data.forEach((_id: string) => {
-            const poolInState = this.context.getters['all'][_id];
-            if (poolInState && poolInState.address) return;
-
             this.context.commit('set', { _id });
         });
     }
 
     @Action({ rawError: true })
     async read(_id: string) {
-        const poolInState = this.context.getters['all'][_id];
-        if (poolInState && poolInState.address) return;
-
         const r = await axios({
             method: 'get',
             url: '/pools/' + _id,
         });
-        const pool = Pool(r.data);
 
-        this.context.commit('set', pool);
+        this.context.commit('set', r.data);
 
-        return pool;
+        return r.data;
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: number; token: string; tokens: string[]; variant: string }) {
+    async create(payload: {
+        network: number;
+        token: string;
+        erc20tokens: string[];
+        erc721tokens: string[];
+        variant: string;
+    }) {
         const { data } = await axios({
             method: 'POST',
             url: '/pools',
@@ -133,7 +136,7 @@ class PoolModule extends VuexModule {
             headers: { 'X-PoolId': data._id },
         });
 
-        this.context.commit('set', Pool(r.data));
+        this.context.commit('set', r.data);
     }
 
     @Action({ rawError: true })
@@ -149,22 +152,18 @@ class PoolModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async update(payload: {
-        pool: IPool;
-        data: {
-            bypassPolls: boolean;
-            rewardPollDuration: number;
-            withdrawPollDuration: number;
-        };
-    }) {
-        const r = await axios({
+    async update({ pool, data }: { pool: IPool; data: { archived: boolean } }) {
+        await axios({
             method: 'PATCH',
-            url: '/pools/' + payload.pool._id,
-            data: payload.data,
-            headers: { 'X-PoolId': payload.pool._id },
+            url: '/pools/' + pool._id,
+            data,
+            headers: { 'X-PoolId': pool._id },
         });
+        this.context.commit('set', { ...pool, ...data });
 
-        return Pool(r.data);
+        if (data.archived) {
+            this.context.commit('unset', pool);
+        }
     }
 
     @Action({ rawError: true })
@@ -175,7 +174,7 @@ class PoolModule extends VuexModule {
             headers: { 'X-PoolId': pool._id },
         });
 
-        this.context.commit('unset', pool._id);
+        this.context.commit('unset', pool);
     }
 
     @Action({ rawError: true })

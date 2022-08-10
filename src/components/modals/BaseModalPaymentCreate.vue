@@ -13,14 +13,14 @@
                 <b-input-group>
                     <b-form-input type="number" v-model="amount" />
                     <template #append>
-                        <b-dropdown :text="`${pool.token.symbol} (${unit})`" variant="primary">
+                        <b-dropdown :text="`${pool.erc20.symbol} (${unit})`" variant="primary">
                             <b-dropdown-item :key="key" v-for="(u, key) of units" @click="unit = key">
                                 {{ key }}
                             </b-dropdown-item>
                         </b-dropdown>
                     </template>
                 </b-input-group>
-                <small class="text-muted"> {{ amountInWei }} {{ pool.token.symbol }} (wei)</small>
+                <small class="text-muted"> {{ amountInWei }} {{ pool.erc20.symbol }} (wei)</small>
             </b-form-group>
             <b-form-group label="Success URL">
                 <b-form-input v-model="successUrl" />

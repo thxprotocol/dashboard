@@ -1,19 +1,8 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create Swap Rule" id="modalERC20SwapRuleCreate">
         <template #modal-body v-if="profile && !loading">
-            <b-form-group>
+            <b-form-group :label="`Allow ${pool.erc20.symbol} swaps against`">
                 <base-dropdown-select-erc20 :chainId="pool.chainId" @selected="onSelectToken" />
-            </b-form-group>
-            <b-form-group>
-                <label>Token Contract Address</label>
-                <b-input-group>
-                    <b-form-input :disabled="!!token" v-model="tokenAddress" />
-                    <b-input-group-addon append>
-                        <b-button variant="primary" v-clipboard:copy="tokenAddress">
-                            <i class="far fa-copy m-0" style="font-size: 1.2rem"></i>
-                        </b-button>
-                    </b-input-group-addon>
-                </b-input-group>
             </b-form-group>
             <b-form-group>
                 <label>Token Ratio</label>
@@ -22,18 +11,13 @@
         </template>
         <template #btn-primary>
             <b-button
-                :disabled="
-                    loading ||
-                    (token && token.address == pool.token.address) ||
-                    !tokenMultiplier ||
-                    tokenMultiplier <= 0
-                "
+                :disabled="loading || isSubmitDisabled"
                 class="rounded-pill"
                 @click="submit()"
                 variant="primary"
                 block
             >
-                Create Swap Role
+                Create Swap Rule
             </b-button>
         </template>
     </base-modal>
@@ -64,12 +48,20 @@ import { IPools } from '@/store/modules/pools';
 export default class ModalERC20SwapRuleCreate extends Vue {
     loading = false;
     error = '';
-    tokenMultiplier = null;
+    tokenMultiplier = 0;
     token: TERC20 | null = null;
     tokenAddress = '';
     profile!: IAccount;
     chainId: ChainId = ChainId.PolygonMumbai;
     pools!: IPools;
+
+    get isSubmitDisabled() {
+        return (
+            (this.token && this.token.address == this.pool.erc20.address) ||
+            !this.tokenMultiplier ||
+            this.tokenMultiplier <= 0
+        );
+    }
 
     get pool() {
         return this.pools[this.$route.params.id];

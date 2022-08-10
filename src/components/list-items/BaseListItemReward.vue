@@ -39,7 +39,7 @@
                 </b-col>
                 <b-col class="d-flex flex-column">
                     <div class="d-flex align-items-center">
-                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ pool.token.symbol }}</h3>
+                        <h3 class="text-primary">{{ reward.withdrawAmount }} {{ pool.erc20.symbol }}</h3>
                         <sup
                             class="fas fa-circle ml-1 mr-auto"
                             :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
@@ -184,7 +184,7 @@ const getBase64Image = (url: string): Promise<string> => {
         VueQr,
     },
 })
-export default class BaseListItemReward extends Vue {
+export default class BaseCardReward extends Vue {
     channelType = '';
     channelAction = '';
     channelItemURL = '';
@@ -198,6 +198,10 @@ export default class BaseListItemReward extends Vue {
     @Prop() reward!: Reward;
 
     brands!: TBrandState;
+
+    get brand() {
+        return this.brands[this.pool._id];
+    }
 
     get expired() {
         if (!this.reward.expiryDate) return false;
@@ -216,8 +220,9 @@ export default class BaseListItemReward extends Vue {
             );
         }
         if (this.reward.amount == 1) {
-            this.$store.dispatch('brands/pool', this.pool._id).then((res) => {
-                getBase64Image(res.logoImgUrl || BASE_URL + require('@/assets/qr-logo.jpg')).then((data) => {
+            this.$store.dispatch('brands/getForPool', this.pool).then(() => {
+                const logoImgUrl = this.brand ? this.brand.logoImgUrl : BASE_URL + require('@/assets/qr-logo.jpg');
+                getBase64Image(logoImgUrl).then((data) => {
                     this.imgData = data;
                     this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
                 });

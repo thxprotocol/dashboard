@@ -36,6 +36,11 @@
             </div>
         </b-jumbotron>
         <div class="container container-md">
+            <b-row>
+                <b-col class="text-right pb-3">
+                    <base-btn-toggle-archive @archived="$store.dispatch('erc20/list', { archived: $event })" />
+                </b-col>
+            </b-row>
             <base-nothing-here
                 v-if="!Object.values(erc20s).length"
                 text-submit="Create a Token"
@@ -62,10 +67,12 @@ import ModalErc20Create from '@/components/modals/BaseModalERC20Create.vue';
 import ModalErc20Import from '@/components/modals/BaseModalERC20Import.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
 import { IERC20s } from '@/types/erc20';
 
 @Component({
     components: {
+        BaseBtnToggleArchive,
         BaseCardErc20,
         ModalErc20Create,
         ModalErc20Import,
@@ -73,7 +80,6 @@ import { IERC20s } from '@/types/erc20';
     },
     computed: mapGetters({
         erc20s: 'erc20/all',
-        erc721s: 'erc721/all',
     }),
 })
 export default class Tokens extends Vue {
