@@ -59,6 +59,9 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async listMetadata(erc721: TERC721) {
+        if (!erc721) {
+            return;
+        }
         const { data } = await axios({
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata`,

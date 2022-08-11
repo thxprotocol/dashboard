@@ -67,12 +67,11 @@ export default class BaseDropdownERC721Metadata extends Vue {
     @Prop() pool!: IPool;
 
     mounted() {
-        if (!this.pool.erc721) {
-            return;
+        if (this.pool.erc721) {
+            this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async (erc721) => {
+                await this.$store.dispatch('erc721/listMetadata', erc721);
+            });
         }
-        this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async (erc721) => {
-            await this.$store.dispatch('erc721/listMetadata', erc721);
-        });
     }
 }
 </script>

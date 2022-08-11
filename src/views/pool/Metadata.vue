@@ -68,9 +68,11 @@ export default class MetadataView extends Vue {
     }
 
     mounted() {
-        this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
-            await this.$store.dispatch('erc721/listMetadata', this.erc721);
-        });
+        if (this.pool.erc721) {
+            this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
+                await this.$store.dispatch('erc721/listMetadata', this.erc721);
+            });
+        }
     }
 }
 </script>
