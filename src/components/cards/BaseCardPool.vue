@@ -7,8 +7,8 @@
             <i class="ml-1 fas fa-file-archive text-white small" v-if="pool.archived"></i>
         </template>
         <template #card-body>
-            <b-alert class="m-0" show variant="warning" v-if="outOfDate && artifacts">
-                <i class="fas fa-exclamation-mark mr-2"></i>
+            <b-alert show variant="warning" v-if="outOfDate && artifacts">
+                <i class="fas fa-exclamation-circle mr-2"></i>
                 Please contact us in
                 <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Discord </b-link>
             </b-alert>
