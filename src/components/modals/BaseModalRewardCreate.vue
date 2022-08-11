@@ -90,6 +90,19 @@
                                         <div>
                                             {{ metadata.title }}
                                         </div>
+                                        <div>
+                                            <b-badge
+                                                :key="key"
+                                                v-for="(value, key) in metadata.attributes"
+                                                variant="dark"
+                                                v-b-tooltip
+                                                :title="value.value"
+                                                class="mr-2"
+                                            >
+                                                {{ value.key }}
+                                            </b-badge>
+                                        </div>
+
                                         <small class="text-muted">
                                             {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
                                         </small>

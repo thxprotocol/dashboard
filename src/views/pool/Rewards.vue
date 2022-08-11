@@ -80,14 +80,13 @@ export default class AssetPoolView extends Vue {
     }
 
     get filteredMetadata() {
-        return this.erc721 && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
+        return this.erc721 && this.erc721.metadata && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
     }
 
     mounted() {
         this.$store.dispatch('rewards/list', this.pool._id);
 
         if (this.pool.erc721) {
-            debugger;
             this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
                 await this.$store.dispatch('erc721/listMetadata', this.pool.erc721);
             });

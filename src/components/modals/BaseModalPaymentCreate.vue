@@ -1,9 +1,38 @@
 <template>
     <base-modal :loading="loading" :error="error" title="Create a payment request" id="modalPaymentCreate">
         <template #modal-body v-if="!loading">
-            <b-form-group>
-                <label> Token Contract </label>
-                <base-dropdown-select-erc20 :pool="pool" @selected="onSelectMetadata" />
+            <b-form-row label="Variant" v-if="pool.erc721">
+                <b-col md="6">
+                    <b-form-radio
+                        @change="onPaymentVariantChanged"
+                        v-model="paymentVariant"
+                        name="paymentVariant"
+                        :value="PaymentVariant.Token"
+                    >
+                        <strong> Token Payment</strong>
+                    </b-form-radio>
+                </b-col>
+                <b-col md="6">
+                    <b-form-radio
+                        @change="onPaymentVariantChanged"
+                        v-model="paymentVariant"
+                        name="paymentVariant"
+                        :value="PaymentVariant.NFT"
+                    >
+                        <strong> NFT Payment</strong>
+                    </b-form-radio>
+                </b-col>
+            </b-form-row>
+            <hr />
+            <b-form-group v-if="showMetadataList">
+                <label>
+                    NFT
+                    <base-tooltip-info
+                        class="mr-2"
+                        title="Select the metadata for the NFT that should be minted when the payment succedes"
+                    />
+                </label>
+                <BaseDropdownERC721Metadata :pool="pool" @selected="onSelectMetadata" />
             </b-form-group>
             <b-form-group>
                 <template #label>
@@ -52,11 +81,20 @@ import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
 import BaseModal from './BaseModal.vue';
 import { unitMap, Unit } from 'web3-utils';
 import { TERC721Metadata } from '@/types/erc721';
+import BaseDropdownERC721Metadata from '../dropdowns/BaseDropdownERC721Metadata.vue';
+import BaseTooltipInfo from '../tooltips/BaseTooltipInfo.vue';
+
+enum PaymentVariant {
+    Token = 0,
+    NFT = 1,
+}
 
 @Component({
     components: {
+        BaseTooltipInfo,
         BaseModal,
         BaseFormSelectNetwork,
+        BaseDropdownERC721Metadata,
     },
     computed: mapGetters({}),
 })
@@ -70,7 +108,10 @@ export default class BaseModalPaymentCreate extends Vue {
     successUrl = '';
     failUrl = '';
     cancelUrl = '';
-    selectedMetadataId: string | null = null;
+    PaymentVariant = PaymentVariant;
+    paymentVariant: PaymentVariant = PaymentVariant.Token;
+    showMetadataList = false;
+    selectedMetadataId: string | undefined = undefined;
 
     get amountInWei() {
         return this.amount * this.units[this.unit];
@@ -84,9 +125,9 @@ export default class BaseModalPaymentCreate extends Vue {
         const payment = {
             chainId: this.pool.chainId,
             amount: this.amountInWei,
-            successUrl: this.successUrl,
-            failUrl: this.failUrl,
-            cancelUrl: this.cancelUrl,
+            successUrl: this.successUrl.length > 0 ? this.successUrl : undefined,
+            failUrl: this.failUrl.length > 0 ? this.failUrl : undefined,
+            cancelUrl: this.cancelUrl.length > 0 ? this.cancelUrl : undefined,
             metadataId: this.selectedMetadataId,
         };
 
@@ -98,6 +139,20 @@ export default class BaseModalPaymentCreate extends Vue {
 
     onSelectMetadata(metadata: TERC721Metadata) {
         this.selectedMetadataId = metadata._id;
+    }
+
+    onPaymentVariantChanged(variant: PaymentVariant) {
+        switch (variant) {
+            case PaymentVariant.NFT: {
+                this.showMetadataList = true;
+                break;
+            }
+            case PaymentVariant.Token: {
+                this.showMetadataList = false;
+                break;
+            }
+        }
+        this.paymentVariant = variant;
     }
 }
 </script>
