@@ -66,7 +66,7 @@
             </b-form-group>
         </template>
         <template #btn-primary>
-            <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
+            <b-button :disabled="isSubmitDisabled" class="rounded-pill" @click="submit()" variant="primary" block>
                 Create Payment Request
             </b-button>
         </template>
@@ -115,6 +115,13 @@ export default class BaseModalPaymentCreate extends Vue {
 
     get amountInWei() {
         return this.amount * this.units[this.unit];
+    }
+
+    get isSubmitDisabled() {
+        if (this.loading || this.amount <= 0 || (this.paymentVariant && !this.selectedMetadataId)) {
+            return true;
+        }
+        return false;
     }
 
     @Prop() pool!: IPool;

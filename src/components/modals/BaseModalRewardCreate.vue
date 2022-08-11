@@ -347,7 +347,8 @@ export default class ModalRewardCreate extends Vue {
     }
 
     onShow() {
-        this.erc721metadata = this.filteredMetadata ? this.filteredMetadata[0] : null;
+        this.erc721metadata =
+            this.rewardVariant === RewardVariant.NFT && this.filteredMetadata ? this.filteredMetadata[0] : null;
     }
 
     onRewardVariantChanged(variant: RewardVariant) {
@@ -493,7 +494,7 @@ export default class ModalRewardCreate extends Vue {
         this.rewardExpireDate = null;
         this.rewardExpireTime = '00:00:00';
         this.amount = 1;
-
+        this.erc721metadata = null;
         this.$bvModal.hide(`modalRewardCreate`);
         this.loading = false;
     }
