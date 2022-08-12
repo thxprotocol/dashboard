@@ -7,10 +7,9 @@
             </div>
             <div v-else>Select an ERC721 token</div>
         </template>
-        <b-dropdown-item v-if="!hasERC721s"> No NFT contracts available. </b-dropdown-item>
-        <b-dropdown-item-button @click="onTokenListItemClick(null)">
-            Do not select an NFT contract
-        </b-dropdown-item-button>
+        <b-dropdown-item-button @click="onTokenListItemClick(null)"> None </b-dropdown-item-button>
+        <b-dropdown-divider />
+        <b-dropdown-item v-if="!hasERC721s"> No ERC721 contract selected </b-dropdown-item>
         <b-dropdown-item-button
             :disabled="chainId !== erc721.chainId"
             :key="erc721._id"

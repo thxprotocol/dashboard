@@ -1,10 +1,12 @@
 <template>
-    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" @show="onShow" :error="error" :loading="loading">
+    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" :error="error" :loading="loading">
         <template #modal-body v-if="profile && !loading">
             <form v-on:submit.prevent="submit" id="formRewardCreate">
+                <hr />
                 <b-form-row label="Variant">
                     <b-col md="6">
                         <b-form-radio
+                            class="mb-0"
                             @change="onRewardVariantChanged"
                             v-model="rewardVariant"
                             name="rewardVariant"
@@ -17,6 +19,7 @@
                     </b-col>
                     <b-col md="6">
                         <b-form-radio
+                            class="mb-0"
                             @change="onRewardVariantChanged"
                             v-model="rewardVariant"
                             name="rewardVariant"
@@ -35,7 +38,7 @@
                             <label> Label </label>
                             <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
                         </b-form-group>
-                        <b-row v-if="rewardVariant === RewardVariant.Token">
+                        <b-row v-if="rewardVariant === RewardVariant.Token && pool.erc20">
                             <b-col md="6">
                                 <b-form-group>
                                     <label>
@@ -465,6 +468,7 @@ export default class ModalRewardCreate extends Vue {
         this.erc721metadata = null;
         this.$bvModal.hide(`modalRewardCreate`);
         this.loading = false;
+        this.$emit('submit');
     }
 
     onSelectMetadata(metadata: TERC721Metadata) {

@@ -42,7 +42,6 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { IPool } from '@/store/modules/pools';
 import { TERC721, TERC721DefaultProp } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';
@@ -84,22 +83,10 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async upload(file: File) {
-        try {
-            const formData = new FormData();
-            formData.append('file', file);
-            const response = await axios({
-                url: '/upload',
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                data: formData,
-            });
-            return response.data.publicUrl;
-        } catch {
-            /* NO-OP */
-        }
+        const publicUrl = await this.$store.dispatch('images/upload', file);
+        return publicUrl;
     }
+
     async onDescChange(event: any) {
         const publicUrl = await this.upload(event.target.files[0]);
         Vue.set(this.erc721.properties[event.target.dataset['key']], 'value', publicUrl);

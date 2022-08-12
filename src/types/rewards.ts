@@ -33,6 +33,9 @@ export interface Reward {
     title: string;
     claims: { _id: string }[];
     amount: number;
+    createdAt: Date;
+    updatedAt: Date;
+    erc721metadataId: string;
 }
 
 export interface IRewards {
