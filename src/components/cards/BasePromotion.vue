@@ -11,7 +11,7 @@
             <strong>{{ promotion.value }}</strong>
         </b-alert>
         <hr />
-        <b-input-group size="lg" :append="pool.token.symbol">
+        <b-input-group size="lg" :append="pool.erc20.symbol">
             <b-form-input type="number" :value="promotion.price" disabled></b-form-input>
         </b-input-group>
         <modal-delete :call="remove" :id="`modalDelete${promotion.id}`" :subject="promotion.id" />

@@ -1,36 +1,41 @@
 <template>
     <base-card :loading="isLoading" :is-deploying="isDeploying">
         <template #card-header>
-            {{ variant }}
+            <span v-if="pool.erc20 && pool.erc721">Token &amp; NFT Pool</span>
+            <span v-if="pool.erc20 && !pool.erc721">Token Pool</span>
+            <span v-if="!pool.erc20 && pool.erc721">Collectible Pool</span>
             <i class="ml-1 fas fa-file-archive text-white small" v-if="pool.archived"></i>
         </template>
         <template #card-body>
-            <b-alert class="m-0" show variant="warning" v-if="outOfDate && artifacts">
-                Version conflict ({{ pool.version }} -> {{ artifacts }})
-                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank">
-                    Please contact us in Discord
-                </b-link>
+            <b-alert show variant="warning" v-if="outOfDate && artifacts">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                Please contact us in
+                <b-link href="https://discord.com/invite/TzbbSmkE7Y" target="_blank"> Discord </b-link>
             </b-alert>
-            <template v-if="pool.token">
-                <base-dropdown-menu-pool
-                    :pool="pool"
-                    @archive="archive"
-                    @remove="$bvModal.show(`modalDelete-${pool.address}`)"
-                />
-                <base-badge-network :chainId="pool.chainId" class="mr-1" />
-                <p class="mt-3 mb-0">
-                    <span class="text-muted">Balance:</span><br />
-                    <span class="font-weight-bold text-primary h3">
-                        {{ pool.token.poolBalance }} {{ pool.token.symbol }}
-                    </span>
-                </p>
-                <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
-                <hr />
-                <b-button class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
-                    <i class="fas fa-cogs mr-2"></i>
-                    Configuration
-                </b-button>
-            </template>
+            <base-dropdown-menu-pool
+                :pool="pool"
+                @archive="archive"
+                @remove="$bvModal.show(`modalDelete-${pool.address}`)"
+            />
+            <base-badge-network :chainId="pool.chainId" class="mr-1" />
+            <p class="mt-3 mb-0" v-if="pool.erc20">
+                <span class="text-muted">Balance:</span><br />
+                <span class="font-weight-bold text-primary h3">
+                    {{ fromWei(pool.erc20.poolBalance) }} {{ pool.erc20.symbol }}
+                </span>
+            </p>
+            <p class="mt-3 mb-0" v-if="pool.erc721">
+                <span class="text-muted">Minted NFTs:</span><br />
+                <span class="font-weight-bold text-primary h3">
+                    {{ pool.erc721.totalSupply }} {{ pool.erc721.symbol }}
+                </span>
+            </p>
+            <base-modal-delete :id="`modalDelete-${pool.address}`" :call="() => remove()" :subject="pool.address" />
+            <hr />
+            <b-button class="rounded-pill" variant="primary" @click="openPoolUrl()" block>
+                <i class="fas fa-cogs mr-2"></i>
+                Configuration
+            </b-button>
         </template>
     </base-card>
 </template>
@@ -45,6 +50,7 @@ import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseCard from '@/components/cards/BaseCard.vue';
 import promisePoller from 'promise-poller';
 import BaseDropdownMenuPool from '@/components/dropdowns/BaseDropdownMenuPool.vue';
+import { fromWei } from 'web3-utils';
 
 @Component({
     components: {
@@ -64,6 +70,7 @@ export default class BaseCardPool extends Vue {
     warning = '';
     isLoading = true;
     isDeploying = false;
+    fromWei = fromWei;
 
     @Prop() pool!: IPool;
 

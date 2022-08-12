@@ -88,7 +88,7 @@
                                 <i class="far fa-file-alt"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span>Developer Docs</span>
+                                <span>Documentation</span>
                             </div>
                         </div>
                     </b-nav-item>

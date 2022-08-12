@@ -19,8 +19,7 @@
             @clicked="$bvModal.show('modalRewardCreate')"
         />
         <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of rewardsByPage" />
-
-        <b-pagination
+         <b-pagination
             v-if="total > limit"
             class="mt-3"
             @change="onChangePage"
@@ -29,8 +28,13 @@
             :total-rows="total"
             align="center"
         ></b-pagination>
-
-        <base-modal-reward-create :pool="pool" :erc721="erc721" :filteredRewards="rewardsByPage" @submit="onSubmit" />
+        <base-modal-reward-create
+            :pool="pool"
+            :erc721="erc721"
+            :filteredRewards="rewardsByPage"
+            :filteredMetadata="filteredMetadata"
+             @submit="onSubmit"
+        />
     </div>
 </template>
 
@@ -39,16 +43,16 @@ import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
-import BaseListItemReward from '@/components/list-items/BaseListItemReward.vue';
+import BaseCardReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
-import { IERC721s, TERC721 } from '@/types/erc721';
 import { TReward, TRewardState } from '@/store/modules/rewards';
+import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
 
 @Component({
     components: {
         BaseNothingHere,
         BaseModalRewardCreate,
-        'base-card-reward': BaseListItemReward,
+        BaseCardReward,
     },
     computed: mapGetters({
         pools: 'pools/all',
@@ -84,8 +88,9 @@ export default class AssetPoolView extends Vue {
         return this.totals[this.$route.params.id];
     }
 
-    get erc721(): TERC721 {
-        return this.erc721s[this.pool.token._id];
+    get erc721(): TERC721 | null {
+        if (!this.pool.erc721) return null;
+        return this.erc721s[this.pool.erc721._id];
     }
 
     get rewardsByPage() {
@@ -113,12 +118,16 @@ export default class AssetPoolView extends Vue {
         this.listRewards();
     }
 
+    get filteredMetadata() {
+        return this.erc721 && this.erc721.metadata?.filter((m: TERC721Metadata) => !m.tokenId);
+    }
+
     mounted() {
         this.listRewards();
 
-        if (this.pool.isNFTPool) {
-            this.$store.dispatch('erc721/read', this.pool.token._id).then(async () => {
-                await this.$store.dispatch('erc721/listMetadata', this.erc721);
+        if (this.pool.erc721) {
+            this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
+                await this.$store.dispatch('erc721/listMetadata', this.pool.erc721);
             });
         }
     }

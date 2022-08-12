@@ -1,32 +1,62 @@
 <template>
-    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" @show="onShow" :error="error" :loading="loading">
+    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" :error="error" :loading="loading">
         <template #modal-body v-if="profile && !loading">
             <form v-on:submit.prevent="submit" id="formRewardCreate">
+                <hr />
+                <b-form-row label="Variant">
+                    <b-col md="6">
+                        <b-form-radio
+                            class="mb-0"
+                            @change="onRewardVariantChanged"
+                            v-model="rewardVariant"
+                            name="rewardVariant"
+                            :value="RewardVariant.Token"
+                        >
+                            <strong> Token Reward</strong>
+                            <p>Let your users withdraw your tokens into their wallet.</p>
+                            <small class="text-muted">2.5% protocol fee on withdrawals</small>
+                        </b-form-radio>
+                    </b-col>
+                    <b-col md="6">
+                        <b-form-radio
+                            class="mb-0"
+                            @change="onRewardVariantChanged"
+                            v-model="rewardVariant"
+                            name="rewardVariant"
+                            :value="RewardVariant.NFT"
+                        >
+                            <strong> NFT Reward</strong>
+                            <p>Let your users mint an NFT for your collection.</p>
+                            <small class="text-muted">2.5% protocol fee on sales</small>
+                        </b-form-radio>
+                    </b-col>
+                </b-form-row>
+                <hr />
                 <b-tabs content-class="mt-3" fill>
                     <b-tab title="General" active>
                         <b-form-group>
-                            <label> Title </label>
+                            <label> Label </label>
                             <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
                         </b-form-group>
-                        <b-row>
-                            <b-col md="6" v-if="pool.isDefaultPool">
+                        <b-row v-if="rewardVariant === RewardVariant.Token && pool.erc20">
+                            <b-col md="6">
                                 <b-form-group>
                                     <label>
-                                        Amount
+                                        Tokens
                                         <a
                                             v-b-tooltip
-                                            :title="`The amount of ${pool.token.symbol} tokens earned with this reward.`"
+                                            :title="`The amount of ${pool.erc20.symbol} tokens earned with this reward.`"
                                             target="_blank"
                                         >
                                             <i class="fas fa-question-circle"></i>
                                         </a>
                                     </label>
-                                    <b-input-group :append="pool.token.symbol">
+                                    <b-input-group :append="pool.erc20.symbol">
                                         <b-form-input type="number" v-model="rewardWithdrawAmount" />
                                     </b-input-group>
                                 </b-form-group>
                             </b-col>
-                            <b-col md="6" v-if="pool.isDefaultPool">
+                            <b-col md="6">
                                 <label>
                                     Supply Limit
                                     <a
@@ -39,16 +69,13 @@
                                 <b-form-input type="number" v-model="rewardWithdrawLimit" />
                             </b-col>
                         </b-row>
-                        <b-form-group title="NFT" v-if="erc721 && erc721metadata">
+                        <b-form-group v-if="rewardVariant === RewardVariant.NFT && erc721metadata">
                             <label>
                                 NFT
-                                <a
+                                <base-tooltip-info
                                     class="mr-2"
-                                    v-b-tooltip
                                     title="Select the metadata for the NFT that should be minted when this reward is claimed."
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
+                                />
                             </label>
                             <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
                                 <template #button-content>
@@ -100,7 +127,7 @@
                             </b-input-group>
                         </b-form-group>
                     </b-tab>
-                    <b-tab title="Unlock & Expiration">
+                    <b-tab title="Expiration">
                         <b-form-group>
                             <label> Expiration </label>
                             <b-row>
@@ -111,18 +138,6 @@
                                     <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
                                 </b-col>
                             </b-row>
-                        </b-form-group>
-                        <b-form-group v-if="pool.isDefaultPool">
-                            <label>
-                                Unlock Date
-                                <a
-                                    v-b-tooltip
-                                    title="The benficiary will not be able to withdraw the tokens prior to this date. Leave blank for not locking the reward."
-                                >
-                                    <i class="fas fa-question-circle"></i>
-                                </a>
-                            </label>
-                            <b-form-datepicker v-model="rewardWithdrawUnlockDate" :min="getDefaultUnlockDate()" />
                         </b-form-group>
                     </b-tab>
                     <b-tab title="Conditions">
@@ -140,7 +155,10 @@
                                     <base-dropdown-channel-actions
                                         v-if="channel && channel.actions.length > 0"
                                         :actions="
-                                            channelActions.filter((action) => channel.actions.includes(action.type))
+                                            channelActions.filter((action) => {
+                                                if (!channel) return;
+                                                return channel.actions.includes(action.type);
+                                            })
                                         "
                                         @selected="onActionClick($event)"
                                     />
@@ -237,10 +255,17 @@ import slugify from '@/utils/slugify';
 import BaseModal from './BaseModal.vue';
 import { TERC721, TERC721Metadata } from '@/types/erc721';
 import { format } from 'date-fns';
+import BaseTooltipInfo from '../tooltips/BaseTooltipInfo.vue';
+
+enum RewardVariant {
+    Token = 0,
+    NFT = 1,
+}
 
 @Component({
     components: {
         BaseModal,
+        BaseTooltipInfo,
         BaseDropdownYoutubeVideo,
         BaseDropdownYoutubeUploads,
         BaseDropdownYoutubeChannels,
@@ -265,6 +290,7 @@ export default class ModalRewardCreate extends Vue {
     error = '';
     warning = '';
     format = format;
+    RewardVariant = RewardVariant;
 
     isClaimOnce = true;
     isMembershipRequired = false;
@@ -276,6 +302,7 @@ export default class ModalRewardCreate extends Vue {
     rewardTitle = '';
     amount = 1;
 
+    rewardVariant: RewardVariant = RewardVariant.Token;
     rewardExpireDate: Date | null = null;
     rewardExpireTime = '00:00:00';
 
@@ -291,7 +318,7 @@ export default class ModalRewardCreate extends Vue {
     @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
     @Prop() filteredRewards!: Reward[];
-    @Prop() isGovernanceEnabled!: boolean;
+    @Prop() filteredMetadata!: TERC721Metadata[];
 
     get minDate() {
         let date = new Date();
@@ -302,23 +329,27 @@ export default class ModalRewardCreate extends Vue {
     get isSubmitDisabled() {
         return (
             this.loading ||
-            (this.pool.isNFTPool && !this.erc721metadata) ||
-            (this.pool.isDefaultPool && this.rewardWithdrawLimit < 0) ||
-            (this.pool.isDefaultPool && this.rewardWithdrawAmount <= 0) ||
+            (this.rewardVariant === RewardVariant.NFT && !this.erc721metadata) ||
+            (this.rewardVariant === RewardVariant.Token && this.rewardWithdrawLimit < 0) ||
+            (this.rewardVariant === RewardVariant.Token && this.rewardWithdrawAmount <= 0) ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
     }
 
-    onShow() {
-        this.erc721metadata = this.filteredMetadata ? this.filteredMetadata[0] : null;
-    }
-
-    getDefaultUnlockDate() {
-        return new Date();
-    }
-
-    get filteredMetadata() {
-        return this.erc721 && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
+    onRewardVariantChanged(variant: RewardVariant) {
+        switch (variant) {
+            case RewardVariant.NFT: {
+                this.rewardWithdrawAmount = 0;
+                this.rewardWithdrawLimit = 0;
+                this.erc721metadata = this.filteredMetadata ? this.filteredMetadata[0] : null;
+                break;
+            }
+            case RewardVariant.Token: {
+                this.erc721metadata = null;
+                break;
+            }
+        }
+        this.rewardVariant = variant;
     }
 
     async getYoutube() {
@@ -407,7 +438,7 @@ export default class ModalRewardCreate extends Vue {
         this.item = this.channelActions[action.type].items[0];
     }
 
-    async submit(close: boolean) {
+    async submit() {
         this.loading = true;
         const expiryDate = this.rewardExpireDate && this.concatDatetime(this.rewardExpireDate, this.rewardExpireTime);
         const withdrawCondition =
@@ -433,9 +464,8 @@ export default class ModalRewardCreate extends Vue {
             expiryDate: expiryDate?.toISOString(),
             erc721metadataId: this.erc721metadata?._id,
             withdrawLimit: this.rewardWithdrawLimit,
-            withdrawAmount: this.pool.isNFTPool ? 1 : this.rewardWithdrawAmount,
+            withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
             withdrawDuration: this.rewardWithdrawDuration,
-            withdrawUnlockDate: this.rewardWithdrawUnlockDate,
             withdrawCondition,
             isClaimOnce: this.isClaimOnce,
             isMembershipRequired: this.isMembershipRequired,
@@ -445,16 +475,12 @@ export default class ModalRewardCreate extends Vue {
         this.rewardWithdrawLimit = 0;
         this.rewardWithdrawAmount = 0;
         this.rewardWithdrawDuration = 0;
-        this.rewardWithdrawUnlockDate = null;
         this.rewardTitle = '';
         this.rewardExpireDate = null;
         this.rewardExpireTime = '00:00:00';
         this.amount = 1;
 
-        if (close) {
-            this.$bvModal.hide(`modalRewardCreate`);
-        }
-
+        this.$bvModal.hide(`modalRewardCreate`);
         this.loading = false;
         this.$emit('submit');
     }

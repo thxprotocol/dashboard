@@ -49,7 +49,7 @@
                     <label>Select reward</label>
                     <b-form-select v-model="widgetReward">
                         <b-form-select-option :key="reward.id" v-for="reward of filteredRewards" :value="reward">
-                            #{{ reward.id }} ({{ reward.withdrawAmount }} {{ pool.token.symbol }})
+                            #{{ reward.id }} ({{ reward.withdrawAmount }} {{ pool.erc20.symbol }})
                         </b-form-select-option>
                     </b-form-select>
                 </b-form-group>

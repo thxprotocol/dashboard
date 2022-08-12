@@ -35,6 +35,7 @@ export interface Reward {
     amount: number;
     createdAt: Date;
     updatedAt: Date;
+    erc721metadataId: string;
 }
 
 export interface IRewards {

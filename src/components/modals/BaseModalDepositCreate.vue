@@ -1,18 +1,28 @@
 <template>
     <base-modal
         size="lg"
-        :title="`Top up a pool with ${pool.token.symbol}`"
-        :id="`modalDepositCreate-${pool.token._id}`"
+        :title="`Top up a pool with ${pool.erc20.symbol}`"
+        :id="`modalDepositCreate-${pool.erc20._id}`"
         @show="onShow"
         :loading="loading"
         :error="error"
     >
         <template #modal-body v-if="!loading && erc20">
-            <b-alert v-if="pool.token.type === ERC20Type.Unlimited" variant="info" show>
+            <b-alert v-if="pool.erc20.type === ERC20Type.Unlimited" variant="info" show>
                 <i class="fas fa-info-circle mr-2"></i>
                 <strong>No need to top up your pool!</strong> Tokens will be minted when they are needed.
             </b-alert>
-            <form v-if="erc20.adminBalance > 0" v-on:submit.prevent="submit" id="formDepositCreate">
+            <b-alert variant="warning" show v-if="pool.erc20.type === ERC20Type.Unknown">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>It seems we have not deployed this contract.</strong>
+                Transfer {{ pool.erc20.symbol }} to <strong>{{ pool.address }}</strong>
+                <a v-clipboard:copy="pool.address"><i class="fas fa-clipboard"></i></a> to top up your pool.
+            </b-alert>
+            <form
+                v-if="pool.erc20.type === ERC20Type.Limited && erc20.adminBalance > 0"
+                v-on:submit.prevent="submit"
+                id="formDepositCreate"
+            >
                 <b-card bg-variant="light" class="border-0" body-class="p-5">
                     <b-input-group :append="erc20.symbol" :class="{ 'is-valid': amount <= erc20.adminBalance }">
                         <b-form-input type="number" v-model="amount" />
@@ -23,23 +33,17 @@
                     </small>
                 </b-card>
             </form>
-            <b-alert variant="warning" show v-else>
-                <i class="fas fa-info-circle mr-2"></i>
-                <strong>It seems we have not deployed this contract.</strong>
-                Transfer {{ pool.token.symbol }} to <strong>{{ pool.address }}</strong>
-                <a v-clipboard:copy="pool.address"><i class="fas fa-clipboard"></i></a> to top up your pool.
-            </b-alert>
         </template>
         <template #btn-primary>
             <b-button
-                :disabled="loading || pool.token.type !== ERC20Type.Limited"
+                :disabled="loading || pool.erc20.type !== ERC20Type.Limited"
                 class="rounded-pill"
                 type="submit"
                 form="formDepositCreate"
                 variant="primary"
                 block
             >
-                Top up {{ amount }} {{ pool.token.symbol }}
+                Top up {{ amount }} {{ pool.erc20.symbol }}
             </b-button>
         </template>
     </base-modal>
@@ -71,14 +75,14 @@ export default class BaseModalDepositCreate extends Vue {
     @Prop() pool!: IPool;
 
     get erc20() {
-        return this.erc20s[this.pool.token._id];
+        return this.erc20s[this.pool.erc20._id];
     }
 
     onShow() {
         this.loading = true;
         this.amount = 0;
         this.error = '';
-        this.$store.dispatch('erc20/read', this.pool.token._id).then(async () => {
+        this.$store.dispatch('erc20/read', this.pool.erc20._id).then(async () => {
             this.loading = false;
         });
     }
