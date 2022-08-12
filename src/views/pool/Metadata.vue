@@ -79,6 +79,7 @@ import BaseCardErc721Metadata from '@/components/cards/BaseCardERC721Metadata.vu
 import BaseModalErc721MetadataCreate from '@/components/modals/BaseModalERC721MetadataCreate.vue';
 import BaseModalErc721MetadataBulkCreate from '@/components/modals/BaseModalERC721MetadataBulkCreate.vue';
 import BaseModalErc721MetadataUploadCSV from '@/components/modals/BaseModalERC721MetadataUploadCSV.vue';
+import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC721MetadataCreateCSV.vue';
 
 @Component({
     components: {
@@ -87,6 +88,7 @@ import BaseModalErc721MetadataUploadCSV from '@/components/modals/BaseModalERC72
         BaseModalErc721MetadataBulkCreate,
         BaseCardErc721Metadata,
         BaseModalErc721MetadataUploadCSV,
+        BaseModalErc721MetadataCreateCSV,
     },
     computed: mapGetters({
         pools: 'pools/all',
@@ -141,10 +143,14 @@ export default class MetadataView extends Vue {
                 page: this.page,
                 limit: this.limit,
             });
+
         });
         this.isLoading = false;
     }
 
+    mounted() {
+        this.listMetadata();
+    }
     mounted() {
         this.listMetadata();
     }
