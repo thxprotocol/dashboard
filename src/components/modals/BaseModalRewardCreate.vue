@@ -482,6 +482,7 @@ export default class ModalRewardCreate extends Vue {
 
         this.$bvModal.hide(`modalRewardCreate`);
         this.loading = false;
+        this.$emit('submit');
     }
 }
 </script>
