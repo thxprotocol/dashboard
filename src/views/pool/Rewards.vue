@@ -19,7 +19,7 @@
             @clicked="$bvModal.show('modalRewardCreate')"
         />
         <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of rewardsByPage" />
-         <b-pagination
+        <b-pagination
             v-if="total > limit"
             class="mt-3"
             @change="onChangePage"
@@ -33,7 +33,7 @@
             :erc721="erc721"
             :filteredRewards="rewardsByPage"
             :filteredMetadata="filteredMetadata"
-             @submit="onSubmit"
+            @submit="onSubmit"
         />
     </div>
 </template>

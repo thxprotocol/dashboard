@@ -42,7 +42,6 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { IPool } from '@/store/modules/pools';
 import { TERC721, TERC721DefaultProp } from '@/types/erc721';
 import { Component, Prop, Vue } from 'vue-property-decorator';

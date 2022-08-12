@@ -1,6 +1,5 @@
-import { Vue } from 'vue-property-decorator';
-import axios, { AxiosResponse } from 'axios';
-import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import axios from 'axios';
+import { Action, Module, VuexModule } from 'vuex-module-decorators';
 
 @Module({ namespaced: true })
 class ImageModule extends VuexModule {
