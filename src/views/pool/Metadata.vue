@@ -40,7 +40,6 @@
         />
         <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" />
         <base-modal-erc721-metadata-bulk-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
-        <BaseModalErc721MetadataCreateCSV v-if="erc721" :pool="pool" :erc721="erc721" />
     </div>
 </template>
 
