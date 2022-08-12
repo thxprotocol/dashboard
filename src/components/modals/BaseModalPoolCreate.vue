@@ -28,7 +28,6 @@ import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectER
 import BaseDropdownSelectMultipleErc20 from '@/components/dropdowns/BaseDropdownSelectMultipleERC20.vue';
 import BaseDropdownSelectErc721 from '@/components/dropdowns/BaseDropdownSelectERC721.vue';
 import BaseModal from './BaseModal.vue';
-import { AxiosError } from 'axios';
 import { IAccount } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
 import { TERC721 } from '@/types/erc721';
@@ -56,7 +55,7 @@ export default class ModalAssetPoolCreate extends Vue {
     profile!: IAccount;
 
     get disabled() {
-        return this.loading || !this.erc20Selectedtokens.length;
+        return this.loading || (!this.erc20Selectedtokens.length && !this.erc721Selectedtokens.length);
     }
 
     onSelectChain(chainId: ChainId) {
@@ -74,20 +73,14 @@ export default class ModalAssetPoolCreate extends Vue {
 
     async submit() {
         this.loading = true;
-        try {
-            await this.$store.dispatch('pools/create', {
-                chainId: this.chainId,
-                erc20tokens: this.erc20Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
-                erc721tokens: this.erc721Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
-                variant: this.poolVariant,
-            });
-            this.$bvModal.hide(`modalAssetPoolCreate`);
-        } catch (error) {
-            const axiosErr = (error as AxiosError).response;
-            this.error = axiosErr && axiosErr.statusText ? axiosErr.statusText : 'Could not deploy your token pool.';
-        } finally {
-            this.loading = false;
-        }
+        await this.$store.dispatch('pools/create', {
+            chainId: this.chainId,
+            erc20tokens: this.erc20Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
+            erc721tokens: this.erc721Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
+            variant: this.poolVariant,
+        });
+        this.$bvModal.hide(`modalAssetPoolCreate`);
+        this.loading = false;
     }
 }
 </script>

@@ -115,7 +115,7 @@ export default class MetadataView extends Vue {
     }
 
     get erc721(): TERC721 {
-        return this.erc721s[this.pool.erc721._id];
+        return this.erc721s[this.pool.erc721Id];
     }
 
     get total() {

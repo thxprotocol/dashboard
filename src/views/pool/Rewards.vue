@@ -12,18 +12,28 @@
             </b-col>
         </b-row>
         <base-nothing-here
-            v-if="!filteredRewards.length"
+            v-if="!rewardsByPage.length"
             text-submit="Create a Reward"
             title="You have not created a reward yet"
             description="Use rewards to send your tokens to people and use reward configuration to limit claims."
             @clicked="$bvModal.show('modalRewardCreate')"
         />
-        <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of filteredRewards" />
+        <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of rewardsByPage" />
+        <b-pagination
+            v-if="total > limit"
+            class="mt-3"
+            @change="onChangePage"
+            v-model="page"
+            :per-page="limit"
+            :total-rows="total"
+            align="center"
+        ></b-pagination>
         <base-modal-reward-create
             :pool="pool"
             :erc721="erc721"
-            :filteredRewards="filteredRewards"
+            :filteredRewards="rewardsByPage"
             :filteredMetadata="filteredMetadata"
+            @submit="onSubmit"
         />
     </div>
 </template>
@@ -32,10 +42,10 @@
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { IRewards, Reward } from '@/types/rewards';
 import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import BaseCardReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
+import { TReward, TRewardState } from '@/store/modules/rewards';
 import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
 
 @Component({
@@ -46,6 +56,7 @@ import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
     },
     computed: mapGetters({
         pools: 'pools/all',
+        totals: 'rewards/totals',
         rewards: 'rewards/all',
         erc721s: 'erc721/all',
     }),
@@ -60,13 +71,21 @@ export default class AssetPoolView extends Vue {
     rewardsLoading = true;
     assetPoolLoading = true;
     isGovernanceEnabled = false;
+    isLoading = true;
+    limit = 5;
+    page = 1;
 
     pools!: IPools;
-    rewards!: IRewards;
+    totals!: { [poolId: string]: number };
+    rewards!: TRewardState;
     erc721s!: IERC721s;
 
     get pool() {
         return this.pools[this.$route.params.id];
+    }
+
+    get total() {
+        return this.totals[this.$route.params.id];
     }
 
     get erc721(): TERC721 | null {
@@ -74,20 +93,39 @@ export default class AssetPoolView extends Vue {
         return this.erc721s[this.pool.erc721._id];
     }
 
-    get filteredRewards(): Reward[] {
+    get rewardsByPage() {
         if (!this.rewards[this.$route.params.id]) return [];
-        return Object.values(this.rewards[this.$route.params.id]);
+
+        return Object.values(this.rewards[this.$route.params.id])
+            .filter((reward: TReward) => reward.page === this.page)
+            .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+            .slice(0, this.limit);
+    }
+
+    async listRewards() {
+        this.isLoading = true;
+        await this.$store.dispatch('rewards/list', { page: this.page, limit: this.limit, poolId: this.pool._id });
+        this.isLoading = false;
+    }
+
+    onChangePage(page: number) {
+        this.page = page;
+        this.listRewards();
+    }
+
+    onSubmit() {
+        this.page = 1;
+        this.listRewards();
     }
 
     get filteredMetadata() {
-        return this.erc721 && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
+        return this.erc721 && this.erc721.metadata?.filter((m: TERC721Metadata) => !m.tokenId);
     }
 
     mounted() {
-        this.$store.dispatch('rewards/list', this.pool._id);
+        this.listRewards();
 
         if (this.pool.erc721) {
-            debugger;
             this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
                 await this.$store.dispatch('erc721/listMetadata', this.pool.erc721);
             });
