@@ -143,14 +143,10 @@ export default class MetadataView extends Vue {
                 page: this.page,
                 limit: this.limit,
             });
-
         });
         this.isLoading = false;
     }
 
-    mounted() {
-        this.listMetadata();
-    }
     mounted() {
         this.listMetadata();
     }
