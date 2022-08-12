@@ -93,8 +93,8 @@ class ClientModule extends VuexModule {
 
         const { data }: TClientResponse = await axios({
             method: 'GET',
-            url: '/clients?' + String(params),
-            headers: { 'X-PoolId': pool._id },
+            url: '/clients',
+            params,
         });
 
         this.context.commit('setTotal', { pool, total: data.total });
