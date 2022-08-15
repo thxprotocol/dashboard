@@ -30,7 +30,7 @@
                     <b-card :loading="isLoading">
                         <label>Upload Edited CSV</label>
                         <b-form-group>
-                            <b-form-file @change="onFileSelected($event)" accept="text/csv" />
+                            <b-form-file v-model="selectedFile" accept="text/csv" />
                         </b-form-group>
                         <b-button
                             class="rounded-pill"
@@ -67,10 +67,6 @@ export default class ModalERC721MetadataCreateCSV extends Vue {
 
     selectedFile: File | null = null;
     isLoading = false;
-
-    async onFileSelected(event: any) {
-        this.selectedFile = event.target.files[0];
-    }
 
     async downloadCsv() {
         this.isLoading = true;
