@@ -59,6 +59,8 @@ export default class BaseDropdownERC721Metadata extends Vue {
     format = format;
     erc721s!: IERC721s;
     selectedMetadata: TERC721Metadata | null = null;
+    limit = 100;
+    page = 1;
 
     get erc721(): TERC721 {
         return this.erc721s[this.pool.erc721._id];
@@ -69,7 +71,11 @@ export default class BaseDropdownERC721Metadata extends Vue {
     mounted() {
         if (this.pool.erc721) {
             this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async (erc721) => {
-                await this.$store.dispatch('erc721/listMetadata', erc721);
+                await this.$store.dispatch('erc721/listMetadata', {
+                    erc721: this.pool.erc721,
+                    page: this.page,
+                    limit: this.limit,
+                });
             });
         }
     }
