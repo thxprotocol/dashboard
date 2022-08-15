@@ -1,4 +1,6 @@
+import { IPool } from '@/store/modules/pools';
 import { ChainId } from '@/types/enums/ChainId';
+import { AxiosResponse } from 'axios';
 
 export enum ERC721Variant {
     Uknown = -1,
@@ -24,6 +26,7 @@ export interface TERC721Metadata {
     createdAt: Date;
     attributes: [{ key: string; value: string }];
     tokens: any[];
+    page: number;
 }
 
 export type TERC721 = {
@@ -44,3 +47,36 @@ export type TERC721 = {
 export interface IERC721s {
     [id: string]: TERC721;
 }
+
+export type PaginationParams = Partial<{
+    page: number;
+    limit: number;
+}>;
+
+export type MetadataListProps = PaginationParams & {
+    erc721: TERC721;
+    pool: IPool;
+};
+
+export type TMetadataMeta = {
+    limit: number;
+    total: number;
+    next?: { page: number };
+    previous?: { page: number };
+};
+
+export type TMetadataResponse = AxiosResponse<
+    TMetadataMeta & {
+        results: TERC721Metadata[];
+    }
+>;
+
+export type MetadataByPage = {
+    [page: number]: TERC721Metadata[];
+};
+
+export type TMetadataState = {
+    [poolId: string]: TMetadataMeta & {
+        byPage: MetadataByPage;
+    };
+};
