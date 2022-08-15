@@ -14,25 +14,19 @@
                 <b-col class="d-flex align-items-center">
                     <h2 class="mb-0">Metadata</h2>
                 </b-col>
-                <div class="d-flex ustify-content-end">
-                    <b-col>
-                        <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
-                            <i class="fas fa-plus mr-2"></i>
-                            <span class="d-none d-md-inline">Create Metadata</span>
-                        </b-button>
-                    </b-col>
-                    <b-col>
-                        <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill" variant="primary">
-                            <i class="fas fa-upload mr-2"></i>
-                            <span class="d-none d-md-inline">Upload images</span>
-                        </b-button>
-                    </b-col>
-                    <b-col>
-                        <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill" variant="primary">
-                            <i class="fas fa-upload mr-2"></i>
-                            <span class="d-none d-md-inline">Upload spreadsheet</span>
-                        </b-button>
-                    </b-col>
+                <div class="d-flex justify-content-end">
+                    <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
+                        <i class="fas fa-plus mr-2"></i>
+                        <span class="d-none d-md-inline">Create Metadata</span>
+                    </b-button>
+                    <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="primary">
+                        <i class="fas fa-upload mr-2"></i>
+                        <span class="d-none d-md-inline">Upload images</span>
+                    </b-button>
+                    <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="primary">
+                        <i class="fas fa-upload mr-2"></i>
+                        <span class="d-none d-md-inline">Upload CSV</span>
+                    </b-button>
                 </div>
             </b-row>
             <base-nothing-here
