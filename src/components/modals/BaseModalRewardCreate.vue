@@ -77,28 +77,7 @@
                                     title="Select the metadata for the NFT that should be minted when this reward is claimed."
                                 />
                             </label>
-                            <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
-                                <template #button-content>
-                                    <div class="d-block" v-if="filteredMetadata.length">
-                                        {{ erc721metadata.title }}
-                                    </div>
-                                    <div v-else>Create some metadata first</div>
-                                </template>
-                                <b-dropdown-item
-                                    :key="key"
-                                    v-for="(metadata, key) of filteredMetadata"
-                                    @click="erc721metadata = metadata"
-                                >
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            {{ metadata.title }}
-                                        </div>
-                                        <small class="text-muted">
-                                            {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
-                                        </small>
-                                    </div>
-                                </b-dropdown-item>
-                            </b-dropdown>
+                            <BaseDropdownERC721Metadata :pool="pool" @selected="onSelectMetadata" />
                         </b-form-group>
                         <hr />
                         <b-form-group class="mb-0">
@@ -256,6 +235,7 @@ import BaseModal from './BaseModal.vue';
 import { TERC721, TERC721Metadata } from '@/types/erc721';
 import { format } from 'date-fns';
 import BaseTooltipInfo from '../tooltips/BaseTooltipInfo.vue';
+import BaseDropdownERC721Metadata from '../dropdowns/BaseDropdownERC721Metadata.vue';
 
 enum RewardVariant {
     Token = 0,
@@ -275,6 +255,7 @@ enum RewardVariant {
         BaseDropdownChannelTypes,
         BaseDropdownSpotifyTrack,
         BaseDropdownSpotifyPlaylist,
+        BaseDropdownERC721Metadata,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -334,6 +315,11 @@ export default class ModalRewardCreate extends Vue {
             (this.rewardVariant === RewardVariant.Token && this.rewardWithdrawAmount <= 0) ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
+    }
+
+    onShow() {
+        this.erc721metadata =
+            this.rewardVariant === RewardVariant.NFT && this.filteredMetadata ? this.filteredMetadata[0] : null;
     }
 
     onRewardVariantChanged(variant: RewardVariant) {
@@ -479,10 +465,14 @@ export default class ModalRewardCreate extends Vue {
         this.rewardExpireDate = null;
         this.rewardExpireTime = '00:00:00';
         this.amount = 1;
-
+        this.erc721metadata = null;
         this.$bvModal.hide(`modalRewardCreate`);
         this.loading = false;
         this.$emit('submit');
+    }
+
+    onSelectMetadata(metadata: TERC721Metadata) {
+        this.erc721metadata = metadata;
     }
 }
 </script>
