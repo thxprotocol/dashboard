@@ -9,6 +9,9 @@
                 {{ !pool.archived ? 'Archive' : 'Unarchive' }}
             </span>
         </b-dropdown-item>
+        <b-dropdown-item v-clipboard:copy="pool._id">
+            <span class="text-muted"><i class="fas fa-clipboard mr-3"></i>Copy ID </span>
+        </b-dropdown-item>
         <b-dropdown-item size="sm" variant="dark" @click="$emit('remove')">
             <span class="text-muted"><i class="fas fa-trash-alt mr-3"></i>Remove</span>
         </b-dropdown-item>

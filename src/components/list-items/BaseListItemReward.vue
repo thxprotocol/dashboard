@@ -1,107 +1,72 @@
 <template>
     <base-card>
+        <template #card-header>
+            {{ reward.title }}
+        </template>
+        <template #card-footer v-if="!reward.erc721metadataId && reward.progress">
+            <b-progress style="border-radius: 0 0 0.3rem 0.3rem">
+                <b-progress-bar
+                    :label="
+                        reward.withdrawLimit ? `${reward.progress}/${reward.withdrawLimit}` : String(reward.progress)
+                    "
+                    :value="reward.progress"
+                    :min="0"
+                    :max="reward.withdrawLimit || reward.progress"
+                />
+            </b-progress>
+        </template>
         <template #card-body>
-            <b-alert variant="info" show v-if="isDownloadScheduled">
-                You will receive an e-mail when you can download your file.
+            <b-alert variant="success" show v-if="isDownloadScheduled">
+                <i class="fas fa-clock mr-2"></i>
+                You will receive an e-mail when your download is ready!
             </b-alert>
-            <b-row>
-                <b-col md="3" class="d-flex mb-3 mb-sm-0">
-                    <b-button
-                        v-if="reward.amount === 1"
-                        v-b-tooltip
-                        block
-                        title="Click to download the QR code as a jpg file"
-                        variant="light"
-                        class="p-3 m-auto m-0"
-                        :download="`${reward._id}.jpg`"
-                        :href="qrURL"
-                    >
-                        <vue-qr
-                            style="width: 50px; height: 50px"
-                            :callback="onQRLoaded"
-                            :logoSrc="imgData"
-                            :text="claimURL"
-                            :correctLevel="3"
-                            :logoScale="0.3"
-                            :logoCornerRadius="0"
-                            :logoMargin="0"
-                            :margin="10"
-                            :size="480"
-                        />
+            <b-alert variant="info" show v-if="isDownloading">
+                <i class="fas fa-hourglass-half mr-2"></i>
+                Downloading your QR codes
+            </b-alert>
+            <div class="d-flex align-items-center">
+                <h3 v-if="!reward.erc721metadataId" class="text-primary">
+                    {{ reward.withdrawAmount }} {{ pool.erc20.symbol }}
+                </h3>
+                <h3 v-if="reward.erc721metadataId" class="text-primary">1 {{ pool.erc721.symbol }}</h3>
+                <b-badge v-if="reward.erc721metadataId" variant="dark" class="mb-2 mx-2">NFT</b-badge>
+                <sup
+                    class="fas fa-circle ml-1 mr-auto"
+                    :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
+                    style="font-size: 0.8rem"
+                >
+                </sup>
+                <b-dropdown size="sm" variant="white" no-caret right>
+                    <template #button-content>
+                        <i
+                            class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
+                            style="font-size: 1.2rem"
+                            aria-hidden="true"
+                        ></i>
+                    </template>
+                    <b-dropdown-item v-clipboard:copy="reward.id">
+                        <i class="fas fa-clipboard mr-3"></i>Copy ID
+                    </b-dropdown-item>
+                    <b-dropdown-item-button v-if="reward.amount > 1" @click="getQRCodes()">
+                        <i class="fas fa-qrcode mr-3"></i>Download {{ reward.amount }} QR codes
+                    </b-dropdown-item-button>
+                    <b-dropdown-item v-if="reward.amount === 1" :download="`${reward._id}.jpg`" :href="qrURL">
+                        <i class="fas fa-qrcode mr-3"></i>Download QR code
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="toggleState()">
+                        <i class="fas fa-power-off mr-3"></i>{{ reward.state ? 'Disable' : 'Enable' }}
+                    </b-dropdown-item>
+                </b-dropdown>
+            </div>
+            <b-input-group size="sm" class="mt-2" v-if="reward.amount === 1">
+                <b-form-input size="sm" readonly :value="claimURL" />
+                <b-input-group-append>
+                    <b-button variant="primary" v-clipboard:copy="claimURL">
+                        <i class="fas fa-clipboard m-0" style="font-size: 1rem"></i>
                     </b-button>
-                    <b-button v-else block title="Download QR codes" variant="primary" @click="getQRCodes()">
-                        <b-spinner small variant="white" v-if="isDownloading" />
-                        <template v-else>
-                            <i class="fas fa-download mr-3"></i>
-                            <strong>{{ reward.amount }}</strong> QR Codes
-                        </template>
-                    </b-button>
-                </b-col>
-                <b-col class="d-flex flex-column">
-                    <div class="d-flex align-items-center">
-                        <h3 v-if="!reward.erc721metadataId" class="text-primary">
-                            {{ reward.withdrawAmount }} {{ pool.erc20.symbol }}
-                        </h3>
-                        <h3 v-if="reward.erc721metadataId" class="text-primary">1 {{ pool.erc721.symbol }}</h3>
-                        <b-badge v-if="reward.erc721metadataId" variant="dark" class="mb-2 mx-2">NFT</b-badge>
-                        <sup
-                            class="fas fa-circle ml-1 mr-auto"
-                            :class="{ 'text-danger': !reward.state, 'text-success': reward.state }"
-                            style="font-size: 0.8rem"
-                        >
-                        </sup>
-                        <b-dropdown size="sm" variant="white" no-caret right>
-                            <template #button-content>
-                                <i
-                                    class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
-                                    style="font-size: 1.2rem"
-                                    aria-hidden="true"
-                                ></i>
-                            </template>
-                            <b-dropdown-item @click="toggleState()">
-                                <i class="fas fa-power-off mr-3"></i>{{ reward.state ? 'Disable' : 'Enable' }}
-                            </b-dropdown-item>
-                            <b-dropdown-item v-clipboard:copy="reward.id">
-                                <i class="fas fa-clipboard mr-3"></i>Copy ID
-                            </b-dropdown-item>
-                            <b-dropdown-item-button v-if="reward.amount > 1">
-                                <i class="fas fa-qrcode mr-3"></i>Download QR Code archive
-                            </b-dropdown-item-button>
-                            <b-dropdown-item v-if="reward.amount === 1" :download="`${reward._id}.jpg`" :href="qrURL">
-                                <i class="fas fa-qrcode mr-3"></i>Download QR Code
-                            </b-dropdown-item>
-                        </b-dropdown>
-                    </div>
-                    <p>{{ reward.title }}</p>
-                    <b-input-group size="sm" class="mt-auto" v-if="reward.amount === 1">
-                        <b-form-input size="sm" readonly :value="claimURL" />
-                        <b-input-group-append>
-                            <b-button variant="primary" v-clipboard:copy="claimURL">
-                                <i class="fas fa-clipboard m-0" style="font-size: 1rem"></i>
-                            </b-button>
-                        </b-input-group-append>
-                    </b-input-group>
-                </b-col>
-            </b-row>
+                </b-input-group-append>
+            </b-input-group>
             <hr />
-            <template v-if="!reward.erc721metadataId">
-                <label>
-                    Supply Limit: <strong v-if="reward.withdrawLimit" class="">{{ reward.withdrawLimit }}</strong>
-                </label>
-                <b-progress>
-                    <b-progress-bar
-                        :label="
-                            reward.withdrawLimit
-                                ? `${reward.progress}/${reward.withdrawLimit}`
-                                : String(reward.progress)
-                        "
-                        :value="reward.progress"
-                        :min="0"
-                        :max="reward.withdrawLimit || reward.progress"
-                    />
-                </b-progress>
-            </template>
-            <label class="mt-3">Reward Conditions:</label>
             <div>
                 <b-badge
                     v-b-tooltip

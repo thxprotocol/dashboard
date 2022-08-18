@@ -15,16 +15,20 @@
             </b-card>
         </template>
         <b-card
-            class="mb-3"
+            class="mb-3 shadow-sm"
             :class="classes"
             @click="$emit('click')"
-            header-bg-variant="dark"
-            header-class="text-white p-0 small text-center"
+            header-bg-variant="light"
+            header-class="p-0 small text-center border-0"
+            footer-class="text-white p-0 small text-center border-0"
         >
             <template #header>
                 <slot name="card-header"></slot>
             </template>
             <slot name="card-body"></slot>
+            <template #footer>
+                <slot name="card-footer"></slot>
+            </template>
         </b-card>
     </b-skeleton-wrapper>
 </template>
