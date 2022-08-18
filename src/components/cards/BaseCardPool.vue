@@ -4,7 +4,7 @@
             <span v-if="pool.erc20 && pool.erc721">Token &amp; NFT Pool</span>
             <span v-if="pool.erc20 && !pool.erc721">Token Pool</span>
             <span v-if="!pool.erc20 && pool.erc721">Collectible Pool</span>
-            <i class="ml-1 fas fa-file-archive text-white small" v-if="pool.archived"></i>
+            <i class="ml-1 fas fa-archive text-white small" v-if="pool.archived"></i>
         </template>
         <template #card-body>
             <b-alert show variant="warning" v-if="outOfDate && artifacts">

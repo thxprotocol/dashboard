@@ -1,7 +1,7 @@
 <template>
-    <b-button size="sm" variant="outline-dark" class="rounded-pill pl-3" @click="toggleShowArchived">
+    <b-button size="sm" variant="outline-gray" class="rounded-pill pl-3" @click="toggleShowArchived">
         <span>{{ !showArchived ? 'Show' : 'Hide' }} archived</span>
-        <i class="fas fa-file-archive mr-2"></i>
+        <i class="fas fa-archive mr-2"></i>
     </b-button>
 </template>
 

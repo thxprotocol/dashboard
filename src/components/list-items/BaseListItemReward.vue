@@ -11,9 +11,9 @@
                         v-b-tooltip
                         block
                         title="Click to download the QR code as a jpg file"
-                        :download="`${reward._id}.jpg`"
                         variant="light"
                         class="p-3 m-auto m-0"
+                        :download="`${reward._id}.jpg`"
                         :href="qrURL"
                     >
                         <vue-qr
@@ -50,7 +50,7 @@
                             style="font-size: 0.8rem"
                         >
                         </sup>
-                        <b-dropdown size="sm" variant="white" no-caret>
+                        <b-dropdown size="sm" variant="white" no-caret right>
                             <template #button-content>
                                 <i
                                     class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
@@ -58,9 +58,18 @@
                                     aria-hidden="true"
                                 ></i>
                             </template>
-                            <b-dropdown-item-button @click="toggleState()">
+                            <b-dropdown-item @click="toggleState()">
                                 <i class="fas fa-power-off mr-3"></i>{{ reward.state ? 'Disable' : 'Enable' }}
+                            </b-dropdown-item>
+                            <b-dropdown-item v-clipboard:copy="reward.id">
+                                <i class="fas fa-clipboard mr-3"></i>Copy ID
+                            </b-dropdown-item>
+                            <b-dropdown-item-button v-if="reward.amount > 1">
+                                <i class="fas fa-qrcode mr-3"></i>Download QR Code archive
                             </b-dropdown-item-button>
+                            <b-dropdown-item v-if="reward.amount === 1" :download="`${reward._id}.jpg`" :href="qrURL">
+                                <i class="fas fa-qrcode mr-3"></i>Download QR Code
+                            </b-dropdown-item>
                         </b-dropdown>
                     </div>
                     <p>{{ reward.title }}</p>
@@ -68,7 +77,7 @@
                         <b-form-input size="sm" readonly :value="claimURL" />
                         <b-input-group-append>
                             <b-button variant="primary" v-clipboard:copy="claimURL">
-                                <i class="far fa-copy m-0" style="font-size: 1rem"></i>
+                                <i class="fas fa-clipboard m-0" style="font-size: 1rem"></i>
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -265,10 +274,8 @@ export default class BaseCardReward extends Vue {
 
     toggleState() {
         this.$store.dispatch('rewards/update', {
-            reward: this.reward,
-            data: {
-                state: this.reward.state ? RewardState.Disabled : RewardState.Enabled,
-            },
+            pool: this.pool,
+            reward: { ...this.reward, state: this.reward.state ? RewardState.Disabled : RewardState.Enabled },
         });
     }
 

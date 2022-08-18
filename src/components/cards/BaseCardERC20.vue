@@ -2,7 +2,7 @@
     <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-header>
             {{ ERC20Type[erc20.type] }}
-            <i class="ml-1 fas fa-file-archive text-white small" v-if="erc20.archived"></i>
+            <i class="ml-1 fas fa-archive text-white small" v-if="erc20.archived"></i>
         </template>
         <template #card-body v-if="erc20.name">
             <base-dropdown-token-menu :erc20="erc20" @archive="archive" />

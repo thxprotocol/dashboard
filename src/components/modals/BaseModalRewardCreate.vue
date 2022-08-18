@@ -27,7 +27,7 @@
                         >
                             <strong> NFT Reward</strong>
                             <p>Let your users mint an NFT for your collection.</p>
-                            <small class="text-muted">2.5% protocol fee on sales</small>
+                            <small class="text-muted">2.5% protocol fee on sales through Payment Requests</small>
                         </b-form-radio>
                     </b-col>
                 </b-form-row>

@@ -2,6 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IRewardCondition, Reward } from '@/types/rewards';
+import { IPool } from './pools';
 
 export type TReward = { page: number } & Reward;
 
@@ -39,7 +40,6 @@ class RewardModule extends VuexModule {
         if (!this._all[pool]) {
             Vue.set(this._all, pool, {});
         }
-
         Vue.set(this._all[pool], reward.id, reward);
     }
 
@@ -89,35 +89,22 @@ class RewardModule extends VuexModule {
             method: 'POST',
             url: '/rewards',
             headers: { 'X-PoolId': payload.poolId },
-            data: {
-                slug: payload.slug,
-                title: payload.title,
-                expiryDate: payload.expiryDate,
-                erc721metadataId: payload.erc721metadataId,
-                withdrawLimit: payload.withdrawLimit,
-                withdrawAmount: payload.withdrawAmount,
-                withdrawDuration: payload.withdrawDuration,
-                withdrawCondition: payload.withdrawCondition,
-                withdrawUnlockDate: payload.withdrawUnlockDate,
-                isClaimOnce: payload.isClaimOnce,
-                isMembershipRequired: payload.isMembershipRequired,
-                amount: payload.amount,
-            },
+            data: payload,
         });
 
         this.context.commit('set', { pool: payload.poolId, reward: r.data });
     }
 
     @Action({ rawError: true })
-    async update({ reward, data }: { reward: Reward; data: any }) {
+    async update({ pool, reward }: { pool: IPool; reward: TReward }) {
         const r = await axios({
             method: 'PATCH',
             url: `/rewards/${reward.id}`,
-            headers: { 'X-PoolId': reward.poolId },
-            data,
+            headers: { 'X-PoolId': pool._id },
+            data: reward,
         });
 
-        this.context.commit('set', r.data);
+        this.context.commit('set', { pool: reward.poolId, reward: { ...reward, ...r.data } });
     }
 
     @Action({ rawError: true })

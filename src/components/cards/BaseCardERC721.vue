@@ -2,7 +2,7 @@
     <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
         <template #card-header>
             NFT
-            <i class="ml-1 fas fa-file-archive text-white small" v-if="erc721.archived"></i>
+            <i class="ml-1 fas fa-archive text-white small" v-if="erc721.archived"></i>
         </template>
         <template #card-body v-if="erc721.address">
             <base-dropdown-menu-nft :erc721="erc721" @archive="archive" />

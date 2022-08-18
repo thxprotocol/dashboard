@@ -20,7 +20,6 @@
         />
         <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of rewardsByPage" />
         <b-pagination
-            v-if="total > limit"
             class="mt-3"
             @change="onChangePage"
             v-model="page"

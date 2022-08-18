@@ -5,7 +5,7 @@
         </template>
         <b-dropdown-item size="sm" variant="dark" @click="$emit('archive')">
             <span class="text-muted"
-                ><i class="fas fa-file-archive mr-3"></i>
+                ><i class="fas fa-archive mr-3"></i>
                 {{ !pool.archived ? 'Archive' : 'Unarchive' }}
             </span>
         </b-dropdown-item>
