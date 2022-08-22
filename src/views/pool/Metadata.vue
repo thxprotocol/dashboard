@@ -14,20 +14,22 @@
                 <b-col class="d-flex align-items-center">
                     <h2 class="mb-0">Metadata</h2>
                 </b-col>
-                <div class="d-flex justify-content-end">
-                    <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
-                        <i class="fas fa-plus mr-2"></i>
-                        <span class="d-none d-md-inline">Create Metadata</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload images</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload CSV</span>
-                    </b-button>
-                </div>
+                <b-dropdown variant="primary" dropleft>
+                    <b-dropdown-item v-b-modal="'modalNFTCreate'">Create Metadata</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTBulkCreate'">Upload images</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Upload CSV</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Download QRCodes</b-dropdown-item>
+                </b-dropdown>
+            </b-row>
+            <b-row>
+                <b-alert variant="success" show v-if="isDownloadScheduled">
+                    <i class="fas fa-clock mr-2"></i>
+                    You will receive an e-mail when your download is ready!
+                </b-alert>
+                <b-alert variant="info" show v-if="isDownloading">
+                    <i class="fas fa-hourglass-half mr-2"></i>
+                    Downloading your QR codes
+                </b-alert>
             </b-row>
             <base-nothing-here
                 v-if="erc721 && !erc721.metadata"
@@ -101,6 +103,10 @@ export default class MetadataView extends Vue {
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
 
+    qrURL = '';
+    isDownloading = false;
+    isDownloadScheduled = false;
+
     pools!: IPools;
     erc721s!: IERC721s;
 
@@ -143,6 +149,15 @@ export default class MetadataView extends Vue {
 
     mounted() {
         this.listMetadata();
+    }
+
+    async getQRCodes() {
+        this.isDownloading = true;
+        this.isDownloadScheduled = await this.$store.dispatch('erc721/getMetadataQRCodes', {
+            pool: this.pool,
+            erc721: this.erc721,
+        });
+        this.isDownloading = false;
     }
 }
 </script>
