@@ -47,10 +47,12 @@ class ERC20Module extends VuexModule {
             method: 'GET',
             url: '/erc20/' + id,
         });
+        if (!data.logoImgUrl || data.logoImgUrl.length == 0) {
+            data.logoImgUrl = `https://avatars.dicebear.com/api/identicon/${data.address}.svg`;
+        }
         const erc20 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc20);
