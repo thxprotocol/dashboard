@@ -24,7 +24,6 @@ export default class ModalERC721MetadataCreateCSV extends Vue {
     @Prop() erc721!: TERC721;
 
     async downloadCsv() {
-        console.log('ciao');
         await this.$store.dispatch('erc721/createMetadataCSV', {
             pool: this.pool,
             erc721: this.erc721,

@@ -56,6 +56,7 @@ export type PaginationParams = Partial<{
 export type MetadataListProps = PaginationParams & {
     erc721: TERC721;
     pool: IPool;
+    q?: string;
 };
 
 export type TMetadataMeta = {
