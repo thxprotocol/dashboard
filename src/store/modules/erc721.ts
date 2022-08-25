@@ -88,7 +88,6 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
-        console.log('METADATA', data);
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {
@@ -112,7 +111,7 @@ class ERC721Module extends VuexModule {
         const erc721 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
+            logoURI: data.logoImgUrl || `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc721);
@@ -121,11 +120,29 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: ChainId; name: string; symbol: string; schema: string[] }) {
+    async create(payload: {
+        chainId: ChainId;
+        name: string;
+        symbol: string;
+        schema: string[];
+        description: string;
+        file?: File;
+    }) {
+        const formData = new FormData();
+        formData.set('chainId', payload.chainId.toString());
+        formData.set('name', payload.name);
+        formData.set('symbol', payload.symbol);
+        formData.set('description', payload.description);
+        formData.set('schema', JSON.stringify(payload.schema));
+
+        if (payload.file) {
+            formData.append('file', payload.file);
+        }
+
         const { data } = await axios({
             method: 'POST',
             url: '/erc721',
-            data: payload,
+            data: formData,
         });
 
         this.context.commit('set', data);
