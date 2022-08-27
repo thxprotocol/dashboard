@@ -27,15 +27,15 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseDropdownChannelActions extends Vue {
     @Prop() actions!: any;
-
-    action: any = null;
+    @Prop() action!: any;
 
     mounted() {
-        this.action = this.actions[0];
+        if (!this.action) {
+            this.$emit('selected', this.actions[0]);
+        }
     }
 
     onActionClick(action: any) {
-        this.action = action;
         this.$emit('selected', action);
     }
 }

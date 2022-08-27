@@ -139,6 +139,7 @@
                                                 return channel.actions.includes(action.type);
                                             })
                                         "
+                                        :action="action"
                                         @selected="onActionClick($event)"
                                     />
                                     <p v-else class="small text-muted">Select a channel first.</p>
@@ -170,7 +171,7 @@
                             </template>
                             <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
                             <template v-if="channel && action && action.type === 0">
-                                <base-dropdown-youtube-video @selected="item = $event" />
+                                <base-dropdown-youtube-video :url="item" @selected="item = $event" />
                             </template>
                             <template
                                 v-if="
@@ -217,9 +218,17 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { channelActionList, ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/types/rewards';
+import {
+    channelActionList,
+    ChannelType,
+    ChannelAction,
+    IChannel,
+    IChannelAction,
+    Reward,
+    channelList,
+} from '@/types/rewards';
 import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import BaseDropdownYoutubeVideo from '../dropdowns/BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from '../dropdowns/BaseDropdownYoutubeUploads.vue';
@@ -300,6 +309,46 @@ export default class ModalRewardCreate extends Vue {
     @Prop() erc721!: TERC721;
     @Prop() filteredRewards!: Reward[];
     @Prop() filteredMetadata!: TERC721Metadata[];
+    @Prop({ required: false }) reward!: Reward;
+
+    get isEditting() {
+        return !!this.reward;
+    }
+
+    @Watch('reward')
+    async onRewardChange() {
+        if (!this.reward) return;
+
+        if (this.reward.withdrawCondition) {
+            const seletectChannel = channelList.find(
+                (channel) => channel.type === this.reward.withdrawCondition.channelType,
+            );
+
+            if (seletectChannel) {
+                Vue.set(this, 'channel', {
+                    type: seletectChannel.type,
+                    name: seletectChannel.name,
+                    logoURI: seletectChannel.logoURI,
+                    actions: seletectChannel.actions,
+                });
+                Vue.set(this, 'action', this.channelActions[this.reward.withdrawCondition?.channelAction]);
+                Vue.set(this, 'item', this.reward.withdrawCondition.channelItem);
+            }
+        }
+
+        this.rewardWithdrawLimit = this.reward?.withdrawLimit || 0;
+        this.rewardWithdrawAmount = this.reward?.withdrawAmount || 0;
+        this.rewardWithdrawDuration = this.reward?.withdrawDuration || 0;
+        this.rewardTitle = this.reward?.title || '';
+        this.rewardExpireDate = this.reward?.expiryDate || null;
+        this.rewardExpireTime = this.reward?.expiryDate
+            ? `${String(this.reward.expiryDate.getHours()).padStart(2, '0')}:${String(
+                  this.reward.expiryDate.getMinutes(),
+              ).padStart(2, '0')}:${String(this.reward.expiryDate.getSeconds()).padStart(2, '0')}`
+            : '00:00:00';
+        this.amount = this.reward?.amount || 1;
+        this.erc721metadata = this.erc721?.metadata?.find((meta) => meta._id === this.reward?.erc721metadataId) || null;
+    }
 
     get minDate() {
         let date = new Date();

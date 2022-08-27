@@ -44,6 +44,7 @@
                             aria-hidden="true"
                         ></i>
                     </template>
+                    <b-dropdown-item @click="onEdit()"><i class="fas fa-pen mr-3"></i> Edit reward </b-dropdown-item>
                     <b-dropdown-item v-clipboard:copy="reward.id">
                         <i class="fas fa-clipboard mr-3"></i>Copy ID
                     </b-dropdown-item>
@@ -132,10 +133,12 @@ import { IPool } from '@/store/modules/pools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
+import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import VueQr from 'vue-qr';
 import { BASE_URL, WALLET_URL } from '@/utils/secrets';
 import { mapGetters } from 'vuex';
 import { TBrandState } from '@/store/modules/brands';
+import { TERC721, TERC721Metadata } from '@/types/erc721';
 
 const getBase64Image = (url: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -158,6 +161,7 @@ const getBase64Image = (url: string): Promise<string> => {
         brands: 'brands/all',
     }),
     components: {
+        BaseModalRewardCreate,
         BaseCard,
         VueQr,
     },
@@ -174,11 +178,16 @@ export default class BaseCardReward extends Vue {
 
     @Prop() pool!: IPool;
     @Prop() reward!: Reward;
+    @Prop() erc721!: TERC721;
 
     brands!: TBrandState;
 
     get brand() {
         return this.brands[this.pool._id];
+    }
+
+    get filteredMetadata() {
+        return this.erc721 && this.erc721.metadata && this.erc721.metadata.filter((m: TERC721Metadata) => !m.tokenId);
     }
 
     get expired() {
@@ -210,6 +219,10 @@ export default class BaseCardReward extends Vue {
 
     onQRLoaded(dataUrl: string) {
         this.qrURL = dataUrl;
+    }
+
+    onEdit() {
+        this.$emit('edit', this.reward);
     }
 
     getChannelActionURL(channelAction: ChannelAction, channelItem: string) {

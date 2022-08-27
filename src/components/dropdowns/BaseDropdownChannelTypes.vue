@@ -6,7 +6,7 @@
                 {{ channel.name }}
             </div>
         </template>
-        <b-dropdown-item-button :key="channel.id" v-for="channel of channelList" @click="$emit('selected', channel)">
+        <b-dropdown-item-button :key="channel.type" v-for="channel of channelList" @click="$emit('selected', channel)">
             <img :src="channel.logoURI" v-if="channel.logoURI" width="20" class="mr-3" :alt="channel.name" />
             {{ channel.name }}
         </b-dropdown-item-button>
@@ -34,7 +34,9 @@ export default class BaseDropdownChannelTypes extends Vue {
     @Prop() channel!: IChannel;
 
     mounted() {
-        this.$emit('selected', this.channelList[0]);
+        if (!this.channel) {
+            this.$emit('selected', this.channelList[0]);
+        }
     }
 }
 </script>

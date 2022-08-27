@@ -2,11 +2,11 @@
     <div>
         <label>YouTube Video URL:</label>
         <b-form-input
+            :value="value"
             :class="{ 'is-valid': videoId.length }"
             class="mb-3"
             placeholder="https://www.youtube.com/watch?v=ckoegYJ1FR4"
             @input="onChange"
-            v-model="url"
         />
 
         <b-alert show variant="info" v-if="videoId">
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { BAlert, BButton, BFormInput, BInputGroup, BInputGroupAppend } from 'bootstrap-vue';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
@@ -31,8 +31,17 @@ import { mapGetters } from 'vuex';
     computed: mapGetters({}),
 })
 export default class BaseDropdownYoutubeVideo extends Vue {
-    url = '';
+    @Prop() url!: string;
+    value = '';
     videoId = '';
+
+    onUrlChange(url: string) {
+        const fallbackURL = `https://youtu.be/${url}`;
+        Vue.set(this, 'value', fallbackURL);
+        Vue.set(this, 'videoId', url);
+
+        this.$emit('selected', { id: url });
+    }
 
     onChange(url: string) {
         const result = /^https?:\/\/(www\.)?youtu\.be/.test(url)
@@ -45,6 +54,10 @@ export default class BaseDropdownYoutubeVideo extends Vue {
         } else {
             this.videoId = '';
         }
+    }
+
+    mounted() {
+        if (this.url) this.onUrlChange(this.url);
     }
 }
 </script>
