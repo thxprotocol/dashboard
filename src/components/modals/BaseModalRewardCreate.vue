@@ -210,7 +210,7 @@
                 variant="primary"
                 block
             >
-                Create Reward
+                {{ reward ? 'Update Reward' : 'Create Reward' }}
             </b-button>
         </template>
     </base-modal>
@@ -492,20 +492,40 @@ export default class ModalRewardCreate extends Vue {
 
         const slug = slugify(this.rewardTitle);
 
-        await this.$store.dispatch('rewards/create', {
-            poolId: this.pool._id,
-            slug,
-            title: this.rewardTitle,
-            expiryDate: expiryDate?.toISOString(),
-            erc721metadataId: this.erc721metadata?._id,
-            withdrawLimit: this.rewardWithdrawLimit,
-            withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
-            withdrawDuration: this.rewardWithdrawDuration,
-            withdrawCondition,
-            isClaimOnce: this.isClaimOnce,
-            isMembershipRequired: this.isMembershipRequired,
-            amount: this.amount,
-        });
+        if (this.reward) {
+            await this.$store.dispatch('rewards/update', {
+                pool: this.pool,
+                reward: {
+                    ...this.reward,
+                    slug,
+                    title: this.rewardTitle,
+                    expiryDate: expiryDate?.toISOString(),
+                    erc721metadataId: this.erc721metadata?._id,
+                    withdrawLimit: this.rewardWithdrawLimit,
+                    withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
+                    withdrawDuration: this.rewardWithdrawDuration,
+                    withdrawCondition,
+                    isClaimOnce: this.isClaimOnce,
+                    isMembershipRequired: this.isMembershipRequired,
+                    amount: this.amount,
+                },
+            });
+        } else {
+            await this.$store.dispatch('rewards/create', {
+                poolId: this.pool._id,
+                slug,
+                title: this.rewardTitle,
+                expiryDate: expiryDate?.toISOString(),
+                erc721metadataId: this.erc721metadata?._id,
+                withdrawLimit: this.rewardWithdrawLimit,
+                withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
+                withdrawDuration: this.rewardWithdrawDuration,
+                withdrawCondition,
+                isClaimOnce: this.isClaimOnce,
+                isMembershipRequired: this.isMembershipRequired,
+                amount: this.amount,
+            });
+        }
 
         this.rewardWithdrawLimit = 0;
         this.rewardWithdrawAmount = 0;
