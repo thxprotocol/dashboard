@@ -1,5 +1,5 @@
 <template>
-    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" :error="error" :loading="loading">
+    <base-modal size="xl" :title="modalName" id="modalRewardCreate" :error="error" :loading="loading">
         <template #modal-body v-if="profile && !loading">
             <form v-on:submit.prevent="submit" id="formRewardCreate">
                 <hr />
@@ -323,6 +323,10 @@ export default class ModalRewardCreate extends Vue {
 
     get isEditting() {
         return !!this.reward;
+    }
+
+    get modalName() {
+        return this.isEditting ? 'Update Reward' : 'Create Reward';
     }
 
     @Watch('reward')
