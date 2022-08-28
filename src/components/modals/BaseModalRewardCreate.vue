@@ -178,7 +178,11 @@
                                     channel && action && (action.type === 7 || action.type === 8 || action.type === 9)
                                 "
                             >
-                                <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
+                                <base-dropdown-spotify-track
+                                    :item="item"
+                                    :items="action.items"
+                                    @selected="item = $event"
+                                />
                             </template>
                             <template v-if="channel && action && action.type === 6">
                                 <base-dropdown-spotify-playlist
@@ -477,7 +481,8 @@ export default class ModalRewardCreate extends Vue {
 
     async onActionClick(action: IChannelAction) {
         this.action = action;
-        this.item = this.channelActions[action.type].items[0];
+        if (!this.item) this.item = this.channelActions[action.type].items[0];
+        else this.item = null;
     }
 
     async submit() {

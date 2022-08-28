@@ -33,7 +33,6 @@ export default class BaseDropdownChannelActions extends Vue {
     }
 
     mounted() {
-        console.log(this.action, this.actions);
         if (!this.action) {
             this.$emit('selected', this.actions[0]);
         }
