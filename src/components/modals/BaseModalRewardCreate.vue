@@ -181,7 +181,11 @@
                                 <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
                             </template>
                             <template v-if="channel && action && action.type === 6">
-                                <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
+                                <base-dropdown-spotify-playlist
+                                    :item="item"
+                                    @selected="item = $event"
+                                    :items="action.items"
+                                />
                             </template>
                         </b-form-group>
                         <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
@@ -331,6 +335,9 @@ export default class ModalRewardCreate extends Vue {
                     logoURI: seletectChannel.logoURI,
                     actions: seletectChannel.actions,
                 });
+
+                await this.onChannelClick(seletectChannel);
+
                 Vue.set(this, 'action', this.channelActions[this.reward.withdrawCondition?.channelAction]);
                 Vue.set(this, 'item', this.reward.withdrawCondition.channelItem);
             }
