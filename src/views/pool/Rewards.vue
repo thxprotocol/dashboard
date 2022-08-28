@@ -5,7 +5,12 @@
                 <h2 class="mb-0">Rewards</h2>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-button v-b-modal="'modalRewardCreate'" class="rounded-pill" variant="primary">
+                <b-button
+                    v-b-modal="'modalRewardCreate'"
+                    @click="editingReward = null"
+                    class="rounded-pill"
+                    variant="primary"
+                >
                     <i class="fas fa-plus mr-2"></i>
                     <span class="d-none d-md-inline">Create a reward</span>
                 </b-button>

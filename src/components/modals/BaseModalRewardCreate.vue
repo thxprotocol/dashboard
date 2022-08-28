@@ -162,11 +162,13 @@
                                     v-if="action.type === 2 || action.type === 3"
                                     @selected="item = $event"
                                     :items="action.items"
+                                    :item="item"
                                 />
                                 <base-dropdown-twitter-users
                                     v-if="action.type === 4"
                                     @selected="item = $event"
                                     :items="action.items"
+                                    :item="item"
                                 />
                             </template>
                             <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
