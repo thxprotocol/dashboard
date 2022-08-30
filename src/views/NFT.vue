@@ -45,7 +45,7 @@
                 </b-col>
             </b-row>
         </div>
-        <modal-erc721-create />
+        <modal-erc721-create :profile="profile" />
     </div>
 </template>
 
@@ -57,6 +57,7 @@ import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IERC721s } from '@/types/erc721';
 import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
+import { IAccount } from '@/types/account';
 
 @Component({
     components: {
@@ -67,10 +68,12 @@ import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue'
     },
     computed: mapGetters({
         erc721s: 'erc721/all',
+        profile: 'account/profile',
     }),
 })
 export default class NFTView extends Vue {
     erc721s!: IERC721s;
+    profile?: IAccount;
 
     mounted() {
         this.$store.dispatch('account/getProfile');

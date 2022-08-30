@@ -88,7 +88,6 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
-        console.log('METADATA', data);
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {
@@ -121,7 +120,14 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: ChainId; name: string; symbol: string; schema: string[] }) {
+    async create(payload: {
+        network: ChainId;
+        name: string;
+        symbol: string;
+        schema: string[];
+        royaltyAddress?: string;
+        royaltyPercentage?: number;
+    }) {
         const { data } = await axios({
             method: 'POST',
             url: '/erc721',

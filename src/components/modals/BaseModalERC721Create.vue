@@ -41,6 +41,37 @@
                 <label>Description</label>
                 <b-form-textarea v-model="description" placeholder="To infinity and beyond!" />
             </b-form-group>
+
+            <b-row
+                ><label
+                    >Royalties
+                    <i
+                        class="fas fa-question-circle text-gray"
+                        v-b-tooltip
+                        title="Set a royalty fee that will be payed whenever this NFT is traded."
+                    ></i></label
+            ></b-row>
+            <b-row>
+                <b-col>
+                    <b-form-group>
+                        <label>Address</label>
+                        <b-form-input v-model="royaltyAddress" :value="royaltyAddress" />
+                    </b-form-group>
+                </b-col>
+                <b-col md="3">
+                    <b-form-group>
+                        <label>Fee Percentage</label>
+                        <b-form-input
+                            type="number"
+                            v-model="royaltyPercentage"
+                            min="0"
+                            max="100"
+                            :value="royaltyPercentage"
+                        />
+                    </b-form-group>
+                </b-col>
+            </b-row>
+
             <b-form-group>
                 <template #label>
                     Properties
@@ -91,9 +122,10 @@
 </template>
 
 <script lang="ts">
+import { IAccount } from '@/types/account';
 import { ChainId } from '@/types/enums/ChainId';
 import { ERC721Variant, TERC721, TERC721DefaultProp } from '@/types/erc721';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCardERC721DefaultPropertyConfig from '../cards/BaseCardERC721DefaultPropertyConfig.vue';
 import BaseFormSelectNetwork from '../form-select/BaseFormSelectNetwork.vue';
 import BaseModal from './BaseModal.vue';
@@ -117,6 +149,10 @@ export default class ModalERC721Create extends Vue {
     symbol = '';
     description = '';
     schema: TERC721DefaultProp[] = [];
+    royaltyAddress: string | null = null;
+    royaltyPercentage = 0;
+
+    @Prop() profile?: IAccount;
 
     onVariantChange(variant: ERC721Variant) {
         this.variant = variant;
@@ -161,6 +197,12 @@ export default class ModalERC721Create extends Vue {
         }
     }
 
+    mounted() {
+        if (this.profile) {
+            this.royaltyAddress = this.profile.address;
+        }
+    }
+
     async submit() {
         this.loading = true;
 
@@ -170,6 +212,8 @@ export default class ModalERC721Create extends Vue {
             symbol: this.symbol,
             description: this.description,
             schema: this.schema,
+            royaltyAddress: this.royaltyAddress,
+            royaltyPercentage: this.royaltyPercentage,
         };
 
         await this.$store.dispatch('erc721/create', data);
