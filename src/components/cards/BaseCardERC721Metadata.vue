@@ -43,24 +43,14 @@
                     </b-badge>
                 </b-col>
                 <b-col cols="12" md="2" class="text-right">
-                    <b-button
-                        size="sm"
-                        variant="primary"
-                        class="rounded-pill mr-1"
-                        target="_blank"
-                        :href="`${apiUrl}/v1/metadata/${item._id}`"
-                    >
-                        View
-                    </b-button>
-                    <b-button
-                        :disabled="item.tokenId > 0"
-                        size="sm"
-                        variant="primary"
-                        class="rounded-pill"
-                        v-b-modal="`modalNFTMint${item._id}`"
-                    >
-                        Mint
-                    </b-button>
+                    <b-dropdown size="sm" class="float-right" variant="light">
+                        <b-dropdown-item @click="onEdit(item)">Edit</b-dropdown-item>
+                        <b-dropdown-item target="_blank" :href="`${apiUrl}/v1/metadata/${item._id}`"
+                            >View</b-dropdown-item
+                        >
+                        <b-dropdown-item v-b-modal="`modalNFTMint${item._id}`">Mint</b-dropdown-item>
+                    </b-dropdown>
+
                     <base-modal-erc721-metadata-mint :pool="pool" :erc721="erc721" :erc721Metadata="item" />
                 </b-col>
             </b-row>
@@ -97,5 +87,9 @@ export default class BaseListItemERC721Metadata extends Vue {
     @Prop() metadata!: TERC721Metadata[];
     @Prop() erc721!: TERC721;
     @Prop() pool!: IPool;
+
+    onEdit(metadata: TERC721Metadata) {
+        this.$emit('edit', metadata);
+    }
 }
 </script>

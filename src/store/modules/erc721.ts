@@ -155,6 +155,30 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
+    async updateMetadata(payload: {
+        pool: IPool;
+        erc721: TERC721;
+        title?: string;
+        description?: string;
+        attributes: any;
+        recipient?: string;
+        id?: string;
+    }) {
+        const { data } = await axios({
+            method: 'PATCH',
+            url: `/erc721/${payload.erc721._id}/metadata/${payload.id}`,
+            headers: { 'X-PoolId': payload.pool._id },
+            data: {
+                title: payload.title,
+                description: payload.description,
+                attributes: payload.attributes,
+                recipient: payload.recipient,
+            },
+        });
+        this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
+    }
+
+    @Action({ rawError: true })
     async mint({
         pool,
         erc721,

@@ -37,6 +37,7 @@
                 @clicked="$bvModal.show('modalNFTCreate')"
             />
             <base-card-erc721-metadata
+                @edit="onEdit"
                 v-if="erc721 && erc721.metadata"
                 :erc721="erc721"
                 :metadata="metadataByPage"
@@ -51,7 +52,13 @@
                 :total-rows="total"
                 align="center"
             ></b-pagination>
-            <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
+            <base-modal-erc721-metadata-create
+                v-if="erc721"
+                :metadata="editingMeta"
+                :pool="pool"
+                :erc721="erc721"
+                @success="listMetadata()"
+            />
             <base-modal-erc721-metadata-bulk-create
                 v-if="erc721"
                 :pool="pool"
@@ -103,6 +110,7 @@ export default class MetadataView extends Vue {
 
     pools!: IPools;
     erc721s!: IERC721s;
+    editingMeta: TERC721Metadata | null = null;
 
     get pool(): IPool {
         return this.pools[this.$route.params.id];
@@ -127,6 +135,11 @@ export default class MetadataView extends Vue {
     onChangePage(page: number) {
         this.page = page;
         this.listMetadata();
+    }
+
+    onEdit(metadata: TERC721Metadata) {
+        Vue.set(this, 'editingMeta', metadata);
+        this.$bvModal.show('modalNFTCreate');
     }
 
     async listMetadata() {
