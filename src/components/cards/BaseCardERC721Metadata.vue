@@ -44,7 +44,7 @@
                 </b-col>
                 <b-col cols="12" md="2" class="text-right">
                     <b-dropdown size="sm" class="float-right" variant="light">
-                        <b-dropdown-item @click="onEdit(item)">Edit</b-dropdown-item>
+                        <b-dropdown-item :disabled="!!item.tokens.length" @click="onEdit(item)">Edit</b-dropdown-item>
                         <b-dropdown-item target="_blank" :href="`${apiUrl}/v1/metadata/${item._id}`"
                             >View</b-dropdown-item
                         >
