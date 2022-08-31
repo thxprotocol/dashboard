@@ -65,7 +65,7 @@
                 :erc721="erc721"
                 @success="listMetadata()"
             />
-            <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
+            <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="onSuccess()" />
         </div>
     </b-skeleton-wrapper>
 </template>
@@ -152,6 +152,11 @@ export default class MetadataView extends Vue {
             });
         });
         this.isLoading = false;
+    }
+
+    async onSuccess() {
+        await this.listMetadata();
+        this.editingMeta = null;
     }
 
     mounted() {
