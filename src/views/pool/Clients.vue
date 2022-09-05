@@ -9,10 +9,16 @@
                     <i class="fas fa-plus mr-2"></i>
                     Create Client
                 </b-button>
-                <base-modal-client-create :pool="pool" :page="page" @submit="onSubmit" />
+                <base-modal-client-create :client="editingClient" :pool="pool" :page="page" @submit="onSubmit" />
             </b-col>
         </b-row>
-        <base-list-item-client :pool="pool" :client="client" :key="client.clientId" v-for="client of clientsByPage" />
+        <base-list-item-client
+            @edit="onEdit"
+            :pool="pool"
+            :client="client"
+            :key="client.clientId"
+            v-for="client of clientsByPage"
+        />
         <b-pagination
             v-if="total > limit"
             class="mt-3"
@@ -50,6 +56,7 @@ export default class Clients extends Vue {
 
     totals!: { [poolId: string]: number };
     clients!: { [poolId: string]: { [id: string]: TClient } };
+    editingClient: TClient | null = null;
     pools!: IPools;
 
     get total() {
@@ -80,6 +87,13 @@ export default class Clients extends Vue {
     onSubmit() {
         this.page = 1;
         this.listClients();
+        this.editingClient = null;
+    }
+
+    onEdit(client: TClient) {
+        console.log('Test', client);
+        this.editingClient = client;
+        this.$bvModal.show('modalClientCreate');
     }
 
     async listClients() {
