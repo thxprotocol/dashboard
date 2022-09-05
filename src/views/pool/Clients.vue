@@ -9,7 +9,13 @@
                     <i class="fas fa-plus mr-2"></i>
                     Create Client
                 </b-button>
-                <base-modal-client-create :client="editingClient" :pool="pool" :page="page" @submit="onSubmit" />
+                <base-modal-client-create
+                    @hidden="onClose"
+                    :client="editingClient"
+                    :pool="pool"
+                    :page="page"
+                    @submit="onSubmit"
+                />
             </b-col>
         </b-row>
         <base-list-item-client
@@ -87,6 +93,10 @@ export default class Clients extends Vue {
     onSubmit() {
         this.page = 1;
         this.listClients();
+        this.onClose();
+    }
+
+    onClose() {
         this.editingClient = null;
     }
 

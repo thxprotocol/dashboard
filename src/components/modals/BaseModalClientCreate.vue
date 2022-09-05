@@ -1,5 +1,5 @@
 <template>
-    <base-modal :error="error" :title="modalName" id="modalClientCreate">
+    <base-modal @hidden="onClose" :error="error" :title="modalName" id="modalClientCreate">
         <template #modal-body>
             <form v-on:submit.prevent="submit" id="formClientCreate">
                 <b-card bg-variant="light" class="border-0" body-class="p-5">
@@ -103,6 +103,18 @@ export default class BaseModalClientCreate extends Vue {
         this.grantType = client.grantType as GrantType;
     }
 
+    reset() {
+        this.name = '';
+        this.grantType = 'client_credentials';
+        this.redirectUri = '';
+        this.requestUri = '';
+    }
+
+    onClose() {
+        this.reset();
+        this.$emit('hidden');
+    }
+
     async submit() {
         if (this.client) {
             await this.$store.dispatch('clients/update', {
@@ -121,10 +133,7 @@ export default class BaseModalClientCreate extends Vue {
         }
 
         this.$emit('submit');
-        this.name = '';
-        this.grantType = 'client_credentials';
-        this.redirectUri = '';
-        this.requestUri = '';
+        this.reset();
         this.$bvModal.hide(`modalClientCreate`);
     }
 }
