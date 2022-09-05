@@ -18,7 +18,7 @@
                     <b-dropdown-item v-b-modal="'modalNFTCreate'">Create Metadata</b-dropdown-item>
                     <b-dropdown-item v-b-modal="'modalNFTBulkCreate'">Upload images</b-dropdown-item>
                     <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Upload CSV</b-dropdown-item>
-                    <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Download QRCodes</b-dropdown-item>
+                    <b-dropdown-item @click="getQRCodes()">Download QR codes</b-dropdown-item>
                 </b-dropdown>
             </b-row>
             <b-row>
@@ -147,8 +147,11 @@ export default class MetadataView extends Vue {
         this.isLoading = false;
     }
 
-    mounted() {
+    async mounted() {
         this.listMetadata();
+        if (this.$route.query.qrcodes === '1') {
+            await this.getQRCodes();
+        }
     }
 
     async getQRCodes() {
