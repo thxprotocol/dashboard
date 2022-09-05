@@ -3,35 +3,51 @@
         <template #button-content>{{
             selectedMetadata ? selectedMetadata.title || 'No Title' : 'Select the NFT to Mint'
         }}</template>
-        <b-dropdown-item-button
-            :key="metadata._id"
-            v-for="metadata of erc721.metadata"
-            @click="
-                $emit('selected', metadata);
-                selectedMetadata = metadata;
-            "
-        >
-            <div class="d-flex justify-content-between">
-                <div>
-                    {{ metadata.title || 'No Title' }}
+        <b-dropdown-form>
+            <b-form-input class="mb-2" placeholder="Search..." @input="onSearch" v-model="q" />
+        </b-dropdown-form>
+        <div style="height: 80px; overflow-y: scroll">
+            <b-dropdown-item-button
+                :key="metadata._id"
+                v-for="metadata of options"
+                @click="
+                    $emit('selected', metadata);
+                    selectedMetadata = metadata;
+                "
+            >
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {{ metadata.title || 'No Title' }}
+                    </div>
+                    <div>
+                        <b-badge
+                            :key="key"
+                            v-for="(value, key) in metadata.attributes"
+                            variant="dark"
+                            v-b-tooltip
+                            :title="value.value"
+                            class="mr-2"
+                        >
+                            {{ value.key }}
+                        </b-badge>
+                    </div>
+                    <small class="text-muted">
+                        {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
+                    </small>
                 </div>
-                <div>
-                    <b-badge
-                        :key="key"
-                        v-for="(value, key) in metadata.attributes"
-                        variant="dark"
-                        v-b-tooltip
-                        :title="value.value"
-                        class="mr-2"
-                    >
-                        {{ value.key }}
-                    </b-badge>
-                </div>
-                <small class="text-muted">
-                    {{ format(new Date(metadata.createdAt), 'dd-MM-yyyy HH:mm') }}
-                </small>
-            </div>
-        </b-dropdown-item-button>
+            </b-dropdown-item-button>
+        </div>
+        <b-dropdown-form>
+            <b-pagination
+                v-if="total > limit"
+                class="mt-3"
+                @change="onChangePage"
+                v-model="page"
+                :per-page="limit"
+                :total-rows="total"
+                align="center"
+            ></b-pagination>
+        </b-dropdown-form>
     </b-dropdown>
 </template>
 
@@ -59,8 +75,11 @@ export default class BaseDropdownERC721Metadata extends Vue {
     format = format;
     erc721s!: IERC721s;
     selectedMetadata: TERC721Metadata | null = null;
-    limit = 100;
+    limit = 50;
     page = 1;
+    total = 0;
+    options: TERC721Metadata[] = [];
+    q: string | null = null;
 
     get erc721(): TERC721 {
         return this.erc721s[this.pool.erc721._id];
@@ -71,13 +90,31 @@ export default class BaseDropdownERC721Metadata extends Vue {
     mounted() {
         if (this.pool.erc721) {
             this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
-                await this.$store.dispatch('erc721/listMetadata', {
-                    erc721: this.pool.erc721,
-                    page: this.page,
-                    limit: this.limit,
-                });
+                await this.listMetadata();
             });
         }
+    }
+
+    async listMetadata() {
+        const data = await this.$store.dispatch('erc721/listMetadata', {
+            erc721: this.pool.erc721,
+            page: this.page,
+            limit: this.limit,
+            q: this.q,
+        });
+
+        this.options = data.results;
+        this.total = data.total;
+    }
+
+    async onChangePage(page: number) {
+        this.page = page;
+        await this.listMetadata();
+    }
+
+    async onSearch(query: string) {
+        this.q = query;
+        await this.listMetadata();
     }
 }
 </script>

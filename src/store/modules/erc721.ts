@@ -46,7 +46,9 @@ class ERC721Module extends VuexModule {
         if (!this._all[payload.erc721._id].metadata) {
             return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
         }
-        const index = payload.erc721.metadata.findIndex((m: TERC721Metadata) => m._id === payload.metadata._id) || 0;
+        const index = payload.erc721.metadata
+            ? payload.erc721.metadata.findIndex((m: TERC721Metadata) => m._id === payload.metadata._id) || 0
+            : 0;
 
         Vue.set(
             this._all[payload.erc721._id]['metadata'],
@@ -76,13 +78,14 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async listMetadata({ page = 1, limit, erc721 }: MetadataListProps) {
+    async listMetadata({ page = 1, limit, erc721, q }: MetadataListProps) {
         if (!erc721) {
             return;
         }
         const params = new URLSearchParams();
         params.set('page', String(page));
         params.set('limit', String(limit));
+        params.set('q', String(q));
 
         const { data }: TMetadataResponse = await axios({
             method: 'GET',
@@ -94,6 +97,8 @@ class ERC721Module extends VuexModule {
             metadata.page = page;
             this.context.commit('setMetadata', { erc721, metadata });
         }
+
+        return data;
     }
 
     @Action({ rawError: true })
