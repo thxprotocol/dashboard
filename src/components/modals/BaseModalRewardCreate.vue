@@ -1,5 +1,5 @@
 <template>
-    <base-modal size="xl" title="Create Reward" id="modalRewardCreate" :error="error" :loading="loading">
+    <base-modal size="xl" :title="modalName" id="modalRewardCreate" :error="error" :loading="loading">
         <template #modal-body v-if="profile && !loading">
             <form v-on:submit.prevent="submit" id="formRewardCreate">
                 <hr />
@@ -139,6 +139,7 @@
                                                 return channel.actions.includes(action.type);
                                             })
                                         "
+                                        :action="action"
                                         @selected="onActionClick($event)"
                                     />
                                     <p v-else class="small text-muted">Select a channel first.</p>
@@ -161,26 +162,36 @@
                                     v-if="action.type === 2 || action.type === 3"
                                     @selected="item = $event"
                                     :items="action.items"
+                                    :item="item"
                                 />
                                 <base-dropdown-twitter-users
                                     v-if="action.type === 4"
                                     @selected="item = $event"
                                     :items="action.items"
+                                    :item="item"
                                 />
                             </template>
                             <b-alert show variant="warning" v-if="warning">{{ warning }}</b-alert>
                             <template v-if="channel && action && action.type === 0">
-                                <base-dropdown-youtube-video @selected="item = $event" />
+                                <base-dropdown-youtube-video :url="item" @selected="item = $event" />
                             </template>
                             <template
                                 v-if="
                                     channel && action && (action.type === 7 || action.type === 8 || action.type === 9)
                                 "
                             >
-                                <base-dropdown-spotify-track :items="action.items" @selected="item = $event" />
+                                <base-dropdown-spotify-track
+                                    :item="item"
+                                    :items="action.items"
+                                    @selected="item = $event"
+                                />
                             </template>
                             <template v-if="channel && action && action.type === 6">
-                                <base-dropdown-spotify-playlist @selected="item = $event" :items="action.items" />
+                                <base-dropdown-spotify-playlist
+                                    :item="item"
+                                    @selected="item = $event"
+                                    :items="action.items"
+                                />
                             </template>
                         </b-form-group>
                         <b-form-group v-if="action && [2, 3, 4].includes(action.type)">
@@ -209,7 +220,7 @@
                 variant="primary"
                 block
             >
-                Create Reward
+                {{ reward ? 'Update Reward' : 'Create Reward' }}
             </b-button>
         </template>
     </base-modal>
@@ -217,9 +228,17 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
-import { channelActionList, ChannelType, ChannelAction, IChannel, IChannelAction, Reward } from '@/types/rewards';
+import {
+    channelActionList,
+    ChannelType,
+    ChannelAction,
+    IChannel,
+    IChannelAction,
+    Reward,
+    channelList,
+} from '@/types/rewards';
 import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
 import BaseDropdownYoutubeVideo from '../dropdowns/BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from '../dropdowns/BaseDropdownYoutubeUploads.vue';
@@ -300,6 +319,53 @@ export default class ModalRewardCreate extends Vue {
     @Prop() erc721!: TERC721;
     @Prop() filteredRewards!: Reward[];
     @Prop() filteredMetadata!: TERC721Metadata[];
+    @Prop({ required: false }) reward!: Reward;
+
+    get isEditting() {
+        return !!this.reward;
+    }
+
+    get modalName() {
+        return this.isEditting ? 'Update Reward' : 'Create Reward';
+    }
+
+    @Watch('reward')
+    async onRewardChange() {
+        if (!this.reward) return;
+
+        if (this.reward.withdrawCondition) {
+            const seletectChannel = channelList.find(
+                (channel) => channel.type === this.reward.withdrawCondition.channelType,
+            );
+
+            if (seletectChannel) {
+                Vue.set(this, 'channel', {
+                    type: seletectChannel.type,
+                    name: seletectChannel.name,
+                    logoURI: seletectChannel.logoURI,
+                    actions: seletectChannel.actions,
+                });
+
+                await this.onChannelClick(seletectChannel);
+
+                Vue.set(this, 'action', this.channelActions[this.reward.withdrawCondition?.channelAction]);
+                Vue.set(this, 'item', this.reward.withdrawCondition.channelItem);
+            }
+        }
+
+        this.rewardWithdrawLimit = this.reward?.withdrawLimit || 0;
+        this.rewardWithdrawAmount = this.reward?.withdrawAmount || 0;
+        this.rewardWithdrawDuration = this.reward?.withdrawDuration || 0;
+        this.rewardTitle = this.reward?.title || '';
+        this.rewardExpireDate = this.reward?.expiryDate || null;
+        this.rewardExpireTime = this.reward?.expiryDate
+            ? `${String(this.reward.expiryDate.getHours()).padStart(2, '0')}:${String(
+                  this.reward.expiryDate.getMinutes(),
+              ).padStart(2, '0')}:${String(this.reward.expiryDate.getSeconds()).padStart(2, '0')}`
+            : '00:00:00';
+        this.amount = this.reward?.amount || 1;
+        this.erc721metadata = this.erc721?.metadata?.find((meta) => meta._id === this.reward?.erc721metadataId) || null;
+    }
 
     get minDate() {
         let date = new Date();
@@ -421,7 +487,8 @@ export default class ModalRewardCreate extends Vue {
 
     async onActionClick(action: IChannelAction) {
         this.action = action;
-        this.item = this.channelActions[action.type].items[0];
+        if (!this.item) this.item = this.channelActions[action.type].items[0];
+        else this.item = null;
     }
 
     async submit() {
@@ -443,20 +510,40 @@ export default class ModalRewardCreate extends Vue {
 
         const slug = slugify(this.rewardTitle);
 
-        await this.$store.dispatch('rewards/create', {
-            poolId: this.pool._id,
-            slug,
-            title: this.rewardTitle,
-            expiryDate: expiryDate?.toISOString(),
-            erc721metadataId: this.erc721metadata?._id,
-            withdrawLimit: this.rewardWithdrawLimit,
-            withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
-            withdrawDuration: this.rewardWithdrawDuration,
-            withdrawCondition,
-            isClaimOnce: this.isClaimOnce,
-            isMembershipRequired: this.isMembershipRequired,
-            amount: this.amount,
-        });
+        if (this.reward) {
+            await this.$store.dispatch('rewards/update', {
+                pool: this.pool,
+                reward: {
+                    ...this.reward,
+                    slug,
+                    title: this.rewardTitle,
+                    expiryDate: expiryDate?.toISOString(),
+                    erc721metadataId: this.erc721metadata?._id,
+                    withdrawLimit: this.rewardWithdrawLimit,
+                    withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
+                    withdrawDuration: this.rewardWithdrawDuration,
+                    withdrawCondition,
+                    isClaimOnce: this.isClaimOnce,
+                    isMembershipRequired: this.isMembershipRequired,
+                    amount: this.amount,
+                },
+            });
+        } else {
+            await this.$store.dispatch('rewards/create', {
+                poolId: this.pool._id,
+                slug,
+                title: this.rewardTitle,
+                expiryDate: expiryDate?.toISOString(),
+                erc721metadataId: this.erc721metadata?._id,
+                withdrawLimit: this.rewardWithdrawLimit,
+                withdrawAmount: this.rewardVariant ? 1 : this.rewardWithdrawAmount,
+                withdrawDuration: this.rewardWithdrawDuration,
+                withdrawCondition,
+                isClaimOnce: this.isClaimOnce,
+                isMembershipRequired: this.isMembershipRequired,
+                amount: this.amount,
+            });
+        }
 
         this.rewardWithdrawLimit = 0;
         this.rewardWithdrawAmount = 0;

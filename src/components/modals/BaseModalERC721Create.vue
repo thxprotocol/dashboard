@@ -41,6 +41,14 @@
                 <label>Description</label>
                 <b-form-textarea v-model="description" placeholder="To infinity and beyond!" />
             </b-form-group>
+            <b-row>
+                <b-col>
+                    <label>Token Icon</label>
+                    <b-form-group>
+                        <b-form-file v-model="logoImg" accept="image/*" />
+                    </b-form-group>
+                </b-col>
+            </b-row>
             <b-form-group>
                 <template #label>
                     Properties
@@ -117,6 +125,7 @@ export default class ModalERC721Create extends Vue {
     symbol = '';
     description = '';
     schema: TERC721DefaultProp[] = [];
+    logoImg: File | null = null;
 
     onVariantChange(variant: ERC721Variant) {
         this.variant = variant;
@@ -170,6 +179,7 @@ export default class ModalERC721Create extends Vue {
             symbol: this.symbol,
             description: this.description,
             schema: this.schema,
+            file: this.logoImg,
         };
 
         await this.$store.dispatch('erc721/create', data);

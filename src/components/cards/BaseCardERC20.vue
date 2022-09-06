@@ -8,7 +8,7 @@
             <base-dropdown-token-menu :erc20="erc20" @archive="archive" />
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
-                <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoURI" />
+                <base-identicon class="mr-2" size="40" :rounded="true" variant="darker" :uri="erc20.logoImgUrl" />
                 <div>
                     <strong class="m-0">{{ erc20.symbol }}</strong>
                     <br />

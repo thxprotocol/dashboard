@@ -15,7 +15,7 @@
                     <h2 class="mb-0">Metadata</h2>
                 </b-col>
                 <b-dropdown variant="primary" dropleft>
-                    <b-dropdown-item v-b-modal="'modalNFTCreate'">Create Metadata</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTCreate'" @click="onCreate()">Create Metadata</b-dropdown-item>
                     <b-dropdown-item v-b-modal="'modalNFTBulkCreate'">Upload images</b-dropdown-item>
                     <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Upload CSV</b-dropdown-item>
                     <b-dropdown-item @click="getQRCodes()">Download QR codes</b-dropdown-item>
@@ -39,6 +39,7 @@
                 @clicked="$bvModal.show('modalNFTCreate')"
             />
             <base-card-erc721-metadata
+                @edit="onEdit"
                 v-if="erc721 && erc721.metadata"
                 :erc721="erc721"
                 :metadata="metadataByPage"
@@ -53,14 +54,21 @@
                 :total-rows="total"
                 align="center"
             ></b-pagination>
-            <base-modal-erc721-metadata-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
+            <base-modal-erc721-metadata-create
+                v-if="erc721"
+                @hidden="reset"
+                :metadata="editingMeta"
+                :pool="pool"
+                :erc721="erc721"
+                @success="listMetadata()"
+            />
             <base-modal-erc721-metadata-bulk-create
                 v-if="erc721"
                 :pool="pool"
                 :erc721="erc721"
                 @success="listMetadata()"
             />
-            <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
+            <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="onSuccess()" />
         </div>
     </b-skeleton-wrapper>
 </template>
@@ -109,6 +117,7 @@ export default class MetadataView extends Vue {
 
     pools!: IPools;
     erc721s!: IERC721s;
+    editingMeta: TERC721Metadata | null = null;
 
     get pool(): IPool {
         return this.pools[this.$route.params.id];
@@ -135,6 +144,20 @@ export default class MetadataView extends Vue {
         this.listMetadata();
     }
 
+    reset() {
+        Vue.set(this, 'editingMeta', null);
+    }
+
+    onEdit(metadata: TERC721Metadata) {
+        Vue.set(this, 'editingMeta', metadata);
+        this.$bvModal.show('modalNFTCreate');
+    }
+
+    onCreate() {
+        this.reset();
+        this.$bvModal.show('modalNFTCreate');
+    }
+
     async listMetadata() {
         this.isLoading = true;
         await this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
@@ -145,6 +168,11 @@ export default class MetadataView extends Vue {
             });
         });
         this.isLoading = false;
+    }
+
+    async onSuccess() {
+        await this.listMetadata();
+        this.reset();
     }
 
     async mounted() {

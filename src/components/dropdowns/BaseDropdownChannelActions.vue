@@ -1,18 +1,14 @@
 <template>
-    <b-dropdown variant="link" class="dropdown-select bg-white">
-        <template #button-content>
-            <div v-if="action">
-                {{ action.name }}
-            </div>
-        </template>
-        <b-dropdown-item-button :key="action.type" v-for="action of actions" @click="onActionClick(action)">
-            {{ action.name }}
-        </b-dropdown-item-button>
-    </b-dropdown>
+    <b-form-select
+        :value="action.type"
+        class="dropdown-select bg-white"
+        @change="onActionClick"
+        :options="options"
+    ></b-form-select>
 </template>
 
 <script lang="ts">
-import { BDropdown, BDropdownItemButton, BBadge, BSpinner } from 'bootstrap-vue';
+import { BDropdown, BDropdownItemButton, BFormSelect, BBadge, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
@@ -27,15 +23,23 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseDropdownChannelActions extends Vue {
     @Prop() actions!: any;
+    @Prop() action!: any;
 
-    action: any = null;
-
-    mounted() {
-        this.action = this.actions[0];
+    get options() {
+        return this.actions.map((action: any) => ({
+            text: action.name,
+            value: action.type,
+        }));
     }
 
-    onActionClick(action: any) {
-        this.action = action;
+    mounted() {
+        if (!this.action) {
+            this.$emit('selected', this.actions[0]);
+        }
+    }
+
+    onActionClick(value: string) {
+        const action = (this.actions as any[]).find((action) => action.type === value);
         this.$emit('selected', action);
     }
 }
