@@ -1,5 +1,5 @@
 <template>
-    <base-modal :error="error" :title="modalTitle" id="modalNFTCreate">
+    <base-modal @hidden="onHidden()" :error="error" :title="modalTitle" id="modalNFTCreate">
         <template #modal-body>
             <b-form-group label="Title">
                 <b-form-input v-model="title" />
@@ -138,6 +138,12 @@ export default class ModalRewardCreate extends Vue {
                 prop.value = this.metadata.attributes[index].value;
             });
         }
+    }
+
+    onHidden() {
+        this.title = '';
+        this.description = '';
+        this.$emit('hidden');
     }
 
     submit() {

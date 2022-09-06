@@ -15,7 +15,7 @@
                     <h2 class="mb-0">Metadata</h2>
                 </b-col>
                 <div class="d-flex justify-content-end">
-                    <b-button v-b-modal="'modalNFTCreate'" class="rounded-pill" variant="primary">
+                    <b-button @click="onCreate()" class="rounded-pill" variant="primary">
                         <i class="fas fa-plus mr-2"></i>
                         <span class="d-none d-md-inline">Create Metadata</span>
                     </b-button>
@@ -54,6 +54,7 @@
             ></b-pagination>
             <base-modal-erc721-metadata-create
                 v-if="erc721"
+                @hidden="reset"
                 :metadata="editingMeta"
                 :pool="pool"
                 :erc721="erc721"
@@ -137,8 +138,17 @@ export default class MetadataView extends Vue {
         this.listMetadata();
     }
 
+    reset() {
+        Vue.set(this, 'editingMeta', null);
+    }
+
     onEdit(metadata: TERC721Metadata) {
         Vue.set(this, 'editingMeta', metadata);
+        this.$bvModal.show('modalNFTCreate');
+    }
+
+    onCreate() {
+        this.reset();
         this.$bvModal.show('modalNFTCreate');
     }
 
@@ -156,7 +166,7 @@ export default class MetadataView extends Vue {
 
     async onSuccess() {
         await this.listMetadata();
-        this.editingMeta = null;
+        this.reset();
     }
 
     mounted() {
