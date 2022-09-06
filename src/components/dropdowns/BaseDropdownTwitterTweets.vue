@@ -3,8 +3,8 @@
         <label> Your Tweets:</label>
         <b-dropdown variant="link" class="dropdown-select bg-white">
             <template #button-content>
-                <div v-if="item" class="text-overflow-ellipsis">
-                    {{ item.text }}
+                <div v-if="selected" class="text-overflow-ellipsis">
+                    {{ selected.text }}
                 </div>
             </template>
             <b-dropdown-item-button
@@ -40,15 +40,24 @@ export default class BaseDropdownTwitterTweets extends Vue {
     format = format;
 
     @Prop() items!: any;
+    @Prop({ required: false }) item: any;
 
-    item: any = null;
+    selected: any = null;
 
     mounted() {
-        this.onItemClick(this.items[0]);
+        if (!this.item) {
+            this.onItemClick(this.items[0]);
+        } else {
+            const isUserPlaylist = this.items.find((playlist: any) => playlist.id === this.item);
+            if (isUserPlaylist) this.selected = isUserPlaylist;
+            else {
+                this.onItemClick(this.items[0]);
+            }
+        }
     }
 
     onItemClick(item: any) {
-        this.item = item;
+        this.selected = item;
         this.$emit('selected', item);
     }
 }
