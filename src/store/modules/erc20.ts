@@ -53,6 +53,7 @@ class ERC20Module extends VuexModule {
         const erc20 = {
             ...data,
             loading: false,
+            logoURI: data.logoImgUrl || `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc20);
@@ -62,10 +63,22 @@ class ERC20Module extends VuexModule {
 
     @Action({ rawError: true })
     async create(payload: any) {
+        const formData = new FormData();
+
+        Object.keys(payload).forEach((key) => {
+            if (key == 'file') {
+                if (payload.file) {
+                    formData.append('file', payload.file);
+                }
+            } else {
+                formData.set(key, payload[key]);
+            }
+        });
+
         const { data } = await axios({
             method: 'POST',
             url: '/erc20/',
-            data: payload,
+            data: formData,
         });
 
         this.context.commit('set', { _id: data._id, loading: true });

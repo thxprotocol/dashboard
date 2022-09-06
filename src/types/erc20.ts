@@ -15,7 +15,7 @@ export type TERC20 = {
     symbol: string;
     adminBalance: number;
     totalSupply: number;
-    logoImgUrl?: string;
+    logoURI?: string;
     archived: boolean;
     poolBalance?: string;
 };
