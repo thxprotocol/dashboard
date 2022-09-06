@@ -1,5 +1,5 @@
 <template>
-    <base-modal :error="error" title="Create NFT" id="modalNFTCreate">
+    <base-modal :error="error" :title="modalTitle" id="modalNFTCreate">
         <template #modal-body>
             <b-form-group label="Title">
                 <b-form-input v-model="title" />
@@ -41,7 +41,7 @@
                 variant="primary"
                 block
             >
-                Create NFT
+                {{ modalTitle }}
             </b-button>
         </template>
     </base-modal>
@@ -49,8 +49,8 @@
 
 <script lang="ts">
 import { IPool } from '@/store/modules/pools';
-import { TERC721, TERC721DefaultProp } from '@/types/erc721';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { TERC721, TERC721DefaultProp, TERC721Metadata } from '@/types/erc721';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseModal from './BaseModal.vue';
 import { isValidUrl } from '@/utils/url';
@@ -80,9 +80,18 @@ export default class ModalRewardCreate extends Vue {
 
     @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
+    @Prop({ required: false }) metadata!: TERC721Metadata;
+
+    get modalTitle() {
+        return this.metadata ? 'Update NFT' : 'Create NFT';
+    }
 
     get isSubmitDisabled() {
         return this.loading;
+    }
+
+    get isEditing() {
+        return this.metadata ? true : false;
     }
 
     get schemaHaveErrors() {
@@ -90,10 +99,11 @@ export default class ModalRewardCreate extends Vue {
             if (pre) {
                 return pre;
             }
+
             return this.getPropValidation(cur.propType, cur.value || '');
         }, false);
 
-        return !result;
+        return !!result;
     }
     getPropValidation = (name: string, value: string) => {
         switch (name) {
@@ -119,6 +129,17 @@ export default class ModalRewardCreate extends Vue {
         Vue.set(this.erc721.properties[event.target.dataset['key']], 'value', publicUrl);
     }
 
+    @Watch('metadata')
+    onMetadataChange() {
+        if (this.metadata) {
+            this.title = this.metadata['title'];
+            this.description = this.metadata['description'];
+            this.erc721.properties.forEach((prop, index) => {
+                prop.value = this.metadata.attributes[index].value;
+            });
+        }
+    }
+
     submit() {
         if (this.schemaHaveErrors) {
             return;
@@ -133,14 +154,27 @@ export default class ModalRewardCreate extends Vue {
             });
         });
 
-        this.$store.dispatch('erc721/createMetadata', {
-            pool: this.pool,
-            erc721: this.erc721,
-            attributes,
-            title: this.title,
-            description: this.description,
-            recipient: this.recipient.length ? this.recipient : undefined,
-        });
+        if (this.isEditing) {
+            this.$store.dispatch('erc721/updateMetadata', {
+                pool: this.pool,
+                erc721: this.erc721,
+                attributes,
+                title: this.title,
+                description: this.description,
+                recipient: this.recipient.length ? this.recipient : undefined,
+                id: this.metadata._id,
+            });
+        } else {
+            this.$store.dispatch('erc721/createMetadata', {
+                pool: this.pool,
+                erc721: this.erc721,
+                attributes,
+                title: this.title,
+                description: this.description,
+                recipient: this.recipient.length ? this.recipient : undefined,
+            });
+        }
+
         this.$emit('success');
         this.$bvModal.hide('modalNFTCreate');
     }
