@@ -52,6 +52,7 @@
             <b-row v-else>
                 <b-col md="6" lg="4" :key="erc20._id" v-for="erc20 of erc20s">
                     <base-card-erc20 :erc20="erc20" />
+                    <base-modal-pool-create :erc20="erc20" @created="loadList()" />
                 </b-col>
             </b-row>
         </div>
@@ -68,6 +69,7 @@ import ModalErc20Import from '@/components/modals/BaseModalERC20Import.vue';
 import BaseCardErc20 from '@/components/cards/BaseCardERC20.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
+import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
 import { IERC20s } from '@/types/erc20';
 
 @Component({
@@ -77,6 +79,7 @@ import { IERC20s } from '@/types/erc20';
         ModalErc20Create,
         ModalErc20Import,
         BaseNothingHere,
+        BaseModalPoolCreate,
     },
     computed: mapGetters({
         erc20s: 'erc20/all',
@@ -85,9 +88,13 @@ import { IERC20s } from '@/types/erc20';
 export default class Tokens extends Vue {
     erc20s!: IERC20s;
 
+    loadList() {
+        this.$store.dispatch('erc20/list');
+    }
+
     mounted() {
         this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc20/list');
+        this.loadList();
     }
 }
 </script>

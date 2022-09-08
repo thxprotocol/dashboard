@@ -80,7 +80,6 @@ export default class BaseListItemClient extends Vue {
     }
 
     onEdit() {
-        console.log('Test');
         this.$emit('edit', this.client);
     }
 

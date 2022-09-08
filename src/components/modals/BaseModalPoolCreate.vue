@@ -1,14 +1,26 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Create Token Pool" id="modalAssetPoolCreate">
-        <template #modal-body v-if="profile && !loading">
+    <base-modal :loading="loading" :error="error" title="Create Token Pool" :id="`modalAssetPoolCreate_${tokenId}`">
+        <template #modal-body>
             <base-form-select-network @selected="onSelectChain" />
             <b-form-group>
                 <label> Token Contract </label>
-                <base-dropdown-select-erc20 :chainId="chainId" @selected="onSelectERC20Token" />
+                <div v-if="erc20">
+                    <div class="d-flex align-items-center">
+                        <base-identicon class="mr-3" :size="20" variant="darker" :uri="erc20.logoURI" />
+                        <strong class="mr-1">{{ erc20.symbol }}</strong> {{ erc20.name }}
+                    </div>
+                </div>
+                <base-dropdown-select-erc20 v-else :chainId="chainId" @selected="onSelectERC20Token" />
             </b-form-group>
             <b-form-group>
                 <label> NFT Contract </label>
-                <base-dropdown-select-erc-721 :chainId="chainId" @selected="onSelectERC721Token" />
+                <div v-if="erc721">
+                    <div class="d-flex align-items-center">
+                        <base-identicon class="mr-3" size="20" variant="darker" :uri="erc721.logoURI" />
+                        <strong class="mr-1">{{ erc721.symbol }}</strong> {{ erc721.name }}
+                    </div>
+                </div>
+                <base-dropdown-select-erc-721 v-else :chainId="chainId" @selected="onSelectERC721Token" />
             </b-form-group>
         </template>
         <template #btn-primary>
@@ -21,7 +33,7 @@
 
 <script lang="ts">
 import { ChainId } from '@/types/enums/ChainId';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseFormSelectNetwork from '@/components/form-select/BaseFormSelectNetwork.vue';
 import BaseDropdownSelectErc20 from '@/components/dropdowns/BaseDropdownSelectERC20.vue';
@@ -31,6 +43,7 @@ import BaseModal from './BaseModal.vue';
 import { IAccount } from '@/types/account';
 import { TERC20 } from '@/types/erc20';
 import { TERC721 } from '@/types/erc721';
+import BaseIdenticon from '../BaseIdenticon.vue';
 
 @Component({
     components: {
@@ -39,6 +52,7 @@ import { TERC721 } from '@/types/erc721';
         BaseDropdownSelectErc20,
         BaseDropdownSelectMultipleErc20,
         BaseDropdownSelectErc721,
+        BaseIdenticon,
     },
     computed: mapGetters({
         profile: 'account/profile',
@@ -54,8 +68,15 @@ export default class ModalAssetPoolCreate extends Vue {
     erc721Selectedtokens: TERC721[] = [];
     profile!: IAccount;
 
+    @Prop() tokenId!: string;
+    @Prop() erc20?: TERC20;
+    @Prop() erc721?: TERC721;
+
     get disabled() {
-        return this.loading || (!this.erc20Selectedtokens.length && !this.erc721Selectedtokens.length);
+        return (
+            this.loading ||
+            (!this.erc20 && !this.erc721 && !this.erc20Selectedtokens.length && !this.erc721Selectedtokens.length)
+        );
     }
 
     onSelectChain(chainId: ChainId) {
@@ -73,6 +94,14 @@ export default class ModalAssetPoolCreate extends Vue {
 
     async submit() {
         this.loading = true;
+
+        if (!this.erc20Selectedtokens.length && this.erc20) {
+            this.erc20Selectedtokens = [this.erc20];
+        }
+        if (!this.erc721Selectedtokens.length && this.erc721) {
+            this.erc721Selectedtokens = [this.erc721];
+        }
+
         await this.$store.dispatch('pools/create', {
             chainId: this.chainId,
             erc20tokens: this.erc20Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
@@ -81,6 +110,7 @@ export default class ModalAssetPoolCreate extends Vue {
         });
         this.$bvModal.hide(`modalAssetPoolCreate`);
         this.loading = false;
+        this.$emit('created');
     }
 }
 </script>

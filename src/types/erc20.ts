@@ -18,6 +18,7 @@ export type TERC20 = {
     logoURI?: string;
     archived: boolean;
     poolBalance?: string;
+    poolId?: string;
 };
 
 export interface IERC20s {

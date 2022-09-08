@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer">
         <template #card-header>
             {{ ERC20Type[erc20.type] }}
             <i class="ml-1 fas fa-archive text-white small" v-if="erc20.archived"></i>
@@ -23,6 +23,11 @@
                 <span class="text-muted">Treasury</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
+            <div class="text-center" v-if="!erc20.poolId">
+                <b-button variant="primary" v-b-modal="'modalAssetPoolCreate'" class="rounded-pill">
+                    Deploy Pool
+                </b-button>
+            </div>
         </template>
     </base-card>
 </template>
@@ -34,7 +39,7 @@ import BaseCard from '@/components/cards/BaseCard.vue';
 import BaseBadgeNetwork from '@/components/badges/BaseBadgeNetwork.vue';
 import BaseIdenticon from '@/components/BaseIdenticon.vue';
 import BaseDropdownTokenMenu from '@/components/dropdowns/BaseDropdownMenuToken.vue';
-import { chainInfo } from '@/utils/chains';
+
 import poll from 'promise-poller';
 
 @Component({
@@ -79,11 +84,6 @@ export default class BaseCardERC20 extends Vue {
         };
 
         poll({ taskFn, interval: 3000, retries: 10 });
-    }
-
-    openTokenUrl() {
-        const url = `${chainInfo[this.erc20.chainId].blockExplorer}/token/${this.erc20.address}`;
-        return (window as any).open(url, '_blank').focus();
     }
 
     async archive() {

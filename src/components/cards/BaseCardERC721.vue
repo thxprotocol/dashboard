@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer">
         <template #card-header>
             NFT
             <i class="ml-1 fas fa-archive text-white small" v-if="erc721.archived"></i>
@@ -32,6 +32,11 @@
                     {{ prop.name }}
                 </b-badge>
             </p>
+            <div class="text-center" v-if="!erc721.poolId">
+                <b-button variant="primary" v-b-modal="`modalAssetPoolCreate_${erc721._id}`" class="rounded-pill">
+                    Deploy Pool
+                </b-button>
+            </div>
         </template>
     </base-card>
 </template>
@@ -64,7 +69,7 @@ export default class BaseCardERC721 extends Vue {
 
     async mounted() {
         await this.$store.dispatch('erc721/read', this.erc721._id);
-
+        console.log('this.erc721', this.erc721);
         if (!this.erc721.address) {
             this.isDeploying = true;
             this.waitForAddress();
