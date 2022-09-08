@@ -24,7 +24,7 @@
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
             <div class="text-center" v-if="!erc20.poolId">
-                <b-button variant="primary" v-b-modal="'modalAssetPoolCreate'" class="rounded-pill">
+                <b-button variant="primary" v-b-modal="`modalAssetPoolCreate_${erc20._id}`" class="rounded-pill">
                     Deploy Pool
                 </b-button>
             </div>

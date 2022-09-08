@@ -108,7 +108,7 @@ export default class ModalAssetPoolCreate extends Vue {
             erc721tokens: this.erc721Selectedtokens.map((t) => t.address), // TODO make this t._id and have API support it
             variant: this.poolVariant,
         });
-        this.$bvModal.hide(`modalAssetPoolCreate`);
+        this.$bvModal.hide(`modalAssetPoolCreate_${this.tokenId}`);
         this.loading = false;
         this.$emit('created');
     }

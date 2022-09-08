@@ -69,7 +69,7 @@ export default class BaseCardERC721 extends Vue {
 
     async mounted() {
         await this.$store.dispatch('erc721/read', this.erc721._id);
-        console.log('this.erc721', this.erc721);
+
         if (!this.erc721.address) {
             this.isDeploying = true;
             this.waitForAddress();

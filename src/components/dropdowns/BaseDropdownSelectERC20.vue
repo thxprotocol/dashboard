@@ -1,5 +1,5 @@
 <template>
-    <b-dropdown variant="link" class="dropdown-select" v-if="erc20s.length">
+    <b-dropdown variant="link" class="dropdown-select" v-if="tokenList.length">
         <template #button-content>
             <div v-if="erc20Token && erc20Token.chainId === chainId">
                 <div class="d-flex align-items-center">
