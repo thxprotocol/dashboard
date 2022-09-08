@@ -50,7 +50,7 @@
                     <b-dropdown-item-button v-if="reward.amount > 1" @click="getQRCodes()">
                         <i class="fas fa-qrcode mr-3"></i>Download {{ reward.amount }} QR codes
                     </b-dropdown-item-button>
-                    <b-dropdown-item v-if="reward.amount === 1" :download="`${reward._id}.jpg`" :href="qrURL">
+                    <b-dropdown-item v-if="reward.amount === 1" @click="getQRCodes()">
                         <i class="fas fa-qrcode mr-3"></i>Download QR code
                     </b-dropdown-item>
                     <b-dropdown-item @click="toggleState()">
