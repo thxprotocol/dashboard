@@ -1,7 +1,13 @@
 <template>
-    <base-modal :loading="loading" :error="error" title="Create Token Pool" :id="`modalAssetPoolCreate_${tokenId}`">
+    <base-modal
+        @show="onShow"
+        :loading="loading"
+        :error="error"
+        title="Create Token Pool"
+        :id="`modalAssetPoolCreate_${tokenId}`"
+    >
         <template #modal-body>
-            <base-form-select-network @selected="onSelectChain" />
+            <base-form-select-network :chainId="chainId" @selected="onSelectChain" />
             <b-form-group>
                 <label> Token Contract </label>
                 <div v-if="erc20">
@@ -77,6 +83,11 @@ export default class ModalAssetPoolCreate extends Vue {
             this.loading ||
             (!this.erc20 && !this.erc721 && !this.erc20Selectedtokens.length && !this.erc721Selectedtokens.length)
         );
+    }
+
+    onShow() {
+        if (this.erc20) this.chainId = this.erc20.chainId;
+        if (this.erc721) this.chainId = this.erc721.chainId;
     }
 
     onSelectChain(chainId: ChainId) {

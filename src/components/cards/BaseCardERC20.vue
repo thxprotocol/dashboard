@@ -4,7 +4,7 @@
             {{ ERC20Type[erc20.type] }}
             <i class="ml-1 fas fa-archive text-white small" v-if="erc20.archived"></i>
         </template>
-        <template #card-body v-if="erc20.name">
+        <template #card-body v-if="!isLoading && erc20.address">
             <base-dropdown-token-menu :erc20="erc20" @archive="archive" />
             <base-badge-network class="mr-2" :chainId="erc20.chainId" />
             <div class="my-3 d-flex align-items-center" v-if="erc20.name">
@@ -23,11 +23,16 @@
                 <span class="text-muted">Treasury</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
-            <div class="text-center" v-if="!erc20.poolId">
-                <b-button variant="primary" v-b-modal="`modalAssetPoolCreate_${erc20._id}`" class="rounded-pill">
-                    Deploy Pool
-                </b-button>
-            </div>
+            <hr />
+            <b-button
+                v-if="!erc20.poolId"
+                block
+                variant="primary"
+                v-b-modal="`modalAssetPoolCreate_${erc20._id}`"
+                class="rounded-pill"
+            >
+                Deploy Pool
+            </b-button>
         </template>
     </base-card>
 </template>
