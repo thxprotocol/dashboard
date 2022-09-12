@@ -11,7 +11,7 @@ import {
     MetadataListProps,
     TMetadataResponse,
 } from '@/types/erc721';
-import { zip, zipFolder } from '@/utils/zip';
+import JSZip from 'jszip';
 
 @Module({ namespaced: true })
 class ERC721Module extends VuexModule {
@@ -91,7 +91,7 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
-        
+
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {
@@ -226,6 +226,9 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async uploadMultipleMetadataImages(payload: { pool: IPool; erc721: TERC721; files: FileList; propName: string }) {
+        const zip = new JSZip();
+        const zipFolder = zip.folder('nft-images');
+
         await Promise.all(
             [...payload.files].map((x: File) => {
                 return zipFolder?.file(x.name, x);
