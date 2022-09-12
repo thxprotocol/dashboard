@@ -44,7 +44,7 @@
                             aria-hidden="true"
                         ></i>
                     </template>
-                    <b-dropdown-item @click="onEdit()"><i class="fas fa-pen mr-3"></i> Edit reward </b-dropdown-item>
+                    <b-dropdown-item @click="onEdit()"> <i class="fas fa-pen mr-2"></i> Edit reward </b-dropdown-item>
                     <b-dropdown-item v-clipboard:copy="reward.id">
                         <i class="fas fa-clipboard mr-3"></i>Copy ID
                     </b-dropdown-item>
@@ -133,7 +133,6 @@ import { IPool } from '@/store/modules/pools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
-import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import VueQr from 'vue-qr';
 import { BASE_URL, WALLET_URL } from '@/utils/secrets';
 import { mapGetters } from 'vuex';
@@ -161,7 +160,6 @@ const getBase64Image = (url: string): Promise<string> => {
         brands: 'brands/all',
     }),
     components: {
-        BaseModalRewardCreate,
         BaseCard,
         VueQr,
     },

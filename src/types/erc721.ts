@@ -42,6 +42,7 @@ export type TERC721 = {
     properties: TERC721DefaultProp[];
     metadata: TERC721Metadata[];
     archived: boolean;
+    poolId?: string;
 };
 
 export interface IERC721s {

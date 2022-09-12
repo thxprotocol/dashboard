@@ -79,7 +79,6 @@ export default class BaseDropdownSpotifyTrack extends Vue {
             this.$emit('selected', { id: this.selected.id });
         } else {
             const isUserTrack = this.items.find((playlist: any) => playlist.track.id === this.item);
-            console.log(this.items, this.item);
 
             if (isUserTrack) this.selected = isUserTrack;
             else {
