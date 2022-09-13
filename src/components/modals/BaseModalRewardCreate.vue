@@ -519,6 +519,7 @@ export default class ModalRewardCreate extends Vue {
                       channelAction: this.action?.type,
                       channelItem:
                           this.item &&
+                          this.item.referenced_tweets &&
                           this.item.referenced_tweets[0] &&
                           this.item.referenced_tweets[0].type === 'retweeted'
                               ? this.item.referenced_tweets[0].id
