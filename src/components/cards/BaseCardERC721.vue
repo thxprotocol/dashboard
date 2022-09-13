@@ -32,16 +32,12 @@
                     {{ prop.name }}
                 </b-badge>
             </p>
-            <hr />
-            <b-button
-                v-if="!erc721.poolId"
-                block
-                variant="primary"
-                v-b-modal="`modalAssetPoolCreate_${erc721._id}`"
-                class="rounded-pill"
-            >
-                Deploy Pool
-            </b-button>
+            <template v-if="!erc721.poolId">
+                <hr />
+                <b-button block variant="primary" v-b-modal="`modalAssetPoolCreate_${erc721._id}`" class="rounded-pill">
+                    Deploy Pool
+                </b-button>
+            </template>
         </template>
     </base-card>
 </template>

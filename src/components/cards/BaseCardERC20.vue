@@ -23,16 +23,12 @@
                 <span class="text-muted">Treasury</span><br />
                 <strong class="font-weight-bold h3 text-primary"> {{ erc20.adminBalance }} </strong>
             </p>
-            <hr />
-            <b-button
-                v-if="!erc20.poolId"
-                block
-                variant="primary"
-                v-b-modal="`modalAssetPoolCreate_${erc20._id}`"
-                class="rounded-pill"
-            >
-                Deploy Pool
-            </b-button>
+            <template v-if="!erc20.poolId">
+                <hr />
+                <b-button block variant="primary" v-b-modal="`modalAssetPoolCreate_${erc20._id}`" class="rounded-pill">
+                    Deploy Pool
+                </b-button>
+            </template>
         </template>
     </base-card>
 </template>
