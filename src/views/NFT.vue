@@ -42,6 +42,7 @@
             <b-row v-else>
                 <b-col md="6" lg="4" :key="erc721._id" v-for="erc721 of erc721s">
                     <base-card-erc721 :erc721="erc721" />
+                    <base-modal-pool-create :erc721="erc721" :tokenId="erc721._id" @created="loadList()" />
                 </b-col>
             </b-row>
         </div>
@@ -57,6 +58,7 @@ import BaseCardErc721 from '@/components/cards/BaseCardERC721.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { IERC721s } from '@/types/erc721';
 import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue';
+import BaseModalPoolCreate from '@/components/modals/BaseModalPoolCreate.vue';
 
 @Component({
     components: {
@@ -64,6 +66,7 @@ import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue'
         BaseCardErc721,
         ModalErc721Create,
         BaseNothingHere,
+        BaseModalPoolCreate,
     },
     computed: mapGetters({
         erc721s: 'erc721/all',
@@ -72,9 +75,13 @@ import BaseBtnToggleArchive from '@/components/buttons/BaseBtnToggleArchive.vue'
 export default class NFTView extends Vue {
     erc721s!: IERC721s;
 
+    loadList() {
+        this.$store.dispatch('erc721/list');
+    }
+
     mounted() {
         this.$store.dispatch('account/getProfile');
-        this.$store.dispatch('erc721/list');
+        this.loadList();
     }
 }
 </script>

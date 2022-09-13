@@ -41,6 +41,14 @@
                     </b-form-group>
                 </b-col>
             </b-row>
+            <b-row>
+                <b-col>
+                    <label>Token Icon</label>
+                    <b-form-group>
+                        <b-form-file v-model="logoImg" accept="image/*" />
+                    </b-form-group>
+                </b-col>
+            </b-row>
         </template>
         <template #btn-primary>
             <b-button :disabled="loading" class="rounded-pill" @click="submit()" variant="primary" block>
@@ -82,6 +90,7 @@ export default class ModalERC20Create extends Vue {
     name = '';
     symbol = '';
     totalSupply = 0;
+    logoImg: File | null = null;
 
     async submit() {
         this.loading = true;
@@ -92,6 +101,7 @@ export default class ModalERC20Create extends Vue {
             symbol: this.symbol,
             type: this.tokenType,
             totalSupply: this.tokenType === ERC20Type.Limited ? this.totalSupply : 0,
+            file: this.logoImg,
         };
 
         await this.$store.dispatch('erc20/create', data);

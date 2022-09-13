@@ -11,7 +11,7 @@
                     {{ client.grantType }}
                 </b-form-group>
             </b-col>
-            <b-col md="6">
+            <b-col md="5">
                 <b-form-row>
                     <b-col md="3">
                         <label class="text-gray">Client ID</label>
@@ -43,6 +43,18 @@
                     </b-col>
                 </b-form-row>
             </b-col>
+            <b-col md="1">
+                <b-dropdown class="float-right" size="sm" variant="white" no-caret right>
+                    <template #button-content>
+                        <i
+                            class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted"
+                            style="font-size: 1.2rem"
+                            aria-hidden="true"
+                        ></i>
+                    </template>
+                    <b-dropdown-item @click="onEdit"> <i class="fas fa-pen mr-2"></i> Edit </b-dropdown-item>
+                </b-dropdown>
+            </b-col>
         </b-row>
     </b-card>
 </template>
@@ -63,6 +75,8 @@ export default class BaseListItemClient extends Vue {
     @Prop() client!: TClient;
     @Prop() pool!: IPool;
 
+    editingClient: TClient | undefined;
+
     get clientSecret() {
         return (
             this.client.clientSecret &&
@@ -70,6 +84,10 @@ export default class BaseListItemClient extends Vue {
                 .map(() => '•')
                 .join('')
         );
+    }
+
+    onEdit() {
+        this.$emit('edit', this.client);
     }
 
     mounted() {

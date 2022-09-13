@@ -5,7 +5,12 @@
                 <h2 class="mb-0">Rewards</h2>
             </b-col>
             <b-col class="d-flex justify-content-end">
-                <b-button v-b-modal="'modalRewardCreate'" class="rounded-pill" variant="primary">
+                <b-button
+                    v-b-modal="'modalRewardCreate'"
+                    @click="editingReward = null"
+                    class="rounded-pill"
+                    variant="primary"
+                >
                     <i class="fas fa-plus mr-2"></i>
                     <span class="d-none d-md-inline">Create a reward</span>
                 </b-button>
@@ -18,7 +23,13 @@
             description="Use rewards to send your tokens to people and use reward configuration to limit claims."
             @clicked="$bvModal.show('modalRewardCreate')"
         />
-        <base-card-reward :pool="pool" :reward="reward" :key="reward._id" v-for="reward of rewardsByPage" />
+        <base-card-reward
+            @edit="onEdit"
+            :pool="pool"
+            :reward="reward"
+            :key="reward._id"
+            v-for="reward of rewardsByPage"
+        />
         <b-pagination
             class="mt-3"
             @change="onChangePage"
@@ -30,6 +41,7 @@
         <base-modal-reward-create
             :pool="pool"
             :erc721="erc721"
+            :reward="editingReward"
             :filteredRewards="rewardsByPage"
             :filteredMetadata="filteredMetadata"
             @submit="onSubmit"
@@ -46,6 +58,7 @@ import BaseCardReward from '@/components/list-items/BaseListItemReward.vue';
 import BaseNothingHere from '@/components/BaseListStateEmpty.vue';
 import { TReward, TRewardState } from '@/store/modules/rewards';
 import { IERC721s, TERC721, TERC721Metadata } from '@/types/erc721';
+import { Reward } from '@/types/rewards';
 
 @Component({
     components: {
@@ -67,6 +80,7 @@ export default class AssetPoolView extends Vue {
 
     error = '';
     loading = true;
+    editingReward: Reward | null = null;
     rewardsLoading = true;
     assetPoolLoading = true;
     isGovernanceEnabled = false;
@@ -105,6 +119,11 @@ export default class AssetPoolView extends Vue {
         this.isLoading = true;
         await this.$store.dispatch('rewards/list', { page: this.page, limit: this.limit, poolId: this.pool._id });
         this.isLoading = false;
+    }
+
+    async onEdit(reward: Reward) {
+        this.editingReward = reward;
+        this.$bvModal.show('modalRewardCreate');
     }
 
     onChangePage(page: number) {

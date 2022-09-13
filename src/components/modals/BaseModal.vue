@@ -2,6 +2,7 @@
     <b-modal
         :size="size || 'lg'"
         @show="$emit('show')"
+        @hidden="$emit('hidden')"
         :title="title"
         :id="id"
         no-close-on-backdrop

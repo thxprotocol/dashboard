@@ -3,7 +3,7 @@
         <template #modal-body v-if="!loading">
             <BaseFormSelectNetwork @selected="chainId = $event" />
             <b-form-group label="Existing ERC20 contract">
-                <BaseDropDownSelectPolygonERC20 :erc20="erc20" :chainId="chainId" @selected="onERC20Selected" />
+                <BaseDropDownSelectPolygonERC20 :erc20="erc20" :chainId="chainId" @selected="onERC20Selected($event)" />
             </b-form-group>
             <b-form-group label="Contract Address">
                 <b-input-group>
@@ -60,6 +60,7 @@ export default class ModalERC20Import extends Vue {
     chainId: ChainId = ChainId.Polygon;
     erc20: TERC20 | null = null;
     erc20Address = '';
+    erc20LogoImgUrl = '';
 
     get isValidAddress() {
         return isAddress(this.erc20Address);
@@ -71,6 +72,7 @@ export default class ModalERC20Import extends Vue {
         const data = {
             chainId: this.chainId,
             address: this.erc20Address,
+            logoImgUrl: this.erc20LogoImgUrl,
         };
 
         await this.$store.dispatch('erc20/import', data);
@@ -83,6 +85,7 @@ export default class ModalERC20Import extends Vue {
     onERC20Selected(erc20: TERC20) {
         this.erc20 = erc20;
         this.erc20Address = erc20 ? erc20.address : '';
+        this.erc20LogoImgUrl = erc20 && erc20.logoURI ? erc20.logoURI : '';
     }
 }
 </script>

@@ -3,15 +3,15 @@
         <label>Your Tracks:</label>
         <b-dropdown variant="link" class="dropdown-select bg-white mb-3">
             <template #button-content>
-                <div v-if="item" class="d-flex align-items-center text-overflow-ellipsis">
+                <div v-if="selected" class="d-flex align-items-center text-overflow-ellipsis">
                     <img
-                        :src="item.track.album.images[0].url"
-                        v-if="item.track.album.images[0].url"
+                        :src="selected.track.album.images[0].url"
+                        v-if="selected.track.album.images[0].url"
                         width="30"
                         class="mr-2"
-                        :alt="item.track.name"
+                        :alt="selected.track.name"
                     />
-                    {{ item.track.name }}
+                    {{ selected.track.name }}
                 </div>
             </template>
             <b-dropdown-item-button :key="item.track.id" v-for="item of items" @click="onItemClick(item)">
@@ -40,7 +40,6 @@
             :class="{ 'is-valid': trackId.length }"
             class="mb-3"
             placeholder="https://open.spotify.com/track/3Xvvu6znhWYasoqzAbn2Hd"
-            @input="onChange"
             v-model="url"
         />
 
@@ -52,7 +51,7 @@
 
 <script lang="ts">
 import { BAlert, BButton, BFormInput, BInputGroup, BInputGroupAppend } from 'bootstrap-vue';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
@@ -67,22 +66,34 @@ import { mapGetters } from 'vuex';
 })
 export default class BaseDropdownSpotifyTrack extends Vue {
     @Prop() items!: any;
+    @Prop({ required: false }) item: any;
 
     url = '';
     trackId = '';
 
-    item: any = null;
+    selected: any = null;
 
     mounted() {
-        this.item = this.items[0];
-        this.$emit('selected', { id: this.item.track.id });
+        if (!this.item) {
+            this.selected = this.items[0];
+            this.$emit('selected', { id: this.selected.id });
+        } else {
+            const isUserTrack = this.items.find((playlist: any) => playlist.track.id === this.item);
+
+            if (isUserTrack) this.selected = isUserTrack;
+            else {
+                this.selected = this.items[0];
+                this.url = `https://open.spotify.com/track/${this.item}`;
+            }
+        }
     }
 
     onItemClick(item: any) {
-        this.item = item;
-        this.$emit('selected', { id: this.item.track.id });
+        this.selected = item;
+        this.$emit('selected', { id: this.selected.track.id });
     }
 
+    @Watch('url')
     onChange(url: string) {
         const result = url.replace(/.*\/(?:track)\/([\w-]{22}).*/, '$1');
 

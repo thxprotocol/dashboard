@@ -8,7 +8,7 @@
         >
             <div class="container container-md pt-5 pb-5">
                 <p class="brand-text">Pools</p>
-                <b-button v-b-modal="'modalAssetPoolCreate'" class="rounded-pill" variant="secondary">
+                <b-button v-b-modal="`modalAssetPoolCreate_0`" class="rounded-pill" variant="secondary">
                     <i class="fas fa-plus mr-2"></i>
                     <span>Create Pool</span>
                 </b-button>
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <base-modal-pool-create />
+        <base-modal-pool-create :tokenId="0" />
     </div>
 </template>
 

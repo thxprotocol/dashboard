@@ -33,7 +33,7 @@ import { ChainId } from '@/types/enums/ChainId';
 import { AccountPlanType, IAccount } from '@/types/account';
 import { chainInfo } from '@/utils/chains';
 import { PUBLIC_URL } from '@/utils/secrets';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 
 @Component({
@@ -42,16 +42,16 @@ import { mapGetters } from 'vuex';
     }),
 })
 export default class BaseFormSelectNetwork extends Vue {
+    @Prop() chainId!: ChainId;
     ChainId = ChainId;
     AccountPlanType = AccountPlanType;
     publicUrl = PUBLIC_URL;
     chainInfo = chainInfo;
-    chainId = ChainId.PolygonMumbai;
     profile!: IAccount;
 
     mounted() {
-        if (this.profile.plan !== AccountPlanType.Free) this.chainId = ChainId.Polygon;
-        if (process.env.NODE_ENV !== 'production') this.chainId = ChainId.Hardhat;
+        if (!this.chainId && this.profile.plan !== AccountPlanType.Free) this.chainId = ChainId.Polygon;
+        else if (!this.chainId) this.chainId = ChainId.PolygonMumbai;
 
         this.$emit('selected', this.chainId);
     }

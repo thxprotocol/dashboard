@@ -26,7 +26,7 @@ const chainInfo: { [chainId: number]: ChainInfo } = {
     80001: {
         disabled: false,
         chainId: ChainId.PolygonMumbai,
-        name: 'Polygon Mumbai (testnet)',
+        name: 'Polygon Mumbai',
         logo: require('@/assets/thx_logo_polygon.svg'),
         blockExplorer: 'https://mumbai.polygonscan.com',
     },

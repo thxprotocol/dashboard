@@ -11,7 +11,7 @@ import {
     MetadataListProps,
     TMetadataResponse,
 } from '@/types/erc721';
-import { zip, zipFolder } from '@/utils/zip';
+import JSZip from 'jszip';
 
 @Module({ namespaced: true })
 class ERC721Module extends VuexModule {
@@ -46,7 +46,9 @@ class ERC721Module extends VuexModule {
         if (!this._all[payload.erc721._id].metadata) {
             return Vue.set(this._all[payload.erc721._id], 'metadata', [payload.metadata]);
         }
-        const index = payload.erc721.metadata.findIndex((m: TERC721Metadata) => m._id === payload.metadata._id) || 0;
+        const index = payload.erc721.metadata
+            ? payload.erc721.metadata.findIndex((m: TERC721Metadata) => m._id === payload.metadata._id) || 0
+            : 0;
 
         Vue.set(
             this._all[payload.erc721._id]['metadata'],
@@ -76,25 +78,28 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async listMetadata({ page = 1, limit, erc721 }: MetadataListProps) {
+    async listMetadata({ page = 1, limit, erc721, q }: MetadataListProps) {
         if (!erc721) {
             return;
         }
         const params = new URLSearchParams();
         params.set('page', String(page));
         params.set('limit', String(limit));
+        params.set('q', String(q));
 
         const { data }: TMetadataResponse = await axios({
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
-        console.log('METADATA', data);
+
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {
             metadata.page = page;
             this.context.commit('setMetadata', { erc721, metadata });
         }
+
+        return data;
     }
 
     @Action({ rawError: true })
@@ -112,7 +117,7 @@ class ERC721Module extends VuexModule {
         const erc721 = {
             ...data,
             loading: false,
-            logoURI: `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
+            logoURI: data.logoImgUrl || `https://avatars.dicebear.com/api/identicon/${data.address}.svg`,
         };
 
         this.context.commit('set', erc721);
@@ -121,11 +126,29 @@ class ERC721Module extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async create(payload: { network: ChainId; name: string; symbol: string; schema: string[] }) {
+    async create(payload: {
+        chainId: ChainId;
+        name: string;
+        symbol: string;
+        schema: string[];
+        description: string;
+        file?: File;
+    }) {
+        const formData = new FormData();
+        formData.set('chainId', payload.chainId.toString());
+        formData.set('name', payload.name);
+        formData.set('symbol', payload.symbol);
+        formData.set('description', payload.description);
+        formData.set('schema', JSON.stringify(payload.schema));
+
+        if (payload.file) {
+            formData.append('file', payload.file);
+        }
+
         const { data } = await axios({
             method: 'POST',
             url: '/erc721',
-            data: payload,
+            data: formData,
         });
 
         this.context.commit('set', data);
@@ -143,6 +166,30 @@ class ERC721Module extends VuexModule {
         const { data } = await axios({
             method: 'POST',
             url: `/erc721/${payload.erc721._id}/metadata`,
+            headers: { 'X-PoolId': payload.pool._id },
+            data: {
+                title: payload.title,
+                description: payload.description,
+                attributes: payload.attributes,
+                recipient: payload.recipient,
+            },
+        });
+        this.context.commit('setMetadata', { erc721: payload.erc721, metadata: data });
+    }
+
+    @Action({ rawError: true })
+    async updateMetadata(payload: {
+        pool: IPool;
+        erc721: TERC721;
+        title?: string;
+        description?: string;
+        attributes: any;
+        recipient?: string;
+        id?: string;
+    }) {
+        const { data } = await axios({
+            method: 'PATCH',
+            url: `/erc721/${payload.erc721._id}/metadata/${payload.id}`,
             headers: { 'X-PoolId': payload.pool._id },
             data: {
                 title: payload.title,
@@ -179,6 +226,9 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async uploadMultipleMetadataImages(payload: { pool: IPool; erc721: TERC721; files: FileList; propName: string }) {
+        const zip = new JSZip();
+        const zipFolder = zip.folder('nft-images');
+
         await Promise.all(
             [...payload.files].map((x: File) => {
                 return zipFolder?.file(x.name, x);
