@@ -57,7 +57,7 @@ export default class BaseFormSelectNetwork extends Vue {
 
     onSelectNetwork(chainId: ChainId) {
         this.currentChainId = chainId;
-        this.$emit('selected', this.chainId);
+        this.$emit('selected', chainId);
     }
 }
 </script>
