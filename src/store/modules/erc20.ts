@@ -2,6 +2,7 @@ import { Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { IERC20s, TERC20 } from '@/types/erc20';
+import { ChainId } from '../enums/chainId';
 
 @Module({ namespaced: true })
 class ERC20Module extends VuexModule {
@@ -116,6 +117,17 @@ class ERC20Module extends VuexModule {
         if (data.archived) {
             this.context.commit('unset', erc20);
         }
+    }
+
+    @Action({ rawError: true })
+    async preview(payload: { chainId: ChainId; address: string }) {
+        const { data } = await axios({
+            method: 'POST',
+            url: '/erc20/preview',
+            data: payload,
+        });
+
+        return data;
     }
 }
 
