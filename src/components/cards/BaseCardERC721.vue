@@ -1,10 +1,10 @@
 <template>
-    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="openTokenUrl()">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer">
         <template #card-header>
             NFT
             <i class="ml-1 fas fa-archive text-white small" v-if="erc721.archived"></i>
         </template>
-        <template #card-body v-if="erc721.address">
+        <template #card-body v-if="!isLoading && erc721.address">
             <base-dropdown-menu-nft :erc721="erc721" @archive="archive" />
             <base-badge-network class="mr-2" :chainId="erc721.chainId" />
             <div class="my-3 d-flex align-items-center">
@@ -32,6 +32,12 @@
                     {{ prop.name }}
                 </b-badge>
             </p>
+            <template v-if="!erc721.poolId">
+                <hr />
+                <b-button block variant="primary" v-b-modal="`modalAssetPoolCreate_${erc721._id}`" class="rounded-pill">
+                    Deploy Pool
+                </b-button>
+            </template>
         </template>
     </base-card>
 </template>

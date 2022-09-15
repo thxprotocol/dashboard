@@ -3,8 +3,8 @@
         <label> Your Tweets:</label>
         <b-dropdown variant="link" class="dropdown-select bg-white">
             <template #button-content>
-                <div v-if="item" class="text-overflow-ellipsis">
-                    {{ item.text }}
+                <div v-if="selected" class="text-overflow-ellipsis">
+                    {{ selected.text }}
                 </div>
             </template>
             <b-dropdown-item-button
@@ -22,33 +22,37 @@
 </template>
 
 <script lang="ts">
-import { BDropdown, BDropdownItemButton, BBadge, BSpinner } from 'bootstrap-vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { format } from 'date-fns';
 
 @Component({
-    components: {
-        BBadge,
-        BDropdown,
-        BDropdownItemButton,
-        BSpinner,
-    },
     computed: mapGetters({}),
 })
 export default class BaseDropdownTwitterTweets extends Vue {
     format = format;
 
     @Prop() items!: any;
+    @Prop({ required: false }) item: any;
 
-    item: any = null;
+    selected: any = null;
 
     mounted() {
-        this.onItemClick(this.items[0]);
+        if (!this.item) {
+            this.onItemClick(this.items[0]);
+        } else {
+            for (const key in this.items) {
+                const tweet = this.items[key].referenced_tweets[0];
+                if (tweet.id === this.item) {
+                    this.onItemClick(this.items[key]);
+                    break;
+                }
+            }
+        }
     }
 
     onItemClick(item: any) {
-        this.item = item;
+        this.selected = item;
         this.$emit('selected', item);
     }
 }

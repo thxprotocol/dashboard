@@ -62,7 +62,7 @@ export enum ChannelAction {
     SpotifyTrackRecent = 9,
 }
 
-export const channelList = [
+export const channelList: IChannel[] = [
     {
         type: ChannelType.None,
         name: ChannelType[0],

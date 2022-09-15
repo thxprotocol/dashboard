@@ -118,6 +118,18 @@ class ClientModule extends VuexModule {
     }
 
     @Action({ rawError: true })
+    async update({ _id, name, pool }: TClientCreate & TClient) {
+        const { data } = await axios({
+            method: 'PATCH',
+            url: '/clients/' + _id,
+            headers: { 'X-PoolId': pool._id },
+            data: { name },
+        });
+
+        this.context.commit('set', { pool, client: data });
+    }
+
+    @Action({ rawError: true })
     async get({ client, pool }: GetClientProps) {
         const { data } = await axios({
             method: 'GET',

@@ -42,6 +42,7 @@ export type TERC721 = {
     properties: TERC721DefaultProp[];
     metadata: TERC721Metadata[];
     archived: boolean;
+    poolId?: string;
 };
 
 export interface IERC721s {
@@ -56,6 +57,7 @@ export type PaginationParams = Partial<{
 export type MetadataListProps = PaginationParams & {
     erc721: TERC721;
     pool: IPool;
+    q?: string;
 };
 
 export type TMetadataMeta = {
