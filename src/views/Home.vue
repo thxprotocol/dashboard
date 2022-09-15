@@ -134,9 +134,9 @@ export default class Home extends Vue {
 
     async mounted() {
         await this.$store.dispatch('account/getProfile');
-        //if (this.profile.email) {
-        this.$bvModal.show('modalRequestAccountEmailUpdate');
-        // }
+        if (!this.profile.email) {
+            this.$bvModal.show('modalRequestAccountEmailUpdate');
+        }
     }
 }
 </script>
