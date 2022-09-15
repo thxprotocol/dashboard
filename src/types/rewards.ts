@@ -81,17 +81,6 @@ export const channelList: IChannel[] = [
         logoURI: require('@/assets/logo-twitter.png'),
         actions: [ChannelAction.TwitterLike, ChannelAction.TwitterRetweet, ChannelAction.TwitterFollow],
     },
-    {
-        type: ChannelType.Spotify,
-        name: ChannelType[3],
-        logoURI: require('@/assets/logo-spotify.png'),
-        actions: [
-            ChannelAction.SpotifyUserFollow,
-            ChannelAction.SpotifyPlaylistFollow,
-            ChannelAction.SpotifyTrackPlaying,
-            ChannelAction.SpotifyTrackSaved,
-        ],
-    },
 ];
 export const channelActionList = [
     {
@@ -117,26 +106,6 @@ export const channelActionList = [
     {
         type: ChannelAction.TwitterFollow,
         name: 'Follow',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyUserFollow,
-        name: 'Follow me',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyPlaylistFollow,
-        name: 'Follow Playlist',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyTrackPlaying,
-        name: 'Play a Track',
-        items: [],
-    },
-    {
-        type: ChannelAction.SpotifyTrackSaved,
-        name: 'Save a Track',
         items: [],
     },
 ];
