@@ -46,7 +46,6 @@ export enum ChannelType {
     None = 0,
     YouTube = 1,
     Twitter = 2,
-    Spotify = 3,
 }
 
 export enum ChannelAction {
@@ -55,11 +54,6 @@ export enum ChannelAction {
     TwitterLike = 2,
     TwitterRetweet = 3,
     TwitterFollow = 4,
-    SpotifyUserFollow = 5,
-    SpotifyPlaylistFollow = 6,
-    SpotifyTrackPlaying = 7,
-    SpotifyTrackSaved = 8,
-    SpotifyTrackRecent = 9,
 }
 
 export const channelList: IChannel[] = [

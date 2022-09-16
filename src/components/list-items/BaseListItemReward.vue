@@ -235,14 +235,6 @@ export default class BaseCardReward extends Vue {
                 return `https://www.twitter.com/twitter/status/${channelItem}`;
             case ChannelAction.TwitterFollow:
                 return `https://www.twitter.com/i/user/${channelItem}`;
-            case ChannelAction.SpotifyUserFollow:
-                return `https://open.spotify.com/artist/${channelItem}`;
-            case ChannelAction.SpotifyPlaylistFollow:
-                return `https://open.spotify.com/playlist/${channelItem}`;
-            case ChannelAction.SpotifyTrackPlaying:
-                return `https://open.spotify.com/track/${channelItem}`;
-            case ChannelAction.SpotifyTrackSaved:
-                return `https://open.spotify.com/track/${channelItem}`;
             default:
                 return '';
         }
