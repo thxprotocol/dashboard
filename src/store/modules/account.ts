@@ -154,7 +154,12 @@ class AccountModule extends VuexModule {
     }
 
     @Action({ rawError: true })
-    async signinRedirect(payload: { signupToken: string; signupEmail: string; passwordResetToken: string }) {
+    async signinRedirect(payload: {
+        signupToken: string;
+        signupEmail: string;
+        passwordResetToken: string;
+        verifyEmailToken: string;
+    }) {
         const extraQueryParams: any = {
             return_url: BASE_URL,
         };
@@ -167,6 +172,11 @@ class AccountModule extends VuexModule {
         if (payload.passwordResetToken) {
             extraQueryParams['prompt'] = 'reset';
             extraQueryParams['password_reset_token'] = payload.passwordResetToken;
+        }
+
+        if (payload.verifyEmailToken) {
+            extraQueryParams['prompt'] = 'verify_email';
+            extraQueryParams['verifyEmailToken'] = payload.verifyEmailToken;
         }
 
         await this.userManager.clearStaleState();
