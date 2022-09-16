@@ -3,6 +3,7 @@
         <b-spinner variant="primary"></b-spinner>
     </div>
     <div v-else>
+        <BaseModalRequestAccountEmailUpdate />
         <b-jumbotron
             class="jumbotron-header text-left"
             :style="{ 'background-image': `url(${require('@/assets/thx_jumbotron.webp')})` }"
@@ -109,12 +110,16 @@ import { AccountPlanType, IAccount } from '@/types/account';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseModalRequestAccountEmailUpdate from '@/components/modals/BaseModalRequestAccountEmailUpdate.vue';
 
 @Component({
     computed: mapGetters({
         profile: 'account/profile',
         pools: 'pools/all',
     }),
+    components: {
+        BaseModalRequestAccountEmailUpdate,
+    },
 })
 export default class Home extends Vue {
     window = window;
@@ -129,6 +134,9 @@ export default class Home extends Vue {
 
     async mounted() {
         await this.$store.dispatch('account/getProfile');
+        if (!this.profile.email) {
+            this.$bvModal.show('modalRequestAccountEmailUpdate');
+        }
     }
 }
 </script>
