@@ -104,9 +104,7 @@ export default class ModalERC20Import extends Vue {
     }
 
     async getPreview(address: string) {
-        console.log('address: ', address);
         if (address.length != 42) {
-            console.log('address length', address.length);
             this.showPreview = false;
             this.name = '';
             this.symbol = '';
@@ -119,7 +117,6 @@ export default class ModalERC20Import extends Vue {
                 chainId: this.chainId,
                 address: address,
             });
-            console.log({ name, symbol, totalSupply });
             this.name = name;
             this.symbol = symbol;
             this.totalSupply = totalSupply;
