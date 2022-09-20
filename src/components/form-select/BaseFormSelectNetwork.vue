@@ -52,6 +52,9 @@ export default class BaseFormSelectNetwork extends Vue {
 
     created() {
         if (!this.chainId && this.profile.plan !== AccountPlanType.Free) this.currentChainId = ChainId.Polygon;
+        else {
+            this.currentChainId = this.chainId;
+        }
         this.$emit('selected', this.currentChainId);
     }
 
