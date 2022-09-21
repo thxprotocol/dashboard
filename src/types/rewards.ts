@@ -31,7 +31,7 @@ export interface Reward {
     isClaimOnce: boolean;
     isMembershipRequired: boolean;
     title: string;
-    claims: { _id: string }[];
+    claims: { id: string }[];
     amount: number;
     createdAt: Date;
     updatedAt: Date;
