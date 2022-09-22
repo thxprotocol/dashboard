@@ -16,13 +16,47 @@
                             <i class="fas fa-question-circle"></i>
                         </a>
                     </template>
-                    <b-form-file
-                        @change="onDescChange"
-                        :data-key="key"
-                        v-if="parsePropType(prop.propType) === 'image'"
-                        accept="image/*"
-                    />
+                    <template v-if="parsePropType(prop.propType) === 'image'">
+                        <div
+                            v-if="prop.value && prop.value.length"
+                            style="display: flex; flex-direction: row; align-content: space-between"
+                        >
+                            <div style="margin-right: 5px; width: 15%; text-align: center">
+                                <b-spinner v-if="imgLoading == key.toString()" variant="primary"></b-spinner>
+                                <img v-else :src="prop.value" width="100%" />
+                            </div>
 
+                            <b-form-file
+                                @change="onDescChange"
+                                :data-key="key"
+                                accept="image/*"
+                                width="50%"
+                                :placeholder="
+                                    !isEditing || !prop.value
+                                        ? 'Browse to upload the image'
+                                        : 'Browse to change the image...'
+                                "
+                                :disabled="imgLoading == key.toString()"
+                            />
+                        </div>
+
+                        <div v-else style="display: flex; flex-direction: row; align-content: space-between">
+                            <div
+                                v-if="imgLoading == key.toString()"
+                                style="margin-right: 5px; width: 15%; text-align: center"
+                            >
+                                <b-spinner variant="primary"></b-spinner>
+                            </div>
+
+                            <b-form-file
+                                @change="onDescChange"
+                                :data-key="key"
+                                accept="image/*"
+                                width="50%"
+                                :placeholder="'Browse to upload the image'"
+                            />
+                        </div>
+                    </template>
                     <b-form-input
                         v-else
                         :type="parsePropType(prop.propType)"
@@ -65,11 +99,13 @@ export default class ModalRewardCreate extends Vue {
     authUrl = process.env['VUE_APP_AUTH_URL'];
     docsUrl = process.env['VUE_APP_DOCS_URL'];
     loading = false;
+
     error = '';
 
     recipient = '';
     title = '';
     description = '';
+    imgLoading = '';
 
     @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
@@ -97,8 +133,12 @@ export default class ModalRewardCreate extends Vue {
     }
 
     async onDescChange(event: any) {
+        this.imgLoading = event.target.dataset.key;
+        this.loading = true;
         const publicUrl = await this.upload(event.target.files[0]);
         Vue.set(this.erc721.properties[event.target.dataset['key']], 'value', publicUrl);
+        this.loading = false;
+        this.imgLoading = '';
     }
 
     @Watch('metadata')
@@ -107,14 +147,21 @@ export default class ModalRewardCreate extends Vue {
             this.title = this.metadata['title'];
             this.description = this.metadata['description'];
             this.erc721.properties.forEach((prop, index) => {
-                prop.value = this.metadata.attributes[index].value;
+                prop.value = this.metadata.attributes[index] ? this.metadata.attributes[index].value : '';
             });
         }
     }
 
-    onHidden() {
+    reset() {
         this.title = '';
         this.description = '';
+        this.erc721.properties.forEach((prop, index) => {
+            prop.value = '';
+        });
+    }
+
+    onHidden() {
+        this.reset();
         this.$emit('hidden');
     }
 
@@ -122,6 +169,9 @@ export default class ModalRewardCreate extends Vue {
         const attributes: { key: string; value: string | number | undefined }[] = [];
 
         this.erc721.properties.forEach((prop: TERC721DefaultProp) => {
+            if (prop.propType == 'image' && (!prop.value || !prop.value.length)) {
+                return;
+            }
             attributes.push({
                 key: prop.name,
                 value: prop.value,
@@ -151,6 +201,7 @@ export default class ModalRewardCreate extends Vue {
 
         this.$emit('success');
         this.$bvModal.hide('modalNFTCreate');
+        this.reset();
     }
 }
 </script>
