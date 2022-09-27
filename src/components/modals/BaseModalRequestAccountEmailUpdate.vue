@@ -1,38 +1,34 @@
 <template>
     <b-modal
         size="lg"
-        :title="`Account Email Update`"
+        title="Welcome to your token HQ!"
         no-close-on-backdrop
         no-close-on-esc
         centered
+        no-fade
+        hide-header-close
         :hide-footer="true"
         id="modalRequestAccountEmailUpdate"
     >
-        <div class="pt-5 pb-3 text-center">
-            <p class="text-center">
-                <strong>Your Email address is not set yet, </strong>
-            </p>
-            <p class="text-center">please go to the Account page to specify the email.</p>
-
-            <b-button
-                size="m"
-                class="rounded-pill mt-3"
-                variant="primary"
-                @click="$emit('clicked')"
-                :href="publicUrl + '/account'"
-            >
-                Go to the Account page
-            </b-button>
-        </div>
+        <b-alert show variant="warning">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            Your e-mail address is not been set yet.
+        </b-alert>
+        <p>
+            In order for us to deliver the best product experience we require your e-mail address so we can send you
+            notifications when certain lengthy tasks are completed.
+        </p>
+        <p><strong>Please visit your account page, provide and confirm your email address.</strong></p>
+        <b-button block class="rounded-pill mt-3" variant="primary" @click="$emit('clicked')" :href="'/account'">
+            Visit my account
+            <i class="fas fa-chevron-right ml-2"></i>
+        </b-button>
     </b-modal>
 </template>
 
 <script lang="ts">
-import { PUBLIC_URL } from '@/utils/secrets';
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component({})
-export default class BaseModalRequestAccountEmailUpdate extends Vue {
-    publicUrl = PUBLIC_URL;
-}
+export default class BaseModalRequestAccountEmailUpdate extends Vue {}
 </script>

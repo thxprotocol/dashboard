@@ -17,17 +17,17 @@
                         </a>
                     </template>
                     <template v-if="parsePropType(prop.propType) === 'image'">
-                        <div
-                            v-if="prop.value && prop.value.length"
-                            style="display: flex; flex-direction: row; align-content: space-between"
-                        >
-                            <div style="margin-right: 5px; width: 15%; text-align: center">
+                        <div class="row">
+                            <div class="col-md-2" v-if="prop.value && prop.value.length">
                                 <b-spinner v-if="imgLoading == key.toString()" variant="primary"></b-spinner>
                                 <img v-else :src="prop.value" width="100%" />
                             </div>
-
+                            <div class="col-md-2" v-else>
+                                <b-spinner v-if="imgLoading == key.toString()" variant="primary"></b-spinner>
+                            </div>
                             <b-form-file
                                 @change="onDescChange"
+                                class="col-md-10"
                                 :data-key="key"
                                 accept="image/*"
                                 width="50%"
@@ -37,23 +37,6 @@
                                         : 'Browse to change the image...'
                                 "
                                 :disabled="imgLoading == key.toString()"
-                            />
-                        </div>
-
-                        <div v-else style="display: flex; flex-direction: row; align-content: space-between">
-                            <div
-                                v-if="imgLoading == key.toString()"
-                                style="margin-right: 5px; width: 15%; text-align: center"
-                            >
-                                <b-spinner variant="primary"></b-spinner>
-                            </div>
-
-                            <b-form-file
-                                @change="onDescChange"
-                                :data-key="key"
-                                accept="image/*"
-                                width="50%"
-                                :placeholder="'Browse to upload the image'"
                             />
                         </div>
                     </template>
@@ -155,7 +138,7 @@ export default class ModalRewardCreate extends Vue {
     reset() {
         this.title = '';
         this.description = '';
-        this.erc721.properties.forEach((prop, index) => {
+        this.erc721.properties.forEach((prop) => {
             prop.value = '';
         });
     }
