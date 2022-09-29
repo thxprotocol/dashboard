@@ -20,9 +20,6 @@
                 <div class="col-md-6 col-lg-4">
                     <base-integration-twitter />
                 </div>
-                <div class="col-md-6 col-lg-4">
-                    <base-integration-spotify />
-                </div>
             </div>
         </div>
     </div>
@@ -33,13 +30,11 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import BaseIntegrationYoutube from '@/components/cards/BaseIntegrationYoutube.vue';
 import BaseIntegrationTwitter from '@/components/cards/BaseIntegrationTwitter.vue';
-import BaseIntegrationSpotify from '@/components/cards/BaseIntegrationSpotify.vue';
 
 @Component({
     components: {
         BaseIntegrationYoutube,
         BaseIntegrationTwitter,
-        BaseIntegrationSpotify,
     },
     computed: mapGetters({
         profile: 'account/profile',

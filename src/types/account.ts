@@ -28,13 +28,6 @@ export interface ITwitter {
     tweets: any;
     users: any;
 }
-
-export interface ISpotify {
-    playlists: any;
-    items: any;
-    users: any;
-}
-
 export interface IMember {
     poolAddress: string;
     memberId: number;
