@@ -1,5 +1,5 @@
 <template>
-    <base-modal :error="error" title="Create Bulk NFTs" id="modalNFTBulkCreate">
+    <base-modal :error="error" title="Upload images" id="modalNFTBulkCreate">
         <template #modal-body>
             <label>Select image property</label>
             <b-dropdown variant="link" class="dropdown-select">
@@ -30,7 +30,7 @@
         </template>
         <template #btn-primary>
             <b-button :disabled="isSubmitDisabled" class="rounded-pill" @click="submit()" variant="primary" block>
-                Create NFTs
+                Upload Images
             </b-button>
         </template>
     </base-modal>

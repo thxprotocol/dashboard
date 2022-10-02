@@ -95,7 +95,7 @@ export default class ModalRewardCreate extends Vue {
     @Prop({ required: false }) metadata!: TERC721Metadata;
 
     get modalTitle() {
-        return this.metadata ? 'Update NFT Metadata' : 'Create NFT Metadata';
+        return this.metadata ? 'Edit metadata' : 'Create metadata';
     }
 
     get isSubmitDisabled() {

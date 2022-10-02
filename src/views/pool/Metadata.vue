@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pb-5">
         <b-row class="mb-3">
             <b-col class="d-flex align-items-center">
                 <h2 class="mb-0">Metadata</h2>
@@ -74,9 +74,9 @@ import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC72
 @Component({
     components: {
         BaseNothingHere,
+        BaseCardErc721Metadata,
         BaseModalErc721MetadataCreate,
         BaseModalErc721MetadataBulkCreate,
-        BaseCardErc721Metadata,
         BaseModalErc721MetadataUploadCSV,
         BaseModalErc721MetadataCreateCSV,
     },

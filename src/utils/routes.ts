@@ -60,13 +60,13 @@ export const getRoutes = (pool: IPool) => {
         },
         {
             path: 'clients',
-            label: 'Authorization',
+            label: 'API Keys',
             iconClasses: 'fas fa-key',
             visible: !!pool.erc20 || !!pool.erc721,
         },
         {
             path: 'info',
-            label: 'Information',
+            label: 'Contracts',
             iconClasses: 'fas fa-info-circle',
             visible: !!pool.erc20 || !!pool.erc721,
         },
