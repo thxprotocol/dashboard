@@ -91,7 +91,6 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
-
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {

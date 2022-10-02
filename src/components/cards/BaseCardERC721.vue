@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="onClick">
         <template #card-header>
             NFT
             <i class="ml-1 fas fa-archive text-white small" v-if="erc721.archived"></i>
@@ -94,6 +94,10 @@ export default class BaseCardERC721 extends Vue {
         };
 
         poll({ taskFn, interval: 3000, retries: 10 });
+    }
+
+    onClick() {
+        if (this.erc721.poolId) this.$router.push({ path: `/pool/${this.erc721.poolId}/rewards` });
     }
 
     openTokenUrl() {

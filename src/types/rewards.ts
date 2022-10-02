@@ -1,3 +1,5 @@
+import { TClaim } from '@/store/modules/claims';
+
 export enum RewardState {
     Disabled = 0,
     Enabled = 1,
@@ -31,7 +33,7 @@ export interface Reward {
     isClaimOnce: boolean;
     isMembershipRequired: boolean;
     title: string;
-    claims: { _id: string }[];
+    claims: TClaim[];
     amount: number;
     createdAt: Date;
     updatedAt: Date;

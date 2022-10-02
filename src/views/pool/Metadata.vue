@@ -24,8 +24,8 @@
                         <span class="d-none d-md-inline">Upload images</span>
                     </b-button>
                     <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload CSV</span>
+                        <i class="far fa-exchange-alt mr-2"></i>
+                        <span class="d-none d-md-inline">Import/Export</span>
                     </b-button>
                 </div>
             </b-row>
@@ -100,7 +100,7 @@ import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC72
 })
 export default class MetadataView extends Vue {
     page = 1;
-    limit = 100;
+    limit = 15;
     isLoading = true;
 
     totals!: { [erc721Id: string]: number };

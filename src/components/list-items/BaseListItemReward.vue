@@ -207,7 +207,7 @@ export default class BaseCardReward extends Vue {
         if (this.reward.amount == 1) {
             this.$store.dispatch('brands/getForPool', this.pool).then(() => {
                 const logoImgUrl = this.brand ? this.brand.logoImgUrl : BASE_URL + require('@/assets/qr-logo.jpg');
-                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0].id}`;
                 getBase64Image(logoImgUrl).then((data) => {
                     this.imgData = data;
                 });

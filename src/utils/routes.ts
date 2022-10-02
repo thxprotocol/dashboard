@@ -5,16 +5,16 @@ type RouteDefinition = { path: string; label: string; iconClasses: string; visib
 export const getRoutes = (pool: IPool) => {
     const routes: RouteDefinition[] = [
         {
-            path: 'metadata',
-            label: 'Metadata',
-            iconClasses: 'fas fa-palette',
-            visible: !!pool.erc721,
-        },
-        {
             path: 'rewards',
             label: 'Rewards',
             iconClasses: 'fas fa-award',
             visible: !!pool.erc20 || !!pool.erc721,
+        },
+        {
+            path: 'metadata',
+            label: 'Metadata',
+            iconClasses: 'fas fa-palette',
+            visible: !!pool.erc721,
         },
         {
             path: 'payments',
