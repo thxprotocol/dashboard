@@ -1,40 +1,46 @@
 <template>
     <div>
-        <b-jumbotron
-            class="jumbotron-header"
-            :style="{
-                'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
-            }"
-        >
-            <div class="container container-md pt-5 pb-5">
-                <p class="brand-text">Tokens</p>
-                <b-button
-                    v-b-modal="'modalERC20Create'"
-                    class="rounded-pill mr-2"
-                    variant="secondary"
-                    v-b-tooltip
-                    title="The fungible token standard ERC-20 could be used for making payments, exchanging value, point systems
+        <div class="container-xl">
+            <b-jumbotron
+                class="mt-3 jumbotron-header"
+                bg-variant="light"
+                :style="{
+                    'min-height': 'none',
+                    'border-radius': '1rem',
+                    'background-size': 'cover',
+                    'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
+                }"
+            >
+                <div class="container container-md py-5">
+                    <p class="brand-text">Tokens</p>
+                    <b-button
+                        v-b-modal="'modalERC20Create'"
+                        class="rounded-pill mr-2"
+                        variant="secondary"
+                        v-b-tooltip
+                        title="The fungible token standard ERC-20 could be used for making payments, exchanging value, point systems
                 and reputation metrics."
-                >
-                    <i class="fas fa-plus mr-2"></i>
-                    <span>Create Token</span>
-                </b-button>
-                <b-button
-                    v-b-modal="'modalERC20Import'"
-                    class="rounded-pill mr-2"
-                    variant="secondary"
-                    v-b-tooltip
-                    title="Import an existing ERC20 token contract, top up your pool and manage the distribution."
-                >
-                    <i class="fas fa-arrow-down mr-2"></i>
-                    <span>Import Token</span>
-                </b-button>
-                <b-button to="/pools" variant="link" class="text-light">
-                    <i class="fas fa-chart-pie mr-2"></i>
-                    <span>Deploy a token pool</span>
-                </b-button>
-            </div>
-        </b-jumbotron>
+                    >
+                        <i class="fas fa-plus mr-2"></i>
+                        <span>Create Token</span>
+                    </b-button>
+                    <b-button
+                        v-b-modal="'modalERC20Import'"
+                        class="rounded-pill mr-2"
+                        variant="secondary"
+                        v-b-tooltip
+                        title="Import an existing ERC20 token contract, top up your pool and manage the distribution."
+                    >
+                        <i class="fas fa-arrow-down mr-2"></i>
+                        <span>Import Token</span>
+                    </b-button>
+                    <b-button to="/pools" variant="link" class="text-light">
+                        <i class="fas fa-chart-pie mr-2"></i>
+                        <span>Deploy a token pool</span>
+                    </b-button>
+                </div>
+            </b-jumbotron>
+        </div>
         <div class="container container-md">
             <b-row>
                 <b-col class="text-right pb-3">
