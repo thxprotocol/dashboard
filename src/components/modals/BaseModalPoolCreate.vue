@@ -6,7 +6,7 @@
         title="Create Token Pool"
         :id="`modalAssetPoolCreate_${tokenId}`"
     >
-        <template #modal-body>
+        <template #modal-body v-if="!loading">
             <base-form-select-network :chainId="chainId" @selected="onSelectChain" />
             <b-form-group>
                 <label> Token Contract </label>

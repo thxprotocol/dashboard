@@ -1,5 +1,5 @@
 <template>
-    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer">
+    <base-card :loading="isLoading" :is-deploying="isDeploying" classes="cursor-pointer" @click="onClick">
         <template #card-header>
             {{ ERC20Type[erc20.type] }}
             <i class="ml-1 fas fa-archive text-white small" v-if="erc20.archived"></i>
@@ -26,7 +26,7 @@
             <template v-if="!erc20.poolId">
                 <hr />
                 <b-button block variant="primary" v-b-modal="`modalAssetPoolCreate_${erc20._id}`" class="rounded-pill">
-                    Deploy Pool
+                    Create Pool
                 </b-button>
             </template>
         </template>
@@ -91,6 +91,10 @@ export default class BaseCardERC20 extends Vue {
         this.isLoading = true;
         this.$store.dispatch('erc20/update', { erc20: this.erc20, data: { archived: !this.erc20.archived } });
         this.isLoading = false;
+    }
+
+    onClick() {
+        if (this.erc20.poolId) this.$router.push({ path: `/pool/${this.erc20.poolId}` });
     }
 }
 </script>

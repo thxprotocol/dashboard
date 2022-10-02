@@ -303,6 +303,27 @@ class ERC721Module extends VuexModule {
             this.context.commit('unset', erc721);
         }
     }
+
+    @Action({ rawError: true })
+    async getQRCodes({ erc721 }: { erc721: TERC721 }) {
+        const { status, data } = await axios({
+            method: 'GET',
+            url: `/erc721/${erc721._id}/metadata/zip`,
+            headers: { 'X-PoolId': erc721.poolId },
+            responseType: 'blob',
+        });
+        // Check if job has been queued, meaning file is not available yet
+        if (status === 201) return true;
+        // Check if response is zip file, meaning job has completed
+        if (status === 200 && data.type == 'application/zip') {
+            // Fake an anchor click to trigger a download in the browser
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(new Blob([data]));
+            anchor.setAttribute('download', `${erc721._id}_qrcodes.zip`);
+            document.body.appendChild(anchor);
+            anchor.click();
+        }
+    }
 }
 
 export default ERC721Module;

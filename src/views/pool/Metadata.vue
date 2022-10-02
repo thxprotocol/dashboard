@@ -1,74 +1,62 @@
 <template>
-    <b-skeleton-wrapper :loading="isLoading">
-        <template #loading>
-            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
-                <b-skeleton animation="fade" width="65%"></b-skeleton>
-                <hr />
-                <b-skeleton animation="fade" width="55%"></b-skeleton>
-                <b-skeleton animation="fade" class="mb-3" width="70%"></b-skeleton>
-                <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
-            </b-card>
-        </template>
-        <div>
-            <b-row class="mb-3">
-                <b-col class="d-flex align-items-center">
-                    <h2 class="mb-0">Metadata</h2>
-                </b-col>
-                <div class="d-flex justify-content-end">
-                    <b-button @click="onCreate()" class="rounded-pill" variant="primary">
-                        <i class="fas fa-plus mr-2"></i>
-                        <span class="d-none d-md-inline">Create Metadata</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload images</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="primary">
-                        <i class="far fa-exchange-alt mr-2"></i>
-                        <span class="d-none d-md-inline">Import/Export</span>
-                    </b-button>
-                </div>
-            </b-row>
-            <base-nothing-here
-                v-if="erc721 && !erc721.metadata"
-                text-submit="Create NFT Metadata"
-                title="You have not created NFT Metadata yet"
-                description="NFT Metadata is the actual data that is attached to your token."
-                @clicked="$bvModal.show('modalNFTCreate')"
-            />
-            <base-card-erc721-metadata
-                @edit="onEdit"
-                v-if="erc721 && erc721.metadata"
-                :erc721="erc721"
-                :metadata="metadataByPage"
-                :pool="pool"
-            />
-            <b-pagination
-                v-if="erc721s && erc721 && erc721.metadata && total > limit"
-                class="mt-3"
-                @change="onChangePage"
-                v-model="page"
-                :per-page="limit"
-                :total-rows="total"
-                align="center"
-            ></b-pagination>
-            <base-modal-erc721-metadata-create
-                v-if="erc721"
-                @hidden="reset"
-                :metadata="editingMeta"
-                :pool="pool"
-                :erc721="erc721"
-                @success="listMetadata()"
-            />
-            <base-modal-erc721-metadata-bulk-create
-                v-if="erc721"
-                :pool="pool"
-                :erc721="erc721"
-                @success="listMetadata()"
-            />
-            <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="onSuccess()" />
-        </div>
-    </b-skeleton-wrapper>
+    <div>
+        <b-row class="mb-3">
+            <b-col class="d-flex align-items-center">
+                <h2 class="mb-0">Metadata</h2>
+            </b-col>
+            <div class="d-flex justify-content-end">
+                <b-button @click="onCreate()" class="rounded-pill" variant="link">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="d-none d-md-inline">Create Metadata</span>
+                </b-button>
+                <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="link">
+                    <i class="fas fa-upload mr-2"></i>
+                    <span class="d-none d-md-inline">Upload images</span>
+                </b-button>
+                <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="link">
+                    <i class="fas fa-exchange-alt mr-2"></i>
+                    <span class="d-none d-md-inline">Import/Export</span>
+                </b-button>
+                <b-button class="rounded-pill ml-2" variant="link" @click="downloadQrCodes()">
+                    <i class="fas fa-download mr-2"></i>
+                    <span class="d-none d-md-inline">Download Rewards</span>
+                </b-button>
+            </div>
+        </b-row>
+        <base-nothing-here
+            v-if="erc721 && !erc721.metadata"
+            text-submit="Create NFT Metadata"
+            title="You have not created NFT Metadata yet"
+            description="NFT Metadata is the actual data that is attached to your token."
+            @clicked="$bvModal.show('modalNFTCreate')"
+        />
+        <base-card-erc721-metadata
+            @edit="onEdit"
+            v-if="erc721 && erc721.metadata"
+            :erc721="erc721"
+            :metadata="metadataByPage"
+            :pool="pool"
+        />
+        <b-pagination
+            v-if="erc721s && erc721 && erc721.metadata && total > limit"
+            class="mt-3"
+            @change="onChangePage"
+            v-model="page"
+            :per-page="limit"
+            :total-rows="total"
+            align="center"
+        ></b-pagination>
+        <base-modal-erc721-metadata-create
+            v-if="erc721"
+            @hidden="reset"
+            :metadata="editingMeta"
+            :pool="pool"
+            :erc721="erc721"
+            @success="listMetadata()"
+        />
+        <base-modal-erc721-metadata-bulk-create v-if="erc721" :pool="pool" :erc721="erc721" @success="listMetadata()" />
+        <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="onSuccess()" />
+    </div>
 </template>
 
 <script lang="ts">
@@ -150,6 +138,10 @@ export default class MetadataView extends Vue {
     onCreate() {
         this.reset();
         this.$bvModal.show('modalNFTCreate');
+    }
+
+    downloadQrCodes() {
+        this.$store.dispatch('erc721/getQRCodes', { erc721: this.erc721 });
     }
 
     async listMetadata() {

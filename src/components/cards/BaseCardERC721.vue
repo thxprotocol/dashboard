@@ -35,7 +35,7 @@
             <template v-if="!erc721.poolId">
                 <hr />
                 <b-button block variant="primary" v-b-modal="`modalAssetPoolCreate_${erc721._id}`" class="rounded-pill">
-                    Deploy Pool
+                    Create Pool
                 </b-button>
             </template>
         </template>
