@@ -91,6 +91,7 @@ class ERC721Module extends VuexModule {
             method: 'GET',
             url: `/erc721/${erc721._id}/metadata?${String(params)}`,
         });
+
         this.context.commit('setTotal', { erc721, total: data.total });
 
         for (const metadata of data.results) {
@@ -225,8 +226,9 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async uploadMultipleMetadataImages(payload: { pool: IPool; erc721: TERC721; files: FileList; propName: string }) {
+        const now = Date.now();
         const zip = new JSZip();
-        const zipFolder = zip.folder('nft-images');
+        const zipFolder = zip.folder(`nft-images_${now}`);
 
         await Promise.all(
             [...payload.files].map((x: File) => {
@@ -236,7 +238,8 @@ class ERC721Module extends VuexModule {
 
         const zipFile = await zip.generateAsync({ type: 'blob' });
 
-        const files = new File([zipFile], 'images.zip');
+        const files = new File([zipFile], `images_${now}.zip`);
+
         const formData = new FormData();
         formData.set('propName', payload.propName);
         formData.append('file', files);
@@ -319,7 +322,28 @@ class ERC721Module extends VuexModule {
             // Fake an anchor click to trigger a download in the browser
             const anchor = document.createElement('a');
             anchor.href = window.URL.createObjectURL(new Blob([data]));
-            anchor.setAttribute('download', `${erc721._id}_qrcodes.zip`);
+            anchor.setAttribute('download', `${pool._id}_metadata_qrcodes.zip`);
+            document.body.appendChild(anchor);
+            anchor.click();
+        }
+    }
+    
+    @Action({ rawError: true })
+    async getMetadataQRCodes({ pool, erc721 }: { pool: IPool; erc721: TERC721 }) {
+        const { status, data } = await axios({
+            method: 'GET',
+            url: `/erc721/${erc721._id}/metadata/zip`,
+            headers: { 'X-PoolId': pool._id },
+            responseType: 'blob',
+        });
+        // Check if job has been queued, meaning file is not available yet
+        if (status === 201) return true;
+        // Check if response is zip file, meaning job has completed
+        if (status === 200 && data.type == 'application/zip') {
+            // Fake an anchor click to trigger a download in the browser
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(new Blob([data]));
+            anchor.setAttribute('download', `${pool._id}_metadata_qrcodes.zip`);
             document.body.appendChild(anchor);
             anchor.click();
         }

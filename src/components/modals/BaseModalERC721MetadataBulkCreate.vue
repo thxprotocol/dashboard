@@ -100,6 +100,9 @@ export default class ModalERC721MetadataBulkCreate extends Vue {
         } finally {
             this.$bvModal.hide('modalNFTBulkCreate');
             this.loading = false;
+            this.files = null;
+            this.selectedProp = null;
+            this.selectedKey = null;
         }
     }
 }
