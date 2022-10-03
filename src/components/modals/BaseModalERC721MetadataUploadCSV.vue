@@ -63,11 +63,13 @@ export default class BaseModalErc721MetadataUploadCSV extends Vue {
                 file: this.selectedFile,
             });
             this.$emit('success');
-            this.isLoading = false;
-            this.$bvModal.hide('modalNFTUploadMetadataCsv');
         } catch (err) {
+            console.log('ERROR ON SUBMIT', err);
+            /* NO-OP */
+        } finally {
             this.isLoading = false;
             this.$bvModal.hide('modalNFTUploadMetadataCsv');
+            this.selectedFile = null;
         }
     }
 }
