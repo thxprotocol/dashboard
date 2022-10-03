@@ -27,8 +27,8 @@
             @edit="onEdit"
             :pool="pool"
             :reward="reward"
-            :key="reward._id"
-            v-for="reward of rewardsByPage"
+            :key="key"
+            v-for="(reward, key) of rewardsByPage"
         />
         <b-pagination
             class="mt-3"
@@ -108,7 +108,6 @@ export default class AssetPoolView extends Vue {
 
     get rewardsByPage() {
         if (!this.rewards[this.$route.params.id]) return [];
-
         return Object.values(this.rewards[this.$route.params.id])
             .filter((reward: TReward) => reward.page === this.page)
             .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
