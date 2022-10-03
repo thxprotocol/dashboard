@@ -27,8 +27,8 @@
             @edit="onEdit"
             :pool="pool"
             :reward="reward"
-            :key="key"
-            v-for="(reward, key) of rewardsByPage"
+            :key="reward.id"
+            v-for="reward of rewardsByPage"
         />
         <b-pagination
             class="mt-3"
