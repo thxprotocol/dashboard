@@ -188,28 +188,6 @@
                             <template v-if="channel && action && action.type === 0">
                                 <base-dropdown-youtube-video :url="item" @selected="item = $event" />
                             </template>
-                            <template
-                                v-if="
-                                    channel &&
-                                    action &&
-                                    (action.type === ChannelAction.SpotifyTrackPlaying ||
-                                        action.type === ChannelAction.SpotifyTrackSaved ||
-                                        action.type === ChannelAction.SpotifyTrackRecent)
-                                "
-                            >
-                                <base-dropdown-spotify-track
-                                    :item="item"
-                                    :items="action.items"
-                                    @selected="item = $event"
-                                />
-                            </template>
-                            <template v-if="channel && action && action.type === ChannelAction.SpotifyPlaylistFollow">
-                                <base-dropdown-spotify-playlist
-                                    :item="item"
-                                    @selected="item = $event"
-                                    :items="action.items"
-                                />
-                            </template>
                         </b-form-group>
                         <b-form-group
                             v-if="
@@ -265,15 +243,13 @@ import {
     Reward,
     channelList,
 } from '@/types/rewards';
-import { IAccount, ISpotify, ITwitter, IYoutube } from '@/types/account';
+import { IAccount, ITwitter, IYoutube } from '@/types/account';
 import BaseDropdownYoutubeVideo from '../dropdowns/BaseDropdownYoutubeVideo.vue';
 import BaseDropdownYoutubeUploads from '../dropdowns/BaseDropdownYoutubeUploads.vue';
 import BaseDropdownYoutubeChannels from '../dropdowns/BaseDropdownYoutubeChannels.vue';
 import BaseDropdownChannelActions from '../dropdowns/BaseDropdownChannelActions.vue';
 import BaseDropdownTwitterTweets from '../dropdowns/BaseDropdownTwitterTweets.vue';
 import BaseDropdownTwitterUsers from '../dropdowns/BaseDropdownTwitterUsers.vue';
-import BaseDropdownSpotifyTrack from '../dropdowns/BaseDropdownSpotifyTrack.vue';
-import BaseDropdownSpotifyPlaylist from '../dropdowns/BaseDropdownSpotifyPlaylist.vue';
 import BaseDropdownChannelTypes from '../dropdowns/BaseDropdownChannelTypes.vue';
 import slugify from '@/utils/slugify';
 import BaseModal from './BaseModal.vue';
@@ -298,15 +274,12 @@ enum RewardVariant {
         BaseDropdownTwitterUsers,
         BaseDropdownChannelActions,
         BaseDropdownChannelTypes,
-        BaseDropdownSpotifyTrack,
-        BaseDropdownSpotifyPlaylist,
         BaseDropdownERC721Metadata,
     },
     computed: mapGetters({
         profile: 'account/profile',
         youtube: 'account/youtube',
         twitter: 'account/twitter',
-        spotify: 'account/spotify',
     }),
 })
 export default class ModalRewardCreate extends Vue {
@@ -340,7 +313,6 @@ export default class ModalRewardCreate extends Vue {
     profile!: IAccount;
     youtube!: IYoutube;
     twitter!: ITwitter;
-    spotify!: ISpotify;
 
     @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
@@ -453,22 +425,6 @@ export default class ModalRewardCreate extends Vue {
         }
     }
 
-    async getSpotify() {
-        const { isAuthorized } = await this.$store.dispatch('account/getSpotify');
-
-        if (!isAuthorized) {
-            this.warning = 'Your Spotify account is not connected.';
-        }
-
-        if (isAuthorized && this.channel) {
-            this.warning = '';
-            this.channelActions[ChannelAction.SpotifyUserFollow].items = this.spotify.users;
-            this.channelActions[ChannelAction.SpotifyPlaylistFollow].items = this.spotify.playlists;
-            this.channelActions[ChannelAction.SpotifyTrackPlaying].items = this.spotify.items;
-            this.channelActions[ChannelAction.SpotifyTrackSaved].items = this.spotify.items;
-        }
-    }
-
     concatDatetime(date: Date, time: string) {
         const concatedDate = new Date(date);
         const [hours, minutes, seconds] = time.split(':').map((item) => Number(item));
@@ -487,10 +443,6 @@ export default class ModalRewardCreate extends Vue {
             case ChannelType.Twitter:
                 this.action = this.channelActions[channel.actions[0]];
                 await this.getTwitter();
-                break;
-            case ChannelType.Spotify:
-                this.action = this.channelActions[channel.actions[0]];
-                await this.getSpotify();
                 break;
             default:
                 this.error = 'Channel type is not known.';

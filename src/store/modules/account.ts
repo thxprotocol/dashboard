@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Module, VuexModule, Action, Mutation } from 'vuex-module-decorators';
 import { User, UserManager } from 'oidc-client-ts';
 import { ChannelType } from '@/types/rewards';
-import { IAccount, IAccountUpdates, ISpotify, ITwitter, IYoutube } from '@/types/account';
+import { IAccount, IAccountUpdates, ITwitter, IYoutube } from '@/types/account';
 import { config } from '@/utils/oidc';
 import { BASE_URL } from '@/utils/secrets';
 
@@ -16,7 +16,6 @@ class AccountModule extends VuexModule {
     _profile: IAccount | null = null;
     _youtube: IYoutube | null = null;
     _twitter: ITwitter | null = null;
-    _spotify: ISpotify | null = null;
 
     get networkHealth() {
         return this._networkHealth;
@@ -38,10 +37,6 @@ class AccountModule extends VuexModule {
         return this._twitter;
     }
 
-    get spotify() {
-        return this._spotify;
-    }
-
     @Mutation
     setUser(user: User) {
         this._user = user;
@@ -60,11 +55,6 @@ class AccountModule extends VuexModule {
     @Mutation
     setTwitter(data: ITwitter) {
         this._twitter = data;
-    }
-
-    @Mutation
-    setSpotify(data: ISpotify) {
-        this._spotify = data;
     }
 
     @Mutation
@@ -119,19 +109,6 @@ class AccountModule extends VuexModule {
         this.context.commit('setTwitter', r.data.isAuthorized ? r.data : null);
 
         if (r.data.isAuthorized) return { twitter: r.data, isAuthorized: true };
-        return { isAuthorized: false };
-    }
-
-    @Action({ rawError: true })
-    async getSpotify() {
-        const r = await axios({
-            method: 'GET',
-            url: '/account/spotify',
-        });
-
-        this.context.commit('setSpotify', r.data.isAuthorized ? r.data : null);
-
-        if (r.data.isAuthorized) return { spotify: r.data, isAuthorized: true };
         return { isAuthorized: false };
     }
 

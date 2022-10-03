@@ -95,7 +95,7 @@ export default class ModalRewardCreate extends Vue {
     @Prop({ required: false }) metadata!: TERC721Metadata;
 
     get modalTitle() {
-        return this.metadata ? 'Update NFT' : 'Create NFT';
+        return this.metadata ? 'Edit metadata' : 'Create metadata';
     }
 
     get isSubmitDisabled() {
@@ -130,7 +130,11 @@ export default class ModalRewardCreate extends Vue {
             this.title = this.metadata['title'];
             this.description = this.metadata['description'];
             this.erc721.properties.forEach((prop, index) => {
-                prop.value = this.metadata.attributes[index] ? this.metadata.attributes[index].value : '';
+                this.metadata.attributes.forEach((attr) => {
+                    if (prop.name === attr.key) {
+                        this.erc721.properties[index].value = attr.value;
+                    }
+                });
             });
         }
     }
