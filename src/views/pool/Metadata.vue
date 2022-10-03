@@ -1,33 +1,29 @@
 <template>
-    <b-skeleton-wrapper :loading="isLoading">
-        <template #loading>
-            <b-card class="mt-3 mb-3 shadow-sm cursor-pointer">
-                <b-skeleton animation="fade" width="65%"></b-skeleton>
-                <hr />
-                <b-skeleton animation="fade" width="55%"></b-skeleton>
-                <b-skeleton animation="fade" class="mb-3" width="70%"></b-skeleton>
-                <b-skeleton type="button" animation="fade" class="rounded-pill" width="100%"></b-skeleton>
-            </b-card>
-        </template>
         <div>
             <b-row class="mb-3">
                 <b-col class="d-flex align-items-center">
                     <h2 class="mb-0">Metadata</h2>
                 </b-col>
-                <div class="d-flex justify-content-end">
-                    <b-button @click="onCreate()" class="rounded-pill" variant="primary">
-                        <i class="fas fa-plus mr-2"></i>
-                        <span class="d-none d-md-inline">Create Metadata</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload images</span>
-                    </b-button>
-                    <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="primary">
-                        <i class="fas fa-upload mr-2"></i>
-                        <span class="d-none d-md-inline">Upload CSV</span>
-                    </b-button>
-                </div>
+                <b-button class="rounded-pill ml-2" variant="link" @click="downloadQrCodes()">
+                    <i class="fas fa-download mr-2"></i>
+                    <span class="d-none d-md-inline">Download Rewards</span>
+                </b-button>
+                <b-dropdown variant="primary" dropleft>
+                    <b-dropdown-item v-b-modal="'modalNFTCreate'" @click="onCreate()">Create Metadata</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTBulkCreate'">Upload images</b-dropdown-item>
+                    <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">Upload CSV</b-dropdown-item>
+                    <b-dropdown-item @click="getQRCodes()">Download QR codes</b-dropdown-item>
+                </b-dropdown>
+            </b-row>
+            <b-row>
+                <b-alert variant="success" show v-if="isDownloadScheduled">
+                    <i class="fas fa-clock mr-2"></i>
+                    You will receive an e-mail when your download is ready!
+                </b-alert>
+                <b-alert variant="info" show v-if="isDownloading">
+                    <i class="fas fa-hourglass-half mr-2"></i>
+                    Downloading your QR codes
+                </b-alert>
             </b-row>
             <base-nothing-here
                 v-if="erc721 && !erc721.metadata"
@@ -68,7 +64,6 @@
             />
             <BaseModalErc721MetadataUploadCSV v-if="erc721" :pool="pool" :erc721="erc721" @success="onSuccess()" />
         </div>
-    </b-skeleton-wrapper>
 </template>
 
 <script lang="ts">
@@ -86,9 +81,9 @@ import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC72
 @Component({
     components: {
         BaseNothingHere,
+        BaseCardErc721Metadata,
         BaseModalErc721MetadataCreate,
         BaseModalErc721MetadataBulkCreate,
-        BaseCardErc721Metadata,
         BaseModalErc721MetadataUploadCSV,
         BaseModalErc721MetadataCreateCSV,
     },
@@ -100,7 +95,7 @@ import BaseModalErc721MetadataCreateCSV from '@/components/modals/BaseModalERC72
 })
 export default class MetadataView extends Vue {
     page = 1;
-    limit = 100;
+    limit = 15;
     isLoading = true;
 
     totals!: { [erc721Id: string]: number };
@@ -108,6 +103,10 @@ export default class MetadataView extends Vue {
     docsUrl = process.env.VUE_APP_DOCS_URL;
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
+
+    qrURL = '';
+    isDownloading = false;
+    isDownloadScheduled = false;
 
     pools!: IPools;
     erc721s!: IERC721s;
@@ -152,6 +151,10 @@ export default class MetadataView extends Vue {
         this.$bvModal.show('modalNFTCreate');
     }
 
+    downloadQrCodes() {
+        this.$store.dispatch('erc721/getQRCodes', { erc721: this.erc721 });
+    }
+
     async listMetadata() {
         this.isLoading = true;
         await this.$store.dispatch('erc721/read', this.pool.erc721._id).then(async () => {
@@ -169,8 +172,20 @@ export default class MetadataView extends Vue {
         this.reset();
     }
 
-    mounted() {
+    async mounted() {
         this.listMetadata();
+        if (this.$route.query.qrcodes === '1') {
+            await this.getQRCodes();
+        }
+    }
+
+    async getQRCodes() {
+        this.isDownloading = true;
+        this.isDownloadScheduled = await this.$store.dispatch('erc721/getMetadataQRCodes', {
+            pool: this.pool,
+            erc721: this.erc721,
+        });
+        this.isDownloading = false;
     }
 }
 </script>
