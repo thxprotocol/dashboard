@@ -79,9 +79,8 @@ class ERC721Module extends VuexModule {
 
     @Action({ rawError: true })
     async listMetadata({ page = 1, limit, erc721, q }: MetadataListProps) {
-        if (!erc721) {
-            return;
-        }
+        if (!erc721) return;
+
         const params = new URLSearchParams();
         params.set('page', String(page));
         params.set('limit', String(limit));
@@ -100,6 +99,16 @@ class ERC721Module extends VuexModule {
         }
 
         return data;
+    }
+
+    @Action({ rawError: true })
+    async readMetadata({ erc721, metadataId }: { erc721: TERC721; metadataId: string }) {
+        const { data }: TMetadataResponse = await axios({
+            method: 'GET',
+            url: `/erc721/${erc721._id}/metadata/${metadataId}`,
+        });
+        const metadata = this._all[erc721._id].metadata.find((m) => m._id === metadataId);
+        this.context.commit('setMetadata', { erc721, metadata: { ...metadata, ...data } });
     }
 
     @Action({ rawError: true })

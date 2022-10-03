@@ -334,6 +334,12 @@ export default class ModalRewardCreate extends Vue {
 
         if (this.reward.erc721metadataId) {
             this.onRewardVariantChanged(RewardVariant.NFT);
+            await this.$store.dispatch('erc721/readMetadata', {
+                erc721: this.erc721,
+                metadataId: this.reward.erc721metadataId,
+            });
+            this.erc721metadata =
+                this.erc721?.metadata?.find((meta) => meta._id === this.reward.erc721metadataId) || null;
         } else {
             this.onRewardVariantChanged(RewardVariant.Token);
         }
@@ -362,7 +368,6 @@ export default class ModalRewardCreate extends Vue {
               ).padStart(2, '0')}:${String(this.reward.expiryDate.getSeconds()).padStart(2, '0')}`
             : '00:00:00';
         this.amount = this.reward.amount || 1;
-        this.erc721metadata = this.erc721?.metadata?.find((meta) => meta._id === this.reward.erc721metadataId) || null;
     }
 
     get minDate() {
