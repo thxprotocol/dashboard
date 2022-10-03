@@ -14,7 +14,7 @@
                     'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
                 }"
             >
-                <div class="container container-md p-5">
+                <div class="container container-md py-5">
                     <b-badge variant="primary" class="p-2">Plan: {{ AccountPlanType[profile.plan] }}</b-badge>
                     <p class="brand-text">
                         {{ greeting }}
