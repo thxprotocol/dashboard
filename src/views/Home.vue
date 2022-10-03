@@ -3,40 +3,51 @@
         <b-spinner variant="primary"></b-spinner>
     </div>
     <div v-else>
-        <b-jumbotron
-            class="jumbotron-header text-left"
-            :style="{ 'background-image': `url(${require('@/assets/thx_jumbotron.webp')})` }"
-        >
-            <div
-                class="container container-md py-5"
-                :style="{ 'background-image': `url(${require('@/assets/thx_diamonds.webp')})` }"
+        <BaseModalRequestAccountEmailUpdate />
+        <div class="container-xl">
+            <b-jumbotron
+                class="text-left mt-3 jumbotron-header"
+                bg-variant="light"
+                :style="{
+                    'border-radius': '1rem',
+                    'background-size': 'cover',
+                    'background-image': `url(${require('@/assets/thx_jumbotron.webp')})`,
+                }"
             >
-                <b-badge variant="primary" class="p-2">Plan: {{ AccountPlanType[profile.plan] }}</b-badge>
-                <p class="brand-text">
-                    {{ greeting }}
-                </p>
-                <div class="lead mb-5">Welcome to your Token Head Quarters</div>
-                <b-button v-b-tooltip title="Deploy tokens" to="/tokens" class="rounded-pill mr-3" variant="primary">
-                    <i class="fas fa-coins m-0"></i>
-                </b-button>
-                <b-button v-b-tooltip title="Deploy NFT" to="/nft" class="rounded-pill mr-3" variant="primary">
-                    <i class="fas fa-palette m-0"></i>
-                </b-button>
-                <b-button v-b-tooltip title="Deploy pools" to="/pools" class="rounded-pill mr-3" variant="primary">
-                    <i class="fas fa-chart-pie m-0"></i>
-                </b-button>
-                <b-button
-                    v-b-tooltip
-                    title="Visit documentation"
-                    :href="docsUrl"
-                    target="_blank"
-                    variant="link"
-                    class="text-light bg-dark rounded-pill"
-                >
-                    <i class="far fa-file-alt m-0 text-gray"></i>
-                </b-button>
-            </div>
-        </b-jumbotron>
+                <div class="container container-md p-5">
+                    <b-badge variant="primary" class="p-2">Plan: {{ AccountPlanType[profile.plan] }}</b-badge>
+                    <p class="brand-text">
+                        {{ greeting }}
+                    </p>
+                    <div class="lead mb-5">Welcome to your Token Head Quarters</div>
+                    <b-button
+                        v-b-tooltip
+                        title="Deploy tokens"
+                        to="/tokens"
+                        class="rounded-pill mr-3"
+                        variant="primary"
+                    >
+                        <i class="fas fa-coins m-0"></i>
+                    </b-button>
+                    <b-button v-b-tooltip title="Deploy NFT" to="/nft" class="rounded-pill mr-3" variant="primary">
+                        <i class="fas fa-palette m-0"></i>
+                    </b-button>
+                    <b-button v-b-tooltip title="Deploy pools" to="/pools" class="rounded-pill mr-3" variant="primary">
+                        <i class="fas fa-chart-pie m-0"></i>
+                    </b-button>
+                    <b-button
+                        v-b-tooltip
+                        title="Visit documentation"
+                        :href="docsUrl"
+                        target="_blank"
+                        variant="link"
+                        class="text-light bg-dark rounded-pill"
+                    >
+                        <i class="far fa-file-alt m-0 text-gray"></i>
+                    </b-button>
+                </div>
+            </b-jumbotron>
+        </div>
         <div class="container container-md">
             <b-alert show variant="info">
                 <i class="fas fa-gift mr-2"></i><strong>New:</strong> Create NFT projects and mint them with pool
@@ -109,12 +120,16 @@ import { AccountPlanType, IAccount } from '@/types/account';
 import { IPools } from '@/store/modules/pools';
 import { Component, Vue } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
+import BaseModalRequestAccountEmailUpdate from '@/components/modals/BaseModalRequestAccountEmailUpdate.vue';
 
 @Component({
     computed: mapGetters({
         profile: 'account/profile',
         pools: 'pools/all',
     }),
+    components: {
+        BaseModalRequestAccountEmailUpdate,
+    },
 })
 export default class Home extends Vue {
     window = window;
@@ -129,6 +144,9 @@ export default class Home extends Vue {
 
     async mounted() {
         await this.$store.dispatch('account/getProfile');
+        if (!this.profile.email) {
+            this.$bvModal.show('modalRequestAccountEmailUpdate');
+        }
     }
 }
 </script>

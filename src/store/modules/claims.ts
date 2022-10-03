@@ -6,6 +6,7 @@ import { IRewardCondition } from '@/types/rewards';
 
 export type TClaim = {
     _id: string;
+    id: string;
     poolId: string;
     erc20Id?: string;
     erc721Id?: string;

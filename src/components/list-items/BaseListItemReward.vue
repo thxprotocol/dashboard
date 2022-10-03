@@ -44,14 +44,14 @@
                             aria-hidden="true"
                         ></i>
                     </template>
-                    <b-dropdown-item @click="onEdit()"><i class="fas fa-pen mr-3"></i> Edit reward </b-dropdown-item>
+                    <b-dropdown-item @click="onEdit()"> <i class="fas fa-pen mr-2"></i> Edit reward </b-dropdown-item>
                     <b-dropdown-item v-clipboard:copy="reward.id">
                         <i class="fas fa-clipboard mr-3"></i>Copy ID
                     </b-dropdown-item>
                     <b-dropdown-item-button v-if="reward.amount > 1" @click="getQRCodes()">
                         <i class="fas fa-qrcode mr-3"></i>Download {{ reward.amount }} QR codes
                     </b-dropdown-item-button>
-                    <b-dropdown-item v-if="reward.amount === 1" :download="`${reward._id}.jpg`" :href="qrURL">
+                    <b-dropdown-item v-if="reward.amount === 1" @click="getQRCodes()">
                         <i class="fas fa-qrcode mr-3"></i>Download QR code
                     </b-dropdown-item>
                     <b-dropdown-item @click="toggleState()">
@@ -133,7 +133,6 @@ import { IPool } from '@/store/modules/pools';
 import { Reward, ChannelType, ChannelAction, RewardState } from '@/types/rewards';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import BaseCard from '../cards/BaseCard.vue';
-import BaseModalRewardCreate from '@/components/modals/BaseModalRewardCreate.vue';
 import VueQr from 'vue-qr';
 import { BASE_URL, WALLET_URL } from '@/utils/secrets';
 import { mapGetters } from 'vuex';
@@ -161,7 +160,6 @@ const getBase64Image = (url: string): Promise<string> => {
         brands: 'brands/all',
     }),
     components: {
-        BaseModalRewardCreate,
         BaseCard,
         VueQr,
     },
@@ -209,7 +207,7 @@ export default class BaseCardReward extends Vue {
         if (this.reward.amount == 1) {
             this.$store.dispatch('brands/getForPool', this.pool).then(() => {
                 const logoImgUrl = this.brand ? this.brand.logoImgUrl : BASE_URL + require('@/assets/qr-logo.jpg');
-                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0]._id}`;
+                this.claimURL = `${WALLET_URL}/claim/${this.reward.claims[0].id}`;
                 getBase64Image(logoImgUrl).then((data) => {
                     this.imgData = data;
                 });
@@ -237,14 +235,6 @@ export default class BaseCardReward extends Vue {
                 return `https://www.twitter.com/twitter/status/${channelItem}`;
             case ChannelAction.TwitterFollow:
                 return `https://www.twitter.com/i/user/${channelItem}`;
-            case ChannelAction.SpotifyUserFollow:
-                return `https://open.spotify.com/artist/${channelItem}`;
-            case ChannelAction.SpotifyPlaylistFollow:
-                return `https://open.spotify.com/playlist/${channelItem}`;
-            case ChannelAction.SpotifyTrackPlaying:
-                return `https://open.spotify.com/track/${channelItem}`;
-            case ChannelAction.SpotifyTrackSaved:
-                return `https://open.spotify.com/track/${channelItem}`;
             default:
                 return '';
         }
