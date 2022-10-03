@@ -55,13 +55,17 @@
                         </b-form-group>
                         <b-form-group v-if="rewardVariant === RewardVariant.NFT && erc721metadata">
                             <label>
-                                NFT
+                                Metadata
                                 <base-tooltip-info
                                     class="mr-2"
                                     title="Select the metadata for the NFT that should be minted when this reward is claimed."
                                 />
                             </label>
-                            <BaseDropdownERC721Metadata :pool="pool" @selected="onSelectMetadata" />
+                            <BaseDropdownERC721Metadata
+                                :erc721metadata="erc721metadata"
+                                :pool="pool"
+                                @selected="onSelectMetadata"
+                            />
                         </b-form-group>
                         <hr />
                         <b-form-group class="mb-0">
@@ -328,6 +332,12 @@ export default class ModalRewardCreate extends Vue {
     async onRewardChange() {
         if (!this.reward) return;
 
+        if (this.reward.erc721metadataId) {
+            this.onRewardVariantChanged(RewardVariant.NFT);
+        } else {
+            this.onRewardVariantChanged(RewardVariant.Token);
+        }
+
         if (this.reward.withdrawCondition) {
             const channel = channelList.find((channel) => channel.type === this.reward.withdrawCondition.channelType);
 
@@ -353,12 +363,6 @@ export default class ModalRewardCreate extends Vue {
             : '00:00:00';
         this.amount = this.reward.amount || 1;
         this.erc721metadata = this.erc721?.metadata?.find((meta) => meta._id === this.reward.erc721metadataId) || null;
-
-        if (this.reward.erc721metadataId) {
-            this.onRewardVariantChanged(RewardVariant.NFT);
-        } else {
-            this.onRewardVariantChanged(RewardVariant.Token);
-        }
     }
 
     get minDate() {
