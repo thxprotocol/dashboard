@@ -40,7 +40,7 @@
                                 <i class="fas fa-palette"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <span class="mr-2">NFT</span>
+                                <span class="mr-2">Collections</span>
                             </div>
                         </div>
                     </b-nav-item>
