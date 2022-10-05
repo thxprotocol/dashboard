@@ -1,6 +1,6 @@
 <template>
-    <base-modal :error="error" title="Upload images" id="modalNFTBulkCreate">
-        <template #modal-body>
+    <base-modal @show="onShow" :loading="loading" :error="error" title="Upload images" id="modalNFTBulkCreate">
+        <template #modal-body v-if="!loading">
             <label>Select image property</label>
             <b-dropdown variant="link" class="dropdown-select">
                 <template #button-content>
@@ -59,7 +59,7 @@ export default class ModalERC721MetadataBulkCreate extends Vue {
     @Prop() pool!: IPool;
     @Prop() erc721!: TERC721;
 
-    mounted() {
+    onShow() {
         const imageProps = this.erc721.properties.filter((x) => x.propType === 'image');
         if (imageProps.length) {
             this.selectedProp = imageProps[0];
@@ -100,6 +100,9 @@ export default class ModalERC721MetadataBulkCreate extends Vue {
         } finally {
             this.$bvModal.hide('modalNFTBulkCreate');
             this.loading = false;
+            this.files = null;
+            this.selectedProp = null;
+            this.selectedKey = null;
         }
     }
 }

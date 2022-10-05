@@ -38,46 +38,34 @@
                             <label> Label </label>
                             <b-form-input v-model="rewardTitle" placeholder="A token of appreciation" />
                         </b-form-group>
-                        <b-row v-if="rewardVariant === RewardVariant.Token && pool.erc20">
-                            <b-col md="6">
-                                <b-form-group>
-                                    <label>
-                                        Tokens
-                                        <a
-                                            v-b-tooltip
-                                            :title="`The amount of ${pool.erc20.symbol} tokens earned with this reward.`"
-                                            target="_blank"
-                                        >
-                                            <i class="fas fa-question-circle"></i>
-                                        </a>
-                                    </label>
-                                    <b-input-group :append="pool.erc20.symbol">
-                                        <b-form-input type="number" v-model="rewardWithdrawAmount" />
-                                    </b-input-group>
-                                </b-form-group>
-                            </b-col>
-                            <b-col md="6">
-                                <label>
-                                    Reward Limit
-                                    <a
-                                        v-b-tooltip
-                                        title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times, but be aware that this could drain your pool."
-                                    >
-                                        <i class="fas fa-question-circle"></i>
-                                    </a>
-                                </label>
-                                <b-form-input type="number" v-model="rewardWithdrawLimit" />
-                            </b-col>
-                        </b-row>
+                        <b-form-group v-if="rewardVariant === RewardVariant.Token && pool.erc20">
+                            <label>
+                                Tokens
+                                <a
+                                    v-b-tooltip
+                                    :title="`The amount of ${pool.erc20.symbol} tokens earned with this reward.`"
+                                    target="_blank"
+                                >
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                            </label>
+                            <b-input-group :append="pool.erc20.symbol">
+                                <b-form-input type="number" v-model="rewardWithdrawAmount" />
+                            </b-input-group>
+                        </b-form-group>
                         <b-form-group v-if="rewardVariant === RewardVariant.NFT && erc721metadata">
                             <label>
-                                NFT
+                                Metadata
                                 <base-tooltip-info
                                     class="mr-2"
                                     title="Select the metadata for the NFT that should be minted when this reward is claimed."
                                 />
                             </label>
-                            <BaseDropdownERC721Metadata :pool="pool" @selected="onSelectMetadata" />
+                            <BaseDropdownERC721Metadata
+                                :erc721metadata="erc721metadata"
+                                :pool="pool"
+                                @selected="onSelectMetadata"
+                            />
                         </b-form-group>
                         <hr />
                         <b-form-group class="mb-0">
@@ -93,6 +81,31 @@
                             </b-form-checkbox>
                         </b-form-group>
                     </b-tab>
+                    <b-tab title="Expiration & Limit">
+                        <b-form-group>
+                            <label> Expiration </label>
+                            <b-row>
+                                <b-col md="6">
+                                    <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
+                                </b-col>
+                                <b-col md="6">
+                                    <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
+                                </b-col>
+                            </b-row>
+                        </b-form-group>
+                        <b-form-group>
+                            <label>
+                                Reward Limit
+                                <a
+                                    v-b-tooltip
+                                    title="The total amount of times this reward could be claimed. Leave 0 for an infinite amount of times, but be aware that this could drain your pool."
+                                >
+                                    <i class="fas fa-question-circle"></i>
+                                </a>
+                            </label>
+                            <b-form-input type="number" v-model="rewardWithdrawLimit" />
+                        </b-form-group>
+                    </b-tab>
                     <b-tab title="QR Codes">
                         <b-form-group>
                             <label>
@@ -104,19 +117,6 @@
                             <b-input-group>
                                 <b-form-input type="number" v-model="amount" min="1" max="10000" />
                             </b-input-group>
-                        </b-form-group>
-                    </b-tab>
-                    <b-tab title="Expiration">
-                        <b-form-group>
-                            <label> Expiration </label>
-                            <b-row>
-                                <b-col md="6">
-                                    <b-datepicker value-as-date :min="minDate" v-model="rewardExpireDate" />
-                                </b-col>
-                                <b-col md="6">
-                                    <b-timepicker :disabled="!rewardExpireDate" v-model="rewardExpireTime" />
-                                </b-col>
-                            </b-row>
                         </b-form-group>
                     </b-tab>
                     <b-tab title="Conditions">
@@ -332,6 +332,18 @@ export default class ModalRewardCreate extends Vue {
     async onRewardChange() {
         if (!this.reward) return;
 
+        if (this.reward.erc721metadataId) {
+            this.onRewardVariantChanged(RewardVariant.NFT);
+            await this.$store.dispatch('erc721/readMetadata', {
+                erc721: this.erc721,
+                metadataId: this.reward.erc721metadataId,
+            });
+            this.erc721metadata =
+                this.erc721?.metadata?.find((meta) => meta._id === this.reward.erc721metadataId) || null;
+        } else {
+            this.onRewardVariantChanged(RewardVariant.Token);
+        }
+
         if (this.reward.withdrawCondition) {
             const channel = channelList.find((channel) => channel.type === this.reward.withdrawCondition.channelType);
 
@@ -356,7 +368,6 @@ export default class ModalRewardCreate extends Vue {
               ).padStart(2, '0')}:${String(this.reward.expiryDate.getSeconds()).padStart(2, '0')}`
             : '00:00:00';
         this.amount = this.reward.amount || 1;
-        this.erc721metadata = this.erc721?.metadata?.find((meta) => meta._id === this.reward.erc721metadataId) || null;
     }
 
     get minDate() {
@@ -373,11 +384,6 @@ export default class ModalRewardCreate extends Vue {
             (this.rewardVariant === RewardVariant.Token && this.rewardWithdrawAmount <= 0) ||
             (this.channel?.type !== ChannelType.None && !this.item)
         );
-    }
-
-    onShow() {
-        this.erc721metadata =
-            this.rewardVariant === RewardVariant.NFT && this.filteredMetadata ? this.filteredMetadata[0] : null;
     }
 
     onRewardVariantChanged(variant: RewardVariant) {

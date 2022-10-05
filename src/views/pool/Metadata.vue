@@ -1,27 +1,40 @@
 <template>
-    <div class="pb-5">
+    <div>
         <b-row class="mb-3">
             <b-col class="d-flex align-items-center">
                 <h2 class="mb-0">Metadata</h2>
             </b-col>
-            <div class="d-flex justify-content-end">
-                <b-button @click="onCreate()" class="rounded-pill" variant="link">
+            <b-dropdown variant="light" dropleft no-caret size="sm" class="ml-2">
+                <template #button-content>
+                    <i class="fas fa-ellipsis-v m-0 p-1 px-2 text-muted" style="font-size: 1.2rem"></i>
+                </template>
+                <b-dropdown-item v-b-modal="'modalNFTCreate'" @click="onCreate()">
                     <i class="fas fa-plus mr-2"></i>
-                    <span class="d-none d-md-inline">Create Metadata</span>
-                </b-button>
-                <b-button v-b-modal="'modalNFTBulkCreate'" class="rounded-pill ml-2" variant="link">
+                    Create Metadata
+                </b-dropdown-item>
+                <b-dropdown-item v-b-modal="'modalNFTBulkCreate'">
                     <i class="fas fa-upload mr-2"></i>
-                    <span class="d-none d-md-inline">Upload images</span>
-                </b-button>
-                <b-button v-b-modal="'modalNFTUploadMetadataCsv'" class="rounded-pill ml-2" variant="link">
+                    Upload Images
+                </b-dropdown-item>
+                <b-dropdown-item v-b-modal="'modalNFTUploadMetadataCsv'">
                     <i class="fas fa-exchange-alt mr-2"></i>
-                    <span class="d-none d-md-inline">Import/Export</span>
-                </b-button>
-                <b-button class="rounded-pill ml-2" variant="link" @click="downloadQrCodes()">
+                    Import/Export
+                </b-dropdown-item>
+                <b-dropdown-item @click="getQRCodes()">
                     <i class="fas fa-download mr-2"></i>
-                    <span class="d-none d-md-inline">Download Rewards</span>
-                </b-button>
-            </div>
+                    Download Rewards
+                </b-dropdown-item>
+            </b-dropdown>
+        </b-row>
+        <b-row>
+            <b-alert variant="success" show v-if="isDownloadScheduled">
+                <i class="fas fa-clock mr-2"></i>
+                You will receive an e-mail when your download is ready!
+            </b-alert>
+            <b-alert variant="info" show v-if="isDownloading">
+                <i class="fas fa-hourglass-half mr-2"></i>
+                Downloading your QR codes
+            </b-alert>
         </b-row>
         <base-nothing-here
             v-if="erc721 && !erc721.metadata"
@@ -97,6 +110,10 @@ export default class MetadataView extends Vue {
     apiUrl = process.env.VUE_APP_API_ROOT;
     widgetUrl = process.env.VUE_APP_WIDGET_URL;
 
+    qrURL = '';
+    isDownloading = false;
+    isDownloadScheduled = false;
+
     pools!: IPools;
     erc721s!: IERC721s;
     editingMeta: TERC721Metadata | null = null;
@@ -161,8 +178,20 @@ export default class MetadataView extends Vue {
         this.reset();
     }
 
-    mounted() {
+    async mounted() {
         this.listMetadata();
+        if (this.$route.query.qrcodes === '1') {
+            await this.getQRCodes();
+        }
+    }
+
+    async getQRCodes() {
+        this.isDownloading = true;
+        this.isDownloadScheduled = await this.$store.dispatch('erc721/getMetadataQRCodes', {
+            pool: this.pool,
+            erc721: this.erc721,
+        });
+        this.isDownloading = false;
     }
 }
 </script>
