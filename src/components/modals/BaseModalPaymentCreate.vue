@@ -97,7 +97,7 @@ import BaseDropdownERC721Metadata from '../dropdowns/BaseDropdownERC721Metadata.
 import BaseTooltipInfo from '../tooltips/BaseTooltipInfo.vue';
 import BaseDropdownPromotion from '../dropdowns/BaseDropdownPromotion.vue';
 import { TPromotion } from '@/store/modules/promotions';
-import { timeStamp } from 'console';
+
 enum PaymentVariant {
     Token = 0,
     NFT = 1,
